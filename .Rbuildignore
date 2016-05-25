@@ -1,0 +1,9 @@
+.gitattributes
+.gitignore
+.RData
+.Rhistory
+extdata/.*[.]csv$
+extdata/.*[.]kml$
+extdata/.*[.]md$
+extdata/.*[.]tif$
+extdata/.*[.]zip$

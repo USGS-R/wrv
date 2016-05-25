@@ -1,0 +1,4157 @@
+\documentclass[letterpaper]{book}
+\usepackage[times,inconsolata,hyper]{Rd}
+\usepackage{makeidx}
+\usepackage[utf8,latin1]{inputenc}
+% \usepackage{graphicx} % @USE GRAPHICX@
+\makeindex{}
+\begin{document}
+\chapter*{}
+\begin{center}
+{\textbf{\huge Package `wrv'}}
+\par\bigskip{\large \today}
+\end{center}
+\begin{description}
+\raggedright{}
+\item[Type]\AsIs{Package}
+\item[Version]\AsIs{0.8.1}
+\item[Date]\AsIs{2016-05-25}
+\item[Title]\AsIs{Wood River Valley Groundwater-Flow Model}
+\item[Author]\AsIs{Jason C. Fisher}
+\item[Maintainer]\AsIs{Jason C. Fisher }\email{jfisher@usgs.gov}\AsIs{}
+\item[Depends]\AsIs{R (>= 3.2.0), sp, rgdal, raster}
+\item[Imports]\AsIs{methods, rgeos, igraph, dplyr}
+\item[Suggests]\AsIs{RCurl, knitr, xtable, sfsmisc, animation, viridis, colorspace}
+\item[SystemRequirements]\AsIs{PEST (>= 13.0, optional)}
+\item[Description]\AsIs{A processing program for the groundwater-flow model of the Wood
+River Valley aquifer system, south-central Idaho. Included in the package is
+MODFLOW-USG version 1.2, a U.S. Geological Survey groundwater-flow model.}
+\item[License]\AsIs{CC0}
+\item[Copyright]\AsIs{This software is in the public domain because it contains materials
+that originally came from the United States Geological Survey (USGS), an
+agency of the United States Department of Interior. For more information, see
+the official USGS copyright policy at
+http://www.usgs.gov/visual-id/credit\_usgs.html\#copyright}
+\item[URL]\AsIs{}\url{https://github.com/USGS-R/wrv}\AsIs{}
+\item[BugReports]\AsIs{}\url{https://github.com/USGS-R/wrv/issues}\AsIs{}
+\item[ByteCompile]\AsIs{yes}
+\item[LazyData]\AsIs{yes}
+\item[LazyDataCompression]\AsIs{xz}
+\item[VignetteBuilder]\AsIs{knitr}
+\end{description}
+\Rdcontents{\R{} topics documented:}
+\inputencoding{utf8}
+\HeaderA{AddBubbles}{Add Bubble Map to Plot}{AddBubbles}
+\keyword{hplot}{AddBubbles}
+%
+\begin{Description}\relax
+This function can be used to add a bubble map to a plot.
+Proportional circle symbols are used to represent spatial point data, where symbol area varies in proportion to an attribute variable.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+AddBubbles(x, y = NULL, z, zlim = NULL, inches = c(0, 0.2),
+           scaling = c("perceptual", "mathematical"),
+           bg.pos = "red", bg.neg = "blue", fg = NA, lwd = 0.25,
+           cex = 0.7, format = NULL, draw.legend = TRUE,
+           loc = c("bottomleft", "topleft", "topright", "bottomright"),
+           inset = 0.02, breaks = NULL, break.labels = NULL,
+           quantile.breaks = FALSE, make.intervals = FALSE,
+           title = NULL, subtitle = NULL, add = TRUE)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{x, y}] \code{numeric}; the x and y coordinates for the centers of the circle symbols. They can be specified in any way which is accepted by \code{xy.coords}.
+\item[\code{z}] \code{numeric}; is the attribute variable.
+\item[\code{zlim}] \code{numeric}; the minimum and maximum \code{z} values that circle symbols are plotted; defaults to the range of the finite values of \code{z}.
+\item[\code{inches}] \code{numeric}; a vector of length 2 specifying the radii limits for the drawn circle symbol.
+\item[\code{scaling}] \code{character}; selects the proportional symbol mapping algorithm to be used; either \code{"perceptual"} or \code{"mathematical"} scaling (Tanimura and others, 2006).
+\item[\code{bg.pos, bg.neg}] \code{character} or \code{function}; the fill color(s) for circle symbols corresponding to positive and negative \code{z} values, respectively.
+A color palette also may be specified.
+\item[\code{fg}] \code{character}; the outer-line color for circle symbols.
+Specify an \code{NA} value to remove the symbols outer line, and a \code{NULL} value to match the outer-line color with the symbols fill color.
+\item[\code{lwd}] \code{numeric}; is the line width for drawing circle symbols.
+\item[\code{cex}] \code{numeric}; the character expansion factor for legend labels.
+\item[\code{format}] \code{character}; the formatting for legend values, see \code{formatC} for options.
+\item[\code{draw.legend}] \code{logical}; if \code{TRUE}, a legend is drawn.
+\item[\code{loc}] \code{character}; the position of the legend in the main plot region: \code{"bottomleft"}, \code{"topleft"}, \code{"topright"}, or \code{"bottomright"} to denote scale location.
+\item[\code{inset}] \code{numeric}; the inset distance of the legend from the margins as a fraction of the main plot region.
+Defaults to 2 percent of the axis range.
+\item[\code{breaks}] \code{numeric}; a set of finite breakpoints for the legend circle symbols.
+\item[\code{break.labels}] \code{character}; a vector of break labels with length equal to \code{breaks}.
+\item[\code{quantile.breaks}] \code{logical}; if \code{TRUE}, \code{breaks} are set to the sample quantiles of \code{z}.
+\item[\code{make.intervals}] \code{logical}; if \code{TRUE}, represent \code{z} within intervals.
+See \code{findInterval} function for details.
+\item[\code{title}] \code{character}; the main title to be placed at the top of the legend.
+\item[\code{subtitle}] \code{character}; a legend subtitle to be placed below the main title.
+\item[\code{add}] \code{logical}; if \code{TRUE}, circle symbols (and an optional legend) are added to an existing plot.
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Details}\relax
+Symbols are sequentially drawn in decreasing order of circle diameter.
+\end{Details}
+%
+\begin{Value}
+Primarily used for the side-effect of a bubble map drawn on the current graphics device.
+\end{Value}
+%
+\begin{Author}\relax
+J.C. Fisher, U.S. Geological Survey, Idaho Water Science Center
+\end{Author}
+%
+\begin{References}\relax
+Tanimura, S., Kuroiwa, C., and Mizota, T., 2006, Proportional Symbol Mapping in R: Journal of Statistical Software, v. 15, no. 5, 7 p.
+\end{References}
+%
+\begin{SeeAlso}\relax
+\code{symbols}
+\end{SeeAlso}
+%
+\begin{Examples}
+\begin{ExampleCode}
+n <- 50L
+x <- cbind(runif(n, 1, 10), runif(n, 1, 10))
+z <- runif(n, -5000, 10000)
+AddBubbles(x, z = z, fg = "green", lwd = 2, title = "Title", loc = "topright",
+           breaks=pretty(z, n = 8), add = FALSE)
+
+Pal1 <- colorRampPalette(c("#F4A582", "#CA0020"))
+Pal2 <- colorRampPalette(c("#92C5DE", "#0571B0"))
+AddBubbles(x, z = z, bg.pos = Pal1, bg.neg = Pal2, add = FALSE)
+
+AddBubbles(x, z = z, bg.pos = Pal1, bg.neg = Pal2, add = FALSE,
+           make.intervals = TRUE)
+
+AddBubbles(x, z = runif(n, 10, 10000), title = "Quantiles", bg.pos = topo.colors,
+           quantile.breaks = TRUE, fg = NULL, add = FALSE)
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{AddColorKey}{Add Color Key to Plot}{AddColorKey}
+\keyword{hplot}{AddColorKey}
+%
+\begin{Description}\relax
+This function can be used to add a color key to a plot.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+AddColorKey(mai, is.categorical, breaks, col, at = NULL, labels = TRUE,
+            scientific = FALSE, explanation = NULL, padx = 0.2)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{mai}] \code{numeric}; a numerical vector of the form \code{c(bottom, left, top, right)} which gives the margin size specified in inches (optional).
+\item[\code{is.categorical}] \code{logical}; if \code{TRUE}, color-key values represent categorical data; otherwise, these data values are assumed continuous.
+\item[\code{breaks}] \code{numeric}; a set of finite numeric breakpoints for the colors: must have one more breakpoint than color and be in increasing order.
+\item[\code{col}] \code{character}; a vector of colors to be used in the plot.
+This argument requires \code{breaks} specification for continuous data.
+For continuous data there should be one less color than breaks; whereas, categorical data require a color for each category.
+\item[\code{at}] \code{numeric}; the points at which tick-marks and labels are to be drawn, only applicable for continuous data.
+The tick-marks will be located at the color breaks if the length of \code{at} is greater than or equal to one minus the length of \code{breaks}.
+\item[\code{labels}] \code{logical} or \code{character}; this can either be a logical value specifying whether (numerical) annotations are to be made at the tickmarks, or a character or expression vector of labels to be placed at the tickpoints.
+\item[\code{scientific}] \code{logical}; indicates if axes labels should be formatted for scientific notation, see \code{\LinkA{ToScientific}{ToScientific}} for details.
+\item[\code{explanation}] \code{character}; a label that describes the data values.
+\item[\code{padx}] \code{numeric}; the inner padding for the left and right margins specified in inches.
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Value}
+Used for the side-effect of a color key drawn on the current graphics device.
+\end{Value}
+%
+\begin{Author}\relax
+J.C. Fisher, U.S. Geological Survey, Idaho Water Science Center
+\end{Author}
+%
+\begin{SeeAlso}\relax
+\code{\LinkA{PlotCrossSection}{PlotCrossSection}}, \code{\LinkA{PlotMap}{PlotMap}}
+\end{SeeAlso}
+%
+\begin{Examples}
+\begin{ExampleCode}
+dev.new(width = 7, height = 2)
+
+AddColorKey(is.categorical = FALSE, breaks = 0:10, scientific = TRUE,
+            explanation = "Example description for data variables in meters.")
+AddColorKey(is.categorical = FALSE, breaks = 0:10, at = pretty(0:10))
+AddColorKey(is.categorical = FALSE, breaks = seq(0.5, 10.5, by = 1), at = 1:10)
+
+AddColorKey(is.categorical = TRUE, labels = LETTERS[1:5])
+AddColorKey(is.categorical = TRUE, col = terrain.colors(5))
+
+graphics.off()
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{AddInsetMap}{Add Inset Map to Plot}{AddInsetMap}
+\keyword{hplot}{AddInsetMap}
+%
+\begin{Description}\relax
+This function can be used to add an inset map to a plot.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+AddInsetMap(p, col = c("#D8D8D8", "#BFA76F"),
+            main.label = list(label = NA, adj = NULL),
+            sub.label = list(label = NA, adj = NULL),
+            loc = c("bottomleft", "topleft", "topright", "bottomright"),
+            inset = 0.02, width = NULL)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{p}] \code{SpatialPolygons}; the polygon describing the large map.
+\item[\code{col}] \code{character}; a vector of length 2 giving the colors for filling the large map polygon \code{p} and the smaller plot extent rectangle.
+\item[\code{main.label}] \code{list}; a list with components \code{label} and \code{adj}.
+The text label and position (\code{x} and \code{y} adjustment of the label) for the large map, respectively.
+\item[\code{sub.label}] \code{list}; identical to the \code{main.label} argument but for the plot extent rectangle.
+\item[\code{loc}] \code{character}; the position of the inset map in the main plot region: \code{"bottomleft"}, \code{"topleft"}, \code{"topright"}, or \code{"bottomright"} to denote scale location.
+\item[\code{inset}] \code{numeric}; the inset distance from the margins as a fraction of the main plot region.
+Defaults to 2 percent of the axis range.
+\item[\code{width}] \code{numeric}; the width of the inset map, in inches.
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Details}\relax
+The smaller axis-aligned rectangle (relative to the larger map polygon) is defined by the user coordinate extent of the main plot region, see \code{par("usr")}.
+\end{Details}
+%
+\begin{Value}
+Used for the side-effect of a inset map drawn on the current graphics device.
+\end{Value}
+%
+\begin{Author}\relax
+J.C. Fisher, U.S. Geological Survey, Idaho Water Science Center
+\end{Author}
+%
+\begin{SeeAlso}\relax
+\code{\LinkA{PlotMap}{PlotMap}}
+\end{SeeAlso}
+%
+\begin{Examples}
+\begin{ExampleCode}
+PlotMap(alluvium.thickness@crs, bg.image = hill.shading, reg.axs = FALSE)
+AddInsetMap(idaho, width = 1, main.label = list("IDAHO", adj = c(-0.4, -4.9)),
+            sub.label = list("Map area", adj = c(0.5, 2.5)), loc = "topright")
+
+graphics.off()
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{AddScaleBar}{Add Scale Bar to Plot}{AddScaleBar}
+\keyword{hplot}{AddScaleBar}
+%
+\begin{Description}\relax
+This function can be used to add a scale bar to a plot.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+AddScaleBar(asp = 1, unit = NULL, is.lonlat = FALSE,
+            loc = c("bottomleft", "topleft", "topright", "bottomright"),
+            offset = c(0, 0), lab.vert.exag = NULL)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{asp}] \code{numeric}; the \emph{y/x} aspect ratio for spatial axes.
+\item[\code{unit}] \code{character}; axis unit of measurement, for example \code{"METERS"}.
+\item[\code{is.lonlat}] \code{logical}; if \code{TRUE}, plot coordinates are in longitude and latitude.
+\item[\code{loc}] \code{character}; the position of the scale bar in the plot region: \code{"bottomleft"}, \code{"topleft"}, \code{"topright"}, or \code{"bottomright"} to denote scale location.
+\item[\code{offset}] \code{numeric}; the \code{x} and \code{y} adjustments of the scale bar, in inches.
+\item[\code{lab.vert.exag}] \code{logical}; if \code{TRUE}, a label is drawn specifying the vertical exaggeration.
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Value}
+Used for the side-effect of a scale bar drawn on the current graphics device.
+\end{Value}
+%
+\begin{Author}\relax
+J.C. Fisher, U.S. Geological Survey, Idaho Water Science Center
+\end{Author}
+%
+\begin{SeeAlso}\relax
+\code{\LinkA{PlotCrossSection}{PlotCrossSection}}, \code{\LinkA{PlotMap}{PlotMap}}
+\end{SeeAlso}
+%
+\begin{Examples}
+\begin{ExampleCode}
+plot(-100:100, -100:100, type = "n", xlab = "x", ylab = "y", asp = 2)
+AddScaleBar(2, unit = "FEET", loc = "topleft")
+AddScaleBar(2, unit = "METERS", loc = "bottomright", offset = c(-0.2, 0))
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{alluvium.extent}{Extent of Alluvium Unit}{alluvium.extent}
+\keyword{datasets}{alluvium.extent}
+%
+\begin{Description}\relax
+The estimated extent of alluvium unit in the Wood River Valley, south-central Idaho.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+alluvium.extent
+\end{verbatim}
+\end{Usage}
+%
+\begin{Format}
+An object of \code{SpatialPolygonsDataFrame} class containing 1 \code{Polygons}.
+Geographic coordinates are in units of meters, in conformance with the North American Datum of 1983 (NAD 83), and placed in the
+Idaho Transverse Mercator projection (\Rhref{https://www.idwr.idaho.gov/GIS/IDTM/}{IDTM}).
+\end{Format}
+%
+\begin{Source}\relax
+Extent defined by Bartollino and Adkins (2012, Plate 1).
+\end{Source}
+%
+\begin{References}\relax
+Bartolino, J.R., and Adkins, C.B., 2012, Hydrogeologic framework of the Wood River Valley aquifer system, south-central Idaho: U.S. Geological Survey Scientific Investigations Report 2012-5053, 46 p., available at \url{http://pubs.usgs.gov/sir/2012/5053/}.
+\end{References}
+%
+\begin{Examples}
+\begin{ExampleCode}
+plot(alluvium.extent, col = "#BFA76F")
+str(alluvium.extent)
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{alluvium.thickness}{Thickness of the Quaternary Sediment}{alluvium.thickness}
+\keyword{datasets}{alluvium.thickness}
+%
+\begin{Description}\relax
+The estimated thickness of the Quaternary sediment in the Wood River Valley aquifer system, South-Central Idaho.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+alluvium.thickness
+\end{verbatim}
+\end{Usage}
+%
+\begin{Format}
+An object of \code{RasterLayer} class.
+Each cell on the surface grid represents a depth measured from land surface in meters.
+Geographic coordinates are in units of meters, in conformance with the North American Datum of 1983 (NAD 83), and placed in the
+Idaho Transverse Mercator projection (\Rhref{https://www.idwr.idaho.gov/GIS/IDTM/}{IDTM}).
+The spatial grid is composed of 565 rows and 429 columns, and has cell sizes that are constant at 100 meters by 100 meters.
+\end{Format}
+%
+\begin{Source}\relax
+This dataset is a revised version of Plate 1 in Bartolino and Adkins (2012).
+\end{Source}
+%
+\begin{References}\relax
+Bartolino, J.R., and Adkins, C.B., 2012, Hydrogeologic framework of the Wood River Valley aquifer system, south-central Idaho: U.S. Geological Survey Scientific Investigations Report 2012-5053, 46 p., available at \url{http://pubs.usgs.gov/sir/2012/5053/}.
+\end{References}
+%
+\begin{Examples}
+\begin{ExampleCode}
+col <- rainbow(255, start = 0.0, end = 0.8)
+image(alluvium.thickness, col = col, asp = 1, axes = FALSE, xlab = "", ylab = "")
+summary(alluvium.thickness)
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{basalt.extent}{Extent of Basalt Unit}{basalt.extent}
+\keyword{datasets}{basalt.extent}
+%
+\begin{Description}\relax
+The estimated extent of the basalt unit underlying the alluvial Wood River Valley aquifer system.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+basalt.extent
+\end{verbatim}
+\end{Usage}
+%
+\begin{Format}
+An object of \code{SpatialPolygonsDataFrame} class containing 1 \code{Polygons}.
+Geographic coordinates are in units of meters, in conformance with the North American Datum of 1983 (NAD 83), and placed in the
+Idaho Transverse Mercator projection (\Rhref{https://www.idwr.idaho.gov/GIS/IDTM/}{IDTM}).
+\end{Format}
+%
+\begin{Source}\relax
+Extent defined by Bartolino and Adkins (2012, Plate 1).
+\end{Source}
+%
+\begin{References}\relax
+Bartolino, J.R., and Adkins, C.B., 2012, Hydrogeologic framework of the Wood River Valley aquifer system, south-central Idaho: U.S. Geological Survey Scientific Investigations Report 2012-5053, 46 p., available at \url{http://pubs.usgs.gov/sir/2012/5053/}.
+\end{References}
+%
+\begin{Examples}
+\begin{ExampleCode}
+plot(basalt.extent, col = "#BEAED4", border = NA)
+plot(alluvium.extent, add = TRUE)
+str(basalt.extent)
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{bellevue.wwtp.ponds}{Bellevue Waste Water Treatment Plant Ponds}{bellevue.wwtp.ponds}
+\keyword{datasets}{bellevue.wwtp.ponds}
+%
+\begin{Description}\relax
+The location of the Bellevue Waste Water Treatment Plant ponds.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+bellevue.wwtp.ponds
+\end{verbatim}
+\end{Usage}
+%
+\begin{Format}
+An object of \code{SpatialPolygons} class containing 1 \code{Polygons}.
+Geographic coordinates are in units of meters, in conformance with the North American Datum of 1983 (NAD 83), and placed in the
+Idaho Transverse Mercator projection (\Rhref{https://www.idwr.idaho.gov/GIS/IDTM/}{IDTM}).
+\end{Format}
+%
+\begin{Source}\relax
+Idaho Department of Water Resources, accessed on December 11, 2014
+\end{Source}
+%
+\begin{Examples}
+\begin{ExampleCode}
+plot(bellevue.wwtp.ponds)
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{BumpDisconnectCells}{Adjustment for Vertically Disconnected Cells}{BumpDisconnectCells}
+\keyword{utilities}{BumpDisconnectCells}
+%
+\begin{Description}\relax
+This function decreases model cell values (such as, land-surface elevations) in the lower raster layer if they violate a minimum vertical overlap between adjacent cells.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+BumpDisconnectCells(rs, min.overlap = 2, bump.by = 0.1, max.itr = 1e+04)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{rs}] \code{RasterStack}; a collection of two raster layers, the first and second layers represent the top and bottom of a model layer.
+\item[\code{min.overlap}] \code{numeric}; the minimum vertical overlap between adjacent cells.
+\item[\code{bump.by}] \code{numeric}; the amount to decrease a cell value by during each iteration of the algorithm.
+\item[\code{max.itr}] \code{numeric}; the maximum number of iterations.
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Details}\relax
+During each iteration of the algorithm:
+(1) Cells are identified that violate the minimum vertical overlap between adjacent cells; that is, the bottom of cell \code{i} is greater than or equal to the top of an adjacent cell \code{j} minus the minimum overlap specified by the \code{min.overlap} argument.
+(2) For cells violating the minimum vertical overlap, lower raster layer (\code{rs[[2]]}) values are decreased by the value specified in the \code{bump.by} argument.
+\end{Details}
+%
+\begin{Value}
+Returns a \code{RasterLayer} that can be added to \code{rs[[2]]} to ensure connectivity between cells.
+Cell values in the returned raster grid represent vertical adjustments.
+\end{Value}
+%
+\begin{Author}\relax
+J.C. Fisher, U.S. Geological Survey, Idaho Water Science Center
+\end{Author}
+%
+\begin{Examples}
+\begin{ExampleCode}
+set.seed(0)
+r.top <- raster(ncols = 10, nrows = 10)
+r.bot <- raster(ncols = 10, nrows = 10)
+r.top[] <- rnorm(ncell(r.top), mean = 12)
+r.bot[] <- rnorm(ncell(r.bot), mean = 10)
+summary(r.top - r.bot)
+
+r <- BumpDisconnectCells(stack(r.top, r.bot), min.overlap = 0.1)
+plot(r.bot + r)
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{BumpRiverStage}{Adjustment for Implausible River Stage}{BumpRiverStage}
+\keyword{utilities}{BumpRiverStage}
+%
+\begin{Description}\relax
+This function decreases stage values in river cells if they are implausible with respect to water always flowing downhill.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+BumpRiverStage(r, outlets, min.drop = 1e-06)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{r}] \code{RasterLayer}; each cell on the surface grid represents a river stage.
+\item[\code{outlets}] \code{SpatialPoints*}, \code{SpatialLines*}, \code{SpatialPolygons*} or \code{Extent}; the location of discharge outlets.
+The \code{rasterize} function is used to locate outlet cells in the raster grid \code{r}.
+\item[\code{min.drop}] \code{numeric}; the minimum drop in stage between adjacent river cells.
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Details}\relax
+The \Rhref{http://en.wikipedia.org/wiki/Lee_algorithm}{Lee algorithm} (Lee, 1961) is used to identify flow paths among the modeled river cells.
+An analysis of river cell stage values along a flow path identifies any problematic cells that are obstructing downhill surface-water flow.
+Stage values for these problematic cells are then lowered to an acceptable elevation.
+\end{Details}
+%
+\begin{Value}
+Returns a \code{RasterLayer} with cell values representing the vertical change in stream stage.
+These changes can be added to \code{r} to ensure that water always flows downhill.
+\end{Value}
+%
+\begin{Author}\relax
+J.C. Fisher, U.S. Geological Survey, Idaho Water Science Center
+\end{Author}
+%
+\begin{References}\relax
+Lee, C.Y., 1961, An algorithm for path connections and its applications: IRE Transactions on Electronic Computers, v. EC-10, no. 2, p. 346--365.
+\end{References}
+%
+\begin{Examples}
+\begin{ExampleCode}
+## Not run: # see uncalibrated-model vignette
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{bypass.canal}{Bypass Canal}{bypass.canal}
+\keyword{datasets}{bypass.canal}
+%
+\begin{Description}\relax
+The location of the Bypass Canal.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+bypass.canal
+\end{verbatim}
+\end{Usage}
+%
+\begin{Format}
+An object of \code{SpatialLines} class containing 4 \code{Lines}.
+Geographic coordinates are in units of meters, in conformance with the North American Datum of 1983 (NAD 83), and placed in the
+Idaho Transverse Mercator projection (\Rhref{https://www.idwr.idaho.gov/GIS/IDTM/}{IDTM}).
+\end{Format}
+%
+\begin{Source}\relax
+Idaho Department of Water Resources, accessed on January 15, 2015
+\end{Source}
+%
+\begin{Examples}
+\begin{ExampleCode}
+plot(bypass.canal)
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{canal.seep}{Canal Seepage}{canal.seep}
+\keyword{datasets}{canal.seep}
+%
+\begin{Description}\relax
+Canal seepage as a fraction of diversions for irrigation entities in the Wood River Valley.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+canal.seep
+\end{verbatim}
+\end{Usage}
+%
+\begin{Format}
+A \code{data.frame} object with 19 records and the following variables:
+\begin{description}
+
+\item[EntityName] is the name of the irrigation entity served by the canal system.
+\item[SeepFrac] is the estimated canal seepage as a fraction of diversions.
+
+\end{description}
+
+\end{Format}
+%
+\begin{Source}\relax
+Idaho Department of Water Resources, accessed on November 4, 2015
+\end{Source}
+%
+\begin{SeeAlso}\relax
+\code{\LinkA{canals}{canals}}
+\end{SeeAlso}
+%
+\begin{Examples}
+\begin{ExampleCode}
+str(canal.seep)
+
+d <- canal.seep[order(canal.seep$SeepFrac, decreasing=TRUE), ]
+par(mar = c(4.1, 8.1, 0.1, 0.6))
+barplot(d$SeepFrac, names.arg = d$EntityName, horiz = TRUE, cex.names = 0.7,
+        cex.axis = 0.7, cex.lab = 0.7, las = 1, xlab = "Seepage fraction")
+
+graphics.off()
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{canals}{Canal Systems}{canals}
+\keyword{datasets}{canals}
+%
+\begin{Description}\relax
+The canal systems in the Wood River Valley and surrounding areas.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+canals
+\end{verbatim}
+\end{Usage}
+%
+\begin{Format}
+An object of \code{SpatialLinesDataFrame} class containing 113 \code{Lines} and a \code{data.frame} with the following variable:
+\begin{description}
+
+\item[EntityName] the name of the irrigation entity served by the canal system.
+\item[Name] the local canal name.
+
+\end{description}
+
+\end{Format}
+%
+\begin{Source}\relax
+Idaho Department of Water Resources, accessed on November 29, 2014
+\end{Source}
+%
+\begin{SeeAlso}\relax
+\code{\LinkA{r.canals}{r.canals}}, \code{\LinkA{canal.seep}{canal.seep}}
+\end{SeeAlso}
+%
+\begin{Examples}
+\begin{ExampleCode}
+plot(canals, col = "#3399CC")
+str(canals@data)
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{cities}{Cities and Towns}{cities}
+\keyword{datasets}{cities}
+%
+\begin{Description}\relax
+Cities and towns in the Wood River Valley and surrounding areas.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+cities
+\end{verbatim}
+\end{Usage}
+%
+\begin{Format}
+An object of \code{SpatialPointsDataFrame} class containing 11 points.
+Geographic coordinates are in units of meters, in conformance with the North American Datum of 1983 (NAD 83), and placed in the
+Idaho Transverse Mercator projection (\Rhref{https://www.idwr.idaho.gov/GIS/IDTM/}{IDTM}).
+\end{Format}
+%
+\begin{Source}\relax
+Idaho Department of Water Resources (\Rhref{https://research.idwr.idaho.gov/index.html#GIS-Data}{IDWR}), accessed on April 15, 2015
+\end{Source}
+%
+\begin{Examples}
+\begin{ExampleCode}
+str(cities)
+
+col <- "#333333"
+plot(cities, pch = 15, cex = 0.8, col = col)
+text(cities, labels = cities@data$FEATURE_NA, col = col, cex = 0.5, pos = 1, offset = 0.4)
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{clay.extent}{Extent of Clay Unit}{clay.extent}
+\keyword{datasets}{clay.extent}
+%
+\begin{Description}\relax
+The estimated extent of the clay confining unit (aquitard) separating the unconfined aquifer from the underlying confined aquifer in the Wood River Valley.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+clay.extent
+\end{verbatim}
+\end{Usage}
+%
+\begin{Format}
+An object of \code{SpatialPolygonsDataFrame} class containing 2 \code{Polygons}.
+Geographic coordinates are in units of meters, in conformance with the North American Datum of 1983 (NAD 83), and placed in the
+Idaho Transverse Mercator projection (\Rhref{https://www.idwr.idaho.gov/GIS/IDTM/}{IDTM}).
+\end{Format}
+%
+\begin{Source}\relax
+Extent defined by Moreland (1977, fig. 3 in USGS Open-File report).
+Moreland (1977) shows an outlier by Picabo that is assumed to indicate confined conditions in the basalt and not the lake sediments.
+\end{Source}
+%
+\begin{References}\relax
+Moreland, J.A., 1977, Ground water-surface water relations in the Silver Creek area, Blaine County, Idaho: Boise, Idaho Department of Water Resources, Water Information Bulletin 44, 42 p., 5 plates in pocket, accessed January 31, 2012.
+Also published as U.S. Geological Survey Open-File report 77-456, 66 p., available at \url{http://pubs.er.usgs.gov/pubs/ofr/ofr77456}.
+\end{References}
+%
+\begin{Examples}
+\begin{ExampleCode}
+plot(clay.extent, col = "#FDC086", border = NA)
+plot(alluvium.extent, add = TRUE)
+str(clay.extent)
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{comb.sw.irr}{Combined Surface-Water Irrigation Diversions}{comb.sw.irr}
+\keyword{datasets}{comb.sw.irr}
+%
+\begin{Description}\relax
+Supplemental groundwater rights and associated surface-water rights.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+comb.sw.irr
+\end{verbatim}
+\end{Usage}
+%
+\begin{Format}
+A \code{data.frame} object with 1,213 records and the following variables:
+\begin{description}
+
+\item[WaterRight] is the name of the supplemental groundwater right.
+\item[CombWaterRight] is the name of the surface-water right that shares a combined limit with the groundwater right.
+\item[Source] is the river or stream source name for the surface-water right.
+\item[WaterUse] is the authorized beneficial use for the surface-water right.
+\item[MaxDivRate] is the authorized maximum diversion rate for the surface-water right, in cubic meters per day.
+\item[Pdate] is the priority date of the surface-water right.
+
+\end{description}
+
+\end{Format}
+%
+\begin{Source}\relax
+Idaho Department of Water Resources (IDWR), accessed on April 25, 2014;
+derived from combined limit comments in IDWR water rights database.
+\end{Source}
+%
+\begin{Examples}
+\begin{ExampleCode}
+str(comb.sw.irr)
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{div.gw}{Groundwater Diversions}{div.gw}
+\keyword{datasets}{div.gw}
+%
+\begin{Description}\relax
+Groundwater diversions recorded by Water District 37 or municipal water providers.
+Groundwater is diverted from the aquifer by means of either pumping wells or flowing-artesian wells.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+div.gw
+\end{verbatim}
+\end{Usage}
+%
+\begin{Format}
+A \code{data.frame} object with 7,292 records and the following variables:
+\begin{description}
+
+\item[YearMonth] is the year and month during which diversions were recorded, with a required date format of \code{YYYYMM}.
+\item[Diversion] is the name of the well.
+\item[Reach] is the name of the river subreach into which the well water is discharged; only applicable to exchange wells.
+\item[BigReach] is the name of the river reach into which the well water is discharged; only applicable to exchange wells.
+\item[EntityName] is the name of the irrigation entity which the well supplies water.
+\item[WMISNumber] is the well number in the Idaho Department of Water Resources (IDWR) Water Measurement Information System.
+\item[GWDiv] is the volume of water diverted during the month, in cubic meters.
+
+\end{description}
+
+\end{Format}
+%
+\begin{Source}\relax
+IDWR, accessed on December 11, 2014;
+compiled data records from Water District 37 and 37M, City of Ketchum, Sun Valley Water and Sewer District, City of Hailey, and City of Bellevue.
+\end{Source}
+%
+\begin{Examples}
+\begin{ExampleCode}
+str(div.gw)
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{div.ret.exch}{Diversions, Returns, and Exchange Wells}{div.ret.exch}
+\keyword{datasets}{div.ret.exch}
+%
+\begin{Description}\relax
+The location of streamflow diversions, irrigation canal or pond returns, and exchange well returns.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+div.ret.exch
+\end{verbatim}
+\end{Usage}
+%
+\begin{Format}
+An object of \code{SpatialPointsDataFrame} class containing 117 points with the following variables:
+\begin{description}
+
+\item[Name] a local name for the diversion/return site.
+\item[Type] the data type: ``Diversion'', ``Return'', and ``Exchange well inflow''.
+\item[LocSource] the data source.
+\item[Big] the corresponding river reach.
+
+\end{description}
+
+Geographic coordinates are in units of meters, in conformance with the North American Datum of 1983 (NAD 83), and placed in the
+Idaho Transverse Mercator projection (\Rhref{https://www.idwr.idaho.gov/GIS/IDTM/}{IDTM}).
+\end{Format}
+%
+\begin{Source}\relax
+Idaho Department of Water Resources, accessed on June 5, 2015
+\end{Source}
+%
+\begin{Examples}
+\begin{ExampleCode}
+plot(div.ret.exch)
+str(div.ret.exch@data)
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{div.sw}{Surface-Water Diversions}{div.sw}
+\keyword{datasets}{div.sw}
+%
+\begin{Description}\relax
+Surface-water diversions recorded by Water District 37 or municipal water providers.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+div.sw
+\end{verbatim}
+\end{Usage}
+%
+\begin{Format}
+A \code{data.frame} object with 15,550 records and the following variables:
+\begin{description}
+
+\item[YearMonth] is the year and month during which diversions were recorded, with a required date format of \code{YYYYMM}.
+\item[Diversion] is the name of the surface-water diversion.
+\item[Reach] is the river subreach from which the water is diverted.
+\item[BigReach] is the river reach from which the water is diverted.
+\item[EntityName] is the name of the irrigation entity which the diversion supplies water.
+\item[SWDiv] is the volume of water diverted during the month, in cubic meters.
+
+\end{description}
+
+\end{Format}
+%
+\begin{Source}\relax
+Idaho Department of Water Resources, accessed on December 11, 2014;
+compiled data records from Water District 37 and 37M, City of Hailey, City of Bellevue, City of Ketchum, and Sun Valley Water and Sewer District.
+\end{Source}
+%
+\begin{Examples}
+\begin{ExampleCode}
+str(div.sw)
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{div.ww}{Wastewater Treatment Plant Diversions}{div.ww}
+\keyword{datasets}{div.ww}
+%
+\begin{Description}\relax
+Discharge from wastewater treatment plants.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+div.ww
+\end{verbatim}
+\end{Usage}
+%
+\begin{Format}
+A \code{data.frame} object with 1,182 records and the following variables:
+\begin{description}
+
+\item[YearMonth] is the year and month during which diversions were recorded, with a required date format of \code{YYYYMM}.
+\item[Return] is the name of the wastewater treatment plant.
+\item[Reach] is the name of the river subreach to which treated effluent is discharged; only applicable to wastewater treatment plants that discharge to the river.
+\item[BigReach] is the name of the river reach to which treated effluent is discharged; only applicable to wastewater treatment plants that discharge to the river.
+\item[EntityName] is the name of the irrigation entity served by the wastewater treatment plant.
+\item[WWDiv] is the volume of wastewater discharged during the month, in cubic meters.
+
+\end{description}
+
+\end{Format}
+%
+\begin{Source}\relax
+Idaho Department of Water Resources and U.S. Geological Survey, accessed on August 11, 2014;
+compiled data records from the U.S. Environmental Protection Agency for plants that discharge to the river, and from records of the Idaho Department of Environmental Quality for plants that discharge to land application.
+\end{Source}
+%
+\begin{Examples}
+\begin{ExampleCode}
+str(div.ww)
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{DownloadFile}{Download File from the Internet}{DownloadFile}
+\keyword{IO}{DownloadFile}
+%
+\begin{Description}\relax
+This function downloads a file from the Internet.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+DownloadFile(url, dest.dir = tempdir(), mode = NULL, extract = TRUE,
+             max.attempts = 10L, wait.time = 30)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{url}] \code{character}; the URL (or FTP) of a resource to be downloaded.
+\item[\code{dest.dir}] \code{character}; the directory where the downloaded file is saved.
+\item[\code{mode}] \code{character}; the mode with which to write the file, such as \code{"w"}, \code{"wb"} (binary), \code{"a"} (append) and \code{"ab"}.
+\item[\code{extract}] \code{logical}; if \code{TRUE}, an attempt is made to extract files from the file archive.
+\item[\code{max.attempts}] \code{integer}; the maximum number of attempts to download a file.
+\item[\code{wait.time}] \code{numeric}; the time to wait between download attempts, in seconds.
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Details}\relax
+This function requires package \pkg{RCurl}.
+\end{Details}
+%
+\begin{Value}
+Returns the file path(s) to the downloaded file (or uncompressed files).
+\end{Value}
+%
+\begin{Author}\relax
+J.C. Fisher, U.S. Geological Survey, Idaho Water Science Center
+\end{Author}
+%
+\begin{SeeAlso}\relax
+\code{CFILE}, \code{curlPerform}
+\end{SeeAlso}
+%
+\begin{Examples}
+\begin{ExampleCode}
+## Not run: 
+url <- paste0("https://raw.githubusercontent.com/jfisher-usgs/",
+              "wrv/master/inst/extdata/alluvium.extent.zip")
+files <- DownloadFile(url)
+unlink(files)
+## End(Not run)
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{drains}{Drain Boundaries at Stanton Crossing and Silver Creek}{drains}
+\keyword{datasets}{drains}
+%
+\begin{Description}\relax
+Polygons used to define the locations of drain boundaries in the model domain.
+The polygons clip the line segments along the aquifer boundary (see \code{\LinkA{alluvium.extent}{alluvium.extent}}), and model cells intersecting these clipped-line segments are defined as boundary cells.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+drains
+\end{verbatim}
+\end{Usage}
+%
+\begin{Format}
+An object of \code{SpatialPolygonsDataFrame} class containing a set of 2 \code{Polygons} and a \code{data.frame} with the following variable:
+\begin{description}
+
+\item[Name] is an identifier for the polygon.
+\item[cond] is the drain conductance in square meters per day.
+\item[elev] is the drain threshold elevation in meters above the North American Vertical Datum of 1988 (NAVD 88).
+
+\end{description}
+
+Geographic coordinates are in units of meters, in conformance with the North American Datum of 1983 (NAD 83), and placed in the
+Idaho Transverse Mercator projection (\Rhref{https://www.idwr.idaho.gov/GIS/IDTM/}{IDTM}).
+\end{Format}
+%
+\begin{Source}\relax
+U.S. Geological Survey, accessed on March 27, 2015;
+a Keyhole Markup Language (\Rhref{http://en.wikipedia.org/wiki/Kml}{KML}) file created in \Rhref{http://www.google.com/earth/}{Google Earth} with polygons drawn by hand in areas of known drains.
+\end{Source}
+%
+\begin{Examples}
+\begin{ExampleCode}
+str(drains)
+
+plot(drains, border = "red")
+plot(alluvium.extent, add = TRUE)
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{drybed}{Dry River Bed and Stream Fed Creek Conditions}{drybed}
+\keyword{datasets}{drybed}
+%
+\begin{Description}\relax
+A summary of dry river bed and stream fed conditions in the Wood River Valley, Idaho.
+Stream reaches on the Big Wood River between Glendale and Wood River Ranch are episodically dry;
+these dry periods are specified for calendar months when water diversions to the Bypass Canal begins before the 16th of the month and ends after the 15th of the month.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+drybed
+\end{verbatim}
+\end{Usage}
+%
+\begin{Format}
+A \code{data.frame} object with 12 records and the following variables:
+\begin{description}
+
+\item[Reach] is the stream reach name.
+\item[199501, \dots, 201012] are logical values indicating whether the stream reach exhibits dry-bed conditions during a stress period.
+
+\end{description}
+
+\end{Format}
+%
+\begin{Source}\relax
+Idaho Department of Water Resources, accessed on January 6, 2016;
+compiled from Water District 37 records.
+\end{Source}
+%
+\begin{Examples}
+\begin{ExampleCode}
+str(drybed)
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{efficiency}{Irrigation Efficiency}{efficiency}
+\keyword{datasets}{efficiency}
+%
+\begin{Description}\relax
+The irrigation efficiency of irrigation entities.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+efficiency
+\end{verbatim}
+\end{Usage}
+%
+\begin{Format}
+A \code{data.frame} object with 88 records and the following variables:
+\begin{description}
+
+\item[EntityName] is the name of the irrigation entity which the irrigation efficiency is applied.
+\item[Eff] is the estimated irrigation efficiency, the ratio of the amount of water consumed by the crop to the amount of water supplied through irrigation.
+\item[Comment] a brief comment on irrigation conditions.
+
+\end{description}
+
+\end{Format}
+%
+\begin{Source}\relax
+Idaho Department of Water Resources, accessed on July 9, 2015
+\end{Source}
+%
+\begin{Examples}
+\begin{ExampleCode}
+str(efficiency)
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{entity.components}{Irrigation Entity Components}{entity.components}
+\keyword{datasets}{entity.components}
+%
+\begin{Description}\relax
+Irrigation entities and their components in the Wood River Valley and surrounding areas.
+An irrigation entity is defined as an area served by a group of surface-water and/or groundwater diversion(s).
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+entity.components
+\end{verbatim}
+\end{Usage}
+%
+\begin{Format}
+A \code{list} object with components of \code{SpatialPolygonsDataFrame-class}.
+There are a total of 192 components, one for each month in the 1995--2010 time period.
+Linked \code{data.frame} objects have the following variables:
+\begin{description}
+
+\item[EntitySrce] a concatenation of the \code{EntityName} and \code{Source} character strings.
+\item[mean.et] the mean evapotranspiration (ET) on irrigated and semi-irrigated lands in meters.
+\item[area] the area of irrigated and semi-irrigated lands in square meters.
+\item[PrecipZone] the name of the precipitation zone.
+See \code{\LinkA{precip.zones}{precip.zones}} dataset for details.
+\item[et.vol] the volume of ET on irrigated and semi-irrigated lands in cubic meters.
+\item[precip.vol] the volume of precipitation on irrigated and semi-irrigated lands in cubic meters.
+\item[cir.vol] the volume of crop irrigation requirement in cubic meters (ET minus precipitation).
+\item[EntityName] is the name of the irrigation entity.
+\item[Source] is the water source: ``Mixed'' for a mixture of surface water and groundwater, ``SW Only'' for surface water only, and ``GW Only'' for groundwater only.
+
+\end{description}
+
+\end{Format}
+%
+\begin{Source}\relax
+Calculated from the \code{\LinkA{irr.entities}{irr.entities}}, \code{\LinkA{wetlands}{wetlands}}, \code{\LinkA{public.parcels}{public.parcels}}, \code{\LinkA{irr.lands.year}{irr.lands.year}}, \code{\LinkA{et}{et}}, and \code{\LinkA{precipitation}{precipitation}} datasets;
+see the \file{package-datasets} vignette for the \R{} code used in this calculation.
+\end{Source}
+%
+\begin{Examples}
+\begin{ExampleCode}
+names(entity.components)
+plot(entity.components[["199506"]])
+print(entity.components[["199506"]])
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{et}{Evapotranspiration}{et}
+\keyword{datasets}{et}
+%
+\begin{Description}\relax
+Evapotranspiration (ET) in the Wood River Valley and surrounding areas.
+Defined as the amount of water lost to the atmosphere via direct evaporation, transpiration by vegetation, or sublimation from snow covered areas.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+et
+\end{verbatim}
+\end{Usage}
+%
+\begin{Format}
+An object of \code{RasterStack} class containing 192 \code{RasterLayer} objects, one layer for each month in the 1995-2010 time period.
+Each cell on a layers surface grid represents the monthly depth of ET in meters.
+Geographic coordinates are in units of meters, in conformance with the North American Datum of 1983 (NAD 83), and placed in the
+Idaho Transverse Mercator projection (\Rhref{https://www.idwr.idaho.gov/GIS/IDTM/}{IDTM}).
+\end{Format}
+%
+\begin{Source}\relax
+Idaho Department of Water Resources, accessed on November 17, 2014
+\end{Source}
+%
+\begin{SeeAlso}\relax
+\code{\LinkA{et.method}{et.method}}
+\end{SeeAlso}
+%
+\begin{Examples}
+\begin{ExampleCode}
+print(et)
+plot(et[["199505"]])
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{et.method}{Method Used to Calculate Evapotranspiration}{et.method}
+\keyword{datasets}{et.method}
+%
+\begin{Description}\relax
+The methods used to estimate monthly distributions of evapotranspiration (ET) rate.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+et.method
+\end{verbatim}
+\end{Usage}
+%
+\begin{Format}
+A \code{data.frame} object with 122 records with the following variables:
+\begin{description}
+
+\item[YearMonth] The year and month during which the method was applied, with a required date format of \code{YYYYMM}.
+\item[ETMethod] An identifier that indicates the method used to estimate ET values.
+Identifiers include:
+``Allen-Robison'', the Allen and Robison method (Allen and Robison, 2007);
+``METRIC'', the Mapping Evapotranspiration at high Resolution and with Internalized Calibration (METRIC) model (Allen and others, 2010a);
+``NDVI'', the Normalized Difference Vegetation Index (NDVI) method (Allen and others, 2010b);
+``Interpolation'', interpolation from known ET data; and
+``METRIC-NDVI'', a combination of METRIC and NDVI methods.
+
+
+\end{description}
+
+\end{Format}
+%
+\begin{Source}\relax
+Idaho Department of Water Resources, accessed on April 27, 2015
+\end{Source}
+%
+\begin{References}\relax
+Allen, R., and Robison, C.W., 2007, Evapotranspiration and consumptive water requirements for Idaho, University of Idaho, Kimberly, Idaho.
+
+Allen, R., Tasumi, M., Trezza, R., and Kjaersgaard, J., 2010a, METRIC mapping evapotranspiration at high resolution applications manual for Landsat satellite imagery version 2.07, University of Idaho, Kimberly, ID.
+
+Allen, R., Robison, C.W., Garcia, M., Trezza, R., Tasumi, M., and Kjaersgaard, J., 2010b, ETrF vs NDVI relationships for southern Idaho for rapid estimation of evapotranspiration, University of Idaho, Kimberly, ID.
+
+ET Idaho: \url{http://data.kimberly.uidaho.edu/ETIdaho/}
+\end{References}
+%
+\begin{Examples}
+\begin{ExampleCode}
+str(et.method)
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{ExportRasterStack}{Export Raster Stack}{ExportRasterStack}
+\keyword{IO}{ExportRasterStack}
+%
+\begin{Description}\relax
+This function writes a raster-stack, a collection of raster layers, to local directories using multiple file formats.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+ExportRasterStack(rs, path, zip = "", col = rainbow(250, start = 0.0, end = 0.8))
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{rs}] \code{RasterStack}; a collection of \code{\LinkA{RasterLayer}{RasterLayer.Rdash.class}} objects with the same extent and resolution.
+\item[\code{path}] \code{character}; path name to write raster stack.
+\item[\code{zip}] \code{character}; if there is no zip program on your path (on windows), you can supply the full path to a \file{zip.exe} here, in order to make a KMZ file.
+\item[\code{col}] \code{character}; a vector of colors.
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Details}\relax
+Five local directories are created under \code{path} and named after their intended file formats:
+Comma-Separated Values (\file{csv}),
+Portable Network Graphics (\file{png}),
+georeferenced TIFF (\file{tif}),
+R Data (\file{rda}),
+and Keyhole Markup Language (\file{kml}).
+For its reference system, \file{kml} uses geographic coordinates: longitude and latitude components as defined by the World Geodetic System of 1984.
+Therefore, the conversion of gridded data between cartographic projections may introduce a new source of error.
+
+To install \file{zip.exe} on windows, download the latest binary version from the \Rhref{http://www.info-zip.org/Zip.html#Downloads}{Info-ZIP} website:
+select one of the given FTP locations, enter directory \file{win32}, download \file{zip300xn.zip}, and extract.
+\end{Details}
+%
+\begin{Value}
+None. Used for the side-effect files written to disk.
+\end{Value}
+%
+\begin{Author}\relax
+J.C. Fisher, U.S. Geological Survey, Idaho Water Science Center
+\end{Author}
+%
+\begin{SeeAlso}\relax
+\code{writeRaster}
+\end{SeeAlso}
+%
+\begin{Examples}
+\begin{ExampleCode}
+## Not run: 
+f <- file.path(getwd(), "SIR2016-XXXX/ancillary/uncalibrated/data/rda/rasters.rda")
+load(file = f)
+ExportRasterStack(rs, tempdir())
+## End(Not run)
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{ExtractAlongTransect}{Extract Raster Values Along Transect Line}{ExtractAlongTransect}
+\keyword{utilities}{ExtractAlongTransect}
+%
+\begin{Description}\relax
+This function extracts values from raster layer(s) along a user defined transect line.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+ExtractAlongTransect(transect, r)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{transect}] \code{SpatialPoints} or \code{SpatialLines}; transect line or its vertices.
+\item[\code{r}] \code{RasterLayer}, \code{RasterStack}, or \code{RasterBrick}; the raster layer(s)
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Details}\relax
+The transect line is described using a simple polygonal chain.
+The transect line and raster layer(s) must be specified in a coordinate reference system.
+\end{Details}
+%
+\begin{Value}
+A \code{list} is returned with components of class \code{SpatialPointsDataFrame}.
+These components represent continuous piecewise line segments along the transect.
+The following variables are specified for each coordinate point in the line segment:
+\begin{ldescription}
+\item[\code{dist}] \code{numeric}; the distance along the transect line.
+\item[\code{2, ..., n}] \code{numeric}; the extracted value for each raster layer in \code{r}, where column names match their respective raster layer name.
+\end{ldescription}
+\end{Value}
+%
+\begin{Author}\relax
+J.C. Fisher, U.S. Geological Survey, Idaho Water Science Center
+\end{Author}
+%
+\begin{SeeAlso}\relax
+\code{\LinkA{PlotCrossSection}{PlotCrossSection}}
+\end{SeeAlso}
+%
+\begin{Examples}
+\begin{ExampleCode}
+coords <- rbind(c(-100, -90), c(80, 90), c(80, 0), c(40, -40))
+crs <- CRS("+proj=longlat +datum=WGS84")
+transect <- SpatialPoints(coords, proj4string = crs)
+r <- raster(nrows = 10, ncols = 10, ymn = -80, ymx = 80, crs = crs)
+names(r) <- "value"
+set.seed(0)
+r[] <- runif(ncell(r))
+r[4, 6] <- NA
+plot(r, xlab = "x", ylab = "y")
+lines(SpatialLines(list(Lines(list(Line(coords)), ID = "Transect")), proj4string = crs))
+points(transect, pch = 21, bg = "red")
+segs <- ExtractAlongTransect(transect, r)
+for (i in 1:length(segs)) points(segs[[i]], col = "blue")
+
+dev.new()
+xlab <- "Distance along transect"
+ylab <- "Raster value"
+xlim <- range(vapply(segs, function(seg) range(seg@data[, "dist"]), c(0, 0)))
+ylim <- range(vapply(segs, function(seg) range(seg@data[, "value"], na.rm = TRUE),
+                     c(0, 0)))
+plot(NA, type = "n", xlab = xlab, ylab = ylab, xlim = xlim, ylim = ylim)
+for (i in 1:length(segs))
+  lines(segs[[i]]@data[, c("dist", "value")], col = rainbow(length(segs))[i])
+coords <- coordinates(transect)
+n <- length(transect)
+d <- cumsum(c(0, as.matrix(dist((coords)))[cbind(1:(n - 1), 2:n)]))
+abline(v = d, col = "grey", lty = 2)
+mtext(paste0("(", paste(head(coords, 1), collapse = ", "), ")"), adj = 0)
+mtext(paste0("(", paste(tail(coords, 1), collapse = ", "), ")"), adj = 1)
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{gage.disch}{Daily Mean Discharge at Streamgages}{gage.disch}
+\keyword{datasets}{gage.disch}
+%
+\begin{Description}\relax
+The daily mean discharge at streamgages in the Big Wood River Valley, Idaho.
+Discharge records bracket the 1992-2014 time period and are based on records with quality assurance code of approved (`A').
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+gage.disch
+\end{verbatim}
+\end{Usage}
+%
+\begin{Format}
+A \code{data.frame} object with 8,315 records and the following variables:
+\begin{description}
+
+\item[Date] is the date during which discharge was averaged.
+\item[13135500] is the daily mean discharge in cubic meters per day, recorded at the USGS \Rhref{http://waterdata.usgs.gov/id/nwis/uv/?site_no=13135500}{13135500} Big Wood River near Ketchum streamgage.
+\item[13139510] is the daily mean discharge in cubic meters per day, recorded at the USGS \Rhref{http://waterdata.usgs.gov/id/nwis/uv/?site_no=13139510}{13139510} Big Wood River at Hailey streamgage.
+\item[13140800] is the daily mean discharge in cubic meters per day, recorded at the USGS \Rhref{http://waterdata.usgs.gov/id/nwis/uv/?site_no=13140800}{13140800} Big Wood River at Stanton Crossing near Bellevue streamgage.
+
+\end{description}
+
+\end{Format}
+%
+\begin{Source}\relax
+National Water Information System (\Rhref{http://waterdata.usgs.gov/nwis}{NWIS}), accessed on January 8, 2015
+\end{Source}
+%
+\begin{Examples}
+\begin{ExampleCode}
+str(gage.disch)
+
+col <- c("red", "blue", "green")
+ylab <- paste("Discharge in cubic", c("meters per day", "acre-foot per year"))
+PlotGraph(gage.disch, ylab = ylab, col = col, lty = 1:3, conversion.factor = 0.29611)
+leg <- sprintf("USGS %s", names(gage.disch)[-1])
+legend("topright", leg, col = col, lty = 1:3, inset = 0.02, cex = 0.7,
+       box.lty = 1, bg = "#FFFFFFE7")
+
+graphics.off()
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{gage.height}{Daily Mean Gage Height at Streamgages}{gage.height}
+\keyword{datasets}{gage.height}
+%
+\begin{Description}\relax
+The daily mean gage height at streamgages in the Big Wood River Valley, Idaho.
+Gage height records bracket the 1987-2014 and are based on records with quality assurance codes of working (`W'), in review (`R'), and approved (`A').
+
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+gage.height
+\end{verbatim}
+\end{Usage}
+%
+\begin{Format}
+A \code{data.frame} object with 9,980 records and the following variables:
+\begin{description}
+
+\item[Date] is the date during which gage height was averaged.
+\item[13135500] is the daily mean gage height in meters, recorded at the USGS \Rhref{http://waterdata.usgs.gov/id/nwis/uv/?site_no=13135500}{13135500} Big Wood River near Ketchum streamgage.
+\item[13139510] is the daily mean gage height in meters, recorded at the USGS \Rhref{http://waterdata.usgs.gov/id/nwis/uv/?site_no=13139510}{13139510} Big Wood River at Hailey streamgage.
+\item[13140800] is the daily mean gage height in meters, recorded at the USGS \Rhref{http://waterdata.usgs.gov/id/nwis/uv/?site_no=13140800}{13140800} Big Wood River at Stanton Crossing near Bellevue streamgages.
+
+\end{description}
+
+\end{Format}
+%
+\begin{Source}\relax
+Data queried from the National Water Information System (\Rhref{http://waterdata.usgs.gov/nwis}{NWIS}) database on December 15, 2014, by Ross Dickinson (USGS).
+Records recorded on May 26-28, 1991 and March 15-22, 1995 were reassigned quality assurance codes of `I' because of assumed ice build-up.
+Missing data at the Big Wood River near Ketchum gage was estimated using a linear regression model based on recorded gage-height data at the Big Wood River at Hailey and Near Ketchum streamgages.
+Missing data at the Stanton Crossing near Bellevue gage was replaced with average gage-height values recorded at this gage.
+\end{Source}
+%
+\begin{Examples}
+\begin{ExampleCode}
+str(gage.height)
+
+col <- c("red", "blue", "green")
+ylab <- paste("Gage height in", c("meters", "feet"))
+PlotGraph(gage.height, ylab = ylab, col = col, lty = 1:3, conversion.factor = 3.28084)
+leg <- sprintf("USGS %s", names(gage.height)[-1])
+legend("topright", leg, col = col, lty = 1:3, inset = 0.02, cex = 0.7,
+       box.lty = 1, bg = "#FFFFFFE7")
+
+graphics.off()
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{GetDaysInMonth}{Get Number of Days in a Year and Month}{GetDaysInMonth}
+\keyword{utilities}{GetDaysInMonth}
+%
+\begin{Description}\relax
+This function determines the number of days in a year and month.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+GetDaysInMonth(x)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{x}] \code{character} or \code{integer}; a vector of year and month values, with a required date format of \code{YYYYMM}.
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Value}
+Returns an integer vector indicating the number of days in each year and month value specified in \code{x}.
+\end{Value}
+%
+\begin{Author}\relax
+J.C. Fisher, U.S. Geological Survey, Idaho Water Science Center
+\end{Author}
+%
+\begin{Examples}
+\begin{ExampleCode}
+GetDaysInMonth(c("199802", "199804", "200412"))
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{GetSeasonalMult}{Get Seasonal Multiplier}{GetSeasonalMult}
+\keyword{manip}{GetSeasonalMult}
+%
+\begin{Description}\relax
+This function determines the seasonal fraction of the long-term mean value.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+GetSeasonalMult(x, reduction, d.in.mv.ave, tr.stress.periods)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{x}] \code{data.frame}; a time series with \code{Date} and \code{numeric} components.
+\item[\code{reduction}] \code{numeric}; is the signal amplitude reduction, a dimensionless quantity.
+Its magnitude should be greater than or equal to 1, where a value of 1 indicates no reduction in the signal amplitude.
+\item[\code{d.in.mv.ave}] \code{numeric}; is the number of days in the moving average subset.
+\item[\code{tr.stress.periods}] \code{Date}; a vector giving the start and end dates for each model stress period.
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Details}\relax
+A simple moving average is first calculated for each month using the previous data (such as the previous 9-months of stage data recorded at a streamgage).
+The seasonal average of the monthly moving average is then passed through a signal amplitude reduction algorithm.
+The reduced values are then divided by the mean of the seasonal reduced data to give the seasonal fraction of the mean (seasonal multiplier).
+\end{Details}
+%
+\begin{Value}
+An object of \code{data.frame} class with \code{Date} and \code{numeric} components; that is, the starting date and multiplier for each season.
+\end{Value}
+%
+\begin{Author}\relax
+J.C. Fisher and J.R. Bartolino, U.S. Geological Survey, Idaho Water Science Center
+
+A.H. Wylie and J. Sukow, Idaho Department of Water Resources
+\end{Author}
+%
+\begin{Examples}
+\begin{ExampleCode}
+tr.interval <- as.Date(c("1995-01-01", "2011-01-01"))
+tr.stress.periods <- seq(tr.interval[1] , tr.interval[2], "1 month")
+m <- GetSeasonalMult(gage.disch[, c("Date", "13139510")], 2, 273.932, tr.stress.periods)
+f <- vapply(tributaries$Flow, function(i) m$multiplier * i, rep(0, nrow(m)))
+colnames(f) <- tributaries$ID
+d <- cbind(m, f)
+str(d)
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{GetWellConfig}{Get Well Completion and Pumping Rate in Model Space}{GetWellConfig}
+\keyword{manip}{GetWellConfig}
+%
+\begin{Description}\relax
+This function determines well completions and pumping rates in model space.
+The pumping rate is specified for each model cell intersecting a well's open interval(s)
+and calculated by multiplying the estimated pumping demand by the cell's transmissivity fraction.
+The transmissivity fraction is calculated by dividing the cell's aquifer transmissivity by the sum of all transmissivity values for cells belonging to the same well.
+The transmissivity fraction calculation assumes saturated conditions in the model cell.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+GetWellConfig(rs.model, wells, well.col, rate.col = NULL, lay2.hk.tol = 1e-02)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{rs.model}] \code{RasterStack}; is composed of raster layers describing the model grid and hydraulic conductivity distribution:
+\code{lay1.top}, \code{lay1.bot}, \code{lay2.bot}, \code{lay3.bot}, \code{lay1.top}, \code{lay1.hk}, \code{lay2.hk}, and \code{lay3.hk}.
+\item[\code{wells}] \code{SpatialPointsDataFrame}; is the average pumping rate for each well during various times.
+\item[\code{well.col}] \code{character}; is the column name of the well identifier field.
+\item[\code{rate.col}] \code{character}; is a vector of column names for the pumping rate fields.
+\item[\code{lay2.hk.tol}] \code{numeric}; is the hydraulic conductivity tolerance for model cells in layer 2.
+Used to prevent pumping in the aquitard layer of the aquifer system.
+Pumping is prohibited in model layer 2 cells with hydraulic conductivity values less than \code{lay2.hk.tol} and a well opening isolated to layer 2;
+for these cases, pumping is allocated to the adjacent layer 1 cell.
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Value}
+An object of \code{data.frame} class with the following components:
+\begin{ldescription}
+\item[\code{...}] \code{numeric}; a unique identifier assigned to a well, its name is specified by \code{well.col}.
+\item[\code{lay, row, col}] \code{integer}; is the layer, row, and column number of a model cell, respectively.
+\item[\code{hk}] \code{numeric}; is the hydraulic conductivity of the model cell, in meters per day.
+\item[\code{thk}] \code{numeric}; is the vertical length of the well opening (open borehole or screen) in the model cell, in meters.
+A value of zero indicates that the well opening is unknown or below the modeled bedrock surface.
+\item[\code{frac}] \code{numeric}; is the transmissivity fraction for a model cell, where transmissivity is defined as \code{hk} multiplied by \code{thk}.
+\item[\code{...}] \code{numeric}; is the pumping rate allocated to the model cell for each time period specified by \code{rate.col}, in cubic meters per day.
+The pumping rate is calculated by multiplying the pumping demand for a well (specified in \code{wells}) by \code{frac}.
+\end{ldescription}
+\end{Value}
+%
+\begin{Author}\relax
+J.C. Fisher, U.S. Geological Survey, Idaho Water Science Center
+
+A.H. Wylie, Idaho Department of Water Resources
+\end{Author}
+%
+\begin{Examples}
+\begin{ExampleCode}
+## Not run: # see uncalibrated-model vignette
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{hill.shading}{Land Surface Hill Shading}{hill.shading}
+\keyword{datasets}{hill.shading}
+%
+\begin{Description}\relax
+Hill shading of the Wood River Valley and surrounding area.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+hill.shading
+\end{verbatim}
+\end{Usage}
+%
+\begin{Format}
+An object of \code{RasterLayer} class.
+Each cell on the surface grid represents the hill shade.
+Geographic coordinates are in units of meters, in conformance with the North American Datum of 1983 (NAD 83), and placed in the
+Idaho Transverse Mercator projection (\Rhref{https://www.idwr.idaho.gov/GIS/IDTM/}{IDTM}).
+The spatial grid is composed of 3,108 rows and 2,360 columns, and has cell sizes that are constant at 20 meters by 20 meters.
+\end{Format}
+%
+\begin{Source}\relax
+Calculated from the slope and aspect of the \code{\LinkA{land.surface}{land.surface}} dataset using the \code{terrain} and \code{hillShade} functions;
+see the \file{package-datasets} vignette for the \R{} code used in this calculation.
+\end{Source}
+%
+\begin{Examples}
+\begin{ExampleCode}
+image(hill.shading, length(hill.shading), col = grey(0:255 / 255), asp = 1,
+      axes = FALSE, xlab = "", ylab = "")
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{idaho}{U.S. State of Idaho}{idaho}
+\keyword{datasets}{idaho}
+%
+\begin{Description}\relax
+The boundary of Idaho, a state in the northwestern region of the United States.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+idaho
+\end{verbatim}
+\end{Usage}
+%
+\begin{Format}
+An object of \code{SpatialPolygons} class containing 1 \code{Polygons}.
+Cartographic boundary at 5m (1:5,000,000) resolution.
+\end{Format}
+%
+\begin{Source}\relax
+U.S. Department of Commerce, U.S. Census Bureau, Geography Division/Cartographic Products Branch.
+A simplified representation of the State of Idaho from the 2014 Census Bureau's MAF/\Rhref{http://www.census.gov/geo/maps-data/data/tiger.html}{TIGER} geographic database.
+\end{Source}
+%
+\begin{Examples}
+\begin{ExampleCode}
+plot(idaho, col = "#EAE2CF", border = "#BFA76F", lwd = 0.5)
+print(idaho)
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{irr.entities}{Irrigation Entities}{irr.entities}
+\keyword{datasets}{irr.entities}
+%
+\begin{Description}\relax
+The delineation of areas served by a group of surface-water and (or) groundwater diversions.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+irr.entities
+\end{verbatim}
+\end{Usage}
+%
+\begin{Format}
+An object of \code{SpatialPolygonsDataFrame} class containing 235 \code{Polygons} and a \code{data.frame} with the following variables:
+\begin{description}
+
+\item[EntityName] is the name of the irrigation entity served by a group of diversions.
+\item[Source] is the water source: ``Mixed'' for a mixture of surface water and groundwater, ``SW Only'' for surface-water only, and ``GW Only'' for groundwater only.
+\item[EntitySrce] is a concatenation of the \code{EntityName} and \code{Source} character strings.
+\item[PrecipZone] is the name of the precipitation zone.
+See \code{\LinkA{precip.zones}{precip.zones}} dataset for details.
+
+\end{description}
+
+\end{Format}
+%
+\begin{Source}\relax
+Idaho Department of Water Resources (IDWR), accessed on December 11, 2014;
+derived from IDWR water rights database, Blaine County tax lot data, and IDWR irrigated land classification files.
+\end{Source}
+%
+\begin{Examples}
+\begin{ExampleCode}
+plot(irr.entities)
+print(irr.entities)
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{irr.lands}{Irrigated Lands}{irr.lands}
+\keyword{datasets}{irr.lands}
+%
+\begin{Description}\relax
+The irrigation classification of land area in the Wood River Valley and surrounding areas; available for years 1996, 2000, 2002, 2006, 2008, 2009, and 2010.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+irr.lands
+\end{verbatim}
+\end{Usage}
+%
+\begin{Format}
+A \code{list object} of length 7 with components of \code{SpatialPolygonsDataFrame-class}.
+The \code{data.frame} associated with each of the \code{SpatialPolygons} objects has the following variable:
+\begin{description}
+
+\item[Status] is the status of land during the year reviewed, may be ``irrigated'', ``semi-irrigated'', or ``non-irrigated''.
+
+\end{description}
+
+\end{Format}
+%
+\begin{Source}\relax
+Idaho Department of Water Resources, accessed on November 17, 2014;
+polygons derived from U.S. Department of Agriculture Common Land Unit polygons with some refinement of polygons.
+Irrigation status interpreted using satellite imagery and aerial photography.
+\end{Source}
+%
+\begin{SeeAlso}\relax
+\code{\LinkA{irr.lands.year}{irr.lands.year}}
+\end{SeeAlso}
+%
+\begin{Examples}
+\begin{ExampleCode}
+spplot(irr.lands[["2010"]], "Status")
+print(irr.lands)
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{irr.lands.year}{Irrigation Lands for a Given Year}{irr.lands.year}
+\keyword{datasets}{irr.lands.year}
+%
+\begin{Description}\relax
+The annual land classification for irrigation practices is only available for select years.
+For missing years, this dataset provides substitute years when land-classification was available (see \code{\LinkA{irr.lands}{irr.lands}}).
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+irr.lands.year
+\end{verbatim}
+\end{Usage}
+%
+\begin{Format}
+A \code{data.frame} object with 16 records and the following variables:
+\begin{description}
+
+\item[Year] is the year with a required date format of \code{YYYY}.
+\item[IL\_Year] is the substitute year with a required date format of \code{YYYY}.
+
+\end{description}
+
+\end{Format}
+%
+\begin{Source}\relax
+Idaho Department of Water Resources, accessed on April 25, 2014
+\end{Source}
+%
+\begin{Examples}
+\begin{ExampleCode}
+str(irr.lands.year)
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{kriging.zones}{Kriging Zones}{kriging.zones}
+\keyword{datasets}{kriging.zones}
+%
+\begin{Description}\relax
+The location of kriging zones in the Wood River Valley, used in parameter estimation.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+kriging.zones
+\end{verbatim}
+\end{Usage}
+%
+\begin{Format}
+An object of \code{SpatialPolygonsDataFrame} class containing 18 \code{Polygons} and a \code{data.frame} with the following variables:
+\begin{description}
+
+\item[Zone] is the kriging zone, interpolation in this zone is based on the parameter values of pilot points located within this zone.
+\item[Layer] is the model layer.
+\item[Name] is the local name.
+
+\end{description}
+
+Geographic coordinates are in units of meters, in conformance with the North American Datum of 1983 (NAD 83), and placed in the
+Idaho Transverse Mercator projection (\Rhref{https://www.idwr.idaho.gov/GIS/IDTM/}{IDTM}).
+\end{Format}
+%
+\begin{Source}\relax
+Idaho Department of Water Resources
+\end{Source}
+%
+\begin{SeeAlso}\relax
+\code{\LinkA{pilot.points}{pilot.points}}
+\end{SeeAlso}
+%
+\begin{Examples}
+\begin{ExampleCode}
+str(kriging.zones@data)
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{lakes}{Lakes and Reservoirs}{lakes}
+\keyword{datasets}{lakes}
+%
+\begin{Description}\relax
+Lakes and reservoirs of the Wood River Valley and surrounding areas.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+lakes
+\end{verbatim}
+\end{Usage}
+%
+\begin{Format}
+An object of \code{SpatialPolygonsDataFrame} class containing 55 \code{Polygons}.
+Geographic coordinates are in units of meters, in conformance with the North American Datum of 1983 (NAD 83), and placed in the
+Idaho Transverse Mercator projection (\Rhref{https://www.idwr.idaho.gov/GIS/IDTM/}{IDTM}).
+\end{Format}
+%
+\begin{Source}\relax
+Idaho Department of Water Resources (\Rhref{https://research.idwr.idaho.gov/index.html#GIS-Data}{IDWR}), accessed on April 2, 2014
+\end{Source}
+%
+\begin{Examples}
+\begin{ExampleCode}
+plot(lakes, col = "#CCFFFF", border = "#3399CC", lwd = 0.5)
+str(lakes@data)
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{land.surface}{Topography of Land Surface}{land.surface}
+\keyword{datasets}{land.surface}
+%
+\begin{Description}\relax
+The Wood River Valley (WRV) is a geologic feature located in south-central Idaho.
+This dataset gives the topography of the land surface in the WRV and vicinity.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+land.surface
+\end{verbatim}
+\end{Usage}
+%
+\begin{Format}
+An object of \code{SpatialGridDataFrame} class.
+Each cell on the surface grid represents an elevation in meters above the North American Vertical Datum of 1988 (NAVD 88).
+Geographic coordinates are in units of meters, in conformance with the North American Datum of 1983 (NAD 83), and placed in the
+Idaho Transverse Mercator projection (\Rhref{https://www.idwr.idaho.gov/GIS/IDTM/}{IDTM}).
+The spatial grid is composed of 565 rows and 429 columns, and has cell sizes that are constant at 100 meters by 100 meters.
+\end{Format}
+%
+\begin{Source}\relax
+The National Elevation Dataset (\Rhref{http://ned.usgs.gov/}{NED}) 1/3-arc-second raster (Gesch, 2007; Gesch and others, 2002), accessed on December 1, 2015.
+This dataset can be downloaded in a Esri ArcGRID format using the \Rhref{http://viewer.nationalmap.gov/viewer/}{National Map Viewer}.
+NED data are distributed in geographic coordinates in units of decimal degrees, and in conformance with the NAD 83.
+Elevation values are in meters above the NAVD 88.
+The west, east, south, and north bounding coordinates for this dataset are -115, -114, 43, and 44 decimal degrees, respectively.
+Post-processing includes:
+(1) project the values of the NED dataset into the \code{\LinkA{alluvium.thickness}{alluvium.thickness}} spatial grid using bilinear interpolation, and
+(2) set values in cells where the elevation of the alluvium bottom is missing to \code{NA}.
+\end{Source}
+%
+\begin{References}\relax
+Gesch, D.B., 2007, The National Elevation Dataset, in Maune, D., ed., Digital Elevation Model Technologies and Applications: The DEM Users Manual, 2nd Edition: Bethesda, Maryland, American Society for Photogrammetry and Remote Sensing, p. 99-118.
+
+Gesch, D., Oimoen, M., Greenlee, S., Nelson, C., Steuck, M., and Tyler, D., 2002, The National Elevation Dataset: Photogrammetric Engineering and Remote Sensing, v. 68, no. 1, p. 5-11.
+\end{References}
+%
+\begin{Examples}
+\begin{ExampleCode}
+image(land.surface)
+summary(land.surface)
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{major.roads}{Major Roads}{major.roads}
+\keyword{datasets}{major.roads}
+%
+\begin{Description}\relax
+Major roads in the Wood River Valley and surrounding areas.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+major.roads
+\end{verbatim}
+\end{Usage}
+%
+\begin{Format}
+An object of \code{SpatialLinesDataFrame} class containing 475 \code{Lines}.
+Geographic coordinates are in units of meters, in conformance with the North American Datum of 1983 (NAD 83), and placed in the
+Idaho Transverse Mercator projection (\Rhref{https://www.idwr.idaho.gov/GIS/IDTM/}{IDTM}).
+\end{Format}
+%
+\begin{Source}\relax
+Idaho Department of Water Resources (\Rhref{https://research.idwr.idaho.gov/index.html#GIS-Data}{IDWR}), accessed on October 20, 2015
+\end{Source}
+%
+\begin{Examples}
+\begin{ExampleCode}
+plot(major.roads)
+str(major.roads@data)
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{map.labels}{Map Labels}{map.labels}
+\keyword{datasets}{map.labels}
+%
+\begin{Description}\relax
+Map labels in the Wood River Valley and surrounding areas.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+map.labels
+\end{verbatim}
+\end{Usage}
+%
+\begin{Format}
+An object of \code{SpatialPointsDataFrame} class containing 40 points with the following variables:
+\begin{description}
+
+\item[label] is the text to be written.
+\item[cex] is the character expansion factor.
+\item[col, font] is the color and font to be used.
+\item[srt] is the string rotation in degrees.
+
+\end{description}
+
+Geographic coordinates are in units of meters, in conformance with the North American Datum of 1983 (NAD 83), and placed in the
+Idaho Transverse Mercator projection (\Rhref{https://www.idwr.idaho.gov/GIS/IDTM/}{IDTM}).
+\end{Format}
+%
+\begin{Source}\relax
+Best estimates of map label locations.
+\end{Source}
+%
+\begin{Examples}
+\begin{ExampleCode}
+plot(map.labels, col = "red")
+lab <- cbind(map.labels@coords, map.labels@data)
+for (i in seq_len(nrow(lab))) {
+  text(lab$x[i], lab$y[i], labels = lab$label[i], cex = lab$cex[i],
+       col = lab$col[i], font = lab$font[i], srt = lab$srt[i])
+}
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{misc.locations}{Miscellaneous Locations}{misc.locations}
+\keyword{datasets}{misc.locations}
+%
+\begin{Description}\relax
+Miscellaneous locations in the Bellevue triangle area.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+misc.locations
+\end{verbatim}
+\end{Usage}
+%
+\begin{Format}
+An object of \code{SpatialPointsDataFrame} class containing 3 points with the following variable:
+\begin{description}
+
+\item[label] is a description of the point location.
+
+\end{description}
+
+Geographic coordinates are in units of meters, in conformance with the North American Datum of 1983 (NAD 83), and placed in the
+Idaho Transverse Mercator projection (\Rhref{https://www.idwr.idaho.gov/GIS/IDTM/}{IDTM}).
+\end{Format}
+%
+\begin{Source}\relax
+Idaho Department of Water Resources (\Rhref{https://research.idwr.idaho.gov/index.html#GIS-Data}{IDWR}), accessed on December 23, 2015
+\end{Source}
+%
+\begin{Examples}
+\begin{ExampleCode}
+plot(misc.locations, pch = 20, col = "red")
+text(misc.locations, labels = misc.locations@data$label, pos = 3, cex = 0.6)
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{misc.seepage}{Recharge from Miscellaneous Seepage Sites}{misc.seepage}
+\keyword{datasets}{misc.seepage}
+%
+\begin{Description}\relax
+Recharge from miscellaneous seepage sites in the Wood River Valley, Idaho.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+misc.seepage
+\end{verbatim}
+\end{Usage}
+%
+\begin{Format}
+A \code{data.frame} object with 2 records and the following variables:
+\begin{description}
+
+\item[RechSite] is the name of the recharge site, see \code{\LinkA{bellevue.wwtp.ponds}{bellevue.wwtp.ponds}} and \code{\LinkA{bypass.canal}{bypass.canal}} datasets.
+\item[199501, \dots, 201012] is the monthly volume of recharge during a stress period, in cubic meters.
+The variable name is specified as year and month.
+
+\end{description}
+
+\end{Format}
+%
+\begin{Source}\relax
+Idaho Department of Water Resources, accessed on January 15, 2015
+\end{Source}
+%
+\begin{Examples}
+\begin{ExampleCode}
+str(misc.seepage)
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{obs.wells}{Observation Wells}{obs.wells}
+\keyword{datasets}{obs.wells}
+%
+\begin{Description}\relax
+Observation wells in the Wood River Valley aquifer system.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+obs.wells
+\end{verbatim}
+\end{Usage}
+%
+\begin{Format}
+An object of \code{SpatialPointsDataFrame} class containing 776 points with the following variables:
+\begin{description}
+
+\item[id] a unique well identifier used in this study.
+\item[SiteNo] a unique well identifier within the National Water Information System (NWIS).
+\item[SITEIDIDWR] a unique well identifier within the Idaho Department of Water Resources (IDWR) hydrologic database.
+\item[WELLNUMBER] the USGS or IDWR site name for the well.
+\item[PESTNAME] a unique well identifier for PEST.
+\item[METHODDRIL] the drilling method.
+\item[TOTALDEPTH] the depth at which drilling stopped, in feet.
+\item[OPENINGMIN] the top of the screened interval, in feet.
+\item[OPENINGMAX] the bottom of the screened interval, in feet.
+\item[COMPLETION] the date on which the well drilling and construction stopped.
+\item[WCWELLID] the well construction well identifier.
+\item[ALTITUDE] the land surface elevation, in feet.
+\item[ALTMETHOD] the method for obtaining the land surface elevation.
+\item[XYMETHOD] the method of obtaining the spatial coordinates.
+\item[BASINNO] the basin number.
+\item[COUNTYNAME] the Idaho county name.
+\item[TWPRGE] the township and range the well is located in.
+\item[SITENAME] a local name for the well.
+\item[desc] is a description of the well type.
+\item[TopOpen1] is the depth to the top of the first open interval in a groundwater well, in meters below land surface.
+\item[BotOpen1] is the depth to the bottom of the first open interval in a groundwater well, in meters below land surface.
+\item[TopOpen2] is not applicable.
+\item[BotOpen2] is not applicable.
+
+\end{description}
+
+Geographic coordinates are in units of meters, in conformance with the North American Datum of 1983 (NAD 83), and placed in the
+Idaho Transverse Mercator projection (\Rhref{https://www.idwr.idaho.gov/GIS/IDTM/}{IDTM}).
+\end{Format}
+%
+\begin{Source}\relax
+IDWR well construction database, accessed on June 29, 2015
+\end{Source}
+%
+\begin{SeeAlso}\relax
+\code{\LinkA{obs.wells.head}{obs.wells.head}}
+\end{SeeAlso}
+%
+\begin{Examples}
+\begin{ExampleCode}
+plot(obs.wells)
+str(obs.wells@data)
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{obs.wells.head}{Hydraulic Heads in Observation Wells}{obs.wells.head}
+\keyword{datasets}{obs.wells.head}
+%
+\begin{Description}\relax
+Hydraulic-head (groundwater-level) measurements recorded in observation wells in the Wood River Valley aquifer system.
+Values are used as observations during the parameter estimation process.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+obs.wells.head
+\end{verbatim}
+\end{Usage}
+%
+\begin{Format}
+A \code{data.frame} object with 3,477 records and the following variables:
+\begin{description}
+
+\item[PESTNAME] is a unique well identifier for PEST.
+\item[DateTime] is the date and time when the measurement was recorded.
+\item[Head] is the groundwater-level measurement (hydraulic head) in meters above NAVD 88.
+
+\end{description}
+
+\end{Format}
+%
+\begin{Source}\relax
+Idaho Department of Water Resources, accessed on June 26, 2015
+\end{Source}
+%
+\begin{SeeAlso}\relax
+\code{\LinkA{obs.wells}{obs.wells}}
+\end{SeeAlso}
+%
+\begin{Examples}
+\begin{ExampleCode}
+str(obs.wells.head)
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{pilot.points}{Pilot Points}{pilot.points}
+\keyword{datasets}{pilot.points}
+%
+\begin{Description}\relax
+Location of pilot points in the model domain.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+pilot.points
+\end{verbatim}
+\end{Usage}
+%
+\begin{Format}
+An object of \code{SpatialPointsDataFrame} class containing 106 points with the following variables:
+\begin{description}
+
+\item[Layer] is the model layer.
+\item[Zone] is the kriging zone.
+
+\end{description}
+
+Geographic coordinates are in units of meters, in conformance with the North American Datum of 1983 (NAD 83), and placed in the
+Idaho Transverse Mercator projection (\Rhref{https://www.idwr.idaho.gov/GIS/IDTM/}{IDTM}).
+\end{Format}
+%
+\begin{Source}\relax
+Idaho Department of Water Resources, accessed on June 11, 2015
+\end{Source}
+%
+\begin{SeeAlso}\relax
+\code{\LinkA{kriging.zones}{kriging.zones}}
+\end{SeeAlso}
+%
+\begin{Examples}
+\begin{ExampleCode}
+plot(pilot.points)
+str(pilot.points@data)
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{PlotCrossSection}{Plot Method for Cross Sections}{PlotCrossSection}
+\keyword{hplot}{PlotCrossSection}
+%
+\begin{Description}\relax
+This function creates a cross-section view of raster data.
+A key showing how the colors map to raster values is shown below the map.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+PlotCrossSection(transect, rs, geo.lays = names(rs), val.lays = NULL,
+                 wt.lay = NULL, asp = 1, ylim = NULL, max.dev.dim = c(43, 56),
+                 n = NULL, breaks = NULL, pal = NULL, col = NULL, ylab = NULL,
+                 unit = NULL, id = c("A", "A'"), labels = NULL,
+                 explanation = NULL, features = NULL, max.feature.dist = Inf,
+                 draw.key = TRUE, draw.sep = TRUE, is.categorical = FALSE,
+                 contour.lines = NULL, bg.col = "#E1E1E1", wt.col = "#FFFFFFD8")
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{transect}] \code{SpatialLines}; the piecewise linear transect line.
+\item[\code{rs}] \code{RasterStack}; a collection of \code{RasterLayer} objects with the same extent and resolution.
+\item[\code{geo.lays}] \code{character}; a vector of names in \code{rs} that specify the geometry raster layers; these must be given in decreasing order, that is, from the upper most (such as land surface) to the lowest (such as a bedrock surface).
+\item[\code{val.lays}] \code{character}; a vector of names in \code{rs} that specify the value raster layers (optional).
+Values from the first layer are mapped as colors to the area between the first and second geometry layers; the second layer mapped between the second and third geometry layers, and so on.
+\item[\code{wt.lay}] \code{character}; the name in \code{rs} that specifies the water-table raster layer (optional).
+\item[\code{asp}] \code{numeric}; the \emph{y/x} aspect ratio for spatial axes.
+\item[\code{ylim}] \code{numeric}; a vector of length 2 giving the minimum and maximum values for the \emph{y}-axis.
+\item[\code{max.dev.dim}] \code{numeric}; a vector of length 2 giving the maximum width and height for the graphics device in picas, respectively.
+Suggested dimensions for single-column, double-column, and sidetitle figures are \code{c(21, 56)}, \code{c(43, 56)}, and \code{c(56, 43)}, respectively.
+\item[\code{n}] \code{integer}; the desired number of intervals to partition the range of raster values (optional).
+\item[\code{breaks}] \code{numeric}; a vector of break points used to partition the colors representing numeric raster values (optional).
+\item[\code{pal}] \code{function}; a color palette to be used to assign colors in the plot, \code{rainbow} by default.
+\item[\code{col}] \code{character}; a vector of colors to be used in the plot.
+This argument requires \code{breaks} specification for numeric raster values and overrides any palette function specification.
+For numeric values there should be one less color than breaks.
+Categorical data require a color for each category.
+\item[\code{ylab}] \code{character}; a label for the \emph{y} axis.
+\item[\code{unit}] \code{character}; a label for the measurement unit of the \emph{x}- and \emph{y}-axes.
+\item[\code{id}] \code{character}; a vector of length 2 giving the labels for the end points of the transect line, defaults to \emph{A--A'}.
+\item[\code{labels}] \code{list}; describes the location and values of labels in the color key.
+This list may include components \code{at} and \code{labels}, numeric and character vectors, respectively.
+\item[\code{explanation}] \code{character}; a label that describes the cell values.
+\item[\code{features}] \code{SpatialGridDataFrame}; point features adjacent to the transect line that are used as reference labels for the upper geometry layer.
+\item[\code{max.feature.dist}] \code{numeric}; the maximum distance from a point feature to the transect line, specified in the units of the \code{rs} projection.
+\item[\code{draw.key}] \code{logical}; if \code{FALSE}, a color key is not drawn.
+\item[\code{draw.sep}] \code{logical}; if \code{TRUE}, lines separating geometry layers are drawn.
+\item[\code{is.categorical}] \code{logical}; if \code{TRUE}, cell values in \code{val.lays} represent categorical data; otherwise, these data values are assumed continuous.
+\item[\code{contour.lines}] \code{list}; if specified, contour lines are drawn.
+The contours are described using a list of arguments supplied to \code{contour}.
+Passed arguments include \code{"drawlables"}, \code{"method"}, and \code{"col"}.
+\item[\code{bg.col}] \code{character}; the color used for the background of the area below the upper geometry raster layer.
+\item[\code{wt.col}] \code{character}; the color used for the water-table line.
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Details}\relax
+The dimensions of a new graphics device is dependent on the argument values of \code{max.dev.dim} and \code{asp}.
+\end{Details}
+%
+\begin{Value}
+Used for the side-effect of a new plot generated.
+Returns a \code{list} object with the following graphical parameters:
+\begin{ldescription}
+\item[\code{din}] \code{numeric}; the device dimensions \code{(width, height)}, in inches.
+\item[\code{usr}] \code{numeric}; the extremes of the coordinates of the plotting region \code{(x1, x2, y1, y2)}.
+\item[\code{heights}] \code{numeric}; the relative heights on the device \code{(upper, lower)} for the map and color-key plots.
+\end{ldescription}
+\end{Value}
+%
+\begin{Author}\relax
+J.C. Fisher, U.S. Geological Survey, Idaho Water Science Center
+\end{Author}
+%
+\begin{SeeAlso}\relax
+\code{\LinkA{ExtractAlongTransect}{ExtractAlongTransect}}, \code{\LinkA{AddScaleBar}{AddScaleBar}}, \code{\LinkA{AddColorKey}{AddColorKey}}
+\end{SeeAlso}
+%
+\begin{Examples}
+\begin{ExampleCode}
+data(volcano)
+x <- seq(from = 2667405, length.out = 61, by = 10)
+y <- seq(from = 6478705, length.out = 87, by = 10)
+r1 <- raster(volcano, xmn = min(x), xmx = max(x), ymn = min(y), ymx = max(y),
+             crs = CRS("+init=epsg:27200"))
+r2 <- min(r1[]) - r1 / 10
+r3 <- r1 - r2
+rs <- stack(r1, r2, r3)
+names(rs) <- c("r1", "r2", "r3")
+
+xy <- rbind(c(2667508, 6479501), c(2667803, 6479214), c(2667508, 6478749))
+transect <- SpatialLines(list(Lines(list(Line(xy)), ID = "Transect")),
+                         proj4string = crs(rs))
+
+plot(r1)
+lines(transect)
+text(as(transect, "SpatialPoints"), labels = c("A", "BEND", "A'"), cex = 0.7,
+     pos = c(3, 4, 1), offset = 0.1, font = 4)
+
+graphics.off()
+PlotCrossSection(transect, rs, geo.lays = c("r1", "r2"), val.lays = "r3",
+                 ylab="Elevation", asp = 5, unit = "METERS",
+                 explanation = "Vertical thickness between layers, in meters.")
+
+graphics.off()
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{PlotGraph}{Plot Method for Graphs}{PlotGraph}
+\keyword{hplot}{PlotGraph}
+%
+\begin{Description}\relax
+This function draws a sequence of points, lines, or box-and-whiskers using specified coordinates.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+PlotGraph(x, y, xlab, ylab, asp = NA, xlim = NULL, ylim = NULL,
+          xn = 5L, yn = 5L, ylog = FALSE, type = "s", lty = 1, lwd = 1,
+          pch = NULL, col = NULL, bg = NA, fill = NULL, pt.cex = 1,
+          seq.date.by = "year", scientific = NA, conversion.factor = NULL,
+          boxwex = 0.8, center.date.labels = FALSE, bg.polygon = NULL)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{x, y}] \code{Date}, \code{numeric}, \code{matrix}, or \code{data.frame}; vectors or matrices of data for plotting.
+The vector length or number of rows should match.
+If \code{y} is missing, then \code{x = x[, 1]} and \code{y = x[, 2:n]}.
+\item[\code{xlab}] \code{character}; title for \emph{x} and axis.
+\item[\code{ylab}] \code{character}; a vector of length 2 giving the title for the 1st and 2nd \emph{y} axes.
+The title for the 2nd \emph{y} axis is optional and requires \code{conversion.factor} be specified.
+\item[\code{asp}] \code{numeric}; the \emph{y/x} aspect ratio.
+\item[\code{xlim}] \code{numeric} or \code{Date}; the \code{x} limits \code{(x1, x2)} of the plot.
+\item[\code{ylim}] \code{numeric}; the \code{y} limits \code{(y1, y2)} of the plot.
+\item[\code{xn, yn}] \code{integer}; the desired number of intervals between tick-marks on the \emph{x}- and \emph{y}-axis, respectively.
+\item[\code{ylog}] \code{logical}; if \code{TRUE}, a logarithm scale is used for the \emph{y} axis.
+\item[\code{type}] \code{character}; is the type of plot for each column of \code{y}, see \code{plot} for possible types.
+A box-and-whisker plot is drawn when \code{type = "box"}, with whiskers extending to the data extremes.
+\item[\code{lty}] \code{integer}; is the line type, see \code{par} for all possible types.
+Line types are used cyclically.
+\item[\code{lwd}] \code{numeric}; is the line width.
+\item[\code{pch}] \code{integer}; is the point type, see \code{points} for all possible types.
+Point types are used cyclically.
+\item[\code{col}] \code{character} or \code{function}; is the point or line color, see \code{par} for all possible ways this can be specified.
+Colors are used cyclically.
+\item[\code{bg}] \code{character}; a vector of background colors for the open plot symbols given by \code{pch = 21:25} as in \code{points}.
+\item[\code{fill}] \code{character}; a vector of fill colors for areas beneath (or above, direction towards 0) lines of type \code{"l"} or \code{"s"}.
+\item[\code{pt.cex}] \code{numeric}; expansion factor for the points.
+\item[\code{seq.date.by}] \code{character}, \code{numeric}, or \code{difftime}; is the increment of the date sequence, see \code{seq.Date} for all possible ways this can be specified.
+\item[\code{scientific}] \code{logical}; a vector of length 3 that indicates if axes labels should be encoded in nice scientific format.
+Vector elements correspond to the \code{x}-axis, \code{y}-axis, and second \code{y}-axis labels.
+Values are recycled as necessary.
+\item[\code{conversion.factor}] \code{numeric}; a conversion factor for the 2nd \emph{y} axis.
+\item[\code{boxwex}] \code{numeric}; a scale factor to be applied to all boxes, only applicable for box-and-whisker plots.
+\item[\code{center.date.labels}] \code{logical}; if \code{TRUE}, date labels are horizontally centered between \emph{x}-axis tickmarks.
+\item[\code{bg.polygon}] \code{list}; if specified, a background polygon is drawn.
+The polygon is described using a list of arguments supplied to the \code{polygon} function.
+Passed arguments include \code{"x"} and \code{"col"}.
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Value}
+Used for the side-effect of a new plot generated.
+\end{Value}
+%
+\begin{Author}\relax
+J.C. Fisher, U.S. Geological Survey, Idaho Water Science Center
+\end{Author}
+%
+\begin{SeeAlso}\relax
+\code{matplot}, \code{boxplot}
+\end{SeeAlso}
+%
+\begin{Examples}
+\begin{ExampleCode}
+n <- 50L
+
+x <- as.Date("2008-07-12") + 1:n
+y <- sample.int(n, replace = TRUE)
+PlotGraph(x, y, ylab = paste("Random number in", c("meters", "feet")), type = "p",
+          pch = 16, seq.date.by = "weeks", scientific = FALSE, conversion.factor = 3.28)
+
+graphics.off()
+y <- data.frame(lapply(1:3, function(i) sample(n, replace = TRUE)))
+PlotGraph(x, y, ylab = "Random number", type = "s", pch = 1, seq.date.by = "days",
+          scientific=TRUE)
+
+graphics.off()
+y <- sapply(1:3, function(i) sample((1:100) + i * 100, n, replace = TRUE))
+m <- cbind(as.numeric(x), y)
+col <- c("red", "gold", "green")
+PlotGraph(m, xlab = "Number", ylab = "Random number", type = "b", pch = 15:17,
+          col = col, pt.cex = 0.9)
+legend("topright", LETTERS[1:3], inset = 0.05, col = col, lty = 1, pch = 15:17,
+       pt.cex = 0.9, cex = 0.8, bg = "white")
+
+graphics.off()
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{PlotMap}{Plot Method for Maps}{PlotMap}
+\keyword{hplot}{PlotMap}
+%
+\begin{Description}\relax
+This function maps raster layer values. A key showing how the colors map to raster values is shown below the map.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+PlotMap(r, layer = 1, att = NULL, n, breaks, xlim = NULL, ylim = NULL,
+        zlim = NULL, asp = 1, extend.xy = FALSE, extend.z = FALSE,
+        reg.axs = TRUE, trim.r = TRUE, dms.tick = FALSE, bg.lines = FALSE,
+        bg.image = NULL, bg.image.alpha = 1, pal = NULL, col = NULL,
+        max.dev.dim = c(43, 56), labels = NULL, scale.loc = "bottomleft",
+        arrow.loc = NULL, explanation = NULL, credit = proj4string(r),
+        shade = NULL, contour.lines = NULL, rivers = NULL, lakes = NULL,
+        roads = NULL, draw.key = NULL, draw.raster = TRUE, useRaster)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{r}] \code{RasterLayer}, \code{SpatialGridDataFrame}, or \code{CRS}; a raster layer with values to be plotted or a coordinate reference system (CRS).
+\item[\code{layer}] \code{integer}; the column to use in the \code{SpatialGridDataFrame}.
+\item[\code{att}] \code{numeric} or \code{character}; the variable identifying the levels attribute to use in the Raster Attribute Table (RAT).
+This argument requires \code{r} values that are of class \code{factor}.
+\item[\code{n}] \code{integer}; the desired number of intervals to partition the range of raster values (or \code{zlim} if specified) (optional).
+\item[\code{breaks}] \code{numeric}; a vector of break points used to partition the colors representing numeric raster values (optional).
+\item[\code{xlim}] \code{numeric}; a vector of length 2 giving the minimum and maximum values for the \emph{x}-axis.
+\item[\code{ylim}] \code{numeric}; a vector of length 2 giving the minimum and maximum values for the \emph{y}-axis.
+\item[\code{zlim}] \code{numeric}; a vector of length 2 giving the minimum and maximum raster values for which colors should be plotted.
+\item[\code{asp}] \code{numeric}; the \emph{y/x} aspect ratio for spatial axes.
+\item[\code{extend.xy}] \code{logical}; if \code{TRUE}, the spatial limits will be extended to the next tick mark on the axes beyond the grid extent.
+\item[\code{extend.z}] \code{logical}; if \code{TRUE}, the raster value limits will be extended to the next tick mark on the color key beyond the measured range.
+\item[\code{reg.axs}] \code{logical}; if \code{TRUE}, the spatial data range is extended.
+\item[\code{trim.r}] \code{logical}; if \code{TRUE}, the outer rows and columns that consist of all \code{NA} values will be removed.
+\item[\code{dms.tick}] \code{logical}; if \code{TRUE}, the axes tickmarks are specified in degrees, minutes, and decimal seconds.
+\item[\code{bg.lines}] \code{logical}; if \code{TRUE}, the graticule is drawn in back of the raster layer using white lines and a grey background.
+\item[\code{bg.image}] \code{RasterLayer}; an image to drawn in back of the main raster layer \code{r}.
+\item[\code{bg.image.alpha}] \code{numeric}; the opacity of the background image from 0 to 1.
+\item[\code{pal}] \code{function}; a color palette to be used to assign colors in the plot, \code{rainbow} by default.
+\item[\code{col}] \code{character}; a vector of colors to be used in the plot.
+This argument requires \code{breaks} specification for numeric values of \code{r} and overrides any palette function specification.
+For numeric values there should be one less color than breaks. Factors require a color for each level.
+\item[\code{max.dev.dim}] \code{numeric}; a vector of length 2 giving the maximum width and height for the graphics device in picas, respectively.
+Suggested dimensions for single-column, double-column, and sidetitle figures are \code{c(21, 56)}, \code{c(43, 56)}, and \code{c(56, 43)}, respectively.
+\item[\code{labels}] \code{list}; describes the location and values of labels in the color key.
+This list may include components \code{at} and \code{labels}.
+\item[\code{scale.loc}] \code{character}; the position of the scale bar: \code{"bottomleft"}, \code{"topleft"}, \code{"topright"}, or \code{"bottomright"} to denote scale location.
+\item[\code{arrow.loc}] \code{character}; the position of the north arrow: \code{"bottomleft"}, \code{"topleft"}, \code{"topright"}, or \code{"bottomright"} to denote arrow location.
+\item[\code{explanation}] \code{character}; a label explaining the raster value.
+\item[\code{credit}] \code{character}; a label crediting the base map.
+\item[\code{shade}] \code{list}; if specified, a semi-transparent shade layer is drawn on top of the raster layer.
+This layer is described using a list of arguments supplied to \code{hillShade}.
+Passed arguments include \code{"angle"} and \code{"direction"}.
+Additional arguments also may be passed that control the vertical aspect ratio (\code{"z.factor"}) and color opacity (\code{"alpha"}).
+\item[\code{contour.lines}] \code{list}; if specified, contour lines are drawn.
+The contours are described using a list of arguments supplied to \code{contour}.
+Passed arguments include \code{"drawlables"}, \code{"method"}, and \code{"col"}.
+\item[\code{rivers}] \code{list}; if specified, lines are drawn.
+The lines are described using a list of arguments supplied to the plot method for \code{SpatialLines}.
+Passed arguments include \code{"x"}, \code{"col"}, and \code{"lwd"}.
+\item[\code{lakes}] \code{list}; if specified, polygons are drawn.
+The polygons are described using a list of arguments supplied to the plot method for \code{SpatialPolygons}.
+Passed arguments include \code{"x"}, \code{"col"}, \code{"border"}, and \code{"lwd"}.
+Bitmap images require a regular grid.
+\item[\code{roads}] \code{list}; if specified, lines are drawn.
+The lines are described using a list of arguments supplied to the plot method for \code{SpatialLines}.
+Passed arguments include \code{"x"}, \code{"col"}, and \code{"lwd"}.
+\item[\code{draw.key}] \code{logical}; indicates if a color key should be drawn.
+\item[\code{draw.raster}] \code{logical}; if \code{FALSE}, the raster image is not drawn.
+\item[\code{useRaster}] \code{logical}; if \code{TRUE}, a bitmap raster is used to plot \code{r} instead of polygons.
+If \code{UseRaster} is not specified, raster images are used when the \code{getOption("preferRaster")} is true.
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Details}\relax
+The dimensions of a new graphics device is dependent on the argument values of \code{max.dev.dim} and \code{asp}.
+\end{Details}
+%
+\begin{Value}
+Used for the side-effect of a new plot generated.
+Returns a \code{list} object with the following graphical parameters:
+\begin{ldescription}
+\item[\code{din}] \code{numeric}; the device dimensions \code{(width, height)}, in inches.
+\item[\code{usr}] \code{numeric}; the extremes of the coordinates of the plotting region \code{(x1, x2, y1, y2)}.
+\item[\code{heights}] \code{numeric}; the relative heights on the device \code{(upper, lower)} for the map and color-key plots.
+\end{ldescription}
+\end{Value}
+%
+\begin{Author}\relax
+J.C. Fisher, U.S. Geological Survey, Idaho Water Science Center
+\end{Author}
+%
+\begin{SeeAlso}\relax
+\code{\LinkA{AddScaleBar}{AddScaleBar}}, \code{\LinkA{AddColorKey}{AddColorKey}}
+\end{SeeAlso}
+%
+\begin{Examples}
+\begin{ExampleCode}
+r <- raster(system.file("external/test.grd", package="raster"))
+PlotMap(r, scale.loc = "topleft", dms.tick = TRUE, trim.r = TRUE)
+
+graphics.off()
+r <- raster(nrow = 10, ncol = 10)
+r[] <- 1L
+r[51:100] <- 2L
+r[3:6, 1:5] <- 8L
+r <- ratify(r)
+rat <- levels(r)[[1]]
+rat$land.cover <- c("Pine", "Oak", "Meadow")
+rat$code <- c(12, 25, 30)
+levels(r) <- rat
+PlotMap(r, att = "land.cover", col = c("grey", "orange", "purple"))
+PlotMap(r, att = "code")
+
+graphics.off()
+r <- alluvium.thickness
+PlotMap(r@crs, bg.image = hill.shading, reg.axs = FALSE)
+plot(alluvium.extent, border = "red", add = TRUE)
+PlotMap(r, bg.image = hill.shading, bg.image.alpha = 0.6)
+PlotMap(r, n = 10, extend.xy = TRUE)
+
+graphics.off()
+PlotMap(r, ylim = c(NA, 1360000), max.dev.dim = c(56, 43), n = 10, extend.z = TRUE,
+        contour.lines = list(col = "#A9A9A9"))
+plot(alluvium.extent, add = TRUE)
+shade <- list(z.factor = 15, alpha = 0.4)
+txt <- "Land surface elevation in meters above National Geodetic Vertical Datum of 1929."
+ans <- PlotMap(r, ylim = c(NA, 1360000), max.dev.dim = c(56, 43), bg.lines = TRUE,
+               shade = shade, arrow.loc = "topright", explanation = txt)
+
+graphics.off()
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{pod.gw}{Points of Diversion for Groundwater}{pod.gw}
+\keyword{datasets}{pod.gw}
+%
+\begin{Description}\relax
+Points of diversion for groundwater within the Wood River Valley model study area.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+pod.gw
+\end{verbatim}
+\end{Usage}
+%
+\begin{Format}
+A \code{data.frame} object with 1,755 records and the following variables:
+\begin{description}
+
+\item[WMISNumber] is a unique number assigned to a water right point of diversion.
+\item[WaterRight] is a number identifying a specific authorization to use water in a prescribed manner.
+\item[EntityName] is the name of the irrigation entity the point of diversion is assigned to.
+\item[EntitySrce] is the source of water for an irrigation entity.
+Possible sources of water include surface water, groundwater and mixed.
+Mixed source entities derive water from both groundwater and surface water.
+\item[Pdate] is the priority date, the date the water right was established.
+\item[IrrRate] is the irrigation rate in cubic meters per day, the maximum permitted water use rate associated with a water right.
+
+\end{description}
+
+\end{Format}
+%
+\begin{Source}\relax
+Idaho Department of Water Resources water rights database, accessed on December 11, 2014
+\end{Source}
+%
+\begin{SeeAlso}\relax
+\code{\LinkA{pod.wells}{pod.wells}}
+\end{SeeAlso}
+%
+\begin{Examples}
+\begin{ExampleCode}
+summary(pod.gw)
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{pod.wells}{Well Completions}{pod.wells}
+\keyword{datasets}{pod.wells}
+%
+\begin{Description}\relax
+Well completions for pumping wells in the Wood River Valley aquifer system.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+pod.wells
+\end{verbatim}
+\end{Usage}
+%
+\begin{Format}
+An object of \code{SpatialPointsDataFrame} class containing 1,243 points with the following variables:
+\begin{description}
+
+\item[WMISNumber] is a unique number assigned to a water right point of diversion.
+\item[WellUse] is the permitted use(s) for a groundwater well.
+\item[TopOpen1] is the depth to the top of the first open interval in a groundwater well, in meters below land surface.
+\item[BotOpen1] is the depth to the bottom of the first open interval in a groundwater well, in meters below land surface.
+\item[TopOpen2] is the depth to the top of the second open interval in a groundwater well, in meters below land surface.
+\item[BotOpen2] is the depth to the bottom of the second open interval in a groundwater well, in meters below land surface.
+
+\end{description}
+
+Geographic coordinates are in units of meters, in conformance with the North American Datum of 1983 (NAD 83), and placed in the
+Idaho Transverse Mercator projection (\Rhref{https://www.idwr.idaho.gov/GIS/IDTM/}{IDTM}).
+\end{Format}
+%
+\begin{Source}\relax
+Idaho Department of Water Resources water rights database, accessed on November 29, 2014
+\end{Source}
+%
+\begin{SeeAlso}\relax
+\code{\LinkA{pod.gw}{pod.gw}}
+\end{SeeAlso}
+%
+\begin{Examples}
+\begin{ExampleCode}
+plot(pod.wells)
+str(pod.wells@data)
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{precip.zones}{Precipitation Zones}{precip.zones}
+\keyword{datasets}{precip.zones}
+%
+\begin{Description}\relax
+Precipitation zones specified for the Wood River Valley and surrounding areas.
+There are three precipitation zones, each containing a single weather station.
+Precipitation zones were distributed to maintain the geographic similarity between weather stations and zones.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+precip.zones
+\end{verbatim}
+\end{Usage}
+%
+\begin{Format}
+An object of \code{SpatialPolygonsDataFrame} class containing 3 \code{Polygons} and a \code{data.frame} with the following variables:
+\begin{description}
+
+\item[ID] a numeric identifier assigned to the polygon.
+\item[PrecipZone] the name of the precipitation zone:
+``Ketchum'', the northernmost zone with data from the Ketchum National Weather Service coop weather station.
+``Hailey'', the central zone with data from the Hailey 3NNW National Weather Service coop weather station.
+``Picabo'', the southernmost zone with data from the Picabo AgriMet weather station.
+
+
+\end{description}
+
+Geographic coordinates are in units of meters, in conformance with the North American Datum of 1983 (NAD 83), and placed in the
+Idaho Transverse Mercator projection (\Rhref{https://www.idwr.idaho.gov/GIS/IDTM/}{IDTM}).
+\end{Format}
+%
+\begin{Source}\relax
+Created using the northing midpoint between weather stations, see \code{\LinkA{weather.stations}{weather.stations}} dataset.
+\end{Source}
+%
+\begin{SeeAlso}\relax
+\code{\LinkA{precipitation}{precipitation}}
+\end{SeeAlso}
+%
+\begin{Examples}
+\begin{ExampleCode}
+col <- c("#D1F2A5", "#FFC48C", "#F56991")
+plot(precip.zones, col = col)
+legend("topright", legend = precip.zones@data$PrecipZone, fill = col, bty = "n")
+plot(alluvium.extent, add = TRUE)
+
+print(precip.zones)
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{precipitation}{Precipitation Rate}{precipitation}
+\keyword{datasets}{precipitation}
+%
+\begin{Description}\relax
+Precipitation rates in the Wood River Valley and surrounding areas.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+precipitation
+\end{verbatim}
+\end{Usage}
+%
+\begin{Format}
+A \code{data.frame} object with 582 records and the following variables:
+\begin{description}
+
+\item[YearMonth] is the year and month during which precipitation were recorded, with a required date format of \code{YYYYMM}.
+\item[PrecipZone] the name of the precipitation zone, see \code{\LinkA{precip.zones}{precip.zones}} dataset for details.
+\item[Precip] is the monthly depth of precipitation accounting for spring melt, in meters.
+\item[Precip.raw] is the monthly depth of precipitation recorded at the weather station, in meters.
+
+\end{description}
+
+\end{Format}
+%
+\begin{Source}\relax
+Idaho Department of Water Resources, accessed on April 24, 2015
+\end{Source}
+%
+\begin{References}\relax
+National Oceanic and Atmospheric Administration's National Weather Service (\Rhref{http://www.nws.noaa.gov/om/coop/}{NWS}) Cooperative Observer Program
+
+U.S. Bureau of Reclamation's Cooperative Agricultural Weather Network (\Rhref{http://www.usbr.gov/pn/agrimet/}{AgriMet})
+\end{References}
+%
+\begin{SeeAlso}\relax
+\code{\LinkA{precip.zones}{precip.zones}}, \code{\LinkA{swe}{swe}}
+\end{SeeAlso}
+%
+\begin{Examples}
+\begin{ExampleCode}
+str(precipitation)
+
+d <- precipitation
+d <- data.frame(Date = as.Date(paste0(d$YearMonth, "15"), format = "%Y%m%d"),
+                Precip = d$Precip)
+zones <- c("Hailey", "Ketchum", "Picabo")
+d1 <- d[precipitation$PrecipZone == zones[1], ]
+d2 <- d[precipitation$PrecipZone == zones[2], ]
+d3 <- d[precipitation$PrecipZone == zones[3], ]
+d <- merge(merge(d1, d2, by = "Date"), d3, by = "Date")
+
+col <- c("red", "blue", "green")
+ylab <- paste("Precipitation in", c("meters", "feet"))
+PlotGraph(d, ylab = ylab, col = col, lty = 1:3, conversion.factor = 3.28084)
+legend("topright", zones, col = col, lty = 1:3, inset = 0.02, cex = 0.7,
+       box.lty = 1, bg = "#FFFFFFE7")
+
+graphics.off()
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{priority.cuts}{Priority Cuts}{priority.cuts}
+\keyword{datasets}{priority.cuts}
+%
+\begin{Description}\relax
+Priority cut dates applied to Big Wood River above Magic Reservoir and Silver Creek by Water District 37 and 37M at the end of each month.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+priority.cuts
+\end{verbatim}
+\end{Usage}
+%
+\begin{Format}
+A \code{data.frame} object with 112 records and the following variables:
+\begin{description}
+
+\item[YearMonth] is the year and month during of the priority cut date, with a required date format of \code{YYYYMM}.
+\item[Pdate\_BWR] is the date of the priority cut applied to Big Wood River above Magic Reservoir by Water District 37.
+\item[Pdate\_SC] is the date of the priority cut applied to Silver Creek by Water District 37M.
+
+\end{description}
+
+\end{Format}
+%
+\begin{Source}\relax
+Idaho Department of Water Resources, accessed on November 17, 2014;
+compiled priority cut dates in effect at the end of each month, derived from Water District 37 and 37M records
+\end{Source}
+%
+\begin{Examples}
+\begin{ExampleCode}
+str(priority.cuts)
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{public.parcels}{Public Land Parcels}{public.parcels}
+\keyword{datasets}{public.parcels}
+%
+\begin{Description}\relax
+Non-irrigated public land parcels in the Wood River Valley and surrounding areas.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+public.parcels
+\end{verbatim}
+\end{Usage}
+%
+\begin{Format}
+An object of \code{SpatialPolygons} class containing 669 \code{Polygons}.
+\end{Format}
+%
+\begin{Source}\relax
+Idaho Department of Water Resources, accessed on November 29, 2014;
+derived from Blaine County tax lots and aerial photography
+\end{Source}
+%
+\begin{Examples}
+\begin{ExampleCode}
+plot(public.parcels)
+print(public.parcels)
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{r.canals}{Rasterized Canals}{r.canals}
+\keyword{datasets}{r.canals}
+%
+\begin{Description}\relax
+Canal systems of the Wood River Valley and surrounding areas transferred to raster cells.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+r.canals
+\end{verbatim}
+\end{Usage}
+%
+\begin{Format}
+An object of \code{RasterLayer} class with indexed cell values linked to a raster attribute table (RAT).
+The RAT is a \code{data.frame} with the following components:
+\begin{description}
+
+\item[ID] the integer cell index.
+\item[COUNT] the frequency of the cell index in the raster grid.
+\item[EntityName] the name of the irrigation entity served by the canal system.
+
+\end{description}
+
+\end{Format}
+%
+\begin{Source}\relax
+Calculated by transferring the \code{\LinkA{canals}{canals}} dataset to grid cells in the \code{\LinkA{land.surface}{land.surface}} dataset using the \code{rasterize} function;
+see the \file{package-datasets} vignette for the \R{} code used in this calculation.
+\end{Source}
+%
+\begin{Examples}
+\begin{ExampleCode}
+plot(r.canals)
+print(levels(r.canals)[[1]])
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{reach.recharge}{Stream-Aquifer Flow Exchange Along River Reaches}{reach.recharge}
+\keyword{datasets}{reach.recharge}
+%
+\begin{Description}\relax
+Stream-aquifer flow exchange along river reaches specified as aquifer recharge.
+Values used as observations in parameter estimation.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+reach.recharge
+\end{verbatim}
+\end{Usage}
+%
+\begin{Format}
+A \code{data.frame} object with 192 records and the following variables:
+\begin{description}
+
+\item[YearMonth] is the year and month of the measurement record, with a required date format of \code{YYYYMM}.
+\item[nKet\_Hai] the stream-aquifer flow exchange in the Big Wood River, near Ketchum to Hailey river reach, in cubic meters per day.
+\item[Hai\_StC] the stream-aquifer flow exchange in the Big Wood River, Hailey to Stanton Crossing river reach, in cubic meters per day.
+\item[WillowCr] the stream-aquifer flow exchange in the Willow Creek river reach, in cubic meters per day.
+\item[SilverAbv] the stream-aquifer flow exchange in Silver Creek, above Sportsman Access river reach, in cubic meters per day.
+\item[SilverBlw] the stream-aquifer flow exchange in Silver Creek, Sportsman Access to near Picabo river reach, in cubic meters per day.
+
+\end{description}
+
+\end{Format}
+%
+\begin{Details}\relax
+A positive stream-aquifer flow exchange indicates aquifer recharge (a losing river reach).
+\end{Details}
+%
+\begin{Source}\relax
+Calculated from continuous stream flow measurements, diversion data, return flow data, and exchange well data
+using a flow difference method to estimate groundwater inflows and outflows along a river reach, accessed on September 1, 2015.
+Derived from U.S. Geological Survey, Idaho Power Company, and Water District 37 and 37M records.
+\end{Source}
+%
+\begin{Examples}
+\begin{ExampleCode}
+str(reach.recharge)
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{ReadModflowBinary}{Read MODFLOW Binary File}{ReadModflowBinary}
+\keyword{IO}{ReadModflowBinary}
+%
+\begin{Description}\relax
+This function reads binary output data from a \Rhref{http://water.usgs.gov/ogw/modflow/}{MODFLOW} run.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+ReadModflowBinary(f, data.type = c("array", "flow"), rm.totim.0 = FALSE)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{f}] \code{character}; the name of the binary file.
+\item[\code{data.type}] \code{character}; a description of how the data are saved.
+\item[\code{rm.totim.0}] \code{logical}; if \code{TRUE}, stress-periods at time zero are removed.
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Details}\relax
+This function reads binary head (\file{.hds}), drawdown (\file{.ddn}), and budget (\file{.bud}) files generated from a MODFLOW run.
+\end{Details}
+%
+\begin{Value}
+Returns a \code{list} object of length equal to the number of times the data type is written to the binary file.
+List components are \code{list} objects with the following components:
+\begin{ldescription}
+\item[\code{d}] \code{matrix} or \code{data.frame}; the data values.
+\item[\code{kstp}] \code{integer}; the time step.
+\item[\code{kper}] \code{integer}; the stress period.
+\item[\code{desc}] \code{character}; the variable name.
+\item[\code{ilay}] \code{integer}; the model-grid layer.
+\item[\code{delt}] \code{numeric}; the length of the current time step.
+\item[\code{pertim}] \code{numeric}; the time in the stress period.
+\item[\code{totim}] \code{numeric}; the total elapsed time.
+\end{ldescription}
+\end{Value}
+%
+\begin{Author}\relax
+J.C. Fisher, U.S. Geological Survey, Idaho Water Science Center
+\end{Author}
+%
+\begin{SeeAlso}\relax
+\code{\LinkA{SummariseBudget}{SummariseBudget}}
+\end{SeeAlso}
+%
+\begin{Examples}
+\begin{ExampleCode}
+## Not run: 
+path <- file.path(getwd(), "SIR2016-XXXX/output/output.model1")
+hds <- ReadModflowBinary(file.path(path, "wrv_mfusg.hds"), "array")
+bud <- ReadModflowBinary(file.path(path, "wrv_mfusg.bud"), "flow")
+## End(Not run)
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{ReplaceInTemplate}{Replace Values in a Template Text}{ReplaceInTemplate}
+\keyword{IO}{ReplaceInTemplate}
+%
+\begin{Description}\relax
+This function replaces keys within special markups in a template text with specified values.
+Pieces of \R{} code can be put into the markups of the template text, and are evaluated during the replacement.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+ReplaceInTemplate(text, replacement)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{text}] \code{character}; a vector of character strings, the template text.
+\item[\code{replacement}] \code{list}; the values to replace in \code{text}.
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Details}\relax
+Keys are enclosed into markups of the form \code{\$(KEY)} and \code{@\{CODE\}}.
+\end{Details}
+%
+\begin{Value}
+A vector of character strings after key replacement.
+\end{Value}
+%
+\begin{Author}\relax
+J.C. Fisher, U.S. Geological Survey, Idaho Water Science Center
+\end{Author}
+%
+\begin{References}\relax
+This code was derived from the \Rhref{http://cran.r-project.org/web/packages/sensitivity/}{sensitivity}\code{::template.replace} function.
+\end{References}
+%
+\begin{Examples}
+\begin{ExampleCode}
+text <- c("Hello $(name)!", "$(a) + $(b) = @{$(a) + $(b)}",
+          "pi = @{format(pi, digits = 5)}")
+replacement <- list(name = "world", a = 1, b = 2)
+cat(ReplaceInTemplate(text, replacement), sep = "\n")
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{river.reaches}{Major River Reaches}{river.reaches}
+\keyword{datasets}{river.reaches}
+%
+\begin{Description}\relax
+The major river reaches of the Wood River Valley, Idaho.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+river.reaches
+\end{verbatim}
+\end{Usage}
+%
+\begin{Format}
+An object of \code{SpatialLinesDataFrame} class containing 22 \code{Lines} and a \code{data.frame} with the following variables:
+\begin{description}
+
+\item[Reach] is the name of the subreaches measured in U.S. Geological Survey (USGS) seepage survey.
+\item[BigReach] is the name of the reaches for which time series targets are available for part or all of the calibration period.
+\item[DrainRiver] is the model boundary assignment, either ``drain'' or ``river''.
+\item[RchAvg] is the estimated average reach gain in cubic meters per day for 1995-2010 based on a combination of gage data and the USGS seepage survey.
+\item[BigRAv] is the estimated average reach gain in cubic meters per day for 1995-2010 based on gage data.
+\item[ReachNo] is the reach number identifier.
+\item[Depth] is the estimated average depth in meters of water in reach, measured from the air-water interface to the top of the riverbed sediments.
+\item[BedThk] is the estimated thickness in meters of the saturated riverbed sediments.
+
+\end{description}
+
+Geographic coordinates are in units of meters, in conformance with the North American Datum of 1983 (NAD 83), and placed in the
+Idaho Transverse Mercator projection (\Rhref{https://www.idwr.idaho.gov/GIS/IDTM/}{IDTM}).
+\end{Format}
+%
+\begin{Source}\relax
+Idaho Department of Water Resources, accessed on June 6, 2015
+\end{Source}
+%
+\begin{Examples}
+\begin{ExampleCode}
+plot(river.reaches)
+str(river.reaches@data)
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{RmSmallCellChunks}{Remove Small Cell Chunks}{RmSmallCellChunks}
+\keyword{utilities}{RmSmallCellChunks}
+%
+\begin{Description}\relax
+This function identifies cell chunks in a single raster grid layer,
+where a cell chunk is defined as a group of connected cells with non-missing values.
+The cell chunk with the largest surface area is preserved and all others removed.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+RmSmallCellChunks(r)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{r}] \code{RasterLayer}; a raster grid layer with cell values.
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Value}
+The raster grid layer \code{r} with cell values in the smaller cell chunks set to \code{NA}.
+\end{Value}
+%
+\begin{Author}\relax
+J.C. Fisher, U.S. Geological Survey, Idaho Water Science Center
+\end{Author}
+%
+\begin{SeeAlso}\relax
+\code{clump}
+\end{SeeAlso}
+%
+\begin{Examples}
+\begin{ExampleCode}
+set.seed(0)
+r <- raster(ncols = 10, nrows = 10)
+r[] <- round(runif(ncell(r)) * 0.7)
+r <- clump(r)
+plot(r)
+
+r.new <- RmSmallCellChunks(r)
+plot(r.new, zlim = range(r[], na.rm = TRUE))
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{rs.entities}{Rasterized Monthly Irrigation Entities}{rs.entities}
+\keyword{datasets}{rs.entities}
+%
+\begin{Description}\relax
+Irrigation entities of the Wood River Valley and surrounding areas transferred to raster cells.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+rs.entities
+\end{verbatim}
+\end{Usage}
+%
+\begin{Format}
+An object of class \code{RasterStack} class containing a 192 \code{RasterLayer} objects, one layer for each month in the 1995-2010 time period.
+For each raster layer, indexed cell values are linked to a raster attribute table (RAT).
+The RAT is a \code{data.frame} with the following components:
+\begin{description}
+
+\item[ID] the integer cell index.
+\item[COUNT] the frequency of the cell index in the raster grid.
+\item[EntityName] the name of the irrigation entity served by a group of diversions.
+
+\end{description}
+
+\end{Format}
+%
+\begin{Source}\relax
+Calculated by transferring the \code{\LinkA{entity.components}{entity.components}} dataset to grid cells in the \code{\LinkA{land.surface}{land.surface}} dataset using the \code{rasterize} function;
+see the \file{package-datasets} vignette for the \R{} code used in this calculation.
+\end{Source}
+%
+\begin{Examples}
+\begin{ExampleCode}
+names(rs.entities)
+plot(rs.entities[["199507"]])
+print(levels(rs.entities[["199507"]])[[1]])
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{rs.rech.non.irr}{Rasterized Monthly Recharge on Non-Irrigated Lands}{rs.rech.non.irr}
+\keyword{datasets}{rs.rech.non.irr}
+%
+\begin{Description}\relax
+Aerial recharge and discharge on non-irrigated lands of the Wood River Valley and surrounding areas transferred to raster cells.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+rs.rech.non.irr
+\end{verbatim}
+\end{Usage}
+%
+\begin{Format}
+An object of \code{RasterStack} class containing 192 \code{RasterLayer} objects, one layer for each month in the 1995-2010 time period.
+Each cell on a layers surface grid represents the monthly recharge in meters.
+\end{Format}
+%
+\begin{Source}\relax
+Calculated from the \code{et}, \code{\LinkA{precipitation}{precipitation}}, \code{\LinkA{precip.zones}{precip.zones}}, and \code{\LinkA{soils}{soils}} datasets;
+see the \file{package-datasets} vignette for the \R{} code used in this calculation.
+\end{Source}
+%
+\begin{Examples}
+\begin{ExampleCode}
+names(rs.rech.non.irr)
+plot(rs.rech.non.irr[["199507"]])
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{RunWaterBalance}{Run Water Balance}{RunWaterBalance}
+\keyword{manip}{RunWaterBalance}
+%
+\begin{Description}\relax
+This function estimates groundwater flow across the water table, and pumping demand at production wells.
+A water-balance approach is used to calculate these volumetric flow rate estimates,
+where positive values are flow into the aqufer system (groundwater recharge),
+and negative values are flow out of the system (groundwater discharge).
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+RunWaterBalance(tr.stress.periods, r.grid, eff, seep, ss.stress.periods = NULL,
+                verbose = FALSE)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{tr.stress.periods}] \code{Date}; a vector of start and end dates for each stress period in the simulation.
+\item[\code{r.grid}] \code{RasterLayer}; a raster of numeric values where \code{NA} indicates an `inactive' cell in the top layer of the model.
+\item[\code{eff}] \code{data.frame}; see \code{\LinkA{efficiency}{efficiency}} dataset for details.
+\item[\code{seep}] \code{data.frame}; see \code{\LinkA{canal.seep}{canal.seep}} dataset for details.
+\item[\code{ss.stress.periods}] \code{Date}; a vector of start and end dates for stress periods used to create steady-state conditions.
+\item[\code{verbose}] \code{logical}; indicates whether to return summary tables \code{natural.rech}, \code{inciden.rech}, \code{pumping.rech};
+see `Value' section for table formats.
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Value}
+Returns a \code{list} object with the following components:
+
+(1) Water-table flow data (combines natural and incidental groundwater recharge and discharge) are stored in \code{areal.rech},
+an object of \code{RasterStack} class with raster layers for each model stress period;
+cell values are specified as volumetric flow rates in cubic meters per day.
+
+(2) Production well pumping data are stored in \code{pod.rech}, an object of \code{data.frame} class with the following components:
+\begin{ldescription}
+\item[\code{WMISNumber}] \code{numeric}; a unique number assigned to a water right point of diversion.
+\item[\code{ss, 199501, ..., 201012}] \code{numeric}; is the volumetric flow rate, specified for each stress period, in cubic meters per day.
+
+\end{ldescription}
+(3) Natural groundwater recharge and discharge data are stored in \code{natural.rech}, an object of \code{data.frame} class with the following components:
+\begin{ldescription}
+\item[\code{YearMonth}] \code{factor}; is the calendar year and month \code{YYYYMM}.
+\item[\code{Area}] \code{numeric}; the land-surface area of non-irrigated lands, in square meters.
+\item[\code{ET}] \code{numeric}; evapotranspiration on non-irrigated lands, in cubic meters per month.
+\item[\code{Rech}] \code{numeric}; is the volumetric flow rate, in cubic meters per month.
+
+\end{ldescription}
+(4) Incidental groundwater recharge data are stored in \code{inciden.rech}, an object of \code{data.frame} class with the following components:
+\begin{ldescription}
+\item[\code{EntityName}] \code{character}; is the name of the irrigation entity.
+\item[\code{YearMonth}] \code{factor}; is the calendar year and month \code{YYYYMM}.
+\item[\code{SWDiv}] \code{numeric}; surface-water diversions, in cubic meters per month.
+\item[\code{SeepFrac}] \code{numeric}; canal seepage as a fraction of diversions, a dimensionless quantity.
+\item[\code{CanalSeep}] \code{numeric}; canal seepage, in cubic meters per month.
+\item[\code{SWDel}] \code{numeric}; surface-water delivered to field headgates, in cubic meters per month.
+\item[\code{area.sw}] \code{numeric}; area irrigated by only surface water, in square meters.
+\item[\code{et.sw}] \code{numeric}; evapotranspiration on lands irrigated by only surface water, in cubic meters per month.
+\item[\code{precip.sw}] \code{numeric}; precipitation on lands irrigated by only surface water, in cubic meters per month.
+\item[\code{cir.sw}] \code{numeric}; crop irrigation requirement on lands irrigated by only surface water, in cubic meters per month.
+\item[\code{area.mix}] \code{numeric}; area irrigated by both surface and groundwater, in square meters.
+\item[\code{et.mix}] \code{numeric}; evapotranspiration on lands irrigated by both surface and groundwater, in cubic meters per month.
+\item[\code{precip.mix}] \code{numeric}; precipitation on lands irrigated by both surface and groundwater, in cubic meters per month.
+\item[\code{cir.mix}] \code{numeric}; crop irrigation requirement on lands irrigated by both surface and groundwater, in cubic meters per month.
+\item[\code{area.gw}] \code{numeric}; area irrigated by only groundwater, in square meters.
+\item[\code{et.gw}] \code{numeric}; evapotranspiration on lands irrigated by only groundwater, in cubic meters per month.
+\item[\code{precip.gw}] \code{numeric}; precipitation on lands irrigated by only groundwater, in cubic meters per month.
+\item[\code{cir.gw}] \code{numeric}; crop irrigation requirement on lands irrigated by only groundwater, in cubic meters per month.
+\item[\code{Eff}] \code{numeric}; irrigation efficiency, a dimensionless quantity.
+\item[\code{GWDiv}] \code{numeric}; recorded groundwater diversions, in cubic meters per month.
+\item[\code{WWDiv}] \code{numeric}; inflow to municipal wastewater treatment plants, in cubic meters per month.
+\item[\code{hg.sw}] \code{numeric}; surface-water delivered to field headgates on lands irrigated by only surface water, in cubic meters per month.
+\item[\code{hg.mix}] \code{numeric}; surface-water delivered to field headgates on lands irrigation by both surface and groundwater, in cubic meters per month.
+\item[\code{rech.sw}] \code{numeric}; incidental groundwater recharge beneath lands irrigated by only surface water, in cubic meters per month.
+\item[\code{gw.dem.mix}] \code{numeric}; groundwater demand on lands irrigated by both surface and groundwater, in cubic meters per month.
+\item[\code{gw.div.est}] \code{numeric}; calculated groundwater diversions, in cubic meters per month.
+\item[\code{rech.mix}] \code{numeric}; incidental groundwater recharge beneath lands irrigated by both surface and groundwater, in cubic meters per month.
+\item[\code{gw.only}] \code{numeric}; groundwater demand on lands irrigated by only groundwater in entities with lands also irrigated by both surface and groundwater, in cubic meters per month.
+\item[\code{rech.muni}] \code{numeric}; incidental groundwater recharge beneath entities with lands irrigated by only groundwater and lands irrigated by both surface and groundwater, in cubic meters per month.
+\item[\code{gw.dem.gw}] \code{numeric}; groundwater demand on lands irrigated by only groundwater in entities without surface-water irrigation, in cubic meters per month.
+\item[\code{rech.gw}] \code{numeric}; incidental groundwater recharge beneath lands irrigated by only groundwater, in cubic meters per month.
+\item[\code{area.model}] \code{numeric}; area of the irrigation entity that is located in the model domain, in square meters.
+\end{ldescription}
+Volumetric flow rates are calculated for their respective area in the irrigation entity---not just that part overlying the model area.
+Flow rate values are given this way in order to facilitate with quality assurance of the water-budget calculation.
+To calculate a simulated volumetric-flow rate: divide the flow rate by the affected area, and then multiply this value by the area of the irrigation entity that is located in the model domain (\code{area.model}).
+
+(5) Well pumping data are also stored in \code{pumping.rech} (see \code{pod.rech} component), an object of \code{data.frame} class with the following components:
+\begin{ldescription}
+\item[\code{WMISNumber}] \code{numeric}; a unique number assigned to a water right point of diversion.
+\item[\code{YearMonth}] \code{factor}; is the calendar year and month \code{YYYYMM}.
+\item[\code{Pumping}] \code{numeric}; is the volumetric rate of pumping, in cubic meters per month.
+\end{ldescription}
+\end{Value}
+%
+\begin{Author}\relax
+J.C. Fisher, U.S. Geological Survey, Idaho Water Science Center
+
+J. Sukow and M. McVay, Idaho Department of Water Resources
+\end{Author}
+%
+\begin{SeeAlso}\relax
+\code{\LinkA{UpdateWaterBudget}{UpdateWaterBudget}}
+\end{SeeAlso}
+%
+\begin{Examples}
+\begin{ExampleCode}
+## Not run: # see wrv-introduction vignette
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{seepage.study}{Stream Seepage Study}{seepage.study}
+\keyword{datasets}{seepage.study}
+%
+\begin{Description}\relax
+A Wood River Valley stream seepage study with streamflow measurements made during the months of August 2012, October 2012, and March 2013.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+seepage.study
+\end{verbatim}
+\end{Usage}
+%
+\begin{Format}
+An object of \code{SpatialPointsDataFrame} class containing 82 points with the following variables:
+\begin{description}
+
+\item[Order] an index used to preserve the downstream order of measurement sites.
+\item[Name] a local name for the measurement site.
+\item[SiteNo] a unique identifier for the measurement site within the National Water Information System (NWIS).
+\item[Type] the type of measurement site:
+``Big Wood River'', ``Willow Creek'', ``Spring fed creeks'', ``Silver Creek'', ``Diversion'', ``Exchange well inflow'', ``Return'', and ``Tributary''.
+\item[Comments] an abbreviated site name.
+\item[Aug] the volumetric flow rate measured during August 2012, in cubic meters per day.
+\item[Oct] the volumetric flow rate measured during October 2012, in cubic meters per day.
+\item[Mar] the volumetric flow rate measured during March 2013, in cubic meters per day.
+
+\end{description}
+
+Geographic coordinates are in units of meters, in conformance with the North American Datum of 1983 (NAD 83), and placed in the
+Idaho Transverse Mercator projection (\Rhref{https://www.idwr.idaho.gov/GIS/IDTM/}{IDTM}).
+\end{Format}
+%
+\begin{Source}\relax
+Derived from Bartolino (2014) seepage study, Idaho Department of Water Resources, Water District 37 and 37M flow records.
+\end{Source}
+%
+\begin{References}\relax
+Bartolino, J.R., 2014, Stream seepage and groundwater levels, Wood River Valley, south-central Idaho, 2012--13: U.S. Geological Survey Scientific Investigations Report 2014-5151, 34 p., \url{http://dx.doi.org/10.3133/sir20145151}.
+\end{References}
+%
+\begin{Examples}
+\begin{ExampleCode}
+plot(seepage.study)
+str(seepage.study@data)
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{sensitivity}{PEST Sensitivity}{sensitivity}
+\keyword{datasets}{sensitivity}
+%
+\begin{Description}\relax
+Calibrated parameter values and composite sensitivities generated by PEST.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+sensitivity
+\end{verbatim}
+\end{Usage}
+%
+\begin{Format}
+A \code{data.frame} object with 336 records and the following variables:
+\begin{description}
+
+\item[parameter.desc] is a description of the parameter.
+\item[ID] is a unique identifier within the parameter type, such as an identifier for a pilot point or irrigation entity.
+\item[units] is the parameter units.
+\item[start.value] is the starting parameter value prior to model calibration.
+\item[lower.bound] is the lower bound placed on the parameter value during the model-calibration process.
+\item[upper.bound] is the upper bound placed on the parameter value during the model-calibration process.
+\item[parameter.name] is the \Rhref{http://www.pesthomepage.org/}{PEST} parameter name.
+\item[group] is the PEST parameter group.
+\item[value] is the calibrated parameter value estimated by PEST.
+\item[comp.sens] is the composite sensitivity generated during the final iteration of PEST.
+\item[rel.comp.sens] is the relative composite sensitivity.
+
+\end{description}
+
+\end{Format}
+%
+\begin{Source}\relax
+Idaho Department of Water Resources, accessed on January 15, 2016
+\end{Source}
+%
+\begin{SeeAlso}\relax
+\code{\LinkA{pilot.points}{pilot.points}}, \code{\LinkA{irr.entities}{irr.entities}}, \code{\LinkA{river.reaches}{river.reaches}}, \code{\LinkA{drains}{drains}}, \code{\LinkA{tributaries}{tributaries}}
+\end{SeeAlso}
+%
+\begin{Examples}
+\begin{ExampleCode}
+str(sensitivity)
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{SetPolygons}{Analysis of Multi-Polygon Objects}{SetPolygons}
+\keyword{utilities}{SetPolygons}
+%
+\begin{Description}\relax
+Determines the intersection or difference between two multi-polygon objects.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+SetPolygons(x, y, cmd = c("gIntersection", "gDifference"), buffer.width = NA)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{x}] \code{SpatialPolygons*}; a multi-polygon object.
+\item[\code{y}] \code{SpatialPolygons*} or \code{Extent}; a multi-polygon object.
+\item[\code{cmd}] \code{character}; specifying \code{"gIntersection"}, the default, cuts out portions of the \code{x} polygons that overlay the \code{y} polygons.
+If \code{"gDifference"} is specified, only those portions of the \code{x} polygons falling outside the \code{y} polygons are copied to the output polygons.
+\item[\code{buffer.width}] \code{numeric}; expands or contracts the geometry of \code{y} to include the area within the specified width, see \code{gBuffer}.
+Specifying \code{NA}, the default, indicates no buffer.
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Details}\relax
+This function tests if the resulting geometry is valid, see \code{gIsValid}.
+\end{Details}
+%
+\begin{Value}
+Returns an object of \code{SpatialPolygons*} class.
+\end{Value}
+%
+\begin{Author}\relax
+J.C. Fisher, U.S. Geological Survey, Idaho Water Science Center
+\end{Author}
+%
+\begin{SeeAlso}\relax
+\code{gIntersection}, \code{gDifference}
+\end{SeeAlso}
+%
+\begin{Examples}
+\begin{ExampleCode}
+library(sp)
+
+m1a <- matrix(c(17.5, 24.7, 22.6, 16.5, 55.1, 55.0, 61.1, 59.7), nrow = 4, ncol = 2)
+m1b <- m1a
+m1b[, 1] <- m1b[, 1] + 11
+p1 <- SpatialPolygons(list(Polygons(list(Polygon(m1a, FALSE), Polygon(m1b, FALSE)), 1)))
+plot(p1, col = "blue")
+
+m2a <- matrix(c(19.6, 35.7, 28.2, 60.0, 58.8, 64.4), nrow = 3, ncol = 2)
+m2b <- matrix(c(20.6, 30.9, 27.3, 56.2, 53.8, 51.4), nrow = 3, ncol = 2)
+p2 <- SpatialPolygons(list(Polygons(list(Polygon(m2a, FALSE), Polygon(m2b, FALSE)), 2)))
+plot(p2, col = "red", add = TRUE)
+
+p <- SetPolygons(p1, p2, "gIntersection")
+plot(p, col = "green", add = TRUE)
+
+p <- SetPolygons(p2, p1, "gDifference")
+plot(p, col = "purple", add = TRUE)
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{soils}{Soil Units}{soils}
+\keyword{datasets}{soils}
+%
+\begin{Description}\relax
+Representation of mapped surficial soil units created by the Idaho Office of the National Resource Conservation Service (NRCS).
+Soils have been assigned a percolation rate based on the average, saturated hydraulic conductivity of the soils as classified using the Unified Soil Classification System (USCS).
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+soils
+\end{verbatim}
+\end{Usage}
+%
+\begin{Format}
+An object of \code{SpatialPolygonsDataFrame} class containing 718 \code{Polygons} and a \code{data.frame} with the following variables:
+\begin{description}
+
+\item[GroupSymbol] is a soil class identifier.
+\item[SoilLayer] is an identifier used to differentiate the soil data source used to create the soils map.
+Data sources are either `USCS' or `STATSGO', the NRCS State Soil Geographic Data Base.
+\item[SoilClass] is a description of the soil class.
+\item[MinRate] is the lower percolation rate limit for the soil class, in meters per month.
+\item[MaxRate] is the upper percolation rate limit for the soil class, in meters per month.
+\item[PercolationRate] is the percolation rate in meters per month.
+
+\end{description}
+
+Geographic coordinates are in units of meters, in conformance with the North American Datum of 1983 (NAD 83), and placed in the
+Idaho Transverse Mercator projection (\Rhref{https://www.idwr.idaho.gov/GIS/IDTM/}{IDTM}).
+\end{Format}
+%
+\begin{Source}\relax
+Idaho Department of Water Resources, accessed on April 22, 2015
+\end{Source}
+%
+\begin{Examples}
+\begin{ExampleCode}
+spplot(soils, "PercolationRate")
+str(soils@data)
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{streamgages}{Streamgages}{streamgages}
+\keyword{datasets}{streamgages}
+%
+\begin{Description}\relax
+Select streamgages in the Wood River Valley.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+streamgages
+\end{verbatim}
+\end{Usage}
+%
+\begin{Format}
+An object of \code{SpatialPointsDataFrame} class containing 9 points and a \code{data.frame} with the following variable:
+\begin{description}
+
+\item[SiteNo] the unique site number for the streamgage.
+\item[SiteName] the official name of the streamgage.
+
+\end{description}
+
+Geographic coordinates are in units of meters, in conformance with the North American Datum of 1983 (NAD 83), and placed in the
+Idaho Transverse Mercator projection (\Rhref{https://www.idwr.idaho.gov/GIS/IDTM/}{IDTM}).
+\end{Format}
+%
+\begin{Source}\relax
+National Water Information System (\Rhref{http://waterdata.usgs.gov/nwis}{NWIS}), accessed on May 29, 2015.
+\end{Source}
+%
+\begin{Examples}
+\begin{ExampleCode}
+str(streamgages)
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{streams.rivers}{Streams and Rivers}{streams.rivers}
+\keyword{datasets}{streams.rivers}
+%
+\begin{Description}\relax
+Streams and rivers of the Wood River Valley and surrounding areas.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+streams.rivers
+\end{verbatim}
+\end{Usage}
+%
+\begin{Format}
+An object of \code{SpatialLinesDataFrame} class containing 581 \code{Lines}.
+Geographic coordinates are in units of meters, in conformance with the North American Datum of 1983 (NAD 83), and placed in the
+Idaho Transverse Mercator projection (\Rhref{https://www.idwr.idaho.gov/GIS/IDTM/}{IDTM}).
+\end{Format}
+%
+\begin{Source}\relax
+Idaho Department of Water Resources (\Rhref{https://research.idwr.idaho.gov/index.html#GIS-Data}{IDWR}), accessed on April 2, 2014
+\end{Source}
+%
+\begin{Examples}
+\begin{ExampleCode}
+plot(streams.rivers, col = "#3399CC")
+str(streams.rivers@data)
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{subreach.recharge}{Stream-Aquifer Flow Exchange Along River Subreaches}{subreach.recharge}
+\keyword{datasets}{subreach.recharge}
+%
+\begin{Description}\relax
+Stream-aquifer flow exchange along river subreaches specified as aquifer recharge.
+Values used as observations in parameter estimation.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+subreach.recharge
+\end{verbatim}
+\end{Usage}
+%
+\begin{Format}
+A \code{data.frame} object with 19 records and the following variables:
+\begin{description}
+
+\item[ReachNo] is the subreach number identifier.
+\item[Reach] is the name of the subreach.
+\item[BigReachNo] is the reach number identifier.
+\item[BigReach] is the name of the reach.
+\item[Aug] the estimated volumetric flow rate measured during August 2012, in cubic meters per day.
+\item[Oct] the estimated volumetric flow rate measured during October 2012, in cubic meters per day.
+\item[Mar] the estimated volumetric flow rate measured during March 2013, in cubic meters per day.
+
+\end{description}
+
+\end{Format}
+%
+\begin{Details}\relax
+A positive stream-aquifer flow exchange indicates aquifer recharge (also know as a losing river subreach).
+\end{Details}
+%
+\begin{Source}\relax
+Flow values calculated from \code{seepage.study} data.
+\end{Source}
+%
+\begin{Examples}
+\begin{ExampleCode}
+str(subreach.recharge)
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{SummariseBudget}{Summarize Volumetric Water Budget}{SummariseBudget}
+\keyword{utilities}{SummariseBudget}
+%
+\begin{Description}\relax
+Summarizes volumetric flow rates for boundary condition types.
+Splits the budget data into subsets, computes summary statistics for each, and returns the result in a summary table.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+SummariseBudget(budget, desc = c("wells", "drains", "river leakage"))
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{budget}] \code{character} or \code{list}; either a description of the path to the MODFLOW Budget File or the returned results from a call to the \code{\LinkA{ReadModflowBinary}{ReadModflowBinary}} function.
+\item[\code{desc}] \code{character}; a vector of MODFLOW package identifiers.
+Data of this package type is included in the summary table.
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Details}\relax
+The \code{budget[[i]]\$d} data table component must contain a numeric \code{id} field, see \code{\LinkA{WriteModflowInput}{WriteModflowInput}} for variable description.
+Subsets are grouped by the MODFLOW package identifier (\code{desc}), stress period (\code{kper}), time step (\code{kstp}), and location identifier (\code{id}).
+\end{Details}
+%
+\begin{Value}
+Returns an object of \code{data.frame} class with the following components:
+\begin{ldescription}
+\item[\code{desc}] \code{factor}; is the MODFLOW package identifier.
+\item[\code{kper}] \code{integer}; is the stress period.
+\item[\code{kstp}] \code{integer}; is the time step.
+\item[\code{id}] \code{integer}; is a location identifier.
+\item[\code{delt}] \code{numeric}; is the length of the current time step.
+\item[\code{pertim}] \code{numeric}; is the time in the stress period.
+\item[\code{totim}] \code{numeric}; is the total elapsed time.
+\item[\code{count}] \code{integer}; is the number of cells in each subset.
+\item[\code{flow.sum}] \code{numeric}; is the total volumetric flow rate.
+\item[\code{flow.mean}] \code{numeric}; is the mean volumetric flow rate.
+\item[\code{flow.median}] \code{numeric}; is the median volumetric flow rate.
+\item[\code{flow.sd}] \code{numeric}; is the standard deviation of the volumetric flow rate.
+\item[\code{flow.dir}] \code{factor}; is the flow direction where \code{"in"} and \code{"out"} indicate water entering and leaving the groundwater system, respectively.
+\end{ldescription}
+\end{Value}
+%
+\begin{Author}\relax
+J.C. Fisher, U.S. Geological Survey, Idaho Water Science Center
+\end{Author}
+%
+\begin{Examples}
+\begin{ExampleCode}
+## Not run: 
+f <- file.path(getwd(), "SIR2016-XXXX/output/output.model1/wrv_mfusg.bud")
+d <- SummariseBudget(f)
+str(d)
+## End(Not run)
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{swe}{Snow Water Equivalent}{swe}
+\keyword{datasets}{swe}
+%
+\begin{Description}\relax
+Average daily snow water equivalent (SWE) at weather stations in the Wood River Valley and surrounding areas.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+swe
+\end{verbatim}
+\end{Usage}
+%
+\begin{Format}
+A \code{data.frame} object with 366 records and the following variables:
+\begin{description}
+
+\item[MonthDay] is the month and day, with a required date format of \code{MMDD}.
+\item[Choco] is the daily SWE recorded at the Chocolate Gulch snow telemetry (SNOTEL) weather station.
+\item[Hailey] is the daily SWE recorded at the Hailey Ranger Station at Hailey hydrometeorological automated data system (HADS) weather station.
+\item[Picabo] is the daily SWE recorded at the Picabo PICI HADS weather station.
+
+\end{description}
+
+\end{Format}
+%
+\begin{Source}\relax
+Idaho Department of Water Resources, accessed on April 24, 2015
+\end{Source}
+%
+\begin{SeeAlso}\relax
+\code{\LinkA{weather.stations}{weather.stations}}, \code{\LinkA{precip.zones}{precip.zones}}, \code{\LinkA{precipitation}{precipitation}}
+\end{SeeAlso}
+%
+\begin{Examples}
+\begin{ExampleCode}
+str(swe)
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{ToScientific}{Format for Scientific Notation}{ToScientific}
+\keyword{utilities}{ToScientific}
+%
+\begin{Description}\relax
+This function formats numbers in scientific notation \eqn{m \times 10^{n}}{}.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+ToScientific(x, digits = format.info(as.numeric(x))[2],
+             lab.type = c("latex", "plotmath"))
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{x}] \code{numeric}; a vector of numbers.
+\item[\code{digits}] \code{integer}; the number of digits after the decimal point for the mantissa.
+\item[\code{lab.type}] \code{character}; by default, LaTeX formatted strings for labels are returned.
+Alternatively, \code{lab.type = "plotmath"} returns \code{plotmath}-compatible expressions.
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Value}
+For the default \code{lab.type = "latex"}, a \code{character} vector of the same length as argument \code{x}.
+And for \code{lab.type = "plotmath"}, an \code{expression} of the same length as \code{x}, typically with elements of the form \code{m x 10\textasciicircum{}n}.
+In order to comply with \Rhref{http://www.section508.gov/}{Section 508},
+an ``\code{x}'' is used as the label separator for the \code{plotmath} type---rather than the more common ``\code{\%*\%}'' seperator.
+\end{Value}
+%
+\begin{Author}\relax
+J.C. Fisher, U.S. Geological Survey, Idaho Water Science Center
+\end{Author}
+%
+\begin{Examples}
+\begin{ExampleCode}
+x <- c(-1e+09, 0, NA, pi * 10^(-5:5))
+ToScientific(x, digits = 2)
+ToScientific(x, digits = 2, lab.type = "plotmath")
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{tributaries}{Groundwater Flow in the Tributary Canyons}{tributaries}
+\keyword{datasets}{tributaries}
+%
+\begin{Description}\relax
+The location and average flow conditions for model boundaries in the major tributary canyons and upper part of the Wood River Valley, south-central Idaho.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+tributaries
+\end{verbatim}
+\end{Usage}
+%
+\begin{Format}
+An object of \code{SpatialPolygonsDataFrame} class containing a set of 22 \code{Polygons} and a \code{data.frame} with the following variable:
+\begin{description}
+
+\item[Name] is the tributary name.
+\item[MinLSD] is the minimum land-surface datum (elevation) along the transect, in meters above the North American Vertical Datum of 1988 (NAVD 88).
+\item[BdrkDepth] is the mean saturated thickness along the transect line, in meters; estimated as the distance between the estimated water table and bedrock elevations.
+\item[TribWidth] is the width of the tributary canyon, or length of the transect line, in meters.
+\item[LandGrad] is the land surface elevation gradient perpendicular to the cross-sectional transect line, a dimensionless quantity.
+\item[K] is the hydraulic conductivity, in meters per day.
+\item[SatArea] is the estimated saturated cross-sectional area, in square meters; its geometry is represented as the lower-half of an ellipse with width and height equal to \code{TribWidth} and \code{BdrkDepth}, respectively.
+\item[DarcyFlow] is the groundwater flow rate, in cubic meters per day, calculated using a \Rhref{http://en.wikipedia.org/wiki/Darcy_law}{Darcian} analysis.
+\item[BasinArea] is the land-surface area defined by the basin above the cross-sectional transect line.
+\item[BasinAreaType] is a label that describes the relative basin size; where \code{"big"} indicates a basin area greater than 10 square miles (25.9 square kilometers), and \code{"small"} indicates a basin area that is less than this breakpoint value.
+\item[PrecipRate] is the mean precipitation rate within the basin area, in meters per day.
+\item[PrecipFlow] is the mean precipitation flow rate, in cubic meters per day, calculated by multiplying \code{PrecipRate} by \code{BasinArea}.
+\item[FlowRatio] is the ratio of darcy flow rate to precipitation flow rate, or \code{DarcyFlow} divided by \code{PrecipFlow}, a dimensionless quantity.
+\item[Flow] is the estimated average volumetric flow rate, in cubic meters per day.
+
+\end{description}
+
+Geographic coordinates are in units of meters, in conformance with the North American Datum of 1983 (NAD 83), and placed in the
+Idaho Transverse Mercator projection (\Rhref{https://www.idwr.idaho.gov/GIS/IDTM/}{IDTM}).
+\end{Format}
+%
+\begin{Source}\relax
+U.S. Geological Survey, accessed on July 2, 2015;
+a Keyhole Markup Language (\Rhref{http://en.wikipedia.org/wiki/Kml}{KML}) file created in \Rhref{http://www.google.com/earth/}{Google Earth} with polygons drawn by hand in areas of known specified flow boundaries.
+Transect lines are defined by the polygon boundaries within the extent of alluvium aquifer (see \code{\LinkA{alluvium.extent}{alluvium.extent}} dataset).
+The land surface gradient (\code{LandGrad}) was estimated from the \code{\LinkA{land.surface}{land.surface}} dataset.
+Hydraulic conductivity (\code{K}) is the average of two geometric means of hydraulic conductivity in the unconfined aquifer taken from table 2 in Bartolino and Adkins (2012).
+The U.S. Geologic Survey \Rhref{http://water.usgs.gov/osw/streamstats/}{StreamStats} tool (Ries and others, 2004) was used to delineate the basin area (\code{BasinArea}) and estimate the precipitation rate (\code{PrecipRate}).
+See the \file{package-datasets} vignette for the \R{} code used to calculate the flow estimates (\code{Flow}).
+\end{Source}
+%
+\begin{References}\relax
+Bartolino, J.R., and Adkins, C.B., 2012, Hydrogeologic framework of the Wood River Valley aquifer system, south-central Idaho: U.S. Geological Survey Scientific Investigations Report 2012-5053, 46 p., available at \url{http://pubs.usgs.gov/sir/2012/5053/}.
+
+Ries, K.G., Steeves, P.A., Coles, J.D., Rea, A.H., and Stewart, D.W., 2004, StreamStats--A U.S. Geological Survey web application for stream information: U.S. Geological Survey Fact Sheet FS-2004-3115, 4 p., available at \url{http://pubs.er.usgs.gov/usgspubs/fs/fs20043115}.
+\end{References}
+%
+\begin{Examples}
+\begin{ExampleCode}
+plot(tributaries, border = "red")
+plot(alluvium.extent, add = TRUE)
+str(tributaries@data)
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{tributary.streams}{Streams and Rivers}{tributary.streams}
+\keyword{datasets}{tributary.streams}
+%
+\begin{Description}\relax
+Tributary streams of the upper Wood River Valley and surrounding areas.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+tributary.streams
+\end{verbatim}
+\end{Usage}
+%
+\begin{Format}
+An object of \code{SpatialLinesDataFrame} class containing 88 \code{Lines}.
+Geographic coordinates are in units of meters, in conformance with the North American Datum of 1983 (NAD 83), and placed in the
+Idaho Transverse Mercator projection (\Rhref{https://www.idwr.idaho.gov/GIS/IDTM/}{IDTM}).
+\end{Format}
+%
+\begin{Source}\relax
+Idaho Department of Water Resources, accessed on June 1, 2015
+\end{Source}
+%
+\begin{Examples}
+\begin{ExampleCode}
+plot(tributary.streams, col = "#3399CC")
+str(tributary.streams@data)
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{UpdateWaterBudget}{Update Water Budget}{UpdateWaterBudget}
+\keyword{utilities}{UpdateWaterBudget}
+%
+\begin{Description}\relax
+This function runs the water budget calculation and updates the MODFLOW Well Package file.
+It is executed during each iteration of PEST and my be run in an interactive \R{} session to initialize the parameter estimation files.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+UpdateWaterBudget(dir.run, id, qa.tables = c("none", "si", "english"),
+                  ss.interval = NULL, iwelcb = 0L)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{dir.run}] \code{character}; the path name of the directory to read/write model files.
+\item[\code{id}] \code{character}; a short identifier (file name) for model files.
+\item[\code{qa.tables}] \code{character}; indicates if quality assurance tables are written to disk; by default \code{"none"} of these tables are written.
+Values of \code{"si"} and \code{"english"} indicate that table values are written in metric and English units, respectively.
+\item[\code{ss.interval}] \code{Date} or \code{character}; a vector of length 2 specifying the start and end dates for the period used to represent steady-state boundary conditions.
+That is, recharge values for stress periods coinciding with this time period are averaged and used as steady-state boundary conditions.
+The required date format is \code{YYYY-MM-DD}.
+This argument overrides the \code{ss.stress.periods} object in the \file{model.rda} file, see `Details' section for additional information.
+\item[\code{iwelcb}] \code{integer}; is a flag and unit number.
+If equal to zero, the default, cell-by-cell flow terms resulting from conditions in the MODFLOW Well Package will not be written to disk.
+This default value is appropriate for model calibration, where MODFLOW run times are kept as short as possible.
+If greater than zero, the cell-by-cell flow terms are written to disk.
+See the MODFLOW Name File (\file{*.nam}) for the unit number associated with the budget file (\file{*.bud}).
+
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Details}\relax
+Files read during execution, and located within the \code{dir.run} directory, include
+the MODFLOW hydraulic conductivity reference files \file{hk1.ref}, \file{hk2.ref}, and \file{hk3.ref}
+corresponding to model layers 1, 2, and 3, respectively.
+Hydraulic conductivity values are read from a two-dimensional array in matrix format with `white-space' delimited fields.
+And a binary data file \file{model.rda} containing the following serialized \R{} objects:
+\code{rs}, \code{misc}, \code{trib}, \code{tr.stress.periods}, and \code{ss.stress.periods}.
+
+\code{rs} is an object of \code{RasterStack} class with raster layers
+``lay1.top'', ``lay1.bot'', ``lay2.bot'', and ``lay3.bot''.
+These raster layers describe the geometry of the model grid; that is,
+the upper and lower elevation of model layer 1, and the bottom elevations of model layers 2 and 3.
+In addition to these layers, \code{rs} includes ancillary raster layers ``lay1.zones'', ``lay2.zones'', and ``lay3.zones''
+describing the distribution of hydrogeologic zones in the model grid.
+Missing cell values (equal to \code{NA}) indicate inactive model cells lying outside of the model domain.
+
+\code{misc} is a \code{data.frame} object with miscellaneous seepage,
+such as from the `Bellevue Waste Water Treatment Plant ponds' and the `Bypass Canal'.
+This object is comprised of the following components:
+\bold{lay}, \bold{row}, \bold{col} are \code{integer} values specifying a model cell's layer, row, and column index, respectively; and
+\bold{ss}, \bold{199501}, \bold{199502}, \dots, \bold{201012} are numeric values of elevation during each stress period, respectively,
+in meters above the North American Vertical Datum of 1988.
+
+\code{trib} is a \code{data.frame} object with default values for the long-term mean underflows in each of the tributary basins.
+The object is comprised of the following components:
+\bold{Name} is a unique identifier for the tributary basin;
+\bold{lay}, \bold{row}, \bold{col} are \code{integer} values of a model cell's layer, row, and column index, respectively; and
+\bold{ss}, \bold{199501}, \bold{199502}, \dots, \bold{201012} are numeric values of underflow during each stress period, respectively,
+in cubic meters per day.
+
+\code{tr.stress.periods} is a vector of \code{Date} values giving the start and end dates for stress periods in the model simulation period (1995--2010).
+
+\code{ss.stress.periods} is a vector of \code{Date} values giving the start and end dates for stress periods used to define steady-state conditions.
+
+\code{reduction} is a \code{numeric} default value for the signal amplitude reduction algorithm, a dimensionless quantity.
+
+\code{d.in.mv.ave} is a \code{numeric} default value for the number of days in the moving average subset.
+\end{Details}
+%
+\begin{Value}
+Returns an object of \code{difftime} class, the runtime for this function.
+Used for the side-effect of files written to disk.
+
+A MODFLOW Well Package file \file{<id>.wel} is always written to disk; whereas,
+parameter estimation files \file{seep.csv}, \file{eff.csv}, and \file{trib.csv}, and
+a script file \file{UpdateBudget.bat}, are only written if they do not already exist.
+The script file may be used to automate the execution of this function from a file manager (such as, Windows Explorer).
+
+The \file{seep.csv} file stores as tabular data the canal seepage fraction for each of the irrigation entities.
+Its \code{character} and \code{numeric} data fields are delimited by commas (a comma-separated-value [CSV] file).
+The first line is reserved for field names \code{EntityName} and \code{SeepFrac}.
+
+The \file{eff.csv} file stores as tabular data the irrigation efficiency for each of the irrigation entities.
+Its \code{character} and \code{numeric} data fields are delimited by commas.
+The first line is reserved for field names \code{EntityName} and \code{Eff}.
+
+The \file{trib.csv} file stores as tabular data the underflow boundary conditions for each tributary basin.
+Its \code{character} and \code{numeric} data fields are delimited by commas.
+The first line is reserved for field names \code{Name} and \code{Value}.
+Data records include a long-term mean flow multiplier for each of the tributary basins (name is the unique identifier for the tributary),
+a record for the amplitude reduction (\code{reduction}), and
+a record for the number of days in the moving average (\code{d.in.mv.ave}).
+
+If the \code{qa.tables} argument is specified as either \code{"si"} or \code{"english"}, quality assurance tables are written to disk as CSV files (`qa-*.csv').
+Volumetric flow rate data within these tables is described in the `Value' section of the \code{\LinkA{RunWaterBalance}{RunWaterBalance}} function;
+see returned \code{list} components \code{natural.rech}, \code{inciden.rech}, and \code{pumping.rech}.
+The well configuration data are described in the `Value' section of the \code{\LinkA{GetWellConfig}{GetWellConfig}} function.
+\end{Value}
+%
+\begin{Author}\relax
+J.C. Fisher, U.S. Geological Survey, Idaho Water Science Center
+\end{Author}
+%
+\begin{SeeAlso}\relax
+\code{\LinkA{RunWaterBalance}{RunWaterBalance}}, \code{\LinkA{GetSeasonalMult}{GetSeasonalMult}}
+\end{SeeAlso}
+%
+\begin{Examples}
+\begin{ExampleCode}
+## Not run: 
+dir.run <- "C:/Users/jfisher/Documents/SIR2016-XXXX/model/model1"
+UpdateWaterBudget(dir.run, "wrv_mfusg", qa.tables = "si",
+                  ss.interval = c("1998-01-01", "2011-01-01"))
+## End(Not run)
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{weather.stations}{Weather Stations}{weather.stations}
+\keyword{datasets}{weather.stations}
+%
+\begin{Description}\relax
+Weather stations in the WRV and surrounding areas.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+weather.stations
+\end{verbatim}
+\end{Usage}
+%
+\begin{Format}
+An object of \code{SpatialPointsDataFrame} class containing 5 points and the following variables:
+\begin{description}
+
+\item[name] is the name of the weather station.
+\item[id] is a unique identifier for the weather station.
+\item[type] is the type of weather stations:
+\code{"HADS"}, a Hydrometeorological Automated Data System operated by the National Weather Service Office of Dissemination;
+\code{"AgriMet"}, a satellite-telemetry network of automated agricultural weather stations operated and maintained by the Bureau of Reclamation; and
+\code{"SNOTEL"}, an automated system of snowpack and related climate sensors operated by the Natural Resources Conservation Service.
+\item[organization] is the managing organization.
+\item[elevation] is the elevation of the weather station in meters above the North American Vertical Datum of 1988 (NAVD 88).
+
+\end{description}
+
+Geographic coordinates are in units of meters, in conformance with the North American Datum of 1983 (NAD 83), and placed in the
+Idaho Transverse Mercator projection (\Rhref{https://www.idwr.idaho.gov/GIS/IDTM/}{IDTM}).
+\end{Format}
+%
+\begin{Source}\relax
+National Oceanic and Atmospheric Administration (NOAA), Bureau of Reclamation, Natural Resources Conservation Service (NRCS), accessed on May 1, 2015
+\end{Source}
+%
+\begin{Examples}
+\begin{ExampleCode}
+plot(alluvium.extent)
+plot(weather.stations, col = "red", add = TRUE)
+str(weather.stations@data)
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{wetlands}{Wetlands}{wetlands}
+\keyword{datasets}{wetlands}
+%
+\begin{Description}\relax
+Wetlands in the Wood River Valley and surrounding areas.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+wetlands
+\end{verbatim}
+\end{Usage}
+%
+\begin{Format}
+An object of \code{SpatialPolygons} class containing 3,024 \code{Polygons}.
+\end{Format}
+%
+\begin{Source}\relax
+U.S. Fish and Wildlife Service National Wetlands Inventory, accessed on April 2, 2014
+\end{Source}
+%
+\begin{Examples}
+\begin{ExampleCode}
+plot(wetlands, col = "#CCFFFF", border = "#3399CC", lwd = 0.5)
+print(wetlands)
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{wl.200610}{Groundwater-Level Contours for October 2006}{wl.200610}
+\keyword{datasets}{wl.200610}
+%
+\begin{Description}\relax
+Groundwater-level contours with a 20 foot (6.096 meter) contour interval for the unconfined aquifer in the Wood River Valley, south-central Idaho, representing conditions during October 2006.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+wl.200610
+\end{verbatim}
+\end{Usage}
+%
+\begin{Format}
+An object of \code{SpatialLinesDataFrame} class containing 265 \code{Lines} and a \code{data.frame} with the following variables:
+\begin{description}
+
+\item[CONTOUR] is the groundwater elevation contour value in meters above the North American Vertical Datum of 1988 (NAVD 88).
+\item[certainty] is the certainty of the groundwater-level contour based on data position and density, specified as \code{"good"} or \code{"poor"}.
+
+\end{description}
+
+Geographic coordinates are in units of meters, in conformance with the North American Datum of 1983 (NAD 83), and placed in the
+Idaho Transverse Mercator projection (\Rhref{https://www.idwr.idaho.gov/GIS/IDTM/}{IDTM}).
+\end{Format}
+%
+\begin{Source}\relax
+This dataset is from Plate 1 in Skinner and others (2007), and available on the \Rhref{http://water.usgs.gov/GIS/metadata/usgswrd/XML/sir2007-5258_oct2006wl.xml}{WRD NSDI Node}.
+\end{Source}
+%
+\begin{References}\relax
+Skinner, K.D., Bartolino, J.R., and Tranmer, A.W., 2007, Water-resource trends and comparisons between partial development and October 2006 hydrologic conditions, Wood River Valley, south-central, Idaho: U.S. Geological Survey Scientific Investigations Report 2007-5258, 30 p., available at \url{http://pubs.usgs.gov/sir/2007/5258/}
+\end{References}
+%
+\begin{Examples}
+\begin{ExampleCode}
+is.good <- wl.200610@data$certainty == "good"
+plot(wl.200610[is.good, ], col = "blue")
+plot(wl.200610[!is.good, ], col = "red", lty = 2, add = TRUE)
+str(wl.200610@data)
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{WriteModflowInput}{Write MODFLOW Input Files}{WriteModflowInput}
+\keyword{IO}{WriteModflowInput}
+%
+\begin{Description}\relax
+This function generates and writes input files for a MODFLOW simulation of groundwater flow in the Wood River Valley (WRV) aquifer system.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+WriteModflowInput(rs.model, rech, well, trib, misc, river, drain, id, dir.run,
+                  is.convertible = FALSE, ss.perlen = 0L,
+                  tr.stress.periods = NULL, ntime.steps = 4L,
+                  mv.flag = 1e+09, auto.flow.reduce = FALSE, verbose = TRUE)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{rs.model}] \code{RasterStack}; a collection of \code{RasterLayer} objects with the same extent and resolution, see `Details' for required raster layers.
+\item[\code{rech}] \code{data.frame}; is the groundwater flow across the water table, in cubic meters per day.
+Variables describe the model cell location (\code{lay}, \code{row}, \code{col}) and volumetric rate during each stress period (\code{ss}, \code{199501}, \code{199502}, \dots, \code{201012}).
+\item[\code{well}] \code{data.frame}; is the well pumping at point locations in cubic meters per day.
+Variables describe the model cell location and volumetric rate during each stress period.
+\item[\code{trib}] \code{data.frame}; is the incoming flows from the major tributary canyons.
+Variables describe the model cell location and volumetric rate during each stress period.
+\item[\code{misc}] \code{data.frame}; is recharge from miscellaneous seepage sites in cubic meters per day.
+Variables describe the model cell location and volumetric rate during each stress period.
+\item[\code{river}] \code{data.frame}; is the river conditions.
+Variables describe the model cell location, river conductance (\code{cond}) in square meters per day, river bottom elevation (\code{bottom}) in meters above the North American Vertical Datum of 1988 (NAVD 88), and a numeric river reach identifier (\code{id}).
+\item[\code{drain}] \code{data.frame}; is the drain conditions for groundwater outlet boundaries.
+Variables describe the model cell location, drain threshold elevation (\code{elev}) in meters above the NAVD 88, drain conductance (\code{cond}) in square meters per day, and a numeric identifier (\code{id}) indicating the drains general location.
+\item[\code{id}] \code{character}; a short identifier for the model run.
+\item[\code{dir.run}] \code{character}; the path name of the directory to write model input files.
+\item[\code{is.convertible}] \code{logical}; if \code{TRUE}, indicates model layers are `convertible', with transmissivity computed using upstream water-table depth.
+Otherwise, model layers are `confined' and transmissivity is constant over time.
+\item[\code{ss.perlen}] \code{integer} or \code{difftime}; the length of the steady-state stress period in days.
+\item[\code{tr.stress.periods}] \code{Date}; a vector of start times for each stress period in the transient simulation.
+If missing, only steady-state conditions are simulated.
+\item[\code{ntime.steps}] \code{integer}; the number of uniform time steps in a stress period.
+\item[\code{mv.flag}] \code{numeric}; default \code{NA}, missing value flag for output reference data files.
+\item[\code{auto.flow.reduce}] \code{logical}; if \code{TRUE}, a simulated well will adjust pumping according to supply under bottom-hole conditions.
+Pumping rates that have been automatically reduced will be written to a model output file (\file{.afr}).
+\item[\code{verbose}] \code{logical}; if \code{TRUE}, additional information is written to the listing file (\file{.lst}) and budget file (\file{.bud}).
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Details}\relax
+Groundwater flow in the WRV aquifer system is simulated using the \Rhref{http://water.usgs.gov/ogw/mfusg/}{MODFLOW-USG} groundwater-flow model.
+This numerical model was chosen for its ability to solve complex unconfined groundwater flow simulations.
+The solver implemented in MODFLOW-USG incorporates the Newton-Raphson formulation for improving solution convergence and avoiding problems with the drying and rewetting of cells (Niswonger and others, 2011).
+A structured finite-difference grid is implemented in the model to
+(1) simplify discretization,
+(2) keep formats and structures for the MODFLOW-USG packages identical to those of \Rhref{http://water.usgs.gov/nrp/gwsoftware/modflow2005/Guide/index.html}{MODFLOW-2005}, and
+(3) allow any MODFLOW post-processor to be used to analyze the results of the MODFLOW-USG simulation (such as \Rhref{http://water.usgs.gov/nrp/gwsoftware/modelviewer/ModelViewer.html}{Model Viewer}).
+
+Model input files are written to \code{dir.run} and include the following MODFLOW Package files: Name (\file{.nam}), Basic (\file{.ba6}), Discretization (\file{.dis}), Layer-Property Flow (\file{.lpf}), Drain (\file{.drn}), River (\file{.riv}),  Well (\file{.wel}), Sparse Matrix Solver (\file{.sms}), and Output Control (\file{.oc}).
+See the users guide (\Cite{Description of Model Input and Output}) included with the MODFLOW-USG \Rhref{http://water.usgs.gov/ogw/mfusg/mfusg.1_2_00.zip}{software} for details on input file formats and structures.
+
+Data within the \code{rech}, \code{well}, \code{trib}, and \code{misc} arguments are combined in the MODFLOW Well Package and identifiable with added \code{id} values of 1, 2, 3, and 4, respectively.
+
+The Layer-Property Flow file includes options for the calculation of vertical flow in partially dewatered cells.
+For the WRV model, where there is no indication that perched conditions exist, \code{CONSTANTCV} and \code{NOVFC} options are used to create the most stable solution (Panday and others, 2013, p. 15-16).
+Options for the Sparse Matrix Solver were set for unconfined simulations by implementing an upstream-weighting scheme with Newton-Raphson linearization, Delta-Bar-Delta under-relaxation, and the \eqn{\chi}{}MD solver of Ibaraki (2005).
+
+The raster stack \code{rs.model} includes the following layers:
+\begin{description}
+
+\item[lay1.top] is the elevation at the top of model layer 1 (land surface), in meters above the NAVD 88.
+\item[lay1.bot] is the elevation at the bottom of model layer 1, in meters above the NAVD 88.
+\item[lay2.bot] is the elevation at the bottom of model layer 2.
+\item[lay3.bot] is the elevation at the bottom of model layer 3.
+\item[lay1.strt] is the initial (starting) hydraulic head in model layer 1, in meters above the NAVD 88.
+\item[lay2.strt] is the initial hydraulic head in model layer 2.
+\item[lay3.strt] is the initial hydraulic head in model layer 3.
+\item[lay1.zones] is the hydrogeologic zones in model layer 1 where values \code{= 1} is unconfined alluvium, \code{= 2} is basalt, \code{= 3} is clay, and \code{= 4} is confined alluvium.
+\item[lay2.zones] is the hydrogeologic zones in model layer 2.
+\item[lay3.zones] is the hydrogeologic zones in model layer 3.
+\item[lay1.hk] is the horizontal hydraulic conductivity in model layer 1, in meters per day.
+\item[lay2.hk] is the horizontal hydraulic conductivity in model layer 2.
+\item[lay3.hk] is the horizontal hydraulic conductivity in model layer 3.
+
+\end{description}
+
+\end{Details}
+%
+\begin{Value}
+None. Used for the side-effect of files written to disk.
+\end{Value}
+%
+\begin{Author}\relax
+J.C. Fisher, U.S. Geological Survey, Idaho Water Science Center
+\end{Author}
+%
+\begin{References}\relax
+Ibaraki, M., 2005, \eqn{\chi}{}MD User's guide-An efficient sparse matrix solver library, version 1.30: Columbus, Ohio State University School of Earth Sciences.
+
+Niswonger, R.G., Panday, Sorab, and Ibaraki, Motomu, 2011, MODFLOW-NWT, A Newton formulation for MODFLOW-2005: U.S. Geological Survey Techniques and Methods 6-A37, 44 p., available at \url{http://pubs.usgs.gov/tm/tm6a37/}.
+
+Panday, Sorab, Langevin, C.D., Niswonger, R.G., Ibaraki, Motomu, and Hughes, J.D., 2013, MODFLOW-USG version 1: An unstructured grid version of MODFLOW for simulating groundwater flow and tightly coupled processes using a control volume finite-difference formulation: U.S. Geological Survey Techniques and Methods, book 6, chap. A45, 66 p., available at \url{http://pubs.usgs.gov/tm/06/a45/}.
+\end{References}
+%
+\begin{Examples}
+\begin{ExampleCode}
+## Not run: # see uncalibrated-model vignette
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{zone.properties}{Hydraulic Properties of Hydrogeologic Zones}{zone.properties}
+\keyword{datasets}{zone.properties}
+%
+\begin{Description}\relax
+Estimates of the hydraulic properties for each hydrogeologic zone.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+zone.properties
+\end{verbatim}
+\end{Usage}
+%
+\begin{Format}
+A \code{data.frame} object with the following variables:
+\begin{description}
+
+\item[ID] is a numeric identifier for the hydrogeologic zone.
+\item[name] is the name of the hydrogeologic zone.
+\item[vani] is the vertical anisotropy, a dimensionless quantity.
+\item[sc] is the storage coefficient, a dimensionless quantity.
+\item[sy] is the specific yield, a dimensionless quantity.
+\item[hk] is the horizontal hydraulic conductivity in meters per day.
+\item[ss] is the specific storage, in inverse meter.
+
+\end{description}
+
+\end{Format}
+%
+\begin{Source}\relax
+Bartolino, J.R., and Adkins, C.B., 2012, Hydrogeologic framework of the Wood River Valley aquifer system, south-central Idaho: U.S. Geological Survey Scientific Investigations Report 2012-5053, 46 p., available at \url{http://pubs.usgs.gov/sir/2012/5053/}.
+\end{Source}
+%
+\begin{Examples}
+\begin{ExampleCode}
+str(zone.properties)
+\end{ExampleCode}
+\end{Examples}
+\printindex{}
+\end{document}

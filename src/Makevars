@@ -1,0 +1,46 @@
+
+OBJECTS = \
+        sparse.o \
+        gmodules.o \
+        glo2btnu1.o \
+        gwf2chd7u1.o \
+        gwf2drn7u1.o \
+        gwf2fhb7u1.o \
+        gwf2ghb7u1.o \
+        gwf2hfb7u1.o \
+        gwf2riv7u1.o \
+        gwf2rch8u1.o \
+        gwf2evt8u1.o \
+        lak_gag_sfr_modules.o \
+        gwf2sfr7u1.o \
+        gwf2str7u1.o \
+        gwf2lak7u1.o \
+        gwf2sub7u1.o \
+        gwf2wel7u1.o \
+        gwf2gag7u1.o \
+        cln2props1.o \
+        gwf2basu1.o \
+        gwf2bcf-lpf-u1.o \
+        xmdlib_2.o \
+        disu2gncb1.o \
+        disu2gncn1.o \
+        xmd.o \
+        parutl7.o \
+        pcgu7.o \
+        utl7u1.o \
+        glo2sms-u1.o \
+        glo2basu1.o \
+        mfusg.o \
+        cln2basu1.o
+
+all: mfusg
+
+mfusg: $(OBJECTS)
+	-$(FC) $(ALL_FFLAGS) -o mfusg $(OBJECTS)
+
+mfusg.o: mfusg.f
+	$(FC) $(ALL_FFLAGS) -c mfusg.f
+
+clean:
+	$(RM) *.o *.mod
+

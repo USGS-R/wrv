@@ -1,0 +1,22 @@
+# Model Geo-Reference Information
+
+Vertical coordinate information is referenced to the North American Vertical Datum of 1988
+([NAVD88](http://en.wikipedia.org/wiki/North_American_Vertical_Datum_of_1988)).
+Horizontal coordinate information is referenced to the North American Datum of 1983 and projected into the Idaho Transverse Mercator projection
+([IDTM83](https://www.idwr.idaho.gov/GIS/IDTM/)).
+
+Corners of the rectangle outlining the model domain are described below.
+Spatial points are specified within two coordinate reference system's ([CRS](http://en.wikipedia.org/wiki/Spatial_reference_system));
+a CRS is defined using a string of [PROJ.4](https://trac.osgeo.org/proj/wiki/GenParms) parameters.
+
+## IDTM83 system
+
+$(xy)
+
+CRS: "$(crs.xy)"
+
+## Geographic latitude and longitude
+
+$(ll)
+
+CRS: "$(crs.ll)"

@@ -1,0 +1,26 @@
+% \VignetteIndexEntry{U.S. Geological Survey Scientific Investigations Report 2016-XXXX}
+% \VignetteEngine{knitr::knitr}
+% \VignetteDepends{wrv}
+
+\documentclass[twoside]{article}
+
+\input{\Sexpr{shQuote(system.file("misc", "preamble.tex", package="wrv"))}}
+
+% =========================================================================
+
+\begin{document}
+
+\title{U.S. Geological Survey Scientific Investigations Report 2016-XXXX\vspace{2ex}}
+\author{}
+\date{}
+\pretitle{\begin{flushleft}\LARGE\bfseries\sffamily}
+\posttitle{\end{flushleft}}
+\maketitle
+
+% =========================================================================
+
+\section{Vignette Placeholder}
+
+This document serves as a placeholder until package checks and compilation has been completed.
+
+\end{document}

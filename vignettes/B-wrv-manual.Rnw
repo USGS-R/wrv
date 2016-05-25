@@ -1,0 +1,80 @@
+% \VignetteIndexEntry{Appendix B. Manual for Package Functions and Datasets}
+% \VignetteEngine{knitr::knitr}
+% \VignetteDepends{wrv}
+
+\documentclass[letterpaper]{book}
+\usepackage{mathptmx}
+\usepackage[hyper]{Rd}
+\usepackage[scaled=0.92]{helvet}
+\usepackage[utf8, latin1]{inputenc}
+\usepackage{makeidx}
+
+\usepackage[tmargin=1.00in, bmargin=0.67in, lmargin=0.58in, rmargin=0.75in]{geometry}
+\usepackage{tocloft}
+\usepackage{fancyhdr}
+
+\renewcommand{\sfdefault}{lmss}
+\renewcommand{\ttdefault}{lmtt}
+
+\renewcommand{\cftdotsep}{0.5}
+\renewcommand\cftsecleader{\cftdotfill{\cftdotsep}}
+
+\pagestyle{fancy}
+\renewcommand{\sectionmark}[1]{\markboth{#1}{}}
+\renewcommand{\headrulewidth}{0pt}
+\fancyhf{}
+\fancypagestyle{plain}{
+  \fancyhf{}
+  \fancyhead[RO]{\normalfont\bfseries\sffamily \thepage}
+}
+\fancyhead[LE]{\normalfont\bfseries\sffamily \thepage \quad Groundwater-Flow Model for the Wood River Valley Aquifer System, South-Central Idaho}
+\fancyhead[RO]{\normalfont\bfseries\sffamily \nouppercase{\leftmark} \quad \thepage}
+
+\renewcommand\cftsubsecfont{\sffamily}
+\setlength{\cftbeforesubsecskip}{0.1cm}
+
+\cftsetindents{subsection}{0in}{0in}
+
+\usepackage{titlesec}
+\titlespacing*{\chapter}{0pt}{25pt}{55pt}
+\titleformat{\chapter}[display]{\LARGE\bfseries\sffamily}{}{0pt}{\LARGE}
+
+\renewcommand{\thepage}{B\arabic{page}}
+
+\setcounter{page}{1}
+
+% =========================================================================
+
+\begin{document}
+
+\chapter*{Appendix B.\enspace Manual for Functions and Datasets\newline in the R-Package `wrv'}
+
+{\setlength{\parindent}{0cm}
+This vignette is a reference manual for functions and datasets in the \textbf{wrv} package (version \Sexpr{packageVersion("wrv")}).
+A short description and \R{} usage information (such as examples of how to use a function) are given for all functions and datasets.
+Dataset documentation include sections describing the format of a dataset (such as a vector or matrix) and details on the original or secondary data source.
+Functions and datasets are named according to the following conventions.
+The form for function names is no separator between words and initial capital letters (such as \code{AddScaleBar});
+dataset names have words separated with dots and all lower case letters (such as \code{alluvium.extent}).
+}
+
+\vspace{10 mm}
+
+\Rdcontents{\Large\bfseries\sffamily Contents}
+
+\clearpage
+
+% =========================================================================
+
+% Create Rd2.tex from the command line:
+%   R CMD Rd2pdf --no-clean --force "./wrv"
+
+<<echo=FALSE>>=
+f <- "Rd2.tex"
+p <- ifelse(file.exists(f), f, system.file("misc", f, package="wrv"))
+n <- match("\\Rdcontents{\\R{} topics documented:}", readLines(p))
+rm.idxs <- -seq_len(n)
+@
+\Sexpr{paste(readLines(p)[rm.idxs], collapse="\n")}
+
+\end{document}

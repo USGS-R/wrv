@@ -1,0 +1,1057 @@
+% \VignetteIndexEntry{Appendix G. Incidental Groundwater Recharge and Pumping Demand}
+% \VignetteEngine{knitr::knitr}
+% \VignetteDepends{wrv}
+
+\documentclass[twoside]{article}
+
+\input{\Sexpr{shQuote(system.file("misc", "preamble.tex", package="wrv"))}}
+\addbibresource{\Sexpr{system.file("misc", "references.bib", package="wrv")}}
+
+\renewcommand{\thefigure}{G\arabic{figure}}
+\renewcommand{\thetable}{G\arabic{table}}
+\renewcommand{\thepage}{G\arabic{page}}
+
+\setcounter{page}{1}
+
+% =========================================================================
+
+\begin{document}
+
+<<setup, include=FALSE>>=
+t0 <- Sys.time()
+try(knitr::opts_chunk$set(tidy=FALSE, comment="#", fig.align="center"), silent=TRUE)
+grDevices::pdf.options(useDingbats=FALSE)
+options(preferRaster=TRUE, scipen=0, digits=2)
+library(wrv)
+loadNamespace("xtable")
+
+# Device dimension in inches (width, height)
+fin.graph         <- c(7.16, 7.16)
+fin.graph.short   <- c(7.16, 3.50)
+fin.map           <- c(7.01, 9.32)
+fin.map.0         <- c(7.01, 8.65)
+fin.map.s         <- c(7.16, 5.31)
+fin.map.s.0       <- c(7.16, 4.64)
+fin.map.n         <- c(7.16, 7.00)
+fin.map.n.small   <- c(3.50, 3.83)
+fin.map.n.small.0 <- c(3.50, 3.16)
+fin.cs            <- c(7.16, 5.39)
+fin.cs.0          <- c(7.16, 4.73)
+
+# Extreme coordinates of plotting region (x1, x2, y1, y2)
+usr.map     <- c(2451504, 2497815, 1342484, 1402354)
+usr.map.s   <- c(2472304, 2497015, 1343284, 1358838)
+usr.map.n.1 <- c(2463000, 2475356, 1386500, 1398856)
+usr.map.n.2 <- c(2467500, 2479856, 1376500, 1388856)
+usr.map.n.3 <- c(2466696, 2479052, 1366501, 1378857)
+usr.map.n.4 <- c(2471500, 2483856, 1356482, 1368838)
+
+# Unit conversions
+m.to.km <- 0.001
+m.to.mi <- 0.000621371
+
+# Map credit
+credit <- paste("Base derived from U.S. Geological Survey National Elevation Dataset 10-meter digital elevation model.",
+                "Idaho Transverse Mercator projection; North American Datum of 1983.", sep="\n")
+@
+
+\title{Appendix G.\enspace Incidental Groundwater Recharge and Pumping Demand in the Wood River Valley Aquifer System, South-Central Idaho\vspace{2ex}}
+\author{}
+\date{}
+\pretitle{\begin{flushleft}\LARGE\bfseries\sffamily}
+\posttitle{\end{flushleft}}
+\maketitle
+
+\tableofcontents
+
+\renewcommand*\listfigurename{Figures}
+\listoffigures
+
+\renewcommand*\listtablename{Tables}
+\listoftables
+
+\clearpage
+
+% =========================================================================
+
+\section{Introduction}
+
+In the Wood River Valley (WRV), irrigation is required for successful cultivation of agriculture crops and landscape maintenance.
+Irrigation water is diverted from surface water and groundwater.
+Diverted water that is not consumed by evapotranspiration (ET) either infiltrates the subsurface (as deep percolation) and recharges the aquifer at the water table, or is returned to rivers or streams.
+Sources of groundwater recharge include canal seepage, municipal delivery system leakage, and infiltration of excess irrigation water.
+Sources of surface-water returns to rivers and creeks include canal conveyance and municipal wastewater treatment plant discharge.
+
+For this study, land use is classified as `irrigated' agricultural land, `semi-irrigated', or `non-irrigated'.
+Semi-irrigated lands include non-agricultural developed lands in urban and suburban areas, irrigated landscaping, parks, and golf courses; as well as impervious areas such as roads, driveways, and buildings.
+Evaporation from aesthetic ponds in semi-irrigated areas is included in the water consumed by ET.
+
+Historically, a limited number of groundwater diversions have been measured and recorded by water districts or municipalities in the study area.
+Groundwater is diverted from the WRV aquifer system by means of either pumping wells or flowing-artesian wells.
+The majority of groundwater diversions in the WRV were not recorded prior to 2013, starting in 2013 the Idaho Department of Water Resources (IDWR) began requiring most non-domestic groundwater users in the valley to install measuring devices \citep{IDWR2011}.
+
+The purpose of this document is to describe the water-balance model used to calculate estimates of (1) incidental recharge associated with water delivery and irrigation on irrigated and semi-irrigated lands,
+and (2) pumping rates associated with missing groundwater diversion records during the model simulation period (1995--2010).
+Incidental recharge is defined as the groundwater recharge (infiltration) that occurs as a result of human activities unrelated to a recharge project.
+
+% =========================================================================
+
+\section{Field Measurements}
+
+\subsection{Diversions}
+
+Diversions are defined as the use of water for something other than its natural fate.
+In the WRV the primary uses of water are agricultural irrigation, municipal and domestic irrigation, in home use, and commercial use.
+Water District 37 oversees water distribution within the Big Wood River basin.
+And Water District 37M oversees water distribution within the Silver Creek and Little Wood River basin.
+In 2014, Water District 37M was combined with Water District 37\footnotemark.
+
+\footnotetext{
+More information on water districts in Idaho is available at \url{http://idwr.idaho.gov/water-rights/water-districts/}.
+}
+
+\subsubsection{Surface-water diversions}
+
+Available surface-water diversion datasets are as follows:
+
+\begin{itemize}
+  \item Surface-water diversions from the Big Wood River, Silver Creek, and a few of the tributary streams have been recorded daily by Water District 37 and 37M since 1920.
+        Data are available for April through September.
+        Although the irrigation season extends through October 31, these Water Districts do not record diversions that occur after September 30.
+  \item Monthly diversions of treated effluent from the Bellevue wastewater treatment plant to a land application site adjacent to the plant were available from the Idaho Department of Environmental Quality (IDEQ) for 1999 through 2012.
+\end{itemize}
+
+\subsubsection{Groundwater diversions}
+
+Available groundwater diversion datasets are as follows:
+
+\begin{itemize}
+  \item Groundwater diversions recorded by Water District 37 or 37M are available for all or part of the 16-year simulation (1995--2010).
+        These groundwater diversions are regulated by the Water District because they are delivered through natural channels,
+        or are mitigated by surface-water rights and regulated in conjunction with surface-water priority cuts (that is a restriction of surface-water rights) on the Big Wood River or Silver Creek.
+        Some diversions were recorded daily, others were recorded as total irrigation season use.
+  \item Groundwater diversions for the Sun Valley Company's River Run snowmaking system are available from \citet{Brockway2013}.
+        This memorandum provides total winter season diversion volumes from 1991 through 2012.
+  \item Monthly groundwater diversions recorded by the City of Hailey municipal water system are available for the simulation period.
+  \item Monthly groundwater diversions, recorded by the Sun Valley Water and Sewer District (SVWSD) and the City of Ketchum municipal water systems, are available for the simulation period.
+  \item Monthly groundwater diversions, recorded by the City of Bellevue municipal water system, are available for the 2006--2013 period.
+  \item Surface-water priority cut dates during the simulation period are available from Water District 37 and 37M.
+        IDWR compiled the priority cut date at the end of each month.
+        The surface-water priority cut dates are useful for determining when supplemental groundwater was needed to irrigate mixed source lands; that is, land irrigated from surface-water and groundwater diversions.
+\end{itemize}
+
+\subsection{Surface-Water Return Flow}
+
+Only a portion of water diverted by a canal company or municipal water system is consumed by evapotranspiration.
+While much of the unconsumed water recharges the aquifer through infiltration, some of the unconsumed water may be discharged directly to a river or creek as surface return flow.
+Available surface-water return flow datasets are as follows:
+
+\begin{itemize}
+  \item Water District 37 recorded surface-water discharge from the District canal system to the Loving Creek area.
+        In recent years (2007--2012), Water District 37 began recording returns to the Big Wood River from canals that primarily deliver water for aesthetic, non-consumptive uses, such as the Gimlet and Rinker systems.
+        The O Drain returns tailwater from the Iden Canal to Silver Creek downstream of the model boundary and is not measured.
+        Other unmeasured surface-water returns from irrigation canals are thought to be negligible in the study area (Kevin Lakey, Watermaster Water District 37, oral commun., August 27, 2013).
+  \item Records of municipal wastewater treatment plant discharge are available for various years (1995--2012 for Ketchum and Sun Valley, 1996--2012 for Hailey, 1999--2012 for Bellevue, and 2000--2012 for The Meadows).
+        Treated effluent from Ketchum and Sun Valley, Hailey, and The Meadows is returned to the Big Wood River.
+        The City of Ketchum and SVWSD have separate public water systems, but are served by a common wastewater treatment plant.
+        For purposes of calculating return flow from each water system, 51 percent of the recorded wastewater treatment plant discharge was apportioned to Ketchum and 49 percent was apportioned to SVWSD based on the average volume of diversions for each public water system during the non-irrigation season (November--March).
+        The Ketchum/Sun Valley Wastewater Treatment Plant is currently permitted to provide up to 11,735 cubic meters per day (3.1 million gallons per day) of recycled water for irrigation and snowmaking \citep{Ketchum2013};
+        however, reuse did not occur during the simulation period.
+        The City of Bellevue's wastewater treatment plant was constructed in 1992 about 6.4-kilometers (4-miles) south of the city \citep{Furber2004}.
+        Treated effluent from Bellevue is applied to fields adjacent to the treatment plant during the irrigation season and is discharged to infiltration ponds during the winter.
+        Effluent discharge during periods of missing data (1995 for Hailey, 1995--1998 for Bellevue, and 1995--1999 for The Meadows) was assumed to be similar to the first year for which data were available.
+  \item SVWSD diversions include water delivered to Dollar Mountain for snowmaking.
+        Most of this water is assumed to return to Trail Creek as snowmelt in the spring.
+        The water use is not consumptive, but the water does not infiltrate directly into the aquifer.
+        Records of monthly deliveries to Dollar Mountain for snowmaking were provided by the SVWSD from 1995 through 2010.
+  \item Monthly diversions of spring water recorded by the City of Hailey (1995--2010) and the City of Bellevue (2006--2010).
+\end{itemize}
+
+\subsection{Canal Seepage}
+
+The majority of canals in the WRV are completed as earthen ditches; therefore, losses to canal seepage must be accounted for in the analysis.
+Available canal seepage datasets are as follows:
+
+\begin{itemize}
+  \item Spatial delineation of canals in the model area is available from the U.S. Geological Survey (USGS) National Hydrography Dataset (NHD) and from IDWR's update of the NHD in the Big Wood River area.
+        IDWR geographic information system (GIS) analysts used 2009 U.S. Department of Agriculture (USDA) National Agriculture Imagery Program (NAIP) imagery, historical maps, and input from Water District 37 to update the spatial delineation of canals in the model area.
+  \item \citet{Brockway1978} measured canal losses in reaches of the District, Bypass, Baseline, Glendale, and Iden canals in 1975 and 1976.
+        Measured reaches ranged from 0.8 kilometers (km) (0.5 miles [mi]) to 5.5 km (3.4 mi) in length.
+        Measured losses ranged from 1 percent of flow per mile to 35 percent of flow per mile.
+        These measurements only include some sections of canals and are not sufficient to quantify seepage losses throughout the canal systems;
+        furthermore, they suggest relatively high losses in the District, Baseline, and Iden canals, and relatively low losses in the Glendale canal.
+  \item \citet{Bartolino2009} estimated canal seepage loss as 12 percent of total flow for the Hiawatha, Cove, District, and Bannon canals.
+        This estimate was based on the average of measurements reported by \citet{Brockway1978} for selected reaches of the District Canal.
+        \citet{Bartolino2009} also estimated canal seepage loss as 7 percent and 1 percent of total flow in the Baseline and Glendale canals, respectively.
+        This estimate was based on \citet{Brockway1978} measurements of a 0.8-km (0.5-mi) reach of each these canals.
+        Because large portions of the canal systems were not measured, direct application of the \citet{Brockway1978} measurements may underestimate canal losses.
+  \item \citet{Merritt1997} documented a May 29, 1997 conversation with Jim Eakin, Wood River Valley Irrigation District number 45 manager, regarding canal losses in the District canal system.
+        Mr. Eakin indicated that the irrigation district assigns a 15 percent loss in the 2.3 km (1.4 mi) section between the headgate and where the main canal splits into three branches.
+        When the 1886 rights are being delivered, the district assigns an additional 5 percent loss per mile downstream of the split.
+        When the 1886 rights are out of priority, the district cuts the amount being delivered to the field headgate by an additional 50 percent.
+        For example, a water right delivered by the district to a point 6.4 km (4 mi) downstream of the split would be assigned a conveyance loss of 35 percent when the 1886 rights are being delivered and 67.5 percent when the 1886 rights are out of priority.
+        The three branches of the canal system extend 8.0 to 14.5 km (5 to 9 mi) downstream of the split.
+        The centroid of the 2006 irrigated lands in the district service area is located about 6.4 km (4 mi) downstream of the split.
+  \item The IDWR calculated conveyance loss in the Hiawatha Canal using the Worstell method to evaluate canal loss mitigation requirements for a water right transfer (Allen Merritt, Idaho Department of Water Resources, written commun., April 2008).
+        The total seepage loss calculated for the canal was 25 percent of the diverted flow rate.
+  \item In April 2008, Allen Merritt, P.E., IDWR, calculated conveyance loss in the Hiawatha Canal using the Worstell method to evaluate canal loss mitigation requirements for a water right transfer.
+        The total seepage loss calculated for the canal was 25 percent of the diverted flow rate.
+  \item On August 28, 2012, the USGS \citep{Bartolino2014} measured flow in the Bypass Canal at
+        the point of diversion (127,221 cubic meters per day [m\textsuperscript{3}/d] or 52.0 cubic-feet per second [cfs]),
+        at Alpine Kennels (107,649 m\textsuperscript{3}/d or 44.0 cfs), and
+        above the Bypass extension (86,853 m\textsuperscript{3}/d or 35.5 cfs).
+        There are no diversions from the Bypass Canal between the canal heading (that is the upper end of the canal system) and Alpine Kennels.
+        The Baseline Canal and Dittoe Ditch divert from the Bypass Canal between Alpine Kennels and the Bypass extension (Kevin Lakey, Watermaster Water District 37, written commun., October 22, 2014).
+        Water District 37 records available for August 28, 2012 indicate that 17,126 m\textsuperscript{3}/d (7 cfs) was diverted from the Bypass Canal between Alpine Kennels and the Bypass extension.
+        Therefore, canal seepage on the Bypass Canal was 19,573 m\textsuperscript{3}/d (8 cfs) in the 4.2-km (2.6-mi) reach upstream of Alpine Kennels and 3,670 m\textsuperscript{3}/d (1.5 cfs) in the 1.1-km (0.7-mi) reach downstream of Alpine Kennels.
+        The USGS \citep{Bartolino2014} also measured flow in the Bypass Canal on October 23, 2014.
+        Canal seepage was 126,912 m\textsuperscript{3}/d (11 cfs) in the 4.2-km (2.6-mi) reach above Alpine Kennels.
+        Canal seepage cannot be determined for the 1.1-km (0.7-mi) reach downstream of Alpine Kennels because the Water District does not monitor diversions during October.
+\end{itemize}
+
+\subsection{Crop Irrigation Requirement}
+
+Precipitation in the WRV is not sufficient to meet the water demand of agricultural crops.
+Therefore, irrigation is required when crop water demand exceeds the supply of water from soil water and precipitation.
+The crop irrigation requirement (CIR) is defined as the difference between ET and precipitation (appendix F).
+The precipitation on irrigated lands is assumed to be used to satisfy the crop water demand; and any shortfall is provided by irrigation.
+Available crop irrigation requirement datasets are as follows:
+
+\begin{itemize}
+  \item METRIC (Mapping EvapoTranspiration at High Resolution and Internalized Calibration) computed monthly ET data were available for April through October of 1996, 2000, 2002, 2006, 2008, 2009, and 2010.
+        These data consist of 30-meter (m) by 30-m (90-feet [ft] by 90-ft) raster images of the monthly ET depth.
+  \item Monthly ET data based on the Normalized Difference Vegetation Index (NDVI) and interpolation are available for the nine years in the simulation period when METRIC ET data were not available.
+        These datasets also consist of 30-m by 30-m raster images of monthly ET depth.
+  \item Precipitation data are available at Ketchum and Picabo during the 16-year simulation (1995--2010), and at Hailey for 2005 through 2010.
+        Precipitation at Hailey was estimated for 1995 through 2004 by correlation with precipitation data recorded at Picabo.
+\end{itemize}
+
+\subsection{Irrigated Lands and Water Sources}
+
+The source of irrigation water can either be `groundwater', `surface water' or `mixed' (that is, both surface water and groundwater).
+Surface water is diverted from the Big Wood River, Silver Creek, tributary streams, or springs.
+Groundwater is diverted from the WRV aquifer system.
+Available irrigated lands and water source datasets are as follows:
+
+\begin{itemize}
+  \item Spatial delineation of irrigated, semi-irrigated, and non-irrigated lands is available for 1996, 2000, 2002, 2006, 2008, 2009, and 2010 calendar years.
+        The spatial delineation was performed by IDWR GIS analysts who reviewed and refined USDA Common Land Unit (CLU) polygons using high resolution imagery available from the USDA NAIP and USGS Digital Orthophoto Quadrangles (DOQ).
+        IDWR GIS analysts classified the irrigation status of CLU polygons for each year by reviewing Landsat imagery from multiple dates throughout the growing season.
+  \item Water right place of use data from the IDWR water permit, water right, and adjudication recommendation databases were available to classify the water source for irrigated and semi-irrigated lands as `surface-water only', `groundwater only', or `mixed source'.
+\end{itemize}
+
+% =========================================================================
+
+\section{Groundwater Recharge from Canal Seepage}
+
+Canal seepage is represented as a percentage of the total water diverted to the canal headgate (\hyperref[table_canal_seep]{table~\ref{table_canal_seep}})
+that infiltrates the canal bed and banks and recharges the WRV aquifer system.
+The canal seepage rate is uniformly distributed along the length of the canal system (\hyperref[fig:map_canals_full]{figs.~\ref{fig:map_canals_full}} and \ref{fig:map_canals}).
+Large seepage losses (60 percent) are assigned to the District and Baseline/Bypass canal systems based on \citet{Brockway1978} and \citet{Merritt1997}.
+A seepage loss of 25 percent is assigned to the Kilpatrick/Iden canal system, which is located in lower permeability soils than the District and Baseline/Bypass systems (see appendix F, figs. F8 and F9).
+A seepage loss of 25 percent is assigned to the Hiawatha canal system based on the analysis performed by Merritt (oral commun., 2008).
+All other canals in the study area have shorter distribution systems and are assigned a seepage loss of 10 percent.
+
+<<table_canal_seep, echo=FALSE, results="asis">>=
+d <- data.frame(canals@data, length=SpatialLinesLengths(canals))
+d <- aggregate(d$length, by=list(d$EntityName), sum)
+names(d) <- c("EntityName", "length")
+d$id <- seq_len(nrow(d))
+d$length_km <- d$length * m.to.km
+d$length_mi <- d$length * m.to.mi
+d$length <- NULL
+d <- merge(d, canal.seep)
+d$SeepFrac <- d$SeepFrac * 100
+columns <- c("Name",
+             "Canal \\\\ No.",
+             "Total length \\\\ (km)",
+             "Total length \\\\ (mi)",
+             "Percent \\\\ seepage loss")
+colnames(d) <- sprintf("\\textbf{\\shortstack{%s}}", columns)
+cap1 <- "Summary description of canal system attributes."
+cap2 <- c("\\textbf{Canal No.}: is an identifier used to locate the canal system on the map in \\hyperref[fig:map_canals]{figure~\\ref{fig:map_canals}}.",
+          "\\textbf{Total length}: is the length of the canal system.",
+          "\\textbf{Percent seepage loss}: is the percentage of water diverted to the canal headgate that infiltrates the canal bed and banks and recharges the aquifer system.",
+          "\\textbf{Abbreviations}: km, kilometer; mi, mile")
+tbl <- xtable::xtable(d, label="table_canal_seep")
+xtable::caption(tbl) <- c(sprintf("%s [%s]", cap1, paste(cap2, collapse=" ")), cap1)
+xtable::digits(tbl) <- c(0, 0, 0, 1, 1, 0)
+print(tbl, include.rownames=FALSE, caption.placement="top", booktabs=TRUE,
+      format.args=list(big.mark=","), sanitize.colnames.function=function(x){x},
+      size="\\small")
+@
+
+<<include=FALSE>>=
+v <- "Canals in the Wood River Valley, Idaho."
+v <- c(paste("Map showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(v)))), v)
+@
+
+<<map_canals_full, echo=FALSE, fig.width=fin.map.0[1], fig.height=fin.map.0[2], fig.scap=sprintf("{%s}", v[1]), fig.cap=sprintf("{%s}", v[2])>>=
+PlotMap(crs(hill.shading), xlim=usr.map[1:2], ylim=usr.map[3:4],
+        bg.image=hill.shading, bg.image.alpha=0.6, dms.tick=TRUE,
+        rivers=list(x=streams.rivers), lakes=list(x=lakes), credit=credit)
+cols <- c("#33333366", "#FBB829", "#000000")
+plot(alluvium.extent, border="#FFFFFFCC", col=cols[1], add=TRUE)
+lines(canals, col=cols[2])
+plot(extent(usr.map.n.1), add=TRUE)
+plot(extent(usr.map.n.2), add=TRUE)
+plot(extent(usr.map.n.3), add=TRUE)
+plot(extent(usr.map.n.4), add=TRUE)
+plot(extent(usr.map.s),   add=TRUE)
+x <- c(usr.map.n.1[2], usr.map.n.2[2], usr.map.n.3[2], usr.map.n.4[2], usr.map.s[2])
+y <- c(usr.map.n.1[4], usr.map.n.2[4], usr.map.n.3[4], usr.map.n.4[4], usr.map.s[4])
+text(x, y, LETTERS[seq_along(x)], adj=c(1.4, 1.4), cex=0.6, lwd=0.75, font=4)
+plot(cities, pch=15, cex=0.8, col="#333333", add=TRUE)
+text(cities, labels=cities@data$FEATURE_NA, col="#333333", cex=0.5, pos=1, offset=0.4)
+leg <- c("Aquifer extent", "Canal", "Inset areas, fig. G2.")
+legend("topleft", leg, pch=c(22, NA, 22), lwd=c(NA, 1, NA), col=cols,
+       pt.bg=c(cols[1], NA, NA), pt.cex=1.5, inset=0.02, cex=0.7, box.lty=1,
+       box.lwd=0.5, bg="#FFFFFFE7")
+AddInsetMap(idaho, width=1, main.label=list("IDAHO", adj=c(-0.4, -4.9)),
+            sub.label=list("Map area", adj=c(0.5, 2.5)), loc="topright")
+invisible(dev.off())
+@
+
+<<echo=FALSE>>=
+Pal <- function(...) {
+  cols1 <- rainbow(..., s=0.5, v=1)
+  cols2 <- rainbow(..., s=1, v=0.5)
+  is.even <- seq_along(cols1) %% 2 == 0
+  cols1[is.even] <- cols2[is.even]
+  return(cols1)
+}
+@
+
+<<echo=FALSE>>=
+cols <- Pal(max(levels(r.canals)[[1]]$ID))
+FUN <- function(usr, credit=NULL, pos=1, max.dev.dim=c(43, 56)) {
+  r <- ratify(crop(deratify(r.canals, att="ID"), extent(usr), snap="out"))
+  PlotMap(r, att="ID", xlim=usr[1:2], ylim=usr[3:4], bg.image=hill.shading,
+          bg.image.alpha=0.6, dms.tick=TRUE, max.dev.dim=max.dev.dim,
+          credit=credit, rivers=list(x=streams.rivers), lakes=list(x=lakes),
+          col=cols[as.integer(levels(r)[[1]][, 1])], draw.key=FALSE)
+  if (nrow(levels(r)[[1]]) > 0) {
+    poly <- rasterToPolygons(r, dissolve=TRUE)
+    xy <- suppressWarnings(getSpatialPolygonsLabelPoints(poly))
+    text(xy, labels=poly@data[, 1], col="#333333", cex=0.6, pos=4, offset=0.4)
+  }
+  plot(cities, pch=15, cex=0.8, col="#333333", add=TRUE)
+  text(cities, labels=cities@data$FEATURE_NA, col="#333333", cex=0.5, pos=pos, offset=0.4)
+  if (length(ids <- as.integer(levels(r)[[1]]$ID)) > 0)
+    legend("topright", as.character(ids), fill=cols[ids], border=NA, inset=0.02,
+           cex=0.7, box.lty=1, box.lwd=0.5, xpd=NA, bg="#FFFFFFE7",
+           title=expression(bold("Canal")))
+}
+@
+
+\begin{figure}
+  \begin{subfigure}{0.5\textwidth}
+    \caption{North of Ketchum \label{fig:map_canals_a}}
+    <<map_canals_a, echo=FALSE, results="asis", fig.width=fin.map.n.small.0[1], fig.height=fin.map.n.small.0[2]>>=
+    FUN(usr.map.n.1, pos=3, max.dev.dim=c(21, 56))
+    @
+  \end{subfigure}%
+  \begin{subfigure}{0.5\textwidth}
+    \caption{South of Ketchum and north of Gimlet \label{fig:map_canals_b}}
+    <<map_canals_b, echo=FALSE, results="asis", fig.width=fin.map.n.small.0[1], fig.height=fin.map.n.small.0[2]>>=
+    FUN(usr.map.n.2, pos=3, max.dev.dim=c(21, 56))
+    @
+  \end{subfigure}
+
+  \vspace{0.5cm}%
+
+  \begin{subfigure}{0.5\textwidth}
+    \caption{South of Gimlet and north of Hailey \label{fig:map_canals_c}}
+    <<map_canals_c, echo=FALSE, results="asis", fig.width=fin.map.n.small.0[1], fig.height=fin.map.n.small.0[2]>>=
+    FUN(usr.map.n.3, max.dev.dim=c(21, 56))
+    @
+  \end{subfigure}%
+  \begin{subfigure}{0.5\textwidth}
+    \caption{South of Hailey and north of Bellevue \label{fig:map_canals_d}}
+    <<map_canals_d, echo=FALSE, results="asis", fig.width=fin.map.n.small.0[1], fig.height=fin.map.n.small.0[2]>>=
+    FUN(usr.map.n.4, pos=3, max.dev.dim=c(21, 56))
+    invisible(dev.off())
+    @
+  \end{subfigure}
+  <<include=FALSE>>=
+  v <- "Canal systems mapped to the model grid (\\textit{\\textbf{A}}) north of Ketchum, (\\textit{\\textbf{B}}) south of Ketchum and north of Gimlet, (\\textit{\\textbf{C}}) south of Gimlet and north of Hailey, (\\textit{\\textbf{D}}) south of Hailey and north of Bellevue, and (\\textit{\\textbf{E}}) south of Bellevue. \\label{fig:map_canals}"
+  v <- c(paste("Maps showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(v)))), v)
+  @
+  \caption[{\Sexpr{v[1]}}]{{\Sexpr{v[2]}}}
+\end{figure}
+
+\captionsetup[figure]{list=no}
+\begin{figure}
+  \ContinuedFloat
+  \begin{subfigure}{\textwidth}
+    \caption{South of Bellevue \label{fig:map_canals_e}}
+    <<map_canals_e, echo=FALSE, results="asis", fig.width=fin.map.s.0[1], fig.height=fin.map.s.0[2]>>=
+    FUN(usr.map.s, credit)
+    invisible(dev.off())
+    @
+  \end{subfigure}
+  \caption{---Continued}
+\end{figure}
+\captionsetup[figure]{list=yes}
+
+\subsection{Bypass Canal Seepage}
+
+Constructed in 1920, the Bypass Canal diverts surface water from the Big Wood River at a location near the Glendale Road (\hyperref[fig:map_bypass_wwtp]{fig.~\ref{fig:map_bypass_wwtp}}).
+The Bypass Canal was designed to (1) reduce seepage losses in the Big Wood River and improve delivery of water to the lower valley \citep{Chapman1921}.
+Water in the Bypass Canal is intended for irrigation and is delivered to the Baseline Canal, Dittoe Ditch, and Bypass Extension Canal.
+A fraction of the Bypass Canal water is returned to the Big Wood River in the vicinity of Wood River Ranch.
+The Bypass Canal begins carrying water in April or May.
+From late in the irrigation season until early November the entire flow of the Big Wood River is routed through the Bypass Canal.
+The water delivered to irrigation diversions is measured and recorded by Water District 37 from April through September---water deliveries that occurred after September were not measured.
+Water returned to the Big Wood River is also not measured by the Water District (Kevin Lakey, Watermaster, oral commun., October 22, 2014).
+
+Because the volume of water in the Bypass Canal is unknown, seepage from the Bypass Canal is represented differently than seepage from the other canals.
+A constant seepage rate of 24,466 m\textsuperscript{3}/d (10 cfs) is applied to the 5.3-km (3.3-mi) reach of the Bypass Canal between the canal heading and the Bypass Extension.
+This seepage rate is based on seepage measurements observed by the USGS in August and October 2012 \citep{Bartolino2014} and is uniformly distributed along its length.
+Seepage is represented in the model from the time of the first recorded diversion to the Bypass Canal, Dittoe Ditch, or Bypass Extension, through the end of October.
+
+\subsection{Infiltration Beneath Bellevue Waste Water Treatment Plant Ponds}
+
+Water applied to infiltration basins at the City of Bellevue wastewater treatment plant is uniformly distributed over the model cells intersected by the ponds (\hyperref[fig:map_bypass_wwtp]{fig.~\ref{fig:map_bypass_wwtp}}).
+Recorded monthly volumes of water delivered to these infiltration basins are available from 1999 through 2010.
+The monthly volumes from 1999 were used as a proxy for unknown 1995 through 1998 monthly volumes.
+
+<<include=FALSE>>=
+v <- "The Bypass Canal and City of Bellevue wastewater treatment plant ponds mapped to the model grid."
+v <- c(paste("Map showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(v)))), v)
+@
+
+<<map_bypass_wwtp, echo=FALSE, fig.width=fin.map.s.0[1], fig.height=fin.map.s.0[2], fig.scap=sprintf("{%s}", v[1]), fig.cap=sprintf("{%s}", v[2])>>=
+r <- raster(alluvium.thickness)
+r[!is.na(rasterize(bypass.canal, r)[])] <- 1L
+r[rasterize(bellevue.wwtp.ponds, r, getCover = TRUE) > 0] <- 2L
+r <- ratify(r)
+d <- data.frame(RechSite = c("Bypass Canal", "Bellevue WWTP Ponds"))
+levels(r) <- cbind(levels(r)[[1]], d)
+cols <- c("#FAB236", "#F02311")
+PlotMap(r, att="RechSite", xlim=usr.map.s[1:2], ylim=usr.map.s[3:4],
+        bg.image=hill.shading, bg.image.alpha=0.6, dms.tick=TRUE, col=cols,
+        roads=list(x=major.roads), rivers=list(x=streams.rivers),
+        lakes=list(x=lakes), draw.key=FALSE, credit=credit)
+plot(alluvium.extent, border="#FFFFFF7F", add=TRUE)
+plot(cities, pch=15, cex=0.8, col="#333333", add=TRUE)
+text(cities, labels=cities@data$FEATURE_NA, col="#333333", cex=0.5, pos=1, offset=0.4)
+lab <- cbind(map.labels@coords, map.labels@data)
+for (i in seq_len(nrow(lab))) {
+  text(lab$x[i], lab$y[i], labels=lab$label[i], cex=lab$cex[i], col=lab$col[i],
+       font=lab$font[i], srt=lab$srt[i])
+}
+text(getSpatialLinesMidPoints(rgeos::gLineMerge(bypass.canal)), labels="Bypass Canal",
+     cex=0.5, col="#333333", srt=80, font=1, pos=4)
+text(suppressWarnings(getSpatialPolygonsLabelPoints(bellevue.wwtp.ponds)),
+     labels="Bellevue WWTP Ponds", cex=0.5, col="#333333", font=1, pos=2)
+legend("topright", as.character(levels(r)[[1]]$RechSite), fill=cols,
+       border=NA, inset=0.02, cex=0.7, box.lty=1, box.lwd=0.5, xpd=NA, bg="#FFFFFFE7")
+invisible(dev.off())
+@
+
+% =========================================================================
+
+\section{Excess Irrigation Water}
+
+Aquifer recharge from infiltration of excess water applied to fields and landscaping is spatially distributed over areas delineated as `irrigated' or `semi-irrigated'.
+Land use classification maps of irrigated lands are available for calendar years 1996, 2000, 2002, 2006, and 2008 through 2010 (\hyperref[fig:map_land_use]{fig.~\ref{fig:map_land_use}}).
+The proxy for calendar years with missing maps (1995, 1997--1999, 2001, 2003--2005, 2007) is the land use classification map for the nearest calendar year
+where land use was available (\hyperref[table_irr_lands_year]{table~\ref{table_irr_lands_year}}).
+Areas designated as wetlands by the U.S. Fish and Wildlife Service National Wetlands Inventory \citep{Cowardin1979} (\hyperref[fig:map_wetlands_parcels]{fig.~\ref{fig:map_wetlands_parcels}})
+are assumed constant over time and re-classified as `non-irrigated' areas.
+Some of the non-irrigated public lands north of Bellevue were inadvertently designated as `semi-irrigated' areas.
+These public lands are delineated by tax lots owned by the U.S. Forest Service or U.S. Bureau of Land Management (\hyperref[fig:map_wetlands_parcels]{fig.~\ref{fig:map_wetlands_parcels}}),
+and re-classified as `non-irrigated' areas.
+
+<<table_irr_lands_year, echo=FALSE, results="asis">>=
+d <- irr.lands.year
+d[d[, 1] == d[, 2], 2] <- NA
+d <- data.frame(d[1:8, ], d[9:16, ])
+columns <- rep(c("Year", "Proxy year"), 2)
+colnames(d) <- sprintf("\\textbf{\\shortstack{%s}}", columns)
+cap1 <- "Applied land use classification maps of irrigated lands during the model simulation period (1995--2010)."
+cap2 <- "\\textbf{Abbreviations}: NA, not applicable"
+tbl <- xtable::xtable(d, label="table_irr_lands_year")
+xtable::caption(tbl) <- c(sprintf("%s [%s]", cap1, paste(cap2, collapse=" ")), cap1)
+xtable::digits(tbl) <- 0
+xtable::align(tbl) <- "lcc|cc"
+print(tbl, include.rownames=FALSE, caption.placement="top", booktabs=TRUE,
+      format.args=list(big.mark=","), sanitize.colnames.function=function(x){x},
+      size="\\small", NA.string="NA")
+@
+
+<<echo=FALSE>>=
+FUN <- function(i) {
+  PlotMap(crs(hill.shading), xlim=usr.map[1:2], ylim=usr.map[3:4], bg.image=hill.shading,
+          bg.image.alpha=0.6, dms.tick=TRUE, rivers=list(x=streams.rivers), lakes=list(x=lakes), credit=credit)
+  plot(alluvium.extent, border="#FFFFFFCC", add=TRUE)
+  cols <- c("#90AB76", "#AF8DC3")
+  is.irr <- irr.lands[[i]]@data$Status == "irrigated"
+  plot(irr.lands[[i]][ is.irr, ], col=cols[1], border=NA, add=TRUE)
+  plot(irr.lands[[i]][!is.irr, ], col=cols[2], border=NA, add=TRUE)
+  plot(cities, pch=15, cex=0.8, col="#333333", add=TRUE)
+  text(cities, labels=cities@data$FEATURE_NA, col="#333333", cex=0.5, pos=1, offset=0.4)
+  legend("topright", c("Irrigated", "Semi-irrigated"), fill=cols,
+         border=NA, inset=0.02, cex=0.7, box.lty=1, box.lwd=0.5, xpd=NA, bg="#FFFFFFE7")
+  box(lwd=0.5)
+}
+@
+
+\begin{figure}
+  \begin{subfigure}{\textwidth}
+    \caption{1996 \label{fig:map_land_use_a}}
+    <<map_land_use_a, echo=FALSE, results="asis", fig.width=fin.map.0[1], fig.height=fin.map.0[2]>>=
+    FUN("1996")
+    @
+  \end{subfigure}
+  <<include=FALSE>>=
+  v <- "Land use classification maps of irrigated lands during the (\\textit{\\textbf{A}}) 1996, (\\textit{\\textbf{B}}) 2000, (\\textit{\\textbf{C}}) 2002, (\\textit{\\textbf{D}}) 2006, and (\\textit{\\textbf{E}}) 2008, (\\textit{\\textbf{F}}) 2009, and (\\textit{\\textbf{G}}) 2010 growing seasons, Wood River Valley and surrounding areas, Idaho. \\label{fig:map_land_use}"
+  v <- c(paste("Maps showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(v)))), v)
+  @
+  \caption[{\Sexpr{v[1]}}]{{\Sexpr{v[2]}}}
+\end{figure}
+
+\captionsetup[figure]{list=no}
+\begin{figure}
+  \ContinuedFloat
+  \begin{subfigure}{\textwidth}
+    \caption{2000 \label{fig:map_land_use_b}}
+    <<map_land_use_b, echo=FALSE, results="asis", fig.width=fin.map.0[1], fig.height=fin.map.0[2]>>=
+    FUN("2000")
+    @
+  \end{subfigure}
+  \caption{---Continued}
+\end{figure}
+
+\begin{figure}
+  \ContinuedFloat
+  \begin{subfigure}{\textwidth}
+    \caption{2002 \label{fig:map_land_use_c}}
+    <<map_land_use_c, echo=FALSE, results="asis", fig.width=fin.map.0[1], fig.height=fin.map.0[2]>>=
+    FUN("2002")
+    @
+  \end{subfigure}
+  \caption{---Continued}
+\end{figure}
+
+\begin{figure}
+  \ContinuedFloat
+  \begin{subfigure}{\textwidth}
+    \caption{2006 \label{fig:map_land_use_d}}
+    <<map_land_use_d, echo=FALSE, results="asis", fig.width=fin.map.0[1], fig.height=fin.map.0[2]>>=
+    FUN("2006")
+    @
+  \end{subfigure}
+  \caption{---Continued}
+\end{figure}
+
+\begin{figure}
+  \ContinuedFloat
+  \begin{subfigure}{\textwidth}
+    \caption{2008 \label{fig:map_land_use_e}}
+    <<map_land_use_e, echo=FALSE, results="asis", fig.width=fin.map.0[1], fig.height=fin.map.0[2]>>=
+    FUN("2008")
+    @
+  \end{subfigure}
+  \caption{---Continued}
+\end{figure}
+
+\begin{figure}
+  \ContinuedFloat
+  \begin{subfigure}{\textwidth}
+    \caption{2009 \label{fig:map_land_use_f}}
+    <<map_land_use_f, echo=FALSE, results="asis", fig.width=fin.map.0[1], fig.height=fin.map.0[2]>>=
+    FUN("2009")
+    @
+  \end{subfigure}
+  \caption{---Continued}
+\end{figure}
+
+\begin{figure}
+  \ContinuedFloat
+  \begin{subfigure}{\textwidth}
+    \caption{2010 \label{fig:map_land_use_g}}
+    <<map_land_use_g, echo=FALSE, results="asis", fig.width=fin.map.0[1], fig.height=fin.map.0[2]>>=
+    FUN("2010")
+    invisible(dev.off())
+    @
+  \end{subfigure}
+  \caption{---Continued}
+\end{figure}
+\captionsetup[figure]{list=yes}
+
+<<include=FALSE>>=
+v <- "Wetlands and non-irrigated public land parcels in the Wood River Valley and surrounding areas, Idaho."
+v <- c(paste("Map showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(v)))), v)
+@
+
+<<map_wetlands_parcels, echo=FALSE, fig.width=fin.map.0[1], fig.height=fin.map.0[2], fig.scap=sprintf("{%s}", v[1]), fig.cap=sprintf("{%s}", v[2])>>=
+PlotMap(crs(hill.shading), xlim=usr.map[1:2], ylim=usr.map[3:4], bg.image=hill.shading,
+        bg.image.alpha=0.6, dms.tick=TRUE, rivers=list(x=streams.rivers), lakes=list(x=lakes), credit=credit)
+plot(public.parcels, col="#CDBB99C0", border="#755C3BC0", add=TRUE)
+plot(alluvium.extent, border="#FFFFFFCC", add=TRUE)
+plot(wetlands, col="#59A80F", border=NA, add=TRUE)
+legend("topright", c("Wetlands", "Public parcels"), fill=c("#59A80F", "#CDBB99C0"),
+       border=c(NA, "#755C3BC0"), inset=0.02, cex=0.7, box.lty=1, box.lwd=0.5,
+       xpd=NA, bg="#FFFFFFE7")
+box(lwd=0.5)
+invisible(dev.off())
+@
+
+The WRV is subdivided into 88 irrigation entities (\hyperref[table_irr_entities]{table~\ref{table_irr_entities}}, \hyperref[fig:map_entities]{fig.~\ref{fig:map_entities}}),
+the resolution of these irrigation entities in terms of source water is consistent with available diversion and return flow data.
+For example, various diverters drawing from the same surface-water source could be grouped into a single irrigation entity.
+The basis for using irrigation entities is as follows:
+
+\begin{itemize}
+  \item Numerous surface-water diversions in the WRV provide irrigation water to multiple water users within a canal service area.
+        Surface-water diversions are generally recorded by Water District 37 and 37M at the canal heading; however, field headgate deliveries to individual parcels are not available.
+  \item Numerous pumping wells provide irrigation water within community water system service areas, or to multiple irrigated parcels.
+
+  \item Some areas are irrigated by diversions from domestic wells without recorded water rights.
+\end{itemize}
+
+Irrigation entities (\hyperref[fig:map_entities]{fig.~\ref{fig:map_entities}}) are used in the calculation of monthly water supply, crop irrigation requirement, and incidental recharge.
+
+The properties of an irrigation entity are only applicable over areas designated as `irrigated' or `semi-irrigated' (\hyperref[fig:map_land_use]{fig.~\ref{fig:map_land_use}}).
+For example, the irrigation entities mapped to irrigated lands in the southern part of the model grid during the 2008 growing season (April--October)
+are shown in \hyperref[fig:map_entities_2008]{figure~\ref{fig:map_entities_2008}}.
+Recall that the areas designated as `wetlands' or `public lands' (\hyperref[fig:map_wetlands_parcels]{fig.~\ref{fig:map_wetlands_parcels}}) were re-classified as `non-irrigated' land use.
+The water-balance model used to estimate incidental recharge from deep percolation of excess irrigation water is expressed for each irrigation entity as:
+
+\begin{equation} \label{eq:rech}
+Q_\mathit{incid} = \mathit{Div}_{sw} - \mathit{Ret}_{sw} - \mathit{Canal} + \mathit{Div}_{gw} - \mathit{WWTP} - \mathit{CIR}
+\end{equation}
+where
+\begin{description}
+\item[Q_\mathit{incid}] is the incidental recharge rate from deep percolation of excess irrigation water, in cubic meters per month;
+\item[\mathit{Div}_{sw}] is the surface-water diversions (including municipal springs), in cubic meters per month;
+\item[\mathit{Ret}_{sw}] is the surface-water return flows, in cubic meters per month;
+\item[\mathit{Canal}] is the canal seepage, in cubic meters per month;
+\item[\mathit{Div}_{gw}] is the groundwater diversions, in cubic meters per month;
+\item[\mathit{WWTP}] is the municipal wastewater treatment plant discharge, in cubic meters per month; and
+\item[\mathit{CIR}] is the crop irrigation requirement, in cubic meters per month, calculated as ET minus precipitation.
+\end{description}
+
+<<echo=FALSE>>=
+x <- irr.entities@data
+entity.names <- levels(x$EntityName)
+d <- data.frame(entity.name=entity.names, id=seq_along(entity.names))
+FUN <- function(i) paste(sort(unique(x$Source[x$EntityName == i])), collapse=", ")
+d$source <- sapply(entity.names, FUN)
+
+PrintTable <- function(idxs, is.last.hline, label) {
+  d <- d[idxs, ]
+  columns <- c("Name", "Entity No.", "Water source")
+  colnames(d) <- sprintf("\\textbf{\\shortstack{%s}}", columns)
+  cap1 <- "Irrigation entities and their respective water sources."
+  cap2 <- c("\\textbf{Entity No.}: is an identifier used to locate the irrigation entity on the map in \\hyperref[fig:map_entities]{figure~\\ref{fig:map_entities}}.",
+            "\\textbf{Water source}: is the water source classification for irrigated and semi-irrigated lands where:",
+            "`GW Only' indicates irrigation water exclusively from groundwater sources;",
+            "`SW Only' indicates irrigation water exclusively from surface-water sources; and",
+            "`Mixed' indicates a combination of groundwater and surface-water sources.")
+  tbl <- xtable::xtable(d, label=label)
+  if (idxs[1] == 1L)
+    xtable::caption(tbl) <- c(sprintf("%s [%s]", cap1, paste(cap2, collapse=" ")), cap1)
+  else
+    xtable::caption(tbl) <- sprintf("%s---Continued", cap1)
+  xtable::align(tbl) <- "rlcl"
+  hline.after <- if (is.last.hline) c(-1, 0, nrow(tbl)) else c(-1, 0)
+  print(tbl, include.rownames=FALSE, caption.placement="top", booktabs=TRUE,
+        sanitize.colnames.function=function(x){x}, size="\\small",
+        hline.after=hline.after)
+}
+@
+
+<<table_irr_entities, echo=FALSE, results="asis">>=
+PrintTable(1:(n <- 50L), FALSE, label <- "table_irr_entities")
+@
+\captionsetup[table]{list=no}
+<<echo=FALSE, results="asis">>=
+cat("\\addtocounter{table}{-1}\n")
+PrintTable((n + 1L):nrow(d), TRUE, paste0(label, "_1"))
+@
+\captionsetup[table]{list=yes}
+
+<<echo=FALSE>>=
+polys <- irr.entities
+polys@data$id <- as.integer(polys@data$EntityName)
+cols <- Pal(max(polys@data$id), alpha=0.8)
+FUN <- function(usr) {
+  p <- SetPolygons(polys, extent(usr), "gIntersection")
+  PlotMap(crs(hill.shading), xlim=usr[1:2], ylim=usr[3:4], bg.image=hill.shading,
+          bg.image.alpha=0.6, dms.tick=TRUE, rivers=list(x=streams.rivers),
+          lakes=list(x=lakes), credit=credit)
+  plot(p, col=cols[p@data$id], border=NA, add=TRUE)
+  plot(cities, pch=15, cex=0.8, col="#333333", add=TRUE)
+  text(cities, labels=cities@data$FEATURE_NA, col="#333333", cex=0.5, pos=1, offset=0.4)
+  plot(alluvium.extent, border="#FFFFFFCC", add=TRUE)
+  xy <- suppressWarnings(getSpatialPolygonsLabelPoints(p))
+  text(xy, labels=p@data$id, col="#333333", cex=0.6)
+  ids <- sort(unique(p@data$id))
+  legend("topright", as.character(ids), fill=cols[ids], border=NA, inset=0.02,
+         cex=0.7, box.lty=1, box.lwd=0.5, xpd=NA, bg="#FFFFFFE7", ncol=2,
+         title=expression(bold("Irrigation Entity")))
+}
+@
+
+\begin{figure}
+  \begin{subfigure}{\textwidth}
+    \caption{North of Ketchum \label{fig:map_entities_a}}
+    <<map_entities_a, echo=FALSE, results="asis", fig.width=fin.map.n[1], fig.height=fin.map.n[2]>>=
+    FUN(usr.map.n.1)
+    @
+  \end{subfigure}
+
+  <<include=FALSE>>=
+  v <- "Irrigation entities (\\textit{\\textbf{A}}) north of Ketchum, (\\textit{\\textbf{B}}) south of Ketchum and north of Gimlet, (\\textit{\\textbf{C}}) south of Gimlet and north of Hailey, (\\textit{\\textbf{D}}) south of Hailey and north of Bellevue, and (\\textit{\\textbf{E}}) south of Bellevue. \\label{fig:map_entities}"
+  v <- c(paste("Maps showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(v)))), v)
+  @
+  \caption[{\Sexpr{v[1]}}]{{\Sexpr{v[2]}}}
+\end{figure}
+
+\captionsetup[figure]{list=no}
+\begin{figure}
+  \ContinuedFloat
+  \begin{subfigure}{\textwidth}
+    \caption{South of Ketchum and north of Gimlet \label{fig:map_entities_b}}
+    <<map_entities_b, echo=FALSE, results="asis", fig.width=fin.map.n[1], fig.height=fin.map.n[2]>>=
+    FUN(usr.map.n.2)
+    @
+  \end{subfigure}
+  \caption{---Continued}
+\end{figure}
+
+\begin{figure}
+  \ContinuedFloat
+  \begin{subfigure}{\textwidth}
+    \caption{South of Gimlet and north of Hailey \label{fig:map_entities_c}}
+    <<map_entities_c, echo=FALSE, results="asis", fig.width=fin.map.n[1], fig.height=fin.map.n[2]>>=
+    FUN(usr.map.n.3)
+    @
+  \end{subfigure}
+  \caption{---Continued}
+\end{figure}
+
+\begin{figure}
+  \ContinuedFloat
+  \begin{subfigure}{\textwidth}
+    \caption{South of Hailey and north of Bellevue \label{fig:map_entities_d}}
+    <<map_entities_d, echo=FALSE, results="asis", fig.width=fin.map.n[1], fig.height=fin.map.n[2]>>=
+    FUN(usr.map.n.4)
+    invisible(dev.off())
+    @
+  \end{subfigure}
+  \caption{---Continued}
+\end{figure}
+
+\begin{figure}
+  \ContinuedFloat
+  \begin{subfigure}{\textwidth}
+    \caption{South of Bellevue \label{fig:map_entities_e}}
+    <<map_entities_e, echo=FALSE, results="asis", fig.width=fin.map.s.0[1], fig.height=fin.map.s.0[2]>>=
+    FUN(usr.map.s)
+    invisible(dev.off())
+    @
+  \end{subfigure}
+  \caption{---Continued}
+\end{figure}
+\captionsetup[figure]{list=yes}
+
+<<include=FALSE>>=
+v <- "Irrigation entities mapped to irrigated lands in the southern part of the model grid during the 2008 growing season (April--October)."
+v <- c(paste("Map showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(v)))), v)
+@
+
+<<map_entities_2008, echo=FALSE, fig.width=fin.map.s.0[1], fig.height=fin.map.s.0[2], fig.scap=sprintf("{%s}", v[1]), fig.cap=sprintf("{%s}", v[2])>>=
+r <- deratify(rs.entities[["200804"]], "ID")
+at <- seq_len(max(r[], na.rm=TRUE))
+cols <- Pal(max(r[], na.rm=TRUE), alpha=0.8)
+PlotMap(r, breaks=seq(min(at) - 0.5, max(at) + 0.5), xlim=usr.map.s[1:2],
+        ylim=usr.map.s[3:4], bg.image=hill.shading, bg.image.alpha=0.6,
+        dms.tick=TRUE, col=cols, labels=list(at=at), draw.key=FALSE,
+        rivers=list(x=streams.rivers), lakes=list(x=lakes), credit=credit)
+poly <- rasterToPolygons(crop(r, extent(usr.map.s)), dissolve=TRUE)
+plot(alluvium.extent, border="#FFFFFFCC", add=TRUE)
+xy <- suppressWarnings(getSpatialPolygonsLabelPoints(poly))
+text(xy, labels=poly@data[, 1], col="#333333", cex=0.6, pos=4, offset=0.4)
+plot(cities, pch=15, cex=0.8, col="#333333", add=TRUE)
+text(cities, labels=cities@data$FEATURE_NA, col="#333333", cex=0.5, pos=1, offset=0.4)
+ids <- unique(crop(r, extent(usr.map.s)))
+legend("topright", as.character(ids), fill=cols[ids], ncol=2,
+       border=NA, inset=0.02, cex=0.7, box.lty=1, box.lwd=0.5, xpd=NA,
+       bg="#FFFFFFE7", title=expression(bold("Irrigation Entity")))
+invisible(dev.off())
+@
+
+Irrigation entities are further subdivided by the irrigation water source type;
+`SW Only' is exclusively surface-water sources,
+`GW Only' is exclusively groundwater sources, and
+`Mixed' is a mixture of both surface-water and groundwater sources
+(\hyperref[table_irr_entities]{table~\ref{table_irr_entities}}, \hyperref[fig:map_sources]{fig.~\ref{fig:map_sources}}).
+
+<<include=FALSE>>=
+v <- "Irrigation entity water sources in the Wood River Valley, Idaho."
+v <- c(paste("Map showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(v)))), v)
+@
+
+<<map_sources, echo=FALSE, fig.width=fin.map.0[1], fig.height=fin.map.0[2], fig.scap=sprintf("{%s}", v[1]), fig.cap=sprintf("{%s}", v[2])>>=
+PlotMap(crs(hill.shading), xlim=usr.map[1:2], ylim=usr.map[3:4], bg.image=hill.shading,
+        bg.image.alpha=0.6, dms.tick=TRUE, rivers=list(x=streams.rivers), lakes=list(x=lakes), credit=credit)
+polys <- irr.entities
+cols <- c("#66C2A5CC", "#FC8D62CC", "#8DA0CBCC")
+plot(polys, col=cols[as.integer(polys@data$Source)], border=NA, add=TRUE)
+plot(alluvium.extent, border="#FFFFFFCC", add=TRUE)
+plot(cities, pch=15, cex=0.8, col="#333333", add=TRUE)
+text(cities, labels=cities@data$FEATURE_NA, col="#333333", cex=0.5, pos=1, offset=0.4)
+legend("topright", levels(polys@data$Source), fill=cols,
+       border=NA, inset=0.02, cex=0.7, box.lty=1, box.lwd=0.5, xpd=NA, bg="#FFFFFFE7",
+       title=expression(bold("Source")))
+invisible(dev.off())
+@
+
+\clearpage
+
+% =========================================================================
+
+\section{Unmeasured Groundwater Diversions}
+
+In the Wood River Valley, the availability of groundwater diversion records ($\mathit{Div}_{gw}$ in equation~\ref{eq:rech}) is limited; therefore, many groundwater diversions (about 80 percent) must be estimated.
+Recall that groundwater diversions include groundwater that is diverted from the WRV aquifer system by means of either pumping wells or flowing-artesian wells.
+Groundwater diversion estimates are calculated using (1) available records of surface-water and groundwater diversions, (2) monthly crop irrigation requirement (CIR) records, and (3) estimated values of irrigation efficiency.
+Irrigation efficiency is defined as the ratio between irrigation water actually utilized by growing plants and the total water diverted from sources in order to supply such irrigation water.
+To estimate groundwater diversions, the CIR ($CIR$ in equation~\ref{eq:rech}) is expressed in terms of the water-balance components:
+
+\begin{equation} \label{eq:model}
+\mathit{CIR} = \mathit{eff} \left(\mathit{Div}_{gw} + \mathit{Div}_{sw} - \mathit{Ret}_{sw} - \mathit{Canal} - \mathit{WWTP}\right)
+\end{equation}
+where
+\begin{description}
+\item[\mathit{eff}] is the irrigation efficiency, a dimensionless quantity.
+\end{description}
+
+Groundwater diversions are the sum of measured and estimated pumping records for the irrigation entity, and expressed as:
+
+\begin{equation} \label{eq:div_gw}
+\mathit{Div}_{gw} = \mathit{Div}_{gw, obs} + \mathit{Div}_{gw, est}
+\end{equation}
+where
+\begin{description}
+\item[\mathit{Div}_{gw, obs}] is the measured groundwater diversions, in cubic meters per month; and
+\item[\mathit{Div}_{gw, est}] is the estimated groundwater diversions, in cubic meters per month.
+\end{description}
+
+The CIR is defined as the sum of the CIR values for each water source in an irrigation entity (\hyperref[fig:map_sources]{fig.~\ref{fig:map_sources}}):
+
+\begin{equation} \label{eq:cir}
+\mathit{CIR} = \mathit{CIR}_{gw} + \mathit{CIR}_{sw} + \mathit{CIR}_{mix}
+\end{equation}
+where
+\begin{description}
+\item[\mathit{CIR}_{gw}] is the CIR for areas irrigated by only surface-water sources, in cubic meters per month;
+\item[\mathit{CIR}_{sw}] is the CIR for areas irrigated by only groundwater sources, in cubic meters per month; and
+\item[\mathit{CIR}_{mix}] is the CIR for areas irrigated by a mixture of surface-water and groundwater sources, in cubic meters per month.
+\end{description}
+
+Rewriting equation~(\ref{eq:model}) with the groundwater diversion components in equation~(\ref{eq:div_gw}) and the expanded definition of CIR in equation~(\ref{eq:cir}) gives the estimated groundwater diversions as:
+
+\begin{equation} \label{eq:div_gw_est}
+\mathit{Div}_{gw, est} = \frac{\mathit{CIR}_{gw} + \mathit{CIR}_{sw} + \mathit{CIR}_{mix}}{\mathit{eff}} - \mathit{Div}_{gw, obs} - \mathit{Div}_{sw} + \mathit{Ret}_{sw} + \mathit{Canal} + \mathit{WWTP}
+\end{equation}
+
+Equation~\ref{eq:div_gw_est} is valid for non-negative values of estimated groundwater diversions and is an insurance that the CIR for areas irrigated by surface-water sources is exceeded.
+These constraints are expressed as:
+\begin{equation} \label{eq:constraints}
+\mathit{Div}_{gw, est} > 0 \quad\text{and}\quad \mathit{eff} \left(\mathit{Div}_{sw} - \mathit{Ret}_{sw} - \mathit{Canal}\right) > \mathit{CIR}_{sw}
+\end{equation}
+
+If the calculated value for estimated groundwater diversions is negative (equation~\ref{eq:constraints}),
+then no additional groundwater diversions are needed and the estimated groundwater diversions are set to zero.
+This may occur when there is an abundant surface-water supply during the stress period,
+or because the majority of groundwater diversions within an irrigation entity are measured.
+It also may occur when the estimated canal seepage is too low,
+the estimated irrigation efficiency is too high,
+or the diversion records or calculated crop irrigation requirements are inaccurate.
+
+If the surface-water supply is less than the calculated demand for surface-water only irrigated lands within an irrigation entity (equation~\ref{eq:constraints}),
+then no surface water will be available for irrigation of `mixed source' areas in the irrigation entity,
+and all CIR on mixed source lands will need to be met with groundwater irrigation.
+This may occur early in the irrigation season when diversions are small or non-existent,
+and CIR is met by water stored in the soil moisture reservoir (represented as negative incidental recharge on `SW Only' lands).
+It also may occur when the estimated canal seepage is too high, the estimated irrigation efficiency is too low,
+or the diversion records and calculated crop irrigation requirements are inaccurate.
+The water balance is maintained by applying the deficit as negative recharge on the `SW Only' lands.
+
+The initial estimate for irrigation efficiency (equation~\ref{eq:model}) was taken from the literature.
+The Food and Agriculture Organization of the United Nations \citep{Brouwer1989} stated that average field application efficiency (that is, irrigation efficiency) is about 60 percent for gravity irrigation, 75 percent for sprinkler irrigation, and 90 percent for drip irrigation.
+The U.S. Department of Agriculture \citep{Howell2003} indicates that attainable field efficiencies can range from 75 to 98 percent for various types of gravity and sprinkler systems, with mean field efficiencies ranging from 65 to 95 percent.
+The University of Nebraska Extension \citep{Irmak2011} suggests that typical application efficiencies for gravity and sprinkler systems range from 45 to 90 percent.
+The University of California Davis  \citep{Solis2013} evaluated application efficiency for ten agricultural regions in California for the 2010 irrigation season.
+\citet{Solis2013} reported application efficiencies ranging from 50 to 95 percent for various types of gravity and sprinkler systems, with mean application efficiencies ranging from 68 percent to 83 percent.
+The mean application efficiencies within each of the ten regions ranged from 73.5 to 79.8 percent.
+Based on the referenced literature, an average irrigation efficiency of 75 percent was used as the initial value in equations~(\ref{eq:model}), (\ref{eq:div_gw_est}), and (\ref{eq:constraints}).
+
+Modeled irrigation efficiency represents the estimated irrigation efficiency only during stress periods when recorded diversions are not adequate to meet CIR on `GW Only' or `mixed source' lands,
+and is only used to estimate unmeasured groundwater diversions.
+Actual irrigation efficiencies varied with time.
+The modeled irrigation efficiency value does not represent irrigation efficiency during stress periods when recorded diversions are adequate to meet CIR.
+
+If surface-water supply is less than the calculated demand for surface-water only irrigated lands within an irrigation entity (equation~\ref{eq:constraints}), there will be no surface-water available for irrigation of `mixed source' areas in the irrigation entity.
+This indicates either the initial irrigation efficiency estimate is too low, or input data (such as diversions, canal seepage, or ET) are incorrect.
+If surface-water supply and measured groundwater diversions are greater than the calculated demand for surface-water only and mixed source irrigation areas within an irrigation entity, estimated groundwater diversions will be zero.
+Unless the majority of groundwater diversions are measured, this indicates either the initial estimate of irrigation efficiency is too high, or input data (such as diversions, canal seepage, or ET) are incorrect.
+For irrigation entities where the data do not constrain the initial estimate of irrigation efficiency, the irrigation efficiency for each irrigation entity may be an adjustable parameter (within specified limits) during the model-calibration process.
+
+% =========================================================================
+
+\section{Ponds}
+
+Evaporation from ponds located within irrigated and developed areas is included in the estimated ET values used to calculate CIR in equation~(\ref{eq:rech}).
+Evaporation from wetlands and ponds located outside of irrigated and developed areas is included in the estimated ET values used to calculate groundwater recharge and discharge on non-irrigated lands.
+
+Surface-water diversions to ponds may be recorded by the Watermaster as `non-consumptive' (NCP) or as a `measured diversion and measured return'.
+Diversions recorded as non-consumptive were excluded from the surface-water diversion data.
+Where both diversions and returns were measured, both were included in the surface-water diversion and return data.
+
+% =========================================================================
+
+\section{Municipalities}
+
+Recharge and groundwater diversions within municipal service areas are estimated using the water-balance model (equations~\ref{eq:rech} and \ref{eq:model}).
+Municipal diversions from springs and surface-water diversions for irrigation within municipal service areas are included in the surface-water diversion data compiled from municipal and Water District 37 records.
+Groundwater diversions recorded by municipalities are included in the groundwater diversion data.
+Precipitation that falls within the service area is accounted for in the calculation of CIR.
+Water supplied to the service area may return to a wastewater treatment plant, be applied for irrigation,
+or infiltrate into the ground via leaky water distribution system piping or stormwater disposal facilities (\hyperref[fig:flowchart_municipal]{fig.~\ref{fig:flowchart_municipal}}).
+For a given municipal service area, the volume of water available for infiltration into the aquifer equals the total water supply minus the sum of ET and wastewater treatment plant returns.
+The Sun Valley Water and Sewer District (SVWSD) delivers water to Dollar Mountain for snowmaking.
+This water is assumed to return to Trail Creek as snowmelt runoff and is deducted from the volume of water available for infiltration.
+Though all of the municipalities have provided diversion data, groundwater diversions for unmeasured non-municipal irrigation wells located within the municipal service areas must be estimated.
+Groundwater and spring diversions by the City of Bellevue, prior to 2006, also must be estimated.
+
+\begin{figure}
+\centering
+\includegraphics{flowchart_municipal.pdf}
+<<include=FALSE>>=
+v <- "Water supply and fate of water in municipal areas."
+v <- c(paste("Diagram showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(v)))), v)
+@
+\caption[{\Sexpr{v[1]}}]{{\Sexpr{v[2]}}}
+\label{fig:flowchart_municipal}
+\end{figure}
+
+% =========================================================================
+
+\section{Subdivisions with Centralized Water Systems}
+
+Recharge and groundwater diversions within subdivisions with community water systems and on-site septic systems, are estimated using the water-balance model (equations~\ref{eq:rech} and \ref{eq:model}).
+Irrigation supplied by surface water is included in the surface-water diversion data.
+Groundwater diversions are generally unmeasured.
+Precipitation that falls within the service area is accounted for in the calculation of CIR.
+Water supplied to the service area may be applied for irrigation, or infiltrate into the ground via leaky water distribution system piping,
+stormwater disposal facilities, or septic systems (\hyperref[fig:flowchart_subdivisions]{fig.~\ref{fig:flowchart_subdivisions}}).
+For a given subdivision, the volume of water available for infiltration into the aquifer equals the total water supply minus evapotranspiration.
+
+\begin{figure}
+\centering
+\includegraphics{flowchart_subdivisions.pdf}
+<<include=FALSE>>=
+v <- "Water supply and fate of water within subdivisions with community water systems."
+v <- c(paste("Diagram showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(v)))), v)
+@
+\caption[{\Sexpr{v[1]}}]{{\Sexpr{v[2]}}}
+\label{fig:flowchart_subdivisions}
+\end{figure}
+
+% =========================================================================
+
+\section{Single Home Domestic Systems}
+
+Recharge and groundwater diversions within single home domestic systems located within subdivisions or agricultural areas, are estimated using the water-balance model (equations~\ref{eq:rech} and \ref{eq:model}).
+Groundwater diversions are generally unmeasured.
+Precipitation that falls within the service area is accounted for in the calculation of CIR.
+Water supplied to the service area may be applied for irrigation, or infiltrate into the ground via infiltration of stormwater runoff or septic systems (\hyperref[fig:flowchart_domestic]{fig.~\ref{fig:flowchart_domestic}}).
+For a given municipal system, the volume of water available for infiltration into the aquifer equals the total water supply minus evapotranspiration.
+Because most single home domestic wells pump water from model layer 1, water pumped for non-consumptive use generally returns to the same model layer in the same (or nearby) model cell via septic systems.
+Only consumptive water use, which is equal to ET minus precipitation, needs to be calculated to estimate the net groundwater discharge resulting from groundwater diversions in these areas.
+
+\begin{figure}
+\centering
+\includegraphics{flowchart_domestic.pdf}
+<<include=FALSE>>=
+v <- "Water supply and fate of water within residential areas served by individual wells."
+v <- c(paste("Diagram showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(v)))), v)
+@
+\caption[{\Sexpr{v[1]}}]{{\Sexpr{v[2]}}}
+\label{fig:flowchart_domestic}
+\end{figure}
+
+% =========================================================================
+
+\section{Apportioning Unmeasured Groundwater Pumping to Individual Wells}
+
+Groundwater diversions reported by municipal providers and Water Districts 37 and 37M are modeled as a withdrawal in the model cell containing the appropriate well.
+Wells without measured diversions are grouped by irrigation entity and a portion of the remaining groundwater demand calculated using equation~(\ref{eq:model}) is modeled as a withdrawal in each model cell containing an unmeasured well.
+\hyperref[fig:map_pod]{Figure~\ref{fig:map_pod}} shows the locations of groundwater points of diversion with and without measured diversions.
+Points labeled as measured diversions in \hyperref[fig:map_pod]{figure~\ref{fig:map_pod}} have diversion records for at least part of the model simulation period, but may not have diversion records for the entire simulation period.
+For 1995 through 2010, about 20 percent of the groundwater diversions (by volume) were recorded and about 80 percent were estimated.
+For months without recorded diversions, diversions from these wells are estimated with the other unmeasured wells as described below.
+
+Because a substantial portion of groundwater rights in the Upper Wood River Valley are supplemental to surface water from the Big Wood River or Silver Creek,
+surface-water availability and water right priority dates were accounted for in the method used to apportion groundwater pumping to individual wells.
+Surface-water availability for each month is evaluated using annual reports prepared by Water District 37 and 37M,
+which list the watermaster's historic priority cut dates for each irrigation season.
+
+Groundwater pumping calculated using equations~(\ref{eq:model} and \ref{eq:div_gw}) is apportioned and assigned to unmeasured wells within each irrigation entity based on:
+(1) groundwater right diversion rates,
+(2) the priority dates and diversion rates of any surface-water rights that share combined limits with a given groundwater right,
+(3) Water District 37 priority cut dates for the Big Wood River above Magic Reservoir, and
+(4) Water District 37M priority cut dates for Silver Creek and the Little Wood River.
+Groundwater pumping within each irrigation entity is apportioned to individual wells using the following calculation:
+
+\begin{equation} \label{eq:pumping}
+\mathit{Div}_{gw, est, i} = \mathit{Div}_{gw, est} \left(\frac{Q_{i}}{\sum Q}\right)
+\end{equation}
+where
+\begin{description}
+\item[\mathit{Div}_{gw, est, i}] is the portion of the estimated groundwater diversions that is assigned to well $i$, in cubic meters per month;
+\item[\mathit{Div}_{gw, est}] is the estimated groundwater diversions for an irrigation entity (equation~\ref{eq:div_gw}), in cubic meters permonth;
+\item[Q_{i}] is the sum of diversion rates for groundwater rights diverted from well $i$ that are not supplemental to surface-water rights that were in priority at the end of the month, in cubic meters per day; and
+\item[\sum Q] is the sum of diversion rates for groundwater rights diverted within an irrigation entity that are not supplemental to surface-water rights that were in priority at the end of the month, in cubic meters per day.
+\end{description}
+For groundwater rights that are supplemental to more than one surface-water right, the diversion rate is multiplied by the fraction of surface-water rights not in priority at the end of the month.
+
+<<include=FALSE>>=
+v <- "Groundwater points of diversion in the Wood River Valley, Idaho."
+v <- c(paste("Map showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(v)))), v)
+@
+
+<<map_pod, echo=FALSE, fig.width=fin.map.0[1], fig.height=fin.map.0[2], fig.scap=sprintf("{%s}", v[1]), fig.cap=sprintf("{%s}", v[2])>>=
+PlotMap(crs(hill.shading), xlim=usr.map[1:2], ylim=usr.map[3:4], bg.image=hill.shading,
+        dms.tick=TRUE, bg.image.alpha=0.6, rivers=list(x=streams.rivers), lakes=list(x=lakes), credit=credit)
+plot(alluvium.extent, border="#FFFFFFCC", add=TRUE)
+is.obs <- pod.wells@data$WMISNumber %in% unique(div.gw$WMISNumber)
+cols <- c("#9061C2", "#FBB829")
+pchs <- c(24, 21)
+pt.cexs <- c(0.5, 0.8)
+points(pod.wells[!is.obs, ], pch=pchs[1], cex=pt.cexs[1], lwd=0.5, col=NA, bg=cols[1])
+points(pod.wells[ is.obs, ], pch=pchs[2], cex=pt.cexs[2], lwd=0.5, col=NA, bg=cols[2])
+leg <- paste(c("Unmeasured", "Measured"), "groundwater diversion")
+legend("topright", leg, col=NA, pt.bg=cols, pch=pchs, pt.cex=pt.cexs, pt.lwd=0.5,
+       inset=0.02, cex=0.7, box.lty=1, box.lwd=0.5, bg="#FFFFFFE7")
+invisible(dev.off())
+@
+
+% =========================================================================
+
+\clearpage
+\phantomsection
+\addcontentsline{toc}{section}{References Cited}
+\printbibliography
+
+% =========================================================================
+
+% \vfill\centerline{Created on \Sexpr{format(Sys.time(), "%B %e, %Y")}; total processing time was \Sexpr{format(difftime(Sys.time(), t0), digits=3)}.}
+
+\end{document}

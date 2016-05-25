@@ -1,0 +1,1162 @@
+% \VignetteIndexEntry{Appendix F. Natural Groundwater Recharge and Discharge}
+% \VignetteEngine{knitr::knitr}
+% \VignetteDepends{wrv}
+
+\documentclass[twoside]{article}
+
+\input{\Sexpr{shQuote(system.file("misc", "preamble.tex", package="wrv"))}}
+\addbibresource{\Sexpr{system.file("misc", "references.bib", package="wrv")}}
+
+\renewcommand{\thefigure}{F\arabic{figure}}
+\renewcommand{\thetable}{F\arabic{table}}
+\renewcommand{\thepage}{F\arabic{page}}
+
+\setcounter{page}{1}
+
+% =========================================================================
+
+\begin{document}
+
+<<setup, include=FALSE>>=
+t0 <- Sys.time()
+try(knitr::opts_chunk$set(tidy=FALSE, comment="#", fig.align="center"), silent=TRUE)
+grDevices::pdf.options(useDingbats=FALSE)
+options(preferRaster=TRUE, scipen=0, digits=2)
+library(wrv)
+loadNamespace("xtable")
+
+# Device dimension in inches (width, height)
+fin.graph         <- c(7.16, 7.16)
+fin.graph.short   <- c(7.16, 3.50)
+fin.map           <- c(7.01, 9.32)
+fin.map.0         <- c(7.01, 8.65)
+fin.map.s         <- c(7.16, 5.31)
+fin.map.s.0       <- c(7.16, 4.64)
+fin.map.n         <- c(7.16, 7.00)
+fin.map.n.small   <- c(3.50, 3.83)
+fin.map.n.small.0 <- c(3.50, 3.16)
+fin.cs            <- c(7.16, 5.39)
+fin.cs.0          <- c(7.16, 4.73)
+
+# Extreme coordinates of plotting region (x1, x2, y1, y2)
+usr.map     <- c(2451504, 2497815, 1342484, 1402354)
+usr.map.s   <- c(2472304, 2497015, 1343284, 1358838)
+usr.map.n.1 <- c(2463000, 2475356, 1386500, 1398856)
+usr.map.n.2 <- c(2467500, 2479856, 1376500, 1388856)
+usr.map.n.3 <- c(2466696, 2479052, 1366501, 1378857)
+usr.map.n.4 <- c(2471500, 2483856, 1356482, 1368838)
+
+# Unit conversions
+m.to.ft <- 3.28084
+m.to.km <- 0.001
+m.to.mi <- 0.000621371
+
+# Map credit
+credit <- paste("Base derived from U.S. Geological Survey National Elevation Dataset 10-meter digital elevation model.",
+                "Idaho Transverse Mercator projection; North American Datum of 1983.", sep="\n")
+@
+
+\title{Appendix F.\enspace Natural Groundwater Recharge and Discharge in the Wood River Valley Aquifer System, South-Central Idaho\vspace{2ex}}
+\author{}
+\date{}
+\pretitle{\begin{flushleft}\LARGE\bfseries\sffamily}
+\posttitle{\end{flushleft}}
+\maketitle
+
+\tableofcontents
+
+\renewcommand*\listfigurename{Figures}
+\listoffigures
+
+\renewcommand*\listtablename{Tables}
+\listoftables
+
+\clearpage
+
+% =========================================================================
+
+\section{Introduction}
+
+
+
+The process of natural groundwater recharge and discharge occurs at the water-table surface.
+Natural groundwater recharge is the fraction of precipitation (rain, snow, sleet, etc.) that infiltrates the land surface and percolates downward through the soil and rock to fill the aquifer below.
+Whereas, natural groundwater discharge is water that is removed from the aquifer by means of evaporation processes.
+For this study, the volumetric flow rate across the water table is dependent on the rate and duration of precipitation and evapotranspiration (ET), land cover land use, and soil type.
+All other factors that affect natural recharge and discharge rates (such as the antecedent soil moisture, slope, and aspect) are neglected.
+The purpose of this document is to describe the water-balance model used to calculate estimates of natural groundwater recharge and discharge rates on non-irrigated lands during the model simulation period (1995--2010).
+
+% =========================================================================
+
+\section{Natural Groundwater Recharge and Discharge}
+
+Precipitation that is not consumed by ET either infiltrates the subsurface and recharges the aquifer (as deep percolation), or becomes surface runoff and drains into rivers and streams.
+The volumetric flow rate of natural groundwater recharge and discharge is defined using the following water balance approach:
+
+\begin{equation} \label{eq:natural_recharge}
+Q_{\mathit{nat}} = A \left(P - \mathit{ET}\right) - R
+\end{equation}
+where
+\begin{description}
+\item[Q_{\mathit{nat}}] is the natural groundwater recharge and discharge rate, where positive values are flow into the aquifer system, and negative values are flow out of the system, in cubic meters per month;
+\item[A] is the land-surface area, in square meters;
+\item[P] is the precipitation rate, in meters per month;
+\item[\mathit{ET}] is the evapotranspiration rate, in meters per month; and
+\item[R] is the surface runoff rate, in cubic meters per month.
+\end{description}
+
+There are no known published estimates of the spatial distribution and duration of surface runoff across the landscape in the WRV because they are very difficult to measure directly.
+Equation~(\ref{eq:natural_recharge}) can alternatively be expressed using the percolation rate (that is, the rate at which soil moisture moves downward toward the water table),
+thus eliminating the need for an estimation of the surface runoff.
+The rate at which the ground can absorb water is limited by the percolation rate of the soil, with any surplus water tending to become surface runoff.
+The water-balance model used to calculate estimates of the volumetric flow rate of natural groundwater recharge and discharge is expressed as:
+
+\begin{equation} \label{eq:rech}
+Q_{\mathit{nat}} = \left\{\begin{array}{l l}
+                     A \left(P - \mathit{ET}\right) & \quad \text{if $P - \mathit{ET} < p$,}\\
+                     A\, p  & \quad \text{if $P - \mathit{ET} \geq p$}
+                   \end{array} \right.
+\end{equation}
+where
+\begin{description}
+\item[p] is the estimated percolation rate for the soil type, in meters per month.
+\end{description}
+
+And estimates of surface runoff can be expressed as:
+\begin{equation} \label{eq:runoff}
+R = \left\{\begin{array}{l l}
+      A \left(P - \mathit{ET} - p\right) & \quad \text{if $P - \mathit{ET} > p$,}\\
+      0 & \quad \text{if $P - \mathit{ET} \leq p$.}
+    \end{array} \right.
+\end{equation}
+
+Natural groundwater recharge and discharge are only applicable on non-irrigated lands, where flow across the water table is unaffected by irrigation and water diversions.
+The spatial distribution of irrigated lands (including semi-irrigated lands) changes throughout the model simulation period (1995--2010).
+During the non-growing season (November through March), all land-surface areas of the WRV are classified as non-irrigated;
+whereas, during the growing season (April through October) much of the land surface is irrigated.
+For example, the distribution of irrigated and non-irrigated lands during the 2008 non-growing season and growing season are shown in
+\hyperref[fig:map_land_use_a]{figures~\ref{fig:map_land_use_a}} and \ref{fig:map_land_use_b}, respectively.
+The spatial distribution of irrigated lands changes annually.
+See appendix G for a description of
+(1) the land-use irrigation classification for 1995--2010, and
+(2) the calculation of incidental groundwater recharge on irrigated lands.
+The methods used to estimate precipitation, ET, and percolation rate in the WRV during 1995--2010 are described in the following sections.
+
+<<echo=FALSE>>=
+FUN <- function(is.irr) {
+  PlotMap(crs(hill.shading), xlim=usr.map[1:2], ylim=usr.map[3:4], bg.image=hill.shading,
+          bg.image.alpha=0.6, dms.tick=TRUE, rivers=list(x=streams.rivers), lakes=list(x=lakes), credit=credit)
+  plot(alluvium.extent, border="#FFFFFFCC", add=TRUE)
+  cols <- c("#d95f02", "#1b9e77")
+  labs <- c("Non-irrigated", "Irrigated and semi-irrigated")
+  if (is.irr) {
+    p <- as(irr.lands[["2008"]], "SpatialPolygons")
+    p1 <- SetPolygons(p, alluvium.extent, "gIntersection", 0.001)
+    p0 <- SetPolygons(alluvium.extent, p1, "gDifference", 0.001)
+    plot(p0, col=cols[1], border=NA, add=TRUE)
+    plot(p1, col=cols[2], border=NA, add=TRUE)
+  } else {
+    plot(alluvium.extent, col=cols[1], border=NA, add=TRUE)
+    cols <- cols[1]
+    labs <- labs[1]
+  }
+  plot(cities, pch=15, cex=0.8, col="#333333", add=TRUE)
+  text(cities, labels=cities@data$FEATURE_NA, col="#333333", cex=0.5, pos=1, offset=0.4)
+  legend("topleft", labs, fill=cols, border=NA, inset=0.02, cex=0.7, box.lty=1,
+         box.lwd=0.5, xpd=NA, bg="#FFFFFFE7")
+  if (!is.irr)
+    AddInsetMap(idaho, width=1, main.label=list("IDAHO", adj=c(-0.4, -4.9)),
+                sub.label=list("Map area", adj=c(0.5, 2.5)), loc="topright")
+}
+@
+
+\begin{figure}
+  \begin{subfigure}{\textwidth}
+    \caption{November through March \label{fig:map_land_use_a}}
+    <<map_land_use_a, echo=FALSE, results="asis", fig.width=fin.map.0[1], fig.height=fin.map.0[2]>>=
+    FUN(FALSE)
+    @
+  \end{subfigure}
+  <<include=FALSE>>=
+  v <- "Irrigated, semi-irrigated, and non-irrigated lands in the Wood River Valley, Idaho, during (\\textit{\\textbf{A}}) November through March, and (\\textit{\\textbf{B}}) April through October, 2008. \\label{fig:map_land_use}"
+  v <- c(paste("Maps showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(v)))), v)
+  @
+  \caption[{\Sexpr{v[1]}}]{{\Sexpr{v[2]}}}
+\end{figure}
+
+\captionsetup[figure]{list=no}
+\begin{figure}
+  \ContinuedFloat
+  \begin{subfigure}{\textwidth}
+    \caption{April through October \label{fig:map_land_use_b}}
+    <<map_land_use_b, echo=FALSE, results="asis", fig.width=fin.map.0[1], fig.height=fin.map.0[2]>>=
+    FUN(TRUE)
+    @
+  \end{subfigure}
+  \caption{---Continued}
+\end{figure}
+\captionsetup[figure]{list=yes}
+
+% =========================================================================
+
+\section{Precipitation}
+
+Precipitation estimates ($P$ in equations~\ref{eq:natural_recharge}, \ref{eq:rech} and \ref{eq:runoff}) are derived from precipitation data recorded at three weather stations in the WRV.
+The weather stations are as follows:
+(1) a Hydrometeorological Automated Data System (HADS) located at the Ketchum Ranger Station near Ketchum (Ketchum HADS),
+(2) a HADS located at the Hailey Ranger Station at Hailey (Hailey HADS), and
+(3) an AgriMet station located near Picabo (PICI) on the Silver Creek Nature Conservancy property (Picabo AgriMet) (\hyperref[fig:map_precip_zones]{fig.~\ref{fig:map_precip_zones}}).
+The HADS is a real-time data acquisition and data distribution system operated by the National Weather Service (NWS) Office of Dissemination \citep{NOAA2015},
+whereas AgriMet is a satellite-telemetry network of automated agricultural weather stations operated and maintained by the Bureau of Reclamation,
+that collect weather data for use in crop water-use modeling, and other weather-related research and monitoring \citep{USBR2015}.
+
+The spatial distribution of precipitation is based on precipitation zones, areas with uniform precipitation rates that together cover the entire extent of the WRV aquifer system
+(\hyperref[fig:map_precip_zones]{fig.~\ref{fig:map_precip_zones}}).
+Boundaries between zones have been chosen based on geographic similarities that preserve the elevation-precipitation relationship observed in the data.
+
+<<include=FALSE>>=
+v <- "Spatial distribution of precipitation zones and weather stations in the Wood River Valley, Idaho."
+v <- c(paste("Map showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(v)))), v)
+@
+
+<<map_precip_zones, echo=FALSE, fig.width=fin.map.0[1], fig.height=fin.map.0[2], fig.scap=sprintf("{%s}", v[1]), fig.cap=sprintf("{%s}", v[2])>>=
+PlotMap(crs(hill.shading), xlim=usr.map[1:2], ylim=usr.map[3:4], bg.image=hill.shading,
+        dms.tick=TRUE, bg.image.alpha=0.6, rivers=list(x=streams.rivers),
+        lakes=list(x=lakes), credit=credit)
+plot(alluvium.extent, border="#FFFFFFCC", add=TRUE)
+cols <- c("#66C2A5", "#FC8D62", "#8DA0CB")
+polys <- SetPolygons(precip.zones, alluvium.extent, "gIntersection", 0.001)
+plot(polys, col=cols, border=NA, add=TRUE)
+plot(weather.stations, pch=23, cex=0.8, col="#333333", add=TRUE)
+labs <- sprintf("%s\n(%s)", weather.stations@data$name, weather.stations@data$type)
+text(weather.stations, labels=labs, col="#333333", cex=0.5, pos=1, offset=0.4)
+leg <- paste(as.character(polys@data$PrecipZone), "precipitation zone")
+legend("topright", leg, fill=cols, border=NA, inset=0.02, cex=0.7, box.lty=1,
+       box.lwd=0.5, xpd=NA, bg="#FFFFFFE7")
+leg <- "Weather stations"
+legend("topleft", leg, pch=23, pt.bg="#333333", pt.cex=0.8, inset=0.02,
+       cex=0.7, box.lty=1, box.lwd=0.5, xpd=NA, bg="#FFFFFFE7")
+invisible(dev.off())
+@
+
+Colder winter temperatures during the months of November through March result in frozen precipitation (snow).
+Precipitation recorded during these months often remains frozen for extended periods of time and is unavailable for deep percolation and surface runoff.
+Winter snowfall, and the subsequent springtime melting, is accounted for in the model by temporally redistributing the recorded precipitation values.
+The melting and infiltration of frozen precipitation is a function of air and soil temperature, wind, precipitation, snow cover, soil moisture and frozen soil moisture, and the thermal and hydrologic characteristics of the soil \citep{Harshburger2010}.
+Because most of this data are unavailable in the study area, a simplified monthly precipitation redistribution model was constructed to account for springtime snowmelt in the model.
+The redistribution algorithm reduces the precipitation values recorded during the winter months (November through February) and redistributes the excess precipitation to springtime months (March and April), thus maintaining mass balance.
+The amount of redistribution is based on the accumulation of snowpack, measured as Snow Water Equivalent (SWE), recorded at the
+Picabo AgriMet, Hailey HADS, and Chocolate Gulch Snow Telemetry (SNOTEL) weather stations (\hyperref[fig:map_precip_zones]{figs.~\ref{fig:map_precip_zones}} and \ref{fig:graph_swe}).
+SNOTEL is an automated system of snowpack and related climate sensors operated by the Natural Resources Conservation Service (NRCS) \citep{USDA2015}.
+
+<<include=FALSE>>=
+v <- "Daily average snow water equivalent recorded at weather stations in the Wood River Valley and surrounding areas, Idaho."
+v <- c(paste("Graph showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(v)))), v)
+@
+
+<<graph_swe, echo=FALSE, fig.width=fin.graph.short[1], fig.height=fin.graph.short[2], fig.scap=sprintf("{%s}", v[1]), fig.cap=sprintf("{%s}", v[2])>>=
+d <- swe
+mo <- as.integer(substr(d$MonthDay, 1, 2))
+d$MonthDay[mo %in% 10:12] <- paste0("2003", d$MonthDay[mo %in% 10:12])
+d$MonthDay[mo %in% 1:9] <- paste0("2004", d$MonthDay[mo %in% 1:9])
+d[, 1] <- as.Date(d$MonthDay, "%Y%m%d")
+d <- d[order(d$MonthDay), ]
+col <- c("#1B9E77", "#D95F02", "#7570B3")
+ylab <- paste("Snow water equivalent, in", c("meters", "inches"))
+PlotGraph(d, ylab=ylab, col=col, fill=paste0(col, "66"), lty=1,
+          seq.date.by="month", conversion.factor=39.3701, center.date.labels=TRUE)
+xlim <- range(d[, 1])
+xat <- seq(xlim[1], xlim[2], by="month")
+at <- xat + diff(c(xat, xlim[2])) / 2
+xlabs <- sprintf("(%d)", c(10:12, 1:9))
+axis.Date(1, at=at, tcl=0, cex.axis=0.6, lwd=-1, labels=xlabs, padj=1.5)
+leg <- c("Chocolate Gulch SNOTEL", "Hailey HADS", "Picabo AgriMet")
+legend("topright", leg, col=col, lty=1, inset=0.02, cex=0.7, box.lty=1,
+       box.lwd=0.5, bg="#FFFFFFE7")
+invisible(dev.off())
+@
+
+The monthly precipitation redistribution model is mathematically expressed as:
+
+\begin{subequations} \label{eq:precip_melt}
+\begin{align}
+\widehat{P}_{K, m} &= \left\{\begin{array}{l l}
+                        P_{K, m} & \quad \text{for $m = 10$,}\\
+                        P_{K, m}\, 0.25 & \quad \text{for $m = $ 11, 12, 1, 2, or 3,}\\
+                        P_{K, m} + \left(P_{K, 11} + P_{K, 12} + P_{K, 1} + P_{K, 2} + P_{K, 3}\right) 0.75 & \quad \text{for $m = 4$,}\\
+                        P_{K, m} & \quad \text{for $m = $ 5, 6, 7, 8, or 9,}\\
+                      \end{array} \right.\\
+\widehat{P}_{H, m} &= \left\{\begin{array}{l l}
+                        P_{H, m} & \quad \text{for $m = 10$,}\\
+                        P_{H, m}\, 0.75 & \quad \text{for $m = 11$,}\\
+                        P_{H, m}\, 0.25 & \quad \text{for $m = $ 12 or 1,}\\
+                        P_{H, m}\, 0.50 & \quad \text{for $m = 2$,}\\
+                        P_{H, m} + P_{H, 11}\, 0.25 + \left(P_{H, 12} + P_{H, 1}\right) 0.75 + P_{H, 2}\, 0.50 & \quad \text{for $m = 3$,}\\
+                        P_{H, m} & \quad \text{for $m = $ 4, 5, 6, 7, 8, or 9,}\\
+                      \end{array} \right.\\
+\widehat{P}_{P, m} &= \left\{\begin{array}{l l}
+                        P_{P, m} & \quad \text{for $m = 10$,}\\
+                        P_{P, m}\, 0.75 & \quad \text{for $m = 11$,}\\
+                        P_{P, m}\, 0.25 & \quad \text{for $m = $ 12 or 1,}\\
+                        P_{P, m}\, 0.75 & \quad \text{for $m = 2$,}\\
+                        P_{P, m} + P_{P, 11}\, 0.25 + \left(P_{P, 12} + P_{P, 1}\right) 0.75 + P_{P, 2}\, 0.25 & \quad \text{for $m = 3$,}\\
+                        P_{P, m} & \quad \text{for $m = $ 4, 5, 6, 7, 8, or 9,}\\
+                      \end{array} \right.
+\end{align}
+\end{subequations}
+where
+\begin{description}
+\item[m] is the month as a counting number (1-12) where 1 is January and 12 is December;
+\item[\widehat{P}_{K, m}\text{, } \widehat{P}_{H, m}\text{, } \widehat{P}_{P, m}] are the precipitation rates applied to the Ketchum, Hailey, and Picabo precipitation zones during the month of $m$, in meters per month, respectively; and
+\item[P_{K, m}\text{, } P_{H, m}\text{, } P_{P, m}] are the precipitation rates recorded at the Ketchum, Hailey, and Picabo weather stations during the month of $m$, in meters, respectively.
+\end{description}
+
+The precipitation-redistribution model assumes that at least 25 percent of a recorded winter-month precipitation is available for immediate deep percolation and surface runoff during the same month.
+
+<<echo=FALSE>>=
+elev <- weather.stations@data[, "elevation"]
+names(elev) <- weather.stations@data[, "id"]
+FUN <- function(i) {
+  sprintf("%s~m (%s~ft)",
+          formatC(elev[i], format="d", big.mark=","),
+          formatC(elev[i] * m.to.ft, format="d", big.mark=","))
+}
+@
+
+SWE measurements recorded at the Chocolate Gulch SNOTEL weather station are used as a proxy for snow accumulation and melt in the Ketchum precipitation zone.
+The Chocolate Gulch SNOTEL weather site is located at an elevation of \Sexpr{FUN("Choco")}.
+This is a relatively high elevation when compared to the elevation of the Ketchum NWS weather station at \Sexpr{FUN("Ketchum")}.
+The effect of which is that snow accumulation at the Chocolate Gulch SNOTEL weather station will likely occur somewhat earlier than in the model area (which is located at a lower elevation on the valley floor), and snowmelt will likely begin later.
+SWE measurements recorded at the Chocolate Gulch SNOTEL weather station indicate that snow accumulation begins in early October;
+assuming snow begins to accumulate within the model domain a short time later, indicates that 25 percent of the November precipitation recorded at the Ketchum HADS weather station can be applied to the Ketchum precipitation zone.
+At the Hailey HADS and Picabo AgriMet weather stations, snow begins to accumulate in the middle of November; thus indicating that 75 percent of the recorded precipitation can be applied to the Hailey and Picabo precipitation zones.
+
+The SWE data shown in \hyperref[fig:graph_swe]{figure~\ref{fig:graph_swe}} indicate that at the Picabo AgriMet and Hailey HADS weather stations the majority of snowmelt occurs during the month of March.
+Snowmelt at the Chocolate Gulch SNOWTEL weather station begins during the first week of April and continues into the latter part of May.
+Recall that the Chocolate Gulch SNOTEL weather station is located at a higher elevation than the valley floor, and it assumed that the snowmelt within the model domain occurs at an earlier date.
+Therefore, the month of April is assumed appropriate for valley-floor snowmelt in the Ketchum precipitation zone.
+
+\hyperref[fig:graph_precip]{Figure~\ref{fig:graph_precip}} shows the redistribution of precipitation data recorded at the Ketchum HADS, Hailey HADS, and Picabo AgriMet weather stations.
+Although the monthly precipitation redistribution model is somewhat subjective with respect to the reallocation of precipitation during the November through April months,
+it is thought to be generally consistent with the theoretical behavior of frozen soil and frozen precipitation \citep{Contor2004, IDWR2013}.
+
+<<echo=FALSE>>=
+FUN <- function(i, col) {
+  d <- precipitation[precipitation$PrecipZone == i, ]
+  d$PrecipZone <- NULL
+  d[, 1] <- as.Date(paste0(d[, 1], "01"), "%Y%m%d")
+  d <- rbind(d, d[nrow(d), , drop=FALSE])
+  d[nrow(d), 1] <- d[nrow(d), 1] + diff(d[, 1])[1]
+  ylab <- paste("Monthly precipitation, in", c("meters", "feet"))
+  col <- c(col, "#333333")
+  PlotGraph(d, ylab=ylab, col=col, fill=paste0(col, "66"), lty=1,
+            conversion.factor=m.to.ft, center.date.labels=TRUE)
+  leg <- c("Adjusted for spring melt", "Recorded at weather station")
+  legend("topright", leg, col=col, lty=1, inset=0.02, cex=0.7, box.lty=1,
+         box.lwd=0.5, bg="#FFFFFFE7")
+}
+@
+
+\begin{figure}
+  \begin{subfigure}{\textwidth}
+    \caption{Ketchum \label{fig:graph_precip_a}}
+    <<graph_precip_a, echo=FALSE, results="asis", fig.width=fin.graph.short[1], fig.height=fin.graph.short[2]>>=
+    FUN("Ketchum", "#1B9E77")
+    @
+  \end{subfigure}
+
+  <<include=FALSE>>=
+  v <- "Monthly precipitation depth at the (\\textit{\\textbf{A}}) Ketchum, (\\textit{\\textbf{B}}) Hailey, (\\textit{\\textbf{C}}) Picabo weather stations, Idaho. \\label{fig:graph_precip}"
+  v <- c(paste("Diagrams showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(v)))), v)
+  @
+  \caption[{\Sexpr{v[1]}}]{{\Sexpr{v[2]}}}
+
+\end{figure}
+
+\captionsetup[figure]{list=no}
+\begin{figure}
+  \ContinuedFloat
+  \begin{subfigure}{\textwidth}
+    \caption{Hailey \label{fig:graph_precip_b}}
+    <<graph_precip_b, echo=FALSE, results="asis", fig.width=fin.graph.short[1], fig.height=fin.graph.short[2]>>=
+    FUN("Hailey", "#D95F02")
+    @
+  \end{subfigure}
+  \caption{---Continued}
+\end{figure}
+
+\begin{figure}
+  \ContinuedFloat
+  \begin{subfigure}{\textwidth}
+    \caption{Picabo \label{fig:graph_precip_c}}
+    <<graph_precip_c, echo=FALSE, results="asis", fig.width=fin.graph.short[1], fig.height=fin.graph.short[2]>>=
+    FUN("Picabo", "#7570B3")
+    invisible(dev.off())
+    @
+  \end{subfigure}
+  \caption{---Continued}
+\end{figure}
+\captionsetup[figure]{list=yes}
+
+% =========================================================================
+
+\section{Evapotranspiration}
+
+Evapotranspiration ($ET$ in equations~\ref{eq:natural_recharge}, \ref{eq:rech} and \ref{eq:runoff}) is the sum of evaporation and plant transpiration,
+and accounts for as much as 47 percent of the annual outflow from the WRV aquifer system \citep{Bartolino2009}.
+The component of evaporation in ET is the movement of water to the atmosphere from the land surface, surface-water bodies, and the capillary fringe of the groundwater table,
+whereas plant transpiration is the uptake of water by plant roots and the subsequent loss of water as vapor through its leaves.
+
+% =========================================================================
+
+\subsection{Estimation Methods}
+
+In the WRV, estimates of ET were made using empirical calculations of indirect observations.
+As shown in \hyperref[fig:graph_et_method]{figure~\ref{fig:graph_et_method}}, the method used to estimate ET varied throughout the duration of the model simulation period (1995--2010).
+The estimation method applied to a given time period was based on the robustness of the method and the availability of indirect observations.
+Five different methods were used to estimate ET indirectly.
+
+<<include=FALSE>>=
+v <- "Methods used to estimate evapotranspiration."
+v <- c(paste("Graph showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(v)))), v)
+@
+
+<<graph_et_method, echo=FALSE, fig.width=fin.graph, fig.height=1, fig.scap=sprintf("{%s}", v[1]), fig.cap=sprintf("{%s}", v[2])>>=
+d <- et.method
+xlim <- as.Date(c("1995-01-01", "2011-01-01"))
+x <- seq(xlim[1], xlim[2], "months")
+y <- d$ETMethod[match(x, as.Date(paste0(d$YearMonth, "01"), format="%Y%m%d"))]
+cols <- c("#FFFFFF", "#7380B5", "#83B6AC", "#C9C26C", "#F3A2AC")
+par(mar=c(2.3, 1.1, 1.5, 1.1), mgp=c(3.2, 0.2, 0))
+plot(NA, xlim=xlim, ylim=c(0, 1), xaxs="i", yaxs="i", xaxt="n", yaxt="n",
+     xlab=NA, ylab=NA, cex.lab=0.8, cex.axis=0.8, las=2, frame.plot=FALSE)
+rect(head(x, -1), 0,  x[-1], 1, col=cols[y], border=NA)
+tcl <- 7.2 / par("cra")[2]
+at <- seq(xlim[1], xlim[2], "years")
+axis.Date(1, at=at, cex.axis=0.7, tcl=tcl, lwd=-1, lwd.ticks=0.5, labels=FALSE)
+axis.Date(1, at=at + diff(c(at, xlim[2])) / 2, tcl=0, cex.axis=0.7, lwd=-1)
+axis.Date(3, at=at, cex.axis=0.7, tcl=tcl, lwd=-1, lwd.ticks=0.5, labels=FALSE)
+idxs <- c(1, 3, 5, 2, 4)
+legend(mean(par("usr")[1:2]), 1, levels(y)[idxs], fill=cols[idxs], horiz=TRUE,
+       cex=0.7, bty="n", xpd=TRUE, xjust=0.5, yjust=0,
+       border=c("#333333", cols[idxs][-1]))
+box(lwd=0.5)
+invisible(dev.off())
+@
+
+% =========================================================================
+
+\subsubsection{Allen and Robison method}
+
+The Allen and Robison method for estimating ET uses the American Society of Civil Engineers (ASCE) standardized Penman-Monteith equation to calculate reference ET values, and dual crop coefficients \citep{Allen2007}.
+The Allen and Robison method is mathematically expressed as:
+
+\begin{equation} \label{eq:et-ar}
+\mathit{ET} = \sum\limits_{i} K_{c, i}\, \mathit{ET}_{r, i}
+\end{equation}
+where
+\begin{description}
+\item[\mathit{ET}] is the estimated evapotranspiration rate, in meters per month;
+\item[i] is the day in the month as a decimal number;
+\item[K_{c, i}] is the crop coefficient on day $i$, a dimensionless quantity; and
+\item[\mathit{ET}_{r, i}] is the reference evapotranspiration rate recorded at the Picabo weather station on day $i$, in meters per day.
+\end{description}
+
+The reference ET represents the ET from a theoretical, standardized reference crop (fully watered, full cover, perfectly managed alfalfa crop), and incorporates net radiation, soil heat flux, air temperature, wind speed, and vapor pressure \citep{Allen2007}.
+The crop coefficient is defined as the ratio of actual ET to the reference ET for a specific crop or land cover.
+An estimate of the crop coefficient is obtained by summing the dual crop coefficients:
+
+\begin{equation} \label{eq:et-kc}
+K_{c} = K_{c, b} + K_{c, e}
+\end{equation}
+where
+\begin{description}
+\item[K_{c, b}] is the basal crop coefficient, a dimensionless quantity; and
+\item[K_{c, e}] is the evaporative crop coefficient, a dimensionless quantity.
+\end{description}
+
+The basal crop coefficient is effective during the irrigation season and represents the non-weather factors of crop height, crop-soil resistance, and surface reflectance that cause actual ET to vary from the reference ET;
+whereas the evaporative crop coefficient represents the evaporation because of wetting by precipitation and irrigation.
+
+\citet{Allen2007} used their method to estimate ET at the Picabo AgriMet weather station for various vegetation types
+(winter-month ET values are shown in \hyperref[table_et_picabo-ar]{table~\ref{table_et_picabo-ar}}; \citealp{ETIdaho2015}).
+Their method is reported to estimate irrigation-season ET within plus or minus 10 to 15 percent of the actual ET value; however, the land-cover distribution must be known in order for this method to work.
+During the growing season, the spatial and temporal resolution of land-cover maps is somewhat diminished by rapid crop growth and misidentification of vegetation types.
+Despite the unreliability of land-cover data during the growing season, the Allen and Robison method is thought to provide robust estimates of ET during the non-growing season (winter months).
+Estimates of ET improve during the winter months because most of ET occurs as evaporation (and sublimation) during this time period \citep{Wright1993};
+additionally, because minimal transpiration takes place, the type of vegetated land cover is much less relevant, and the amount of mulch (dead or dormant vegetation) provides vegetative control on ET.
+Lands with full or partial mulch cover will experience less ET than bare soil because of the higher albedo and insulating properties of the mulch \citep{Allen2007}.
+As a result of winter conditions, land-cover identification becomes less crucial to the estimation of ET because many vegetation types have similar winter vegetative-cover percentages.
+Furthermore, less energy is available to support evaporation resulting in much less winter-time evaporation.
+Because wintertime ET rates are small, and differences in wintertime ET rates between land-cover types are also small, mistakes in land-cover identification do not represent as significant an error as during the irrigation season.
+Therefore, the Allen and Robison method is only applied during the winter months (November through March).
+
+<<table_et_picabo-ar, echo=FALSE, results="asis">>=
+covers <- c("100 percent impervious", "Grass turf (lawns) - irrigated", "Alfalfa - less frequent cuttings",
+            "Bare soil", "Cottonwoods", "Grass Pasture - high management", "Mulched soil (including grain stubble)",
+            "Open water - shallow systems", "Range grass - early short season", "Sage brush", "Spring grain - irrigated",
+            "Sweet corn - late plant", "Wetlands - narrow stands", "Willows", "Winter grain", "Range (not including impervious)")
+d <- data.frame(covers,
+                nov=c(0.00, 0.21, 0.47, 0.40, 0.32, 0.21, 0.30, 0.68, 0.30, 0.30, 0.30, 0.42, 0.32, 0.33, 0.44, 0.47),
+                dec=c(0.00, 0.11, 0.29, 0.28, 0.20, 0.11, 0.20, 0.29, 0.20, 0.20, 0.20, 0.29, 0.20, 0.20, 0.28, 0.18),
+                jan=c(0.00, 0.14, 0.36, 0.36, 0.25, 0.14, 0.25, 0.34, 0.25, 0.25, 0.25, 0.36, 0.25, 0.25, 0.35, 0.22),
+                feb=c(0.00, 0.23, 0.58, 0.57, 0.39, 0.23, 0.39, 0.63, 0.39, 0.39, 0.39, 0.58, 0.39, 0.39, 0.57, 0.40),
+                mar=c(0.00, 0.45, 0.88, 0.81, 0.71, 0.45, 0.67, 1.32, 0.70, 0.70, 0.69, 0.88, 0.71, 0.72, 1.07, 0.87))
+columns <- c("Land cover", "Nov \\\\ (mm/d)", "Dec \\\\ (mm/d)", "Jan \\\\ (mm/d)", "Feb \\\\ (mm/d)", "Mar \\\\ (mm/d)")
+colnames(d) <- sprintf("\\textbf{\\shortstack{%s}}", columns)
+cap1 <- "Average monthly land cover evapotranspiration rates at the Picabo AgriMet weather station as calculated by the Allen and Robison method."
+cap2 <- "\\textbf{Abbreviations}: mm/d, millimeters per day"
+tbl <- xtable::xtable(d, label="table_et_picabo-ar")
+xtable::caption(tbl) <- c(sprintf("%s [%s]", cap1, paste(cap2, collapse=" ")), cap1)
+xtable::digits(tbl) <- 2
+xtable::align(tbl) <- c("l", "l", "c", "c", "c", "c", "c")
+print(tbl, include.rownames=FALSE, caption.placement="top", booktabs=TRUE,
+      format.args=list(big.mark=","), sanitize.colnames.function=function(x){x},
+      size="\\small")
+@
+
+Equations~(\ref{eq:et-ar}) and (\ref{eq:et-kc}) were reparameterized to best represent the dominant processes during the winter months, evaporation and sublimation.
+The reference ET ($\mathit{ET}_{r}$ in equation \ref{eq:et-ar}) is changed to represent snow cover instead of a perfectly managed alfalfa crop,
+the basal crop coefficient ($K_{c, b}$ in equation \ref{eq:et-kc}) is decreased to 0.1, and the evaporative crop coefficient ($K_{c, e}$ in equation \ref{eq:et-kc}) changed to account for the evaporative effect of mulch cover.
+The smaller basal crop coefficient results in an ET estimate that is dominated by evaporation and much more sensitive to the distribution of mulch cover and precipitation events \citep{Allen2007}.
+In summary, the Allen and Robison method is used to estimate ET for winter months by employing a reference ET for snow covered surfaces, which primarily represents ablation due to temperature and wind, and is strongly dependent on the amount of snow cover, mulch cover, and precipitation.
+
+Because winter-time ET is relatively insensitive to vegetation type, when compared to growing-season ET estimates,
+it is assumed that land cover land use maps are sufficient for calculating ET during this time period (\hyperref[table_land-cover-ar]{table~\ref{table_land-cover-ar}}).
+Land cover land use maps are provided by the National Land Cover Database \citep{MRLC2013} and the Cropland Data Layer \citep{NASS2013}.
+
+<<table_land-cover-ar, echo=FALSE, results="asis">>=
+d <- data.frame(yr=1995:2010,
+                covers=c(rep(2001, 6), NA, 2001, rep(2005, 2), rep(NA, 6)),
+                src=c(rep("NLCD", 8), rep("CDL", 3), "NLCD", rep("CDL", 4)))
+d <- data.frame(d[1:8, ], d[9:16, ])
+columns <- rep(c("Year", "Proxy year", "Data source"), 2)
+colnames(d) <- sprintf("\\textbf{\\shortstack{%s}}", columns)
+cap1 <- "Applied land cover land use maps during the model simulation period (1995--2010)."
+cap2 <- "\\textbf{Abbreviations}: NLCD, National Land Cover Dataset; CDL, Cropland Data Layer; NA, not applicable"
+tbl <- xtable::xtable(d, label="table_land-cover-ar")
+xtable::caption(tbl) <- c(sprintf("%s [%s]", cap1, paste(cap2, collapse=" ")), cap1)
+xtable::digits(tbl) <- 0
+xtable::align(tbl) <- "rccc|ccc"
+print(tbl, include.rownames=FALSE, caption.placement="top", booktabs=TRUE,
+      sanitize.colnames.function=function(x){x}, size="\\small", NA.string="NA")
+@
+
+Allen and Robison ET estimates are available for the Picabo AgriMet weather station during 1995 through 2010 and applied to the Picabo precipitation zone.
+However, Allen and Robison ET estimates were not available for the Hailey HADS or Ketchum HADS weather stations during this time period.
+Because wintertime ET is strongly dependent on temperature and snow cover, \citet{ETIdaho2015} estimates of ET at the Picabo AgriMet weather station
+(\hyperref[table_et_picabo-ar]{table~\ref{table_et_picabo-ar}}) are not directly applicable the Hailey and Ketchum precipitation zones.
+To address this issue, long-term average monthly ET estimates for the Hailey HADS (1894--1988) and Picabo AgriMet (1994--2011) weather stations where used to develop a regression model between these two site.
+\hyperref[table_et_ratios-ar]{Table~\ref{table_et_ratios-ar}} provides the monthly ratio between land cover ET rates estimated at the Hailey HADS and Picabo AgriMet weather stations.
+These ratios were then used to estimate ET in the Hailey precipitation zone.
+
+<<table_et_ratios-ar, echo=FALSE, results="asis">>=
+d <- data.frame(covers=covers[-c(1, length(covers))],
+                nov=c(0.95, 1.02, 1.03, 1.03, 0.95, 1.00, 0.99, 1.10, 1.03, 1.03, 1.05, 1.03, 1.06, 1.02),
+                dec=c(1.09, 0.97, 0.93, 1.00, 1.09, 0.90, 1.14, 1.05, 1.00, 1.00, 1.00, 1.00, 1.00, 0.93),
+                jan=c(1.00, 0.97, 1.00, 0.92, 1.00, 0.96, 1.24, 0.92, 0.92, 0.92, 0.94, 0.96, 0.92, 0.91),
+                feb=c(0.91, 0.90, 0.91, 0.92, 0.91, 0.92, 1.11, 0.92, 0.92, 0.92, 0.88, 0.90, 0.92, 0.91),
+                mar=c(0.71, 0.78, 0.77, 0.73, 0.71, 0.72, 0.94, 0.74, 0.71, 0.72, 0.77, 0.73, 0.72, 0.72))
+columns <- c("Land cover", "Nov \\\\ (1)", "Dec \\\\ (1)", "Jan \\\\ (1)", "Feb \\\\ (1)", "Mar \\\\ (1)")
+colnames(d) <- sprintf("\\textbf{\\shortstack{%s}}", columns)
+cap <- "Ratio of monthly land cover evapotranspiration rates estimated at the Hailey HADS weather station to those estimated at the Picabo AgriMet weather station."
+tbl <- xtable::xtable(d, label="table_et_ratios-ar")
+xtable::caption(tbl) <- cap
+xtable::digits(tbl) <- 2
+xtable::align(tbl) <- c("l", "l", "c", "c", "c", "c", "c")
+print(tbl, include.rownames=FALSE, caption.placement="top", booktabs=TRUE,
+      format.args=list(big.mark=","), sanitize.colnames.function=function(x){x},
+      size="\\small")
+@
+
+<<echo=FALSE>>=
+dist <- rgeos::gDistance(weather.stations[weather.stations@data$id == "Ketchum", ],
+                         weather.stations[weather.stations@data$id == "Mackay", ])
+dist <- sprintf("%s km [%s mi]", formatC(dist * m.to.mi, format="d", big.mark=","),
+                 formatC(dist * m.to.km, format="d", big.mark=","))
+dz <- abs(weather.stations@data[weather.stations@data$id == "Ketchum", "elevation"] -
+          weather.stations@data[weather.stations@data$id == "Mackay", "elevation"])
+dz <- sprintf("%s m [%s ft]", formatC(dz, format="d", big.mark=","),
+              formatC(dz * m.to.ft, format="d", big.mark=","))
+@
+
+The Ketchum HADS weather station has no available estimates of ET.
+Although the conditions are not identical, the Mackay HADS weather station (located about \Sexpr{dist} north-west of the Ketchum HADS weather station)
+has ET estimates based on the Allen and Robison method that are available for the 1995--2010 period (\hyperref[table_et_mackay-ar]{table~\ref{table_et_mackay-ar}}).
+Because the elevation difference between the Ketchum and Mackay HADS weather stations is small (\Sexpr{dz}),
+and both weather stations are located in a south-central Idaho mountain valley, the Mackay ET estimates are used as a proxy for ET in the Ketchum precipitation zone.
+
+<<table_et_mackay-ar, echo=FALSE, results="asis">>=
+d <- data.frame(covers=covers[-c(1, length(covers))],
+                nov=c(0.16, 0.33, 0.28, 0.24, 0.16, 0.22, 0.57, 0.22, 0.22, 0.22, 0.29, 0.24, 0.24, 0.28),
+                dec=c(0.11, 0.26, 0.26, 0.18, 0.11, 0.18, 0.27, 0.18, 0.18, 0.18, 0.26, 0.18, 0.18, 0.25),
+                jan=c(0.14, 0.34, 0.34, 0.23, 0.14, 0.23, 0.32, 0.23, 0.23, 0.23, 0.34, 0.23, 0.23, 0.33),
+                feb=c(0.21, 0.45, 0.43, 0.33, 0.21, 0.32, 0.60, 0.33, 0.33, 0.32, 0.44, 0.32, 0.33, 0.47),
+                mar=c(0.33, 0.46, 0.41, 0.50, 0.33, 0.40, 1.33, 0.43, 0.43, 0.42, 0.46, 0.50, 0.50, 0.67))
+columns <- c("Land cover", "Nov \\\\ (mm/d)", "Dec \\\\ (mm/d)", "Jan \\\\ (mm/d)", "Feb \\\\ (mm/d)", "Mar \\\\ (mm/d)")
+colnames(d) <- sprintf("\\textbf{\\shortstack{%s}}", columns)
+cap1 <- "Average monthly land cover evapotranspiration rates at the Mackay HADS weather station as calculated by the Allen and Robison method."
+cap2 <- "\\textbf{Abbreviations}: mm/d, millimeters per day"
+tbl <- xtable::xtable(d, label="table_et_mackay-ar")
+xtable::caption(tbl) <- c(sprintf("%s [%s]", cap1, paste(cap2, collapse=" ")), cap1)
+xtable::digits(tbl) <- 2
+xtable::align(tbl) <- c("l", "l", "c", "c", "c", "c", "c")
+print(tbl, include.rownames=FALSE, caption.placement="top", booktabs=TRUE,
+      format.args=list(big.mark=","), sanitize.colnames.function=function(x){x},
+      size="\\small")
+@
+
+% =========================================================================
+
+\subsubsection{METRIC model}
+
+The METRIC (Mapping Evapotranspiration at high Resolution using Internalized Calibration) model uses an energy balance approach to estimate ET \citep{Allen2010a}.
+The energy consumed during the ET process is calculated by METRIC as the total energy available minus heat fluxes to the ground and air \citep{Allen2010b}.
+Remote sensing data (heat, reflectance, radiation) as measured by a Landsat satellite, are used to indirectly estimate the components of the energy balance equation.
+The remote sensing data are available as raster images (gridded data) and only for snapshots in time when a satellite passed over the WRV.
+Cloud cover and smoke can obscure ground features from satellite imagery and make it unusable,
+although images with partial cloud cover may still be used by masking, or removing, those areas of the image that are obscured by clouds.
+ET estimates in the masked regions of images are rendered using data from different Landsat satellites passing over at different times.
+
+The ratio of instantaneous ET (calculated from a satellite image) to the hourly reference ET (recorded at a local weather station) is called the realized fraction of ET, and expressed as:
+
+\begin{equation} \label{eq:et-frmetric}
+F_{r, \mathit{metric}} = \frac{\mathit{ET}_{\mathit{instant}}}{\mathit{ET}_{r, \mathit{hour}}}
+\end{equation}
+where
+\begin{description}
+\item[F_{r, \mathit{metric}}] is the realized fraction of evapotranspiration, a dimensionless quantity;
+\item[\mathit{ET}_{\mathit{instant}}] is the instantaneous evapotranspiration, in meters; and
+\item[\mathit{ET}_{r, \mathit{hour}}] is the hourly reference evapotranspiration, in meters.
+\end{description}
+
+The realized fraction of ET is relatively constant throughout the day \citep{Allen2010b}.
+Therefore, multiplying the realized fraction of ET by the daily reference ET gives a daily estimate of ET using the METRIC model.
+ET estimates based on the METRIC model are expressed as:
+
+\begin{equation} \label{eq:et-metric}
+\mathit{ET} = \sum\limits_{i} F_{r, \mathit{metric}, i}\, \mathit{ET}_{r, i}
+\end{equation}
+where
+\begin{description}
+\item[\mathit{ET}_{r, i}] is the reference evapotranspiration rate recorded at the Picabo AgriMet weather station on day $i$, in meters per day.
+\end{description}
+
+An interpolation method based on vegetative growth and senescence is used to estimate ET on days when satellite images are not available; that is, days between image snapshot dates.
+Monthly ET estimates using the METRIC model are reported to be within plus or minus 10 percent of actual ET \citep{Mokhtari2012}.
+\hyperref[table_metric_data]{Table~\ref{table_metric_data}} gives the availability of METRIC ET estimates during 1995--2010 period.
+
+<<table_metric_data, echo=FALSE, results="asis">>=
+d <- data.frame(yr=c(1996, 2000, 2002, 2006, 2008:2010),
+                mo=c(rep("Apr--Oct", 2), "May--Oct", rep("Apr--Oct", 4)),
+                covers=c(rep("WRV", 2), "South of Bellevue", rep("WRV", 4)))
+columns <- c("Year", "Month", "Land cover")
+colnames(d) <- sprintf("\\textbf{\\shortstack{%s}}", columns)
+cap <- "Availability of METRIC estimates of evapotranspiration in the Wood River Valley (WRV) during the model simulation period (1995--2010)."
+tbl <- xtable::xtable(d, label="table_metric_data")
+xtable::caption(tbl) <- cap
+xtable::digits(tbl) <- 0
+xtable::align(tbl) <- c("l", "c", "l", "l")
+print(tbl, include.rownames=FALSE, caption.placement="top", booktabs=TRUE,
+      sanitize.colnames.function=function(x){x}, size="\\small",
+      sanitize.text.function=identity)
+@
+
+% =========================================================================
+
+\subsubsection{NDVI method}
+
+The Normalized Difference Vegetation Index (NDVI) is an indicator used to analyze remote sensing measurements (plant reflectance) and assess whether the land surface contains live green vegetation or not.
+The NDVI is calculated as the difference between red and infrared wavelengths reflected from the earth's surface as sensed from a satellite-borne sensor, and expressed as:
+
+\begin{equation} \label{eq:ndvi}
+\mathit{NDVI} = \frac{\mathit{ref}_{\mathit{nir}} - \mathit{ref}_{\mathit{red}}}{\mathit{ref}_{\mathit{nir}} + \mathit{ref}_{\mathit{red}}}
+\end{equation}
+where
+\begin{description}
+\item[\mathit{NDVI}] is the normalized difference vegetation index, a dimensionless quantity;
+\item[\mathit{ref}_{\mathit{nir}}] is the spectral reflectance measurement acquired in the near-infrared region, in nanometers; and
+\item[\mathit{ref}_{\mathit{red}}] is the spectral reflectance measurement acquired in the visible (red) region, in nanometers.
+\end{description}
+
+The dependence of ET on vegetation provides evidence for a strong correlation between NDVI and the realized fraction of ET ($F_{r, \mathit{metric}}$ in equation~\ref{eq:et-metric}).
+For each WRV crop type, a linear regression model was established between the NDVI and the realized fraction of ET.
+An analysis of these models indicates that all crop types exhibited a similar functional relationship; therefore, a single generalized linear regression model was established \citep{Allen2010a}, and expressed as:
+
+\begin{equation} \label{eq:et-frnvdi}
+F_{r, \mathit{ndvi}} = 1.06 \, \mathit{NDVI} + 0.15
+\end{equation}
+where
+\begin{description}
+\item[F_{r, \mathit{ndvi}}] is the regressed estimate of the realized fraction of evapotranspiration, a dimensionless quantity.
+\end{description}
+
+ET estimates based on the NDVI method are then expressed as:
+
+\begin{equation} \label{eq:et-ndvi}
+\mathit{ET} = \sum\limits_{i} F_{r, \mathit{ndvi}, i}\, \mathit{ET}_{r, i}
+\end{equation}
+
+where
+\begin{description}
+\item[\mathit{ET}_{r, i}] is the reference evapotranspiration rate recorded at the Picabo AgriMet weather station on day $i$, in meters per day.
+\end{description}
+
+The availability of NDVI ET estimates during the model simulation period is provided in \hyperref[table_ndvi_data]{table~\ref{table_ndvi_data}}.
+The NDVI method is considered less robust than the METRIC model because of the added uncertainty introduced by the regression estimate of realized fraction of ET (equation~\ref{eq:et-frnvdi}).
+An analysis of ET estimates calculated using the METRIC model and NDVI method for concurrent dates in the WRV indicate that the NDVI ET estimates are on average 9 percent larger.
+
+<<table_ndvi_data, echo=FALSE, results="asis">>=
+d <- data.frame(yr=c(1995, 1997:1999, 2001, 2003:2005, 2007),
+                mo=c("July", "Sep--Oct", rep("Aug--Oct", 2), "Jun--Oct",
+                     "Jun--Sep", "Apr, Jul, and Oct", rep("Apr--Oct", 2)),
+                covers=rep("WRV", 9))
+columns <- c("Year", "Month", "Land cover")
+colnames(d) <- sprintf("\\textbf{\\shortstack{%s}}", columns)
+cap <- "Availability of NDVI estimates of evapotranspiration in the Wood River Valley (WRV) during the model simulation period (1995--2010)."
+tbl <- xtable::xtable(d, label="table_ndvi_data")
+xtable::caption(tbl) <- cap
+xtable::digits(tbl) <- 0
+xtable::align(tbl) <- c("l", "c", "l", "l")
+print(tbl, include.rownames=FALSE, caption.placement="top", booktabs=TRUE,
+      sanitize.colnames.function=function(x){x}, size="\\small",
+      sanitize.text.function=identity)
+@
+
+% =========================================================================
+
+\subsubsection{Interpolation method}
+
+The interpolation method uses METRIC data from the nearest available year and scales it to the month and year of interest using NDVI data.
+The interpolated realized fraction of ET is expressed as:
+
+\begin{equation} \label{eq:et-frintrpl}
+F_{r, \mathit{intrpl}, m_{0}, y_{0}} = F_{r, \mathit{metric}, m_{0}, y_{1}} \left(\frac{F_{r, \mathit{ndvi}, m_{1}, y_{0}}}{F_{r, \mathit{ndvi}, m_{1}, y_{1}}}\right)
+\end{equation}
+where
+\begin{description}
+\item[m_{0}\text{, } y_{0}] are the month and year where evapotranspiration is interpolated, respectively;
+\item[m_{1}] is the month in year $y_{0}$ where NDVI evapotranspiration estimates are available;
+\item[y_{1}] is the year where METRIC evapotranspiration estimates are available in month $m_{0}$;
+\item[F_{r, \mathit{intrpl}}] is the interpolated realized fraction of evapotranspiration, a dimensionless quantity; and
+\item[F_{r, \mathit{metric}}\text{, } F_{r, \mathit{ndvi}}] are the realized fraction of evapotranspiration from the METRIC model (equation~\ref{eq:et-metric}) and NDVI method (equation~\ref{eq:et-frnvdi}), respectively, dimensionless quantities.
+\end{description}
+
+The rationale for this approach is that the realized fraction of ET from the METRIC model implicitly reflects long-term ET trends; however,
+there exists no data pertaining to crop-mix changes and acute stresses available for use in the METRIC model during the month without satellite imagery \citep{Contor2012}.
+Crop-mix changes and acute stresses are correlated to the vegetative index, and are represented in the ratio of the NDVI realized fraction of ET between the same month in different years.
+In summary, the interpolated estimates of ET encapsulate long-term trends using METRIC data, acute crop differences and stresses using NDVI data, and appropriate weather conditions using the reference ET from a local weather station.
+The ET estimates based on the interpolation method are expressed as:
+
+\begin{equation} \label{eq:et-intrpl}
+\mathit{ET} = F_{r, \mathit{intrpl}}\, \mathit{ET}_{r}
+\end{equation}
+where
+\begin{description}
+\item[\mathit{ET}_{r}] is the reference evapotranspiration rate recorded at the Picabo AgriMet weather station, in meters per month.
+\end{description}
+
+The availability of interpolated ET estimates during the model simulation period is provided in \hyperref[table_intrpl_data]{table~\ref{table_intrpl_data}}.
+The interpolation method is considered less robust than both the METRIC model and
+the NDVI method because of the added uncertainty introduced by the interpolated estimate of realized fraction of ET (equation~\ref{eq:et-frintrpl}).
+
+<<table_intrpl_data, echo=FALSE, results="asis">>=
+d <- data.frame(yr=c(1995, 1997:1999, 2001:2004),
+                mo=c("Apr--Jun and Aug--Oct", "Apr--Aug", rep("Apr--Jul", 2),
+                     "Apr--May", "Apr", "Apr--May and Oct", "May--Jun and Aug--Sep"),
+                covers=rep("WRV", 8))
+columns <- c("Year", "Month", "Land cover")
+colnames(d) <- sprintf("\\textbf{\\shortstack{%s}}", columns)
+cap <- "Availability of interpolated estimates of evapotranspiration in the Wood River Valley (WRV) during the model simulation period (1995--2010)."
+tbl <- xtable::xtable(d, label="table_intrpl_data")
+xtable::caption(tbl) <- cap
+xtable::digits(tbl) <- 0
+xtable::align(tbl) <- c("l", "c", "l", "l")
+print(tbl, include.rownames=FALSE, caption.placement="top", booktabs=TRUE,
+      sanitize.colnames.function=function(x){x}, size="\\small",
+      sanitize.text.function=identity)
+@
+
+% =========================================================================
+
+\subsubsection{METRIC-NDVI method}
+
+From May through October 2002, METRIC data are only available in the area south of the city of Bellevue (commonly referred to as the Bellevue Triangle); whereas NDVI estimates are available for the entire WRV.
+METRIC ET estimates are directly applied in the Bellevue Triangle during this time period because of the robustness of this method.
+In areas where only NDVI data are available (north of the city of Bellevue), a scaled NDVI ET estimate based on a comparison between METRIC and NDVI ET estimates in the Bellevue Triangle was applied.
+In the Bellevue Triangle, the comparison between estimates is expressed as a ratio:
+
+\begin{equation} \label{eq:et-frmetric_ndvi}
+r = \frac{\sum\mathit{ET}_{\mathit{ndvi}}}{\sum\mathit{ET}_{\mathit{metric}}}
+\end{equation}
+where
+\begin{description}
+\item[r] is the ratio between evapotranspiration estimates in the Bellevue Triangle using the NDVI method ($\mathit{ET}_{\mathit{ndvi}}$) and METRIC model ($\mathit{ET}_{\mathit{metric}}$), a dimensionless quantity.
+\end{description}
+
+The ET estimates based on the METRIC-NDVI method are expressed as:
+
+\begin{equation} \label{eq:metric_ndvi}
+\mathit{ET} = \left\{\begin{array}{l l}
+                 \mathit{ET}_{\mathit{metric}} & \quad \text{if located in the Bellevue Triangle,}\\
+                 \mathit{ET}_{\mathit{ndvi}} \; r & \quad \text{if located north of the city of Bellevue.}
+               \end{array} \right.
+\end{equation}
+
+The METRIC-NDVI method assumes that the ratio $r$ is constant throughout the WRV.
+
+% =========================================================================
+
+\subsection{Distribution and Statistics}
+
+ET estimates are available for every month in the model simulation period (1995--2010) and spatially cover most of the WRV; a small area in the very northern part of the WRV, located outside the model domain, is missing.
+For example, \hyperref[fig:map_et]{figure~\ref{fig:map_et}} shows the spatial distribution of ET rates in
+February (\hyperref[fig:map_et_a]{fig.~\ref{fig:map_et_a}}) and August (\hyperref[fig:map_et_b]{fig.~\ref{fig:map_et_b}}) of 2008.
+Descriptive statistics for ET rates during each month of the model simulation period are shown by a box-and-whisker plot (\hyperref[fig:graph_et]{fig.~\ref{fig:graph_et}}),
+in which the bottom and top of a box are the first and third quartiles, and the band inside the box is the second quartile (the median).
+The ends of the whiskers represent the minimum and maximum ET rates.
+As expected, the largest ET rates were measured during the peak of the growing season (June through August) and the lowest rates during the winter months (November through March).
+
+<<echo=FALSE>>=
+zlim <- range(pretty(c(et[["200802"]][], et[["200808"]][])))
+FUN <- function(i) {
+  PlotMap(i, xlim=usr.map[1:2], ylim=usr.map[3:4], zlim=zlim,
+          bg.image=hill.shading, bg.image.alpha=0.6, dms.tick=TRUE,
+          pal=topo.colors, explanation="Evapotranspiration rate, in meters per month.",
+          rivers=list(x=streams.rivers), lakes=list(x=lakes), credit=credit)
+  plot(cities, pch=15, cex=0.8, col="#333333", add=TRUE)
+  text(cities, labels=cities@data$FEATURE_NA, col="#333333", cex=0.5, pos=1, offset=0.4)
+}
+@
+
+\begin{figure}
+  \begin{subfigure}{\textwidth}
+    \caption{February 2008 \label{fig:map_et_a}}
+    <<map_et_a, echo=FALSE, results="asis", fig.width=fin.map[1], fig.height=fin.map[2]>>=
+    FUN(et[["200802"]])
+    @
+  \end{subfigure}
+  <<include=FALSE>>=
+  v <- "Spatial distribution of evapotranspiration during (\\textit{\\textbf{A}}) February and (\\textit{\\textbf{B}}) August of 2008, Wood River Valley, Idaho. \\label{fig:map_et}"
+  v <- c(paste("Maps showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(v)))), v)
+  @
+  \caption[{\Sexpr{v[1]}}]{{\Sexpr{v[2]}}}
+\end{figure}
+
+\captionsetup[figure]{list=no}
+\begin{figure}
+  \ContinuedFloat
+  \begin{subfigure}{\textwidth}
+    \caption{August 2008 \label{fig:map_et_b}}
+    <<map_et_b, echo=FALSE, results="asis", fig.width=fin.map[1], fig.height=fin.map[2]>>=
+    FUN(et[["200808"]])
+    invisible(dev.off())
+    @
+  \end{subfigure}
+  \caption{---Continued}
+\end{figure}
+\captionsetup[figure]{list=yes}
+
+<<echo=FALSE>>=
+x <- as.Date(paste0(names(et), "15"), format="%Y%m%d")
+d <- as.data.frame(do.call(cbind, lapply(seq_len(nlayers(et)), function(i) et[[i]][])))
+names(d) <- format(x, "%m/%y")
+ylim <- range(pretty(range(cellStats(et, stat="range"))))
+pars <- list(boxwex=0.8, staplewex=0.5, outwex=0.5, cex.axis=0.7, las=1)
+ylab <- paste("Evapotranspiration rate, in", c("meters", "feet"), "per month")
+FUN <- function(xlim) {
+  xlim <- as.Date(xlim)
+  idxs <-  which(x > xlim[1] & x < xlim[2])
+  PlotGraph(x[idxs], d[, idxs], xlim=xlim, type="box", ylab=ylab, ylim=ylim, col="#FFE4C4",
+            seq.date.by="years", conversion.factor=m.to.ft, boxwex=20,
+            center.date.labels=TRUE)
+}
+@
+
+\begin{figure}
+  \begin{subfigure}{\textwidth}
+    \caption{1995 through 1998 \label{fig:graph_et_a}}
+    <<graph_et_a, echo=FALSE, results="asis", fig.width=fin.graph.short[1], fig.height=fin.graph.short[2]>>=
+    FUN(c("1995-01-01", "1999-01-01"))
+    @
+  \end{subfigure}
+  <<include=FALSE>>=
+  v <- "Monthly evapotranspiration rate statistics during (\\textit{\\textbf{A}}) 1995--1998, (\\textit{\\textbf{B}}) 1999--2002, (\\textit{\\textbf{C}}) 2003--2006, and (\\textit{\\textbf{D}}) 2007--2010, Wood River Valley, Idaho. \\label{fig:graph_et}"
+  v <- c(paste("Graphs showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(v)))), v)
+  @
+  \caption[{\Sexpr{v[1]}}]{{\Sexpr{v[2]}}}
+\end{figure}
+
+\captionsetup[figure]{list=no}
+\begin{figure}
+  \ContinuedFloat
+  \begin{subfigure}{\textwidth}
+    \caption{1999 through 2002 \label{fig:graph_et_b}}
+    <<graph_et_b, echo=FALSE, results="asis", fig.width=fin.graph.short[1], fig.height=fin.graph.short[2]>>=
+    FUN(c("1999-01-01", "2003-01-01"))
+    @
+  \end{subfigure}
+  \caption{---Continued}
+\end{figure}
+
+\begin{figure}
+  \ContinuedFloat
+  \begin{subfigure}{\textwidth}
+    \caption{2003 through 2006 \label{fig:graph_et_c}}
+    <<graph_et_c, echo=FALSE, results="asis", fig.width=fin.graph.short[1], fig.height=fin.graph.short[2]>>=
+    FUN(c("2003-01-01", "2007-01-01"))
+    @
+  \end{subfigure}
+  \caption{---Continued}
+\end{figure}
+
+\begin{figure}
+  \ContinuedFloat
+  \begin{subfigure}{\textwidth}
+    \caption{2007 through 2010 \label{fig:graph_et_d}}
+    <<graph_et_d, echo=FALSE, results="asis", fig.width=fin.graph.short[1], fig.height=fin.graph.short[2]>>=
+    FUN(c("2007-01-01", "2011-01-01"))
+    invisible(dev.off())
+    @
+  \end{subfigure}
+  \caption{---Continued}
+\end{figure}
+\captionsetup[figure]{list=yes}
+
+% =========================================================================
+
+\section{Percolation Rate}
+
+The percolation rate indicates how quickly water moves through the soil.
+Estimates of percolation rates ($p$ in equations~\ref{eq:natural_recharge}, \ref{eq:rech} and \ref{eq:runoff}) are based on the saturated hydraulic conductivity of surficial soil types in the WRV.
+Soil types are classified using the Unified Soil Classification System (USCS), a classification system that describes soils based on grain size and texture.
+\hyperref[fig:map_soils]{Figure~\ref{fig:map_soils}} shows the spatial distribution of USCS soil types in the WRV \citep{NRCS2013}.
+Percolation rates associated with each soil type are given in \hyperref[table_soils]{table~\ref{table_soils}} and shown in \hyperref[fig:map_percolation]{figure~\ref{fig:map_percolation}}.
+The assigned percolation rate for a given USCS soil type is based on a weighted average of measured percolation rates \citep{IDNR2009}.
+
+The estimation of percolation rate assumes that the rate is dependent only on the grain size and texture of the soil type \citep{Ward2004}.
+In fact, antecedent soil moisture, soil temperature, soil condition, land use, and soil chemistry also effect the distribution of percolation rates.
+These variables are not considered in the percolation rate estimate because of the scarcity of measurements in the WRV.
+
+<<include=FALSE>>=
+v <- "Spatial distribution of surficial soil types in the Wood River Valley, Idaho."
+v <- c(paste("Map showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(v)))), v)
+@
+
+<<map_soils, echo=FALSE, fig.width=fin.map.0[1], fig.height=fin.map.0[2], fig.scap=sprintf("{%s}", v[1]), fig.cap=sprintf("{%s}", v[2])>>=
+Pal <- function(...) {
+  cols1 <- rainbow(..., s=0.5, v=1)
+  cols2 <- rainbow(..., s=1, v=0.5)
+  is.even <- seq_along(cols1) %% 2 == 0
+  cols1[is.even] <- cols2[is.even]
+  return(cols1)
+}
+polys <- SetPolygons(soils, alluvium.extent, "gIntersection", 0.001)
+PlotMap(crs(hill.shading), xlim=usr.map[1:2], ylim=usr.map[3:4], bg.image=hill.shading,
+        bg.image.alpha=0.6, dms.tick=TRUE, rivers=list(x=streams.rivers), lakes=list(x=lakes), credit=credit)
+idxs <- as.integer(polys@data$GroupSymbol)
+cols <- Pal(max(idxs), alpha=0.9)
+plot(polys, col=cols[idxs], border=NA, add=TRUE)
+plot(cities, pch=15, cex=0.8, col="#333333", add=TRUE)
+text(cities, labels=cities@data$FEATURE_NA, col="#333333", cex=0.5, pos=1, offset=0.4)
+leg <- as.character(levels(polys@data$GroupSymbol))
+legend("topright", leg, fill=cols, border=NA, inset=0.02, cex=0.7, box.lty=1,
+       box.lwd=0.5, xpd=NA, bg="#FFFFFFE7", title=expression(bold("Soil Types")))
+invisible(dev.off())
+@
+
+<<table_soils, echo=FALSE, results="asis">>=
+d <- soils@data[!is.na(soils@data$SoilClass), ]
+d <- d[na.omit(match(levels(d$GroupSymbol), d$GroupSymbol)), ]
+d$Rate_ft.per.mo <- d$PercolationRate * m.to.ft
+d$MinRate <- ToScientific(d$MinRate, digits=1)
+d$MaxRate <- ToScientific(d$MaxRate, digits=1)
+d$RateRange <- paste(d$MinRate, "to", d$MaxRate)
+d$PercolationRate <- ToScientific(d$PercolationRate, digits=2)
+d$Rate_ft.per.mo <- ToScientific(d$Rate_ft.per.mo, digits=2)
+d <- d[, c("SoilClass", "GroupSymbol", "RateRange", "PercolationRate", "Rate_ft.per.mo")]
+columns <- c("USCS soil class",
+             "Symbol",
+             "Expected interval for \\\\ percolation rate \\\\ (m/mo)",
+             "Percolation \\\\ rate \\\\ (m/mo)",
+             "Percolation \\\\ rate \\\\ (ft/mo)")
+colnames(d) <- sprintf("\\textbf{\\shortstack{%s}}", columns)
+cap1 <- "Soil classes and corresponding percolation rates in the Wood River Valley, Idaho."
+cap2 <- c("\\textbf{Abbreviations}: m/mo, meters per month; ft/mo, feet per month")
+tbl <- xtable::xtable(d, label="table_soils")
+xtable::caption(tbl) <- c(sprintf("%s [%s]", cap1, paste(cap2, collapse=" ")), cap1)
+xtable::align(tbl)[4] <- "l"
+print(tbl, include.rownames=FALSE, caption.placement="top", booktabs=TRUE,
+      format.args=list(big.mark=","), sanitize.colnames.function=function(x){x},
+      sanitize.text.function=identity, size="\\small")
+@
+
+<<include=FALSE>>=
+v <- "Spatial distribution of percolation in the Wood River Valley, Idaho."
+v <- c(paste("Map showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(v)))), v)
+@
+
+<<map_percolation, echo=FALSE, fig.width=fin.map[1], fig.height=fin.map[2], fig.scap=sprintf("{%s}", v[1]), fig.cap=sprintf("{%s}", v[2])>>=
+r <- rasterize(polys, raster(hill.shading), "PercolationRate")
+r[] <- log10(r[])
+breaks <- pretty(r[], n=30, na.rm=TRUE)
+at <- breaks[c(TRUE, FALSE, FALSE)]
+labels <- ToScientific(10^at, digits=1, lab.type="plotmath")
+Pal <- colorRampPalette(c("#ffffb2", "#fecc5c", "#fd8d3c", "#f03b20", "#bd0026"))
+PlotMap(r, breaks=breaks, xlim=usr.map[1:2], ylim=usr.map[3:4],
+        bg.image=hill.shading, bg.image.alpha=0.6, dms.tick=TRUE,
+        pal=Pal, explanation="Percolation rate, in meters per month, plotted on a logarithmic scale.",
+        rivers=list(x=streams.rivers), lakes=list(x=lakes),
+        labels=list(at=at, labels=labels), credit=credit)
+plot(cities, pch=15, cex=0.8, col="#333333", add=TRUE)
+text(cities, labels=cities@data$FEATURE_NA, col="#333333", cex=0.5, pos=1, offset=0.4)
+invisible(dev.off())
+@
+
+% =========================================================================
+
+\section{Groundwater Recharge and Discharge Rate}
+
+The water-balance model (equation~\ref{eq:rech}) was used to calculate the volumetric flow rate across the water table of natural groundwater recharge and discharge ($Q_{\mathit{nat}}$) beneath non-irrigated lands during each month of the transient simulation (1995--2010).
+For example, \hyperref[fig:map_rate]{figure~\ref{fig:map_rate}} shows the spatial distribution of natural groundwater recharge and discharge rates in
+February (\hyperref[fig:map_rate_a]{fig.~\ref{fig:map_rate_a}}) and August (\hyperref[fig:map_rate_b]{fig.~\ref{fig:map_rate_b}}) of 2008.
+Recall that a positive volumetric flow rate represents groundwater entering the aquifer system, and a negative value represents groundwater leaving the system.
+Descriptive statistics for natural groundwater recharge and discharge rates during each month of the model simulation period are shown by a box-and-whisker plot (\hyperref[fig:graph_rate]{fig.~\ref{fig:graph_rate}}),
+in which the bottom and top of a box are the first and third quartiles, and the band inside the box is the second quartile (the median).
+The ends of the whiskers represent the minimum and maximum rates.
+The largest groundwater recharge rates were estimated during the month of March, and were the result of springtime snowmelt.
+Recall that most of the precipitation occurs during the winter months (November through March) and is frozen or unavailable for recharge during the month in which it fell.
+The largest groundwater discharge rates were estimated during the growing season (June through August) and
+resulted from the smaller precipitation rates (mostly as rainfall) and larger evapotranspiration rates that are characteristic for this time of year.
+
+<<echo=FALSE>>=
+rs <- rs.rech.non.irr
+zlim <- range(pretty(c(rs[["200802"]][], rs[["200808"]][])))
+if (zlim[1] < 0) {
+  ratio <- abs(zlim[1]) / diff(zlim)
+  Pal <- function(...) {
+    Pal1 <- colorRampPalette(c(rep("#F02311", 2), "#FFD0D4"))
+    Pal2 <- colorRampPalette(c("#BAE4E5", "#101F78"))
+    n1 <- round(... * ratio)
+    n2 <- ... - n1
+    return(c(Pal1(n1), Pal2(n2)))
+  }
+} else {
+  Pal <- colorRampPalette(c("#FCFBE3", "#67A9CF"))
+}
+FUN <- function(i) {
+  PlotMap(i, xlim=usr.map[1:2], ylim=usr.map[3:4], zlim=zlim,
+          bg.image=hill.shading, bg.image.alpha=0.6, dms.tick=TRUE, pal=Pal,
+          explanation="Natural recharge rate, in cubic meters per month.",
+          rivers=list(x=streams.rivers), lakes=list(x=lakes), credit=credit)
+  plot(cities, pch=15, cex=0.8, col="#333333", add=TRUE)
+  text(cities, labels=cities@data$FEATURE_NA, col="#333333", cex=0.5, pos=1, offset=0.4)
+}
+@
+
+\begin{figure}
+  \begin{subfigure}{\textwidth}
+    \caption{February 2008 \label{fig:map_rate_a}}
+    <<map_rate_a, echo=FALSE, results="asis", fig.width=fin.map[1], fig.height=fin.map[2]>>=
+    FUN(rs[["200802"]])
+    @
+  \end{subfigure}
+  <<include=FALSE>>=
+  v <- "Natural groundwater recharge during (\\textit{\\textbf{A}}) February and (\\textit{\\textbf{B}}) August of 2008, Wood River Valley, Idaho. \\label{fig:map_rate}"
+  v <- c(paste("Maps showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(v)))), v)
+  @
+  \caption[{\Sexpr{v[1]}}]{{\Sexpr{v[2]}}}
+\end{figure}
+
+\captionsetup[figure]{list=no}
+\begin{figure}
+  \ContinuedFloat
+  \begin{subfigure}{\textwidth}
+    \caption{August 2008 \label{fig:map_rate_b}}
+    <<map_rate_b, echo=FALSE, results="asis", fig.width=fin.map[1], fig.height=fin.map[2]>>=
+    FUN(rs[["200808"]])
+    invisible(dev.off())
+    @
+  \end{subfigure}
+  \caption{---Continued}
+\end{figure}
+\captionsetup[figure]{list=yes}
+
+<<echo=FALSE>>=
+x <- as.Date(paste0(names(rs), "15"), format="%Y%m%d")
+d <- as.data.frame(do.call(cbind, lapply(seq_len(nlayers(rs)), function(i) rs[[i]][])))
+names(d) <- format(x, "%m/%y")
+ylim <- range(pretty(range(cellStats(rs, stat="range"))))
+pars <- list(boxwex=0.8, staplewex=0.5, outwex=0.5, cex.axis=0.7, las=1)
+ylab <- paste("Natural groundwater recharge rate, in cubic", c("meters", "feet"), "per month")
+FUN <- function(xlim) {
+  xlim <- as.Date(xlim)
+  idxs <-  which(x > xlim[1] & x < xlim[2])
+  PlotGraph(x[idxs], d[, idxs], xlim=xlim, type="box", ylab=ylab, ylim=ylim, col="#FFE4C4",
+            seq.date.by="years", conversion.factor=m.to.ft, boxwex=20,
+            center.date.labels=TRUE, scientific=c(FALSE, FALSE, TRUE))
+}
+@
+
+\begin{figure}
+  \begin{subfigure}{\textwidth}
+    \caption{1995 through 1998 \label{fig:graph_rate_a}}
+    <<graph_rate_a, echo=FALSE, results="asis", fig.width=fin.graph.short[1], fig.height=fin.graph.short[2]>>=
+    FUN(c("1995-01-01", "1999-01-01"))
+    @
+  \end{subfigure}
+  <<include=FALSE>>=
+  v <- "Monthly natural groundwater recharge rate statistics during (\\textit{\\textbf{A}}) 1995--1998, (\\textit{\\textbf{B}}) 1999--2002, (\\textit{\\textbf{C}}) 2003--2006, and (\\textit{\\textbf{D}}) 2007--2010, Wood River Valley, Idaho. \\label{fig:graph_rate}"
+  v <- c(paste("Graphs showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(v)))), v)
+  @
+  \caption[{\Sexpr{v[1]}}]{{\Sexpr{v[2]}}}
+\end{figure}
+
+\captionsetup[figure]{list=no}
+\begin{figure}
+  \ContinuedFloat
+  \begin{subfigure}{\textwidth}
+    \caption{1999 through 2002 \label{fig:graph_rate_b}}
+    <<graph_rate_b, echo=FALSE, results="asis", fig.width=fin.graph.short[1], fig.height=fin.graph.short[2]>>=
+    FUN(c("1999-01-01", "2003-01-01"))
+    @
+  \end{subfigure}
+  \caption{---Continued}
+\end{figure}
+
+\begin{figure}
+  \ContinuedFloat
+  \begin{subfigure}{\textwidth}
+    \caption{2003 through 2006 \label{fig:graph_rate_c}}
+    <<graph_rate_c, echo=FALSE, results="asis", fig.width=fin.graph.short[1], fig.height=fin.graph.short[2]>>=
+    FUN(c("2003-01-01", "2007-01-01"))
+    @
+  \end{subfigure}
+  \caption{---Continued}
+\end{figure}
+
+\begin{figure}
+  \ContinuedFloat
+  \begin{subfigure}{\textwidth}
+    \caption{2007 through 2010 \label{fig:graph_rate_d}}
+    <<graph_rate_d, echo=FALSE, results="asis", fig.width=fin.graph.short[1], fig.height=fin.graph.short[2]>>=
+    FUN(c("2007-01-01", "2011-01-01"))
+    invisible(dev.off())
+    @
+  \end{subfigure}
+  \caption{---Continued}
+\end{figure}
+\captionsetup[figure]{list=yes}
+
+% =========================================================================
+
+\clearpage
+\phantomsection
+\addcontentsline{toc}{section}{References Cited}
+\printbibliography
+
+% =========================================================================
+
+% \vfill\centerline{Created on \Sexpr{format(Sys.time(), "%B %e, %Y")}; total processing time was \Sexpr{format(difftime(Sys.time(), t0), digits=3)}.}
+
+\end{document}

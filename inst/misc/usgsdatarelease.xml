@@ -1,0 +1,393 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="fgdc_classic.xsl"?>
+<metadata xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://water.usgs.gov/GIS/metadata/usgswrd/fgdc-std-001-1998.xsd">
+	<idinfo>
+		<citation>
+			<citeinfo>
+				<origin>Jason C. Fisher</origin>
+				<origin>James R. Bartolino</origin>
+				<origin>Allan H. Wylie</origin>
+				<origin>Jennifer Sukow</origin>
+				<origin>Michael McVay</origin>
+				<pubdate>2016</pubdate>
+				<title>MODFLOW-USG model of groundwater flow in the Wood River Valley aquifer system in Blaine County, Idaho: U.S. Geological Survey Data Release</title>
+				<edition>Version 1.0 - The structure of the archive and associated download files were modified to exactly match the proposed U.S. Geological Survey Office of Groundwater groundwater model archive structure 05/23/2016</edition>
+				<geoform>groundwater model</geoform>
+				<pubinfo>
+					<pubplace>Reston, VA, USA</pubplace>
+					<publish>U.S. Geological Survey</publish>
+				</pubinfo>
+				<onlink>http://dx.doi.org/10.5066/F7C827DT</onlink>
+				<lworkcit>
+					<citeinfo>
+						<origin>Jason C. Fisher</origin>
+						<origin>James R. Bartolino</origin>
+						<origin>Allan H. Wylie</origin>
+						<origin>Jennifer Sukow</origin>
+						<origin>Michael McVay</origin>
+						<pubdate>2016</pubdate>
+						<title>Groundwater-Flow Model for the Wood River Valley Aquifer System, South-Central Idaho</title>
+						<geoform>Publication</geoform>
+						<serinfo>
+							<sername>Scientific Investigations Report</sername>
+							<issue>2016-XXXX</issue>
+						</serinfo>
+						<pubinfo>
+							<pubplace>Reston, VA, USA</pubplace>
+							<publish>U.S. Geological Survey</publish>
+						</pubinfo>
+						<onlink>http://dx.doi.org/10.3133/sir2016XXXX</onlink>
+					</citeinfo>
+				</lworkcit>
+			</citeinfo>
+		</citation>
+		<descript>
+			<abstract>A three-dimensional numerical groundwater flow model (MODFLOW-USG) was developed for the Wood River Valley (WRV) aquifer system, south-central Idaho, to evaluate groundwater and surface-water availability at the regional scale. The U.S. Geological Survey (USGS), in cooperation Idaho Department of Water Resources, used the transient groundwater flow model to simulate historical hydraulic head conditions from 1995 to 2010. This USGS data release contains all of the input and output files for the simulation described in the associated model documentation report (http://dx.doi.org/10.3133/sir2016XXXX).</abstract>
+			<purpose>This groundwater model was created to advance the basic understanding of the Wood River Valley aquifer system, Idaho. Ultimately the model could be used to examine human development and climatic effects on the groundwater system and its interaction with the Big Wood River caused by changes in water use and groundwater recharge and discharge. The development of the model input and output files included in this data release are documented in U.S. Geological Survey Scientific Investigations Report 2016-XXXX (http://dx.doi.org/10.3133/sir2016XXXX).</purpose>
+			<supplinf>Support is provided for correcting errors in the data release and clarification of the modeling conducted by the U.S. Geological Survey. Users are encouraged to review the complete model documentation report (http://dx.doi.org/10.3133/sir2016XXXX) to understand the purpose, construction, and limitations of this model. The models, along with pre- and post-processing tools, will run successfully only if the original directory structure is correctly restored. The model archive is broken into several pieces to reduce the likelihood of download timeouts. Instructions for reconstructing the original directory structure and running the models included in this data release and described in the model documentation report can be found in the readme.txt ASCII file which can be downloaded as part of this data release.</supplinf>
+		</descript>
+		<timeperd>
+			<timeinfo>
+				<rngdates>
+					<begdate>19980101</begdate>
+					<enddate>20101231</enddate>
+				</rngdates>
+			</timeinfo>
+			<current>publication date</current>
+		</timeperd>
+		<status>
+			<progress>Complete</progress>
+			<update>Not planned</update>
+		</status>
+		<spdom>
+			<bounding>
+				<westbc>-114.42</westbc>
+				<eastbc>-114.05</eastbc>
+				<northbc>43.78</northbc>
+				<southbc>43.29</southbc>
+			</bounding>
+		</spdom>
+		<keywords>
+			<theme>
+				<themekt>USGS Thesaurus</themekt>
+				<themekey>usgsgroundwatermodel</themekey>
+				<themekey>Groundwater</themekey>
+				<themekey>InlandWaters</themekey>
+				<themekey>Groundwater Model</themekey>
+				<themekey>MODFLOW-USG</themekey>
+			</theme>
+			<theme>
+				<themekt>ISO 19115 Topic Category</themekt>
+				<themekey>geoscientificInformation</themekey>
+				<themekey>inlandWaters</themekey>
+				<themekey>environment</themekey>
+			</theme>
+			<place>
+				<placekt>Geographic Names Information System</placekt>
+				<placekey>Idaho</placekey>
+				<placekey>Blaine County</placekey>
+				<placekey>Wood River Valley aquifer</placekey>
+			</place>
+		</keywords>
+		<accconst>None. Acknowledgement of the U.S. Geological Survey would be appreciated in products derived from this data release.</accconst>
+		<useconst>none</useconst>
+		<ptcontac>
+			<cntinfo>
+				<cntperp>
+					<cntper>Jason C. Fisher</cntper>
+					<cntorg>U.S. Geological Survey</cntorg>
+				</cntperp>
+				<cntaddr>
+					<addrtype>mailing and physical</addrtype>
+					<address>6566 Cottonwood Cir Apt C</address>
+					<city>Dublin</city>
+					<state>CA</state>
+					<postal>94568</postal>
+					<country>USA</country>
+				</cntaddr>
+				<cntvoice>209-261-2905</cntvoice>
+				<cntemail>jfisher@usgs.gov</cntemail>
+			</cntinfo>
+		</ptcontac>
+		<browse>
+			<browsen>http://water.usgs.gov/GIS/browse/SIR2016-XXXXThumbnail.png</browsen>
+			<browsed>Image of the model domain and active area of the model.</browsed>
+			<browset>png</browset>
+		</browse>
+		<datacred>U.S. Geological Survey and Idaho Department of Water Resources</datacred>
+	</idinfo>
+	<dataqual>
+		<attracc>
+			<attraccr>The model was calibrated using data from 1998 to 2010 and was used to simulate historical conditions from 1995 to 2010. Field measurements used in the parameter estimation process include groundwater levels in wells, stream-aquifer flow exchange in river reaches, and groundwater flow at outlet boundaries.</attraccr>
+		</attracc>
+		<logic>No formal logical accuracy tests were conducted</logic>
+		<complete>Data set is considered complete for the information presented, as described in the abstract. Users are advised to read the rest of the metadata record and the associated model documentation report (http://dx.doi.org/10.3133/sir2016XXXX) carefully for additional details.</complete>
+		<posacc>
+			<horizpa>
+				<horizpar>No formal positional accuracy tests were conducted</horizpar>
+			</horizpa>
+			<vertacc>
+				<vertaccr>No formal positional accuracy tests were conducted</vertaccr>
+			</vertacc>
+		</posacc>
+		<lineage>
+			<procstep>
+				<procdesc>The process used to develop, calibrate, and apply the groundwater flow model is fully described in the model documentation report (http://dx.doi.org/10.3133/sir2016XXXX).</procdesc>
+				<procdate>2016</procdate>
+			</procstep>
+		</lineage>
+	</dataqual>
+	<spdoinfo>
+	<direct>raster</direct>
+	<rastinfo>
+		<rasttype>pixel</rasttype>
+	</rastinfo>
+	</spdoinfo>
+	<spref>
+		<horizsys>
+			<planar>
+				<mapproj>
+					<mapprojn>Transverse Mercator</mapprojn>
+					<transmer>
+						<sfctrmer>0.9996</sfctrmer>
+						<longcm>-114</longcm>
+						<latprjo>42</latprjo>
+						<feast>2500000</feast>
+						<fnorth>1200000</fnorth>
+					</transmer>
+				</mapproj>
+				<planci>
+					<plance>row and column</plance>
+					<coordrep>
+						<absres>100.0</absres>
+						<ordres>100.0</ordres>
+					</coordrep>
+					<plandu>meters</plandu>
+				</planci>
+			</planar>
+		</horizsys>
+		<vertdef>
+			<altsys>
+				<altdatum>North American Vertical Datum of 1988</altdatum>
+				<altres>1.0</altres>
+				<altunits>meters</altunits>
+				<altenc>Attribute values</altenc>
+			</altsys>
+		</vertdef>
+	</spref>
+	<eainfo>
+	<detailed>
+		<enttyp>
+			<enttypl>domain.shp</enttypl>
+			<enttypd>ESRI Polygon shapefile</enttypd>
+			<enttypds>U.S. Geological Survey</enttypds>
+		</enttyp>
+<attr>
+	<attrlabl>Area</attrlabl>
+	<attrdef>Text string indicates active and inactive model domain.</attrdef>
+	<attrdefs>http://dx.doi.org/10.3133/sir2016XXXX</attrdefs>
+	<attrdomv>
+		<edom>
+			<edomv>usgsgroundwatermodel</edomv>
+			<edomvd>Delineation of active and inactive areas in the model.</edomvd>
+			<edomvds>http://dx.doi.org/10.3133/sir2016XXXX</edomvds>
+		</edom>
+	</attrdomv>
+</attr>
+	</detailed>
+		<overview>
+			<eaover>Fisher, J.C. and Bartolino, J.R. and Wylie, A.H. and Sukow, Jennifer and McVay, Michael, 2016, MODFLOW-USG model of groundwater flow in the Wood River Valley aquifer system in Blaine County, Idaho: U.S. Geological Survey Data Release: U.S. Geological Survey, Reston, VA, USA.</eaover>
+			<eadetcit>http://dx.doi.org/10.5066/F7C827DT</eadetcit>
+		</overview>
+	</eainfo>
+	<distinfo>
+		<distrib>
+			<cntinfo>
+				<cntperp>
+					<cntper>Ask USGS -- Water Webserver Team</cntper>
+					<cntorg>U.S. Geological Survey</cntorg>
+				</cntperp>
+				<cntaddr>
+					<addrtype>mailing and physical</addrtype>
+					<address>445 National Center</address>
+					<city>Reston</city>
+					<state>Virginia</state>
+					<postal>20192</postal>
+					<country>USA</country>
+				</cntaddr>
+				<cntvoice>1-888-275-8747 (1-888-ASK-USGS)</cntvoice>
+				<cntemail>http://water.usgs.gov/user_feedback_form.html</cntemail>
+			</cntinfo>
+		</distrib>
+		<distliab>Although this data set has been used by the U.S. Geological Survey, U.S. Department of the Interior, no warranty expressed or implied is made by the U.S. Geological Survey as to the accuracy of the data and related materials. The act of distribution shall not constitute any such warranty, and no responsibility is assumed by the U.S. Geological Survey in the use of this data, software, or related materials. Any use of trade, product, or firm names is for descriptive purposes only and does not imply endorsement by the U.S. Government.</distliab>
+		<stdorder>
+			<digform>
+				<digtinfo>
+					<formname>readme.txt</formname>
+					<formvern>1.0</formvern>
+					<formspec>ASCII</formspec>
+					<formcont>This text file contains a description of the archive folder structure and the files contained in each subfolder.</formcont>
+					<transize>XXXXXXXXXXXXXXXXXX</transize>
+				</digtinfo>
+				<digtopt>
+					<onlinopt>
+						<computer>
+							<networka>
+								<networkr>http://water.usgs.gov/GIS/dsdl/gwmodels/SIR2016-XXXX/readme.txt</networkr>
+							</networka>
+						</computer>
+					</onlinopt>
+				</digtopt>
+			</digform>
+			<digform>
+				<digtinfo>
+					<formname>modelgeoref.txt</formname>
+					<formvern>1.0</formvern>
+					<formspec>ASCII</formspec>
+					<formcont>This text file contains geo-reference information, including latitude and longitude of the corners of a rectangle outlining the model study area and projection.</formcont>
+					<transize>XXXXXXXXXXXXXXXXXX</transize>
+				</digtinfo>
+				<digtopt>
+					<onlinopt>
+						<computer>
+							<networka>
+								<networkr>http://water.usgs.gov/GIS/dsdl/gwmodels/SIR2016-XXXX/modelgeoref.txt</networkr>
+							</networka>
+						</computer>
+					</onlinopt>
+				</digtopt>
+			</digform>
+			<digform>
+				<digtinfo>
+					<formname>ancillary.zip</formname>
+					<formvern>1.0</formvern>
+					<formspec>ZIP</formspec>
+					<formcont>This compressed folder contains ancillary data, including data exported during the model building process, a model-grid shapefile, and a PEST control file.</formcont>
+					<transize>XXXXXXXXXXXXXXXXXX</transize>
+				</digtinfo>
+				<digtopt>
+					<onlinopt>
+						<computer>
+							<networka>
+								<networkr>http://water.usgs.gov/GIS/dsdl/gwmodels/SIR2016-XXXX/ancillary.zip</networkr>
+							</networka>
+						</computer>
+					</onlinopt>
+				</digtopt>
+			</digform>
+			<digform>
+				<digtinfo>
+					<formname>bin.zip</formname>
+					<formvern>1.0</formvern>
+					<formspec>ZIP</formspec>
+					<formcont>This compressed folder contains the compiled code that was used in the study.</formcont>
+					<transize>XXXXXXXXXXXXXXXXXX</transize>
+				</digtinfo>
+				<digtopt>
+					<onlinopt>
+						<computer>
+							<networka>
+								<networkr>http://water.usgs.gov/GIS/dsdl/gwmodels/SIR2016-XXXX/bin.zip</networkr>
+							</networka>
+						</computer>
+					</onlinopt>
+				</digtopt>
+			</digform>
+			<digform>
+				<digtinfo>
+					<formname>georef.zip</formname>
+					<formvern>1.0</formvern>
+					<formspec>ZIP</formspec>
+					<formcont>This compressed folder contains a polygon shapefile showing the maximum extent of the study area.</formcont>
+					<transize>XXXXXXXXXXXXXXXXXX</transize>
+				</digtinfo>
+				<digtopt>
+					<onlinopt>
+						<computer>
+							<networka>
+								<networkr>http://water.usgs.gov/GIS/dsdl/gwmodels/SIR2016-XXXX/georef.zip</networkr>
+							</networka>
+						</computer>
+					</onlinopt>
+				</digtopt>
+			</digform>
+			<digform>
+				<digtinfo>
+					<formname>model.zip</formname>
+					<formvern>1.0</formvern>
+					<formspec>ZIP</formspec>
+					<formcont>This compressed folder contains model input files.</formcont>
+					<transize>XXXXXXXXXXXXXXXXXX</transize>
+				</digtinfo>
+				<digtopt>
+					<onlinopt>
+						<computer>
+							<networka>
+								<networkr>http://water.usgs.gov/GIS/dsdl/gwmodels/SIR2016-XXXX/model.zip</networkr>
+							</networka>
+						</computer>
+					</onlinopt>
+				</digtopt>
+			</digform>
+			<digform>
+				<digtinfo>
+					<formname>output.zip</formname>
+					<formvern>1.0</formvern>
+					<formspec>ZIP</formspec>
+					<formcont>This compressed folder contains model output files for the model files included in the compressed model folder.</formcont>
+					<transize>XXXXXXXXXXXXXXXXXX</transize>
+				</digtinfo>
+				<digtopt>
+					<onlinopt>
+						<computer>
+							<networka>
+								<networkr>http://water.usgs.gov/GIS/dsdl/gwmodels/SIR2016-XXXX/output.zip</networkr>
+							</networka>
+						</computer>
+					</onlinopt>
+				</digtopt>
+			</digform>
+			<digform>
+				<digtinfo>
+					<formname>source.zip</formname>
+					<formvern>1.0</formvern>
+					<formspec>ZIP</formspec>
+					<formcont>This compressed folder contains source code that was used in this study.</formcont>
+					<transize>XXXXXXXXXXXXXXXXXX</transize>
+				</digtinfo>
+				<digtopt>
+					<onlinopt>
+						<computer>
+							<networka>
+								<networkr>http://water.usgs.gov/GIS/dsdl/gwmodels/SIR2016-XXXX/source.zip</networkr>
+							</networka>
+						</computer>
+					</onlinopt>
+				</digtopt>
+			</digform>
+			<fees>None</fees>
+		</stdorder>
+	</distinfo>
+	<metainfo>
+		<metd>20160524</metd>
+	<metc>
+			<cntinfo>
+				<cntorgp>
+					<cntorg>U.S. Geological Survey</cntorg>
+				</cntorgp>
+				<cntpos>Ask USGS -- Water Webserver Team</cntpos>
+				<cntaddr>
+					<addrtype>mailing</addrtype>
+					<address>445 National Center</address>
+					<city>Reston</city>
+					<state>VA</state>
+					<postal>20192</postal>
+				</cntaddr>
+				<cntvoice>1-888-275-8747 (1-888-ASK-USGS)</cntvoice>
+				<cntemail>http://answers.usgs.gov/cgi-bin/gsanswers?pemail=h2oteam&amp;subject=GIS+Dataset+sir2016_5022_usgsdatarelease</cntemail>
+			</cntinfo>
+		</metc>
+		<metstdn>FGDC Content Standards for Digital Geospatial Metadata</metstdn>
+		<metstdv>FGDC-STD-001-1998</metstdv>
+	</metainfo>
+</metadata>

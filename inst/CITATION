@@ -1,0 +1,22 @@
+citHeader("To cite 'wrv' in publications use")
+
+cit <- list(entry       = "TechReport",
+            author      = c(person(c("Jason", "C."), "Fisher", email="jfisher@usgs.gov"),
+                            person(c("James", "R."), "Bartolino", email="jrbartol@usgs.gov"),
+                            person(c("Allan", "H."), "Wylie", email="allan.wylie@idwr.idaho.gov"),
+                            person("Jennifer", "Sukow", email="jennifer.sukow@idwr.idaho.gov"),
+                            person("Michael", "McVay", email="michael.mcvay@idwr.idaho.gov")),
+            title       = "Groundwater-flow model of the Wood River Valley aquifer system, south-central Idaho",
+            institution = "U.S. Geological Survey",
+            type        = "Scientific Investigations Report",
+            number      = "2016-XXXX",
+            year        = "2016",
+            pages       = "XX",
+            url         = "http://dx.doi.org/10.3133/sir2016XXXX")
+
+aut <- "Fisher, J.C., Bartolino, J.R., Wylie, A.H., Sukow, Jennifer, and McVay, Michael"
+
+cit$textVersion <- sprintf("%s, %s, %s: %s %s %s, %s p., %s.",
+                           aut, cit$year, cit$title, cit$institution, cit$type, cit$number, cit$pages, cit$url)
+
+do.call(citEntry, cit)
