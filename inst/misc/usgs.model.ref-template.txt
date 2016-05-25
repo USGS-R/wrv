@@ -1,0 +1,9 @@
+xul $(xul)  # x-coordinate of the upper left of the model grid
+yul $(yul)  # y-coordinate of the upper left of the model grid
+rotation 0.0  # rotation of the model grid in degrees
+length_units meters  # length unit of the model grid
+time_units days  # time unit of the model grid
+start_date $(start_date)  # start date of the model
+start_time 00:00:00  # start time of the model
+model $(model)  # model type
+proj4 '$(proj4)'  # proj4 string

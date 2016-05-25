@@ -1,0 +1,24 @@
+Name,MinLSD_m,BdrkDepth_m,TribWidth_m,LandGrad,K_ft.per.d,BasinArea_mi2,PrecipRate_in.per.yr
+Adams Gulch,1799.8,14.8,198,0.0482,85,11,30
+BWR Upper,1898.5,9.5,468,0.0228,85,178,33
+Chocolate Gulch,1896.9,17.9,216,0.0727,85,1,22
+Clear Creek,1766.6,10.6,190,0.0795,85,2,20
+Cold Springs Gulch,1775.3,19.3,105,0.0576,85,3,22
+Cove Canyon,1522.0,2.0,932,0.0127,85,14,15
+Croy Creek,1645.2,12.2,424,0.0226,85,28,16
+Deer Creek,1675.5,22.5,694,0.0155,85,55,25
+Eagle Creek,1880.9,22.9,325,0.0226,85,11,29
+East Fork,1713.2,13.2,431,0.0137,85,86,26
+Elkhorn Gulch,1767.5,2.5,118,0.0289,85,13,18
+Greenhorn Gulch,1719.7,23.7,262,0.0182,85,21,27
+Indian Creek,1685.2,25.2,326,0.0485,85,11,17
+Lake Creek,1852.7,20.7,407,0.0472,85,12,27
+Lees Gulch,1576.5,17.5,252,0.0556,85,3,15
+Ohio Gulch,1703.9,25.9,379,0.0664,85,5,16
+Oregon Gulch,1900.7,13.7,60,0.0177,85,5,26
+Quigley Creek,1648.3,18.3,404,0.0126,85,17,17
+Seamans Gulch,1608.5,47.5,424,0.0160,85,23,15
+Slaughterhouse Gulch,1612.4,18.4,227,0.0200,85,13,17
+Townshead Gulch,1573.1,19.1,222,0.0476,85,1,15
+Trail Creek,1789.2,38.2,656,0.0191,85,64,33
+Warm Springs Creek,1774.9,13.9,493,0.0117,85,96,35

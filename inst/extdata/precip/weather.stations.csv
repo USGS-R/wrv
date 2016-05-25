@@ -1,0 +1,6 @@
+longitude,latitude,name,id,type,organization,elevation_ft,url
+-114.16583,43.31166,Picabo PICI,Picabo,AgriMet,USBR,4900,http://www.usbr.gov/pn/agrimet/agrimetmap/picida.html
+-114.36278,43.68167,Ketchum Ranger Station near Ketchum,Ketchum,HADS,NOAA,5890,http://www.wrh.noaa.gov/mesowest/getobext.php?wfo=pih&sid=KETI1&num=48
+-114.31361,43.52500,Hailey Ranger Station at Hailey,Hailey,HADS,NOAA,5299,http://www.wrh.noaa.gov/mesowest/getobext.php?wfo=pih&sid=HLSI1&num=48
+-114.41667,43.76667,Chocolate Gulch,Choco,SNOTEL,NRCS,6440,http://www.wcc.nrcs.usda.gov/nwcc/site?sitenum=895
+-113.37,43.55,Mackay Ranger Station (105462),Mackay,NA,NA,5910,NA

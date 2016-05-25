@@ -1,0 +1,44 @@
+
+importFrom("grDevices", "axisTicks", "col2rgb", "dev.cur", "dev.new", "dev.off",
+           "dev.size", "extendrange", "grey", "png", "rainbow", "xy.coords")
+importFrom("graphics", "abline", "arrows", "axTicks", "axis", "axis.Date",
+           "box", "grconvertX", "grconvertY", "layout", "matplot", "mtext",
+           "par", "plot.new", "plot.window", "polygon", "rect", "segments",
+           "strheight", "strwidth", "symbols", "title")
+importFrom("methods", "as", "slot", "slot<-")
+importFrom("stats", "approxfun", "dist", "integrate", "median", "na.omit", "sd")
+importFrom("utils", "read.csv", "untar", "unzip", "write.csv", "write.table")
+
+import("sp", "rgdal", "raster")
+
+importFrom("rgeos", "append.poly", "gArea", "gBuffer", "gCentroid",
+           "gDifference", "gDistance", "gIntersection", "gIntersects",
+           "gIsValid", "gUnaryUnion", "gUnion")
+importFrom("igraph", "clusters")
+importFrom("dplyr", "arrange", "bind_rows", "filter", "group_by", "left_join",
+           "mutate", "summarise")
+
+export("AddBubbles",
+       "AddColorKey",
+       "AddInsetMap",
+       "AddScaleBar",
+       "BumpDisconnectCells",
+       "BumpRiverStage",
+       "DownloadFile",
+       "ExportRasterStack",
+       "ExtractAlongTransect",
+       "GetDaysInMonth",
+       "GetSeasonalMult",
+       "GetWellConfig",
+       "PlotCrossSection",
+       "PlotGraph",
+       "PlotMap",
+       "ReadModflowBinary",
+       "ReplaceInTemplate",
+       "RmSmallCellChunks",
+       "RunWaterBalance",
+       "SetPolygons",
+       "SummariseBudget",
+       "ToScientific",
+       "UpdateWaterBudget",
+       "WriteModflowInput")

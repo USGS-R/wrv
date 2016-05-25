@@ -1,0 +1,337 @@
+parameter.desc,ID,units,start.value,lower.bound,upper.bound,parameter.name,group,value,comp.sens
+Horizontal hydraulic conductivity,1,m/d,21,1E-10,1E+10,l1hkppt1,hk1,648.913,4.233995E-03
+Horizontal hydraulic conductivity,2,m/d,21,1E-10,1E+10,l1hkppt2,hk1,102.563,1.309994E-02
+Horizontal hydraulic conductivity,3,m/d,21,1E-10,1E+10,l1hkppt3,hk1,217.559,4.974330E-03
+Horizontal hydraulic conductivity,4,m/d,21,1E-10,1E+10,l1hkppt4,hk1,252.052,5.366032E-03
+Horizontal hydraulic conductivity,5,m/d,21,1E-10,1E+10,l1hkppt5,hk1,147.378,6.221294E-03
+Horizontal hydraulic conductivity,6,m/d,21,1E-10,1E+10,l1hkppt6,hk1,250.403,7.000874E-03
+Horizontal hydraulic conductivity,7,m/d,21,1E-10,1E+10,l1hkppt7,hk1,0.890262,5.956790E-03
+Horizontal hydraulic conductivity,8,m/d,21,1E-10,1E+10,l1hkppt8,hk1,27.6401,7.296146E-03
+Horizontal hydraulic conductivity,9,m/d,21,1E-10,1E+10,l1hkppt9,hk1,28.7058,4.722826E-02
+Horizontal hydraulic conductivity,10,m/d,21,1E-10,1E+10,l1hkppt10,hk1,163.585,3.602779E-02
+Horizontal hydraulic conductivity,11,m/d,21,1E-10,1E+10,l1hkppt11,hk1,715.158,9.108745E-03
+Horizontal hydraulic conductivity,12,m/d,21,1E-10,1E+10,l1hkppt12,hk1,2.40378,3.235186E-03
+Horizontal hydraulic conductivity,13,m/d,21,1E-10,1E+10,l1hkppt13,hk1,12863.1,3.003020E-03
+Horizontal hydraulic conductivity,14,m/d,21,1E-10,1E+10,l1hkppt14,hk1,84.9958,1.103520E-02
+Horizontal hydraulic conductivity,15,m/d,21,1E-10,1E+10,l1hkppt15,hk1,584.039,7.626506E-03
+Horizontal hydraulic conductivity,16,m/d,21,1E-10,1E+10,l1hkppt16,hk1,46.7957,1.339911E-02
+Horizontal hydraulic conductivity,17,m/d,21,1E-10,1E+10,l1hkppt17,hk1,378.827,1.348655E-02
+Horizontal hydraulic conductivity,18,m/d,21,1E-10,1E+10,l1hkppt18,hk1,37290.6,3.035797E-03
+Horizontal hydraulic conductivity,19,m/d,21,1E-10,1E+10,l1hkppt19,hk1,332.399,1.073558E-02
+Horizontal hydraulic conductivity,20,m/d,21,1E-10,1E+10,l1hkppt20,hk1,15.5838,3.899403E-03
+Horizontal hydraulic conductivity,21,m/d,21,1E-10,1E+10,l1hkppt21,hk1,12.2349,4.403107E-02
+Horizontal hydraulic conductivity,22,m/d,21,1E-10,1E+10,l1hkppt22,hk1,11.8927,4.546110E-02
+Horizontal hydraulic conductivity,23,m/d,21,1E-10,1E+10,l1hkppt23,hk1,298.386,1.956046E-02
+Horizontal hydraulic conductivity,24,m/d,21,1E-10,1E+10,l1hkppt24,hk1,90.5343,1.989667E-02
+Horizontal hydraulic conductivity,25,m/d,21,1E-10,1E+10,l1hkppt25,hk1,32.3205,1.504943E-02
+Horizontal hydraulic conductivity,26,m/d,21,1E-10,1E+10,l1hkppt26,hk1,181.821,1.328778E-02
+Horizontal hydraulic conductivity,27,m/d,21,1E-10,1E+10,l1hkppt27,hk1,4.80096,9.240949E-03
+Horizontal hydraulic conductivity,28,m/d,21,1E-10,1E+10,l1hkppt28,hk1,7.30878,1.596833E-02
+Horizontal hydraulic conductivity,29,m/d,21,1E-10,1E+10,l1hkppt29,hk1,470.006,4.261523E-03
+Horizontal hydraulic conductivity,30,m/d,21,1E-10,1E+10,l1hkppt30,hk1,1.7646,2.301461E-03
+Horizontal hydraulic conductivity,31,m/d,21,1E-10,1E+10,l1hkppt31,hk1,0.916391,2.302784E-03
+Horizontal hydraulic conductivity,32,m/d,21,1E-10,1E+10,l1hkppt32,hk1,106.03,1.148077E-02
+Horizontal hydraulic conductivity,33,m/d,21,1E-10,1E+10,l1hkppt33,hk1,1926.08,3.772522E-03
+Horizontal hydraulic conductivity,34,m/d,21,1E-10,1E+10,l1hkppt34,hk1,9.85414,8.056969E-03
+Horizontal hydraulic conductivity,35,m/d,21,1E-10,1E+10,l1hkppt35,hk1,104.386,1.814002E-02
+Horizontal hydraulic conductivity,36,m/d,21,1E-10,1E+10,l1hkppt36,hk1,338.478,1.617890E-02
+Horizontal hydraulic conductivity,37,m/d,21,1E-10,1E+10,l1hkppt37,hk1,3.45479,8.708844E-03
+Horizontal hydraulic conductivity,38,m/d,21,1E-10,1E+10,l1hkppt38,hk1,243.054,1.429056E-02
+Horizontal hydraulic conductivity,39,m/d,21,1E-10,1E+10,l1hkppt39,hk1,5.87125,2.079960E-03
+Horizontal hydraulic conductivity,40,m/d,21,1E-10,1E+10,l1hkppt40,hk1,26.8192,3.315720E-03
+Horizontal hydraulic conductivity,41,m/d,21,1E-10,1E+10,l1hkppt41,hk1,4.7886,1.082772E-02
+Horizontal hydraulic conductivity,42,m/d,21,1E-10,1E+10,l1hkppt42,hk1,20.7234,9.421834E-03
+Horizontal hydraulic conductivity,43,m/d,21,1E-10,1E+10,l1hkppt43,hk1,3.43056,2.942653E-02
+Horizontal hydraulic conductivity,44,m/d,21,1E-10,1E+10,l1hkppt44,hk1,244.016,8.028801E-03
+Horizontal hydraulic conductivity,45,m/d,21,1E-10,1E+10,l1hkppt45,hk1,196.231,6.672931E-03
+Horizontal hydraulic conductivity,46,m/d,21,1E-10,1E+10,l1hkppt46,hk1,168.927,3.434664E-02
+Horizontal hydraulic conductivity,47,m/d,21,1E-10,1E+10,l1hkppt47,hk1,620.295,2.320327E-02
+Horizontal hydraulic conductivity,48,m/d,21,1E-10,1E+10,l1hkppt48,hk1,89.0488,1.312896E-02
+Horizontal hydraulic conductivity,49,m/d,21,1E-10,1E+10,l1hkppt49,hk1,1143.08,1.815391E-02
+Horizontal hydraulic conductivity,50,m/d,21,1E-10,1E+10,l1hkppt50,hk1,0.704064,4.745253E-03
+Horizontal hydraulic conductivity,51,m/d,21,1E-10,1E+10,l1hkppt51,hk1,86.0779,6.355895E-03
+Horizontal hydraulic conductivity,52,m/d,21,1E-10,1E+10,l1hkppt52,hk1,158.374,8.284980E-03
+Horizontal hydraulic conductivity,53,m/d,21,1E-10,1E+10,l1hkppt53,hk1,758.656,2.805241E-02
+Horizontal hydraulic conductivity,54,m/d,21,1E-10,1E+10,l1hkppt54,hk1,956.082,2.123174E-02
+Horizontal hydraulic conductivity,55,m/d,21,1E-10,1E+10,l1hkppt55,hk1,14.4652,4.066466E-02
+Horizontal hydraulic conductivity,56,m/d,21,1E-10,1E+10,l1hkppt56,hk1,2.01524,1.482199E-02
+Horizontal hydraulic conductivity,57,m/d,21,1E-10,1E+10,l1hkppt57,hk1,73.6691,1.005497E-02
+Horizontal hydraulic conductivity,58,m/d,21,1E-10,1E+10,l1hkppt58,hk1,133.587,8.318862E-03
+Horizontal hydraulic conductivity,59,m/d,21,1E-10,1E+10,l1hkppt59,hk1,586.176,1.389078E-02
+Horizontal hydraulic conductivity,60,m/d,21,1E-10,1E+10,l2hkppt1,hk2,237.072,1.358757E-02
+Horizontal hydraulic conductivity,61,m/d,21,1E-10,1E+10,l2hkppt2,hk2,35.1331,1.505866E-02
+Horizontal hydraulic conductivity,62,m/d,21,1E-10,1E+10,l2hkppt3,hk2,30.0414,1.663721E-02
+Horizontal hydraulic conductivity,63,m/d,21,1E-10,1E+10,l2hkppt4,hk2,16.4425,1.706336E-02
+Horizontal hydraulic conductivity,64,m/d,21,1E-10,1E+10,l2hkppt5,hk2,73.5358,1.659990E-02
+Horizontal hydraulic conductivity,65,m/d,21,1E-10,1E+10,l2hkppt6,hk2,9.66442,1.648210E-02
+Horizontal hydraulic conductivity,66,m/d,21,1E-10,1E+10,l2hkppt7,hk2,18.4809,1.665831E-02
+Horizontal hydraulic conductivity,67,m/d,21,1E-10,1E+10,l2hkppt8,hk2,92.3979,1.673408E-02
+Horizontal hydraulic conductivity,68,m/d,21,1E-10,1E+10,l2hkppt9,hk2,3.09503,1.684795E-02
+Horizontal hydraulic conductivity,69,m/d,21,1E-10,1E+10,l2hkppt10,hk2,16.5299,1.655909E-02
+Horizontal hydraulic conductivity,70,m/d,21,1E-10,1E+10,l2hkppt11,hk2,7.61409,1.462642E-02
+Horizontal hydraulic conductivity,71,m/d,21,1E-10,1E+10,l2hkppt12,hk2,5.96014,1.652348E-02
+Horizontal hydraulic conductivity,72,m/d,21,1E-10,1E+10,l2hkppt13,hk2,12.5117,1.593748E-02
+Horizontal hydraulic conductivity,73,m/d,8.5E-07,1E-10,1,l2hkcon14,hk2,2.76E-04,6.874378E-03
+Horizontal hydraulic conductivity,74,m/d,21,1E-10,1E+10,l2hkppt15,hk2,22.0695,1.560191E-02
+Horizontal hydraulic conductivity,75,m/d,21,1E-10,1E+10,l2hkppt16,hk2,28.2262,1.501945E-02
+Horizontal hydraulic conductivity,76,m/d,21,1E-10,1E+10,l2hkppt17,hk2,72.5685,1.419032E-02
+Horizontal hydraulic conductivity,77,m/d,15,1E-10,1E+10,l2hkbas18,hk2,6.19545,6.962839E-02
+Horizontal hydraulic conductivity,78,m/d,15,1E-10,1E+10,l2hkbas19,hk2,13.6635,6.968940E-02
+Horizontal hydraulic conductivity,79,m/d,15,1E-10,1E+10,l2hkbas20,hk2,5.37961,6.959473E-02
+Horizontal hydraulic conductivity,80,m/d,15,1E-10,1E+10,l2hkbas21,hk2,19.8643,6.965819E-02
+Horizontal hydraulic conductivity,81,m/d,8.5E-07,1E-10,1,l2hkcon22,hk2,3.86E-05,6.813058E-03
+Horizontal hydraulic conductivity,82,m/d,8.5E-07,1E-10,1,l2hkcon23,hk2,3.82E-04,7.762447E-03
+Horizontal hydraulic conductivity,83,m/d,21,1E-10,1E+10,l2hkppt24,hk2,58.1589,1.651201E-02
+Horizontal hydraulic conductivity,84,m/d,21,1E-10,1E+10,l2hkppt25,hk2,21.8908,1.600237E-02
+Horizontal hydraulic conductivity,85,m/d,21,1E-10,1E+10,l3hkppt1,hk3,325.279,1.844519E-02
+Horizontal hydraulic conductivity,86,m/d,21,1E-10,1E+10,l3hkppt2,hk3,161.055,1.959559E-02
+Horizontal hydraulic conductivity,87,m/d,21,1E-10,1E+10,l3hkppt3,hk3,582.483,2.038739E-02
+Horizontal hydraulic conductivity,88,m/d,21,1E-10,1E+10,l3hkppt4,hk3,373.856,2.494126E-02
+Horizontal hydraulic conductivity,89,m/d,21,1E-10,1E+10,l3hkppt5,hk3,796.973,3.300154E-02
+Horizontal hydraulic conductivity,90,m/d,21,1E-10,1E+10,l3hkppt6,hk3,1276.57,3.216568E-02
+Horizontal hydraulic conductivity,91,m/d,21,1E-10,1E+10,l3hkppt7,hk3,338.701,2.015854E-02
+Horizontal hydraulic conductivity,92,m/d,21,1E-10,1E+10,l3hkppt8,hk3,105.693,3.574639E-02
+Horizontal hydraulic conductivity,93,m/d,21,1E-10,1E+10,l3hkppt9,hk3,5172.72,2.061529E-02
+Horizontal hydraulic conductivity,94,m/d,21,1E-10,1E+10,l3hkppt10,hk3,946.91,2.982635E-02
+Horizontal hydraulic conductivity,95,m/d,21,1E-10,1E+10,l3hkppt11,hk3,147.865,1.889797E-02
+Horizontal hydraulic conductivity,96,m/d,13,1E-10,1E+10,l3hkppt12,hk3,277.229,1.151202E-02
+Horizontal hydraulic conductivity,97,m/d,21,1E-10,1E+10,l3hkppt13,hk3,1392,2.357538E-02
+Horizontal hydraulic conductivity,98,m/d,21,1E-10,1E+10,l3hkppt14,hk3,483.704,2.756718E-02
+Horizontal hydraulic conductivity,99,m/d,15,1E-10,1E+10,l3hkbas15,hk3,96.0824,6.989356E-02
+Horizontal hydraulic conductivity,100,m/d,15,1E-10,1E+10,l3hkbas16,hk3,14.3417,7.000626E-02
+Horizontal hydraulic conductivity,101,m/d,15,1E-10,1E+10,l3hkbas17,hk3,5.39227,6.975008E-02
+Horizontal hydraulic conductivity,102,m/d,15,1E-10,1E+10,l3hkbas18,hk3,49.4383,7.034572E-02
+Horizontal hydraulic conductivity,103,m/d,13,1E-10,1E+10,l3hkppt19,hk3,6684.61,1.084691E-02
+Horizontal hydraulic conductivity,104,m/d,13,1E-10,1E+10,l3hkppt20,hk3,268.569,1.025208E-02
+Horizontal hydraulic conductivity,105,m/d,21,1E-10,1E+10,l3hkppt21,hk3,604.292,1.782619E-02
+Horizontal hydraulic conductivity,106,m/d,21,1E-10,1E+10,l3hkppt22,hk3,540.419,1.909710E-02
+Vertical anisotropy,,,50,1E-10,1E+10,vani,vc,138.24,5.553520E-01
+Storage coefficient,1,,0.1,0.095,0.35,l1sppt1,s1,5.00E-02,3.577906E-06
+Storage coefficient,2,,0.1,0.095,0.35,l1sppt2,s1,5.00E-02,0.000000E+00
+Storage coefficient,3,,0.1,0.095,0.35,l1sppt3,s1,5.50E-02,1.798182E-06
+Storage coefficient,4,,0.1,0.095,0.35,l1sppt4,s1,5.00E-02,1.379571E-06
+Storage coefficient,5,,0.1,0.095,0.35,l1sppt5,s1,5.00E-02,0.000000E+00
+Storage coefficient,6,,0.1,0.095,0.35,l1sppt6,s1,5.18E-02,8.948189E-06
+Storage coefficient,7,,0.1,0.095,0.35,l1sppt7,s1,5.42E-02,1.337544E-05
+Storage coefficient,8,,0.1,0.095,0.35,l1sppt8,s1,5.00E-02,9.107413E-06
+Storage coefficient,9,,0.1,0.095,0.35,l1sppt9,s1,5.98E-02,0.000000E+00
+Storage coefficient,10,,0.1,0.095,0.35,l1sppt10,s1,5.94E-02,0.000000E+00
+Storage coefficient,11,,0.1,0.095,0.35,l1sppt11,s1,5.00E-02,1.827075E-05
+Storage coefficient,12,,0.1,0.095,0.35,l1sppt12,s1,5.00E-02,0.000000E+00
+Storage coefficient,13,,0.1,0.095,0.35,l1sppt13,s1,5.00E-02,0.000000E+00
+Storage coefficient,14,,0.1,0.095,0.35,l1sppt14,s1,5.00E-02,2.624846E-03
+Storage coefficient,15,,0.1,0.095,0.35,l1sppt15,s1,0.253578,1.390713E-03
+Storage coefficient,16,,0.1,0.095,0.35,l1sppt16,s1,0.35,1.246257E-03
+Storage coefficient,17,,0.1,0.095,0.35,l1sppt17,s1,5.00E-02,2.873716E-03
+Storage coefficient,18,,0.1,0.095,0.35,l1sppt18,s1,0.175536,2.280223E-03
+Storage coefficient,19,,0.1,0.095,0.35,l1sppt19,s1,0.324877,3.513293E-03
+Storage coefficient,20,,0.1,0.095,0.35,l1sppt20,s1,0.208217,2.352265E-04
+Storage coefficient,21,,0.1,0.095,0.35,l1sppt21,s1,0.349993,2.695683E-03
+Storage coefficient,22,,0.1,0.095,0.35,l1sppt22,s1,5.83E-02,2.071001E-03
+Storage coefficient,23,,0.1,0.095,0.35,l1sppt23,s1,5.11E-02,2.839150E-03
+Storage coefficient,24,,0.1,0.095,0.35,l1sppt24,s1,0.112439,3.380128E-03
+Storage coefficient,25,,0.1,0.095,0.35,l1sppt25,s1,5.20E-02,0.000000E+00
+Storage coefficient,26,,0.1,0.095,0.35,l1sppt26,s1,0.349806,1.671885E-03
+Storage coefficient,27,,0.1,0.095,0.35,l1sppt27,s1,0.35,1.077796E-03
+Storage coefficient,28,,0.1,0.095,0.35,l1sppt28,s1,7.83E-02,7.293230E-04
+Storage coefficient,29,,0.1,0.095,0.35,l1sppt29,s1,0.35,1.770985E-03
+Storage coefficient,30,,0.1,0.095,0.35,l1sppt30,s1,0.35,4.366069E-05
+Storage coefficient,31,,0.1,0.095,0.35,l1sppt31,s1,5.35E-02,7.138174E-05
+Storage coefficient,32,,0.1,0.095,0.35,l1sppt32,s1,0.35,1.207801E-03
+Storage coefficient,33,,0.1,0.095,0.35,l1sppt33,s1,5.00E-02,0.000000E+00
+Storage coefficient,34,,0.1,0.095,0.35,l1sppt34,s1,5.99E-02,0.000000E+00
+Storage coefficient,35,,0.1,0.095,0.35,l1sppt35,s1,5.13E-02,2.224450E-03
+Storage coefficient,36,,0.1,0.095,0.35,l1sppt36,s1,8.27E-02,7.196468E-05
+Storage coefficient,37,,0.1,0.095,0.35,l1sppt37,s1,9.55E-02,2.805105E-05
+Storage coefficient,38,,0.1,0.095,0.35,l1sppt38,s1,5.00E-02,5.541010E-05
+Storage coefficient,39,,0.1,0.095,0.35,l1sppt39,s1,5.44E-02,0.000000E+00
+Storage coefficient,40,,0.1,0.095,0.35,l1sppt40,s1,6.62E-02,0.000000E+00
+Storage coefficient,41,,0.1,0.095,0.35,l1sppt41,s1,5.01E-02,8.419666E-05
+Storage coefficient,42,,0.1,0.095,0.35,l1sppt42,s1,5.00E-02,2.741132E-03
+Storage coefficient,43,,0.1,0.095,0.35,l1sppt43,s1,5.00E-02,2.779145E-03
+Storage coefficient,44,,0.1,0.095,0.35,l1sppt44,s1,5.00E-02,5.078844E-05
+Storage coefficient,45,,0.1,0.095,0.35,l1sppt45,s1,5.00E-02,4.594240E-04
+Storage coefficient,46,,0.1,0.095,0.35,l1sppt46,s1,5.00E-02,4.837929E-03
+Storage coefficient,47,,0.1,0.095,0.35,l1sppt47,s1,0.324285,4.862608E-03
+Storage coefficient,48,,0.1,0.095,0.35,l1sppt48,s1,0.34973,1.921942E-03
+Storage coefficient,49,,0.1,0.095,0.35,l1sppt49,s1,0.349816,1.806266E-03
+Storage coefficient,50,,0.1,0.095,0.35,l1sppt50,s1,8.64E-02,1.539442E-03
+Storage coefficient,51,,0.1,0.095,0.35,l1sppt51,s1,5.01E-02,1.222089E-04
+Storage coefficient,52,,0.1,0.095,0.35,l1sppt52,s1,0.119925,2.832457E-03
+Storage coefficient,53,,0.1,0.095,0.35,l1sppt53,s1,0.349931,1.192816E-03
+Storage coefficient,54,,0.1,0.095,0.35,l1sppt54,s1,0.34994,5.248634E-03
+Storage coefficient,55,,0.1,0.095,0.35,l1sppt55,s1,0.35,8.000277E-03
+Storage coefficient,56,,0.1,0.095,0.35,l1sppt56,s1,5.49E-02,2.952810E-03
+Storage coefficient,57,,0.1,0.095,0.35,l1sppt57,s1,5.26E-02,1.056222E-03
+Storage coefficient,58,,0.1,0.095,0.35,l1sppt58,s1,5.00E-02,2.855797E-03
+Storage coefficient,59,,0.1,0.095,0.35,l1sppt59,s1,7.85E-02,1.485404E-03
+Storage coefficient,60,,0.1,1E-10,0.001,l2sppt1,s2,1.00E-03,2.037725E-06
+Storage coefficient,61,,0.1,1E-10,0.001,l2sppt2,s2,9.23E-08,2.146039E-07
+Storage coefficient,62,,0.1,1E-10,0.001,l2sppt3,s2,6.67E-05,4.459269E-07
+Storage coefficient,63,,0.1,1E-10,0.001,l2sppt4,s2,7.20E-06,2.851629E-07
+Storage coefficient,64,,0.1,1E-10,0.001,l2sppt5,s2,1.05E-06,4.557112E-07
+Storage coefficient,65,,0.1,1E-10,0.001,l2sppt6,s2,3.62E-04,6.615222E-07
+Storage coefficient,66,,0.1,1E-10,0.001,l2sppt7,s2,1.10E-06,3.374580E-07
+Storage coefficient,67,,0.1,1E-10,0.001,l2sppt8,s2,4.16E-07,3.108831E-07
+Storage coefficient,68,,0.1,1E-10,0.001,l2sppt9,s2,1.78E-08,6.455557E-07
+Storage coefficient,69,,0.1,1E-10,0.001,l2sppt10,s2,3.72E-10,7.494986E-07
+Storage coefficient,70,,0.1,1E-10,0.001,l2sppt11,s2,2.66E-06,8.041787E-07
+Storage coefficient,71,,0.1,1E-10,0.001,l2sppt12,s2,4.85E-05,1.979800E-05
+Storage coefficient,72,,0.1,1E-10,0.001,l2sppt13,s2,3.60E-04,1.992424E-05
+Storage coefficient,73,,0.011,1E-10,0.001,l2sppt14,s2,7.64E-06,1.611806E-05
+Storage coefficient,74,,0.1,1E-10,0.001,l2sppt15,s2,6.15E-06,1.293305E-06
+Storage coefficient,75,,0.1,1E-10,0.001,l2sppt16,s2,1.50E-07,8.311008E-07
+Storage coefficient,76,,0.1,1E-10,0.001,l2sppt17,s2,7.51E-06,5.998765E-07
+Storage coefficient,77,,3.6E-05,1E-10,0.35,l2sppt18,s2,3.39E-10,2.325764E-07
+Storage coefficient,78,,3.6E-05,1E-10,0.001,l2sppt19,s2,3.35E-06,2.325759E-07
+Storage coefficient,79,,3.6E-05,1E-10,0.001,l2sppt20,s2,1.20E-07,2.325764E-07
+Storage coefficient,80,,3.6E-05,1E-10,0.001,l2sppt21,s2,4.76E-08,2.325760E-07
+Storage coefficient,81,,0.011,1E-10,0.001,l2sppt22,s2,1.17E-07,2.682639E-07
+Storage coefficient,82,,0.011,1E-10,0.001,l2sppt23,s2,1.72E-07,1.336932E-07
+Storage coefficient,83,,0.1,1E-10,0.001,l2sppt24,s2,1.32E-05,6.609436E-08
+Storage coefficient,84,,0.1,1E-10,0.001,l2sppt25,s2,4.70E-04,2.183576E-05
+Storage coefficient,85,,0.1,1E-10,0.001,l3sppt1,s3,3.20E-06,1.936303E-07
+Storage coefficient,86,,0.1,1E-10,0.001,l3sppt2,s3,1.17E-04,1.817552E-07
+Storage coefficient,87,,0.1,1E-10,0.001,l3sppt3,s3,6.05E-07,2.634906E-07
+Storage coefficient,88,,0.1,1E-10,0.001,l3sppt4,s3,2.75E-06,3.372997E-07
+Storage coefficient,89,,0.1,1E-10,0.001,l3sppt5,s3,8.44E-06,3.452835E-07
+Storage coefficient,90,,0.1,1E-10,0.001,l3sppt6,s3,1.10E-08,6.927574E-08
+Storage coefficient,91,,0.1,1E-10,0.001,l3sppt7,s3,2.62E-05,3.298175E-07
+Storage coefficient,92,,0.1,1E-10,0.001,l3sppt8,s3,5.51E-07,0.000000E+00
+Storage coefficient,93,,0.1,1E-10,0.001,l3sppt9,s3,6.64E-06,7.901862E-07
+Storage coefficient,94,,0.1,1E-10,0.001,l3sppt10,s3,2.98E-09,3.397560E-07
+Storage coefficient,95,,0.1,1E-10,0.001,l3sppt11,s3,1.19E-06,2.325761E-07
+Storage coefficient,96,,7.5E-05,1E-10,0.001,l3sppt12,s3,5.21E-06,0.000000E+00
+Storage coefficient,97,,0.1,1E-10,0.001,l3sppt13,s3,3.11E-08,7.534182E-07
+Storage coefficient,98,,0.1,1E-10,0.001,l3sppt14,s3,3.24E-04,1.220874E-06
+Storage coefficient,99,,3.6E-05,1E-10,0.35,l3sppt15,s3,9.43E-07,5.043926E-07
+Storage coefficient,100,,3.6E-05,1E-10,0.001,l3sppt16,s3,5.36E-09,8.399544E-07
+Storage coefficient,101,,3.6E-05,1E-10,0.001,l3sppt17,s3,2.19E-04,2.212237E-06
+Storage coefficient,102,,3.6E-05,1E-10,0.001,l3sppt18,s3,5.83E-04,2.922348E-06
+Storage coefficient,103,,7.5E-05,1E-10,0.001,l3sppt19,s3,1.74E-05,0.000000E+00
+Storage coefficient,104,,7.5E-05,1E-10,0.001,l3sppt20,s3,9.51E-05,0.000000E+00
+Storage coefficient,105,,0.1,1E-10,0.001,l3sppt21,s3,8.89E-05,3.472702E-07
+Storage coefficient,106,,0.1,1E-10,0.001,l3sppt22,s3,1.52E-09,3.975339E-07
+Riverbed conductance,1,m2/d,5669,1E-10,1.00E+10,wr_nke_hul,rbcon,10527.6,4.899602E-04
+Riverbed conductance,2,m2/d,5669,1E-10,1.00E+10,wr_hul_ket,rbcon,11373.9,9.528497E-04
+Riverbed conductance,3,m2/d,5669,1E-10,1.00E+10,wr_ket_gim,rbcon,437.088,2.431531E-02
+Riverbed conductance,4,m2/d,5669,1E-10,1.00E+10,wr_gim_hai,rbcon,3.83012,2.430529E-03
+Riverbed conductance,5,m2/d,5669,1E-10,1.00E+10,wr_hai_nbr,rbcon,1.19834,2.162677E-04
+Riverbed conductance,6,m2/d,5669,1E-10,1.00E+10,wr_nbr_sbr,rbcon,1.73062,3.062764E-04
+Riverbed conductance,7,m2/d,5669,1E-10,1.00E+10,wr_sbr_gle,rbcon,53288.6,8.695122E-04
+Riverbed conductance,8,m2/d,5669,1E-10,1.00E+10,wr_gle_slu,rbcon,8355.4,4.935312E-03
+Riverbed conductance,9,m2/d,5669,1E-10,1.00E+10,wr_slu_wrr,rbcon,71.7472,8.369555E-04
+Riverbed conductance,10,m2/d,5669,1E-10,1.00E+10,wr_wrr_stc,rbcon,49113.9,1.315658E-03
+Riverbed conductance,20,m2/d,1890,1E-10,1.00E+10,lovingcr,rbcon,41409.9,7.603792E-04
+Riverbed conductance,19,m2/d,1890,1E-10,1.00E+10,covecr,rbcon,1400.77,4.155023E-03
+Riverbed conductance,11,m2/d,1890,1E-10,1.00E+10,willowcr,rbcon,291579,8.639554E-03
+Riverbed conductance,14,m2/d,1890,1E-10,1.00E+10,pattoncr,rbcon,943.505,3.028045E-04
+Riverbed conductance,13,m2/d,1890,1E-10,1.00E+10,buhlerdrn,rbcon,23543.1,4.625147E-03
+Riverbed conductance,15,m2/d,1890,1E-10,1.00E+10,caincr,rbcon,128.3,4.161516E-04
+Riverbed conductance,17,m2/d,1890,1E-10,1.00E+10,mudcr,rbcon,336.283,1.480746E-03
+Riverbed conductance,16,m2/d,1890,1E-10,1.00E+10,chaneycr,rbcon,268.783,1.491522E-03
+Riverbed conductance,18,m2/d,1890,1E-10,1.00E+10,wilsoncr,rbcon,67.365,3.241697E-04
+Riverbed conductance,22,m2/d,1890,1E-10,1.00E+10,silvercr,rbcon,2.83932,4.272622E-04
+Riverbed conductance,21,m2/d,1890,1E-10,1.00E+10,springcr,rbcon,297.515,1.392412E-02
+Drain conductance,1,m2/d,210,1E-10,1.00E+10,drn_stcr_l1,dc,28026.9,4.790358E-06
+Drain conductance,2,m2/d,152,1E-10,1.00E+10,drn_sicr_l1,dc,0.878194,4.791655E-07
+Drain conductance,2,m2/d,152,1E-10,1.00E+10,drn_sicr_l2,dc,7.53022,1.252784E-05
+Drain conductance,2,m2/d,152,1E-10,1.00E+10,drn_sicr_l3,dc,2.04E+06,1.253463E-05
+Irrigation efficiency,1,,0.75,0.5,0.95,effadams,eff,0.758374,3.624178E-03
+Irrigation efficiency,2,,0.75,0.5,0.95,effaspen,eff,0.741464,3.623232E-03
+Irrigation efficiency,3,,0.75,0.5,0.95,effaspgrov,eff,0.765994,3.623189E-03
+Irrigation efficiency,4,,0.75,0.5,0.95,effasphol,eff,0.730545,3.642693E-03
+Irrigation efficiency,8,,0.75,0.5,0.95,effblack,eff,0.707811,3.687095E-03
+Irrigation efficiency,9,,0.75,0.5,0.95,effbroadfd,eff,0.793433,3.626004E-03
+Irrigation efficiency,10,,0.75,0.5,0.95,effbuhler1,eff,0.5,5.377112E-03
+Irrigation efficiency,11,,0.75,0.5,0.95,effbuhler2,eff,0.54785,5.247958E-03
+Irrigation efficiency,12,,0.75,0.5,0.95,effbypass,eff,0.5,8.763861E-03
+Irrigation efficiency,13,,0.75,0.5,0.95,effchalet,eff,0.752938,3.623188E-03
+Irrigation efficiency,14,,0.75,0.5,0.95,effbellevu,eff,0.710794,3.647836E-03
+Irrigation efficiency,15,,0.75,0.5,0.95,effketchum,eff,0.552752,4.020981E-03
+Irrigation efficiency,16,,0.75,0.5,0.95,effclearjc,eff,0.753167,3.623188E-03
+Irrigation efficiency,18,,0.75,0.5,0.95,effcoldspr,eff,0.772471,3.623199E-03
+Irrigation efficiency,19,,0.75,0.5,0.95,effcomstoc,eff,0.75,3.623188E-03
+Irrigation efficiency,20,,0.75,0.5,0.95,effcove,eff,0.738496,3.659513E-03
+Irrigation efficiency,21,,0.75,0.5,0.95,effcroy,eff,0.721756,3.898792E-03
+Irrigation efficiency,22,,0.75,0.5,0.95,effdeercr,eff,0.743531,3.623355E-03
+Irrigation efficiency,23,,0.75,0.5,0.95,effdipcr,eff,0.763877,3.623195E-03
+Irrigation efficiency,24,,0.75,0.5,0.95,effdistric,eff,0.694555,4.252257E-03
+Irrigation efficiency,25,,0.75,0.5,0.95,effeaglecr,eff,0.727669,3.623262E-03
+Irrigation efficiency,26,,0.75,0.5,0.95,effefork,eff,0.744886,3.623191E-03
+Irrigation efficiency,28,,0.75,0.5,0.95,effflyhrt,eff,0.758787,3.623240E-03
+Irrigation efficiency,30,,0.75,0.5,0.95,effglendal,eff,0.721177,3.623776E-03
+Irrigation efficiency,31,,0.75,0.5,0.95,effgolden,eff,0.71795,3.648675E-03
+Irrigation efficiency,32,,0.75,0.5,0.95,effgraff,eff,0.745867,3.624810E-03
+Irrigation efficiency,33,,0.75,0.5,0.95,effgreenho,eff,0.742103,3.869828E-03
+Irrigation efficiency,34,,0.75,0.5,0.95,effgwbroad,eff,0.769067,3.623381E-03
+Irrigation efficiency,35,,0.75,0.5,0.95,effgwcain,eff,0.805486,3.642826E-03
+Irrigation efficiency,36,,0.75,0.5,0.95,effgwchan,eff,0.743899,3.646827E-03
+Irrigation efficiency,37,,0.75,0.5,0.95,effgwefork,eff,0.500009,5.132319E-02
+Irrigation efficiency,38,,0.75,0.5,0.95,effgwcroy,eff,0.73872,3.625775E-03
+Irrigation efficiency,39,,0.75,0.5,0.95,effgwfreed,eff,0.791047,3.640848E-03
+Irrigation efficiency,40,,0.75,0.5,0.95,effgwganne,eff,0.731827,3.648626E-03
+Irrigation efficiency,41,,0.75,0.5,0.95,effgwgimha,eff,0.708873,5.395405E-03
+Irrigation efficiency,42,,0.75,0.5,0.95,effgwglwrr,eff,0.500012,4.436283E-03
+Irrigation efficiency,43,,0.75,0.5,0.95,effgwhasbr,eff,0.709178,3.649986E-03
+Irrigation efficiency,44,,0.75,0.5,0.95,effgwhulke,eff,0.74768,3.631287E-03
+Irrigation efficiency,45,,0.75,0.5,0.95,effgwkegim,eff,0.500015,5.884598E-03
+Irrigation efficiency,46,,0.75,0.5,0.95,effgwmud,eff,0.788123,3.642647E-03
+Irrigation efficiency,47,,0.75,0.5,0.95,effgwnkhul,eff,0.755924,3.624362E-03
+Irrigation efficiency,48,,0.75,0.5,0.95,effgwsbrgl,eff,0.801781,3.656069E-03
+Irrigation efficiency,49,,0.75,0.5,0.95,effgwsiblw,eff,0.736478,3.623876E-03
+Irrigation efficiency,50,,0.75,0.5,0.95,effgwsino,eff,0.500023,3.631670E-03
+Irrigation efficiency,51,,0.75,0.5,0.95,effgwsiso,eff,0.744025,3.629636E-03
+Irrigation efficiency,52,,0.75,0.5,0.95,effgwstalk,eff,0.772079,3.934872E-03
+Irrigation efficiency,53,,0.75,0.5,0.95,effgwwillo,eff,0.5,9.337506E-03
+Irrigation efficiency,54,,0.75,0.5,0.95,effgwwilso,eff,0.745527,3.643018E-03
+Irrigation efficiency,55,,0.75,0.5,0.95,effheather,eff,0.773411,3.655330E-03
+Irrigation efficiency,56,,0.75,0.5,0.95,effhiawhai,eff,0.748778,3.626866E-03
+Irrigation efficiency,57,,0.75,0.5,0.95,effhiawoth,eff,0.757598,3.623258E-03
+Irrigation efficiency,58,,0.75,0.5,0.95,effhiawvc,eff,0.793374,3.646183E-03
+Irrigation efficiency,59,,0.75,0.5,0.95,effholiday,eff,0.727423,3.623188E-03
+Irrigation efficiency,60,,0.75,0.5,0.95,effhulenmd,eff,0.752517,3.623365E-03
+Irrigation efficiency,62,,0.75,0.5,0.95,effindpark,eff,0.802729,3.623189E-03
+Irrigation efficiency,63,,0.75,0.5,0.95,effkiliden,eff,0.540403,5.910299E-03
+Irrigation efficiency,64,,0.75,0.5,0.95,efflakecrk,eff,0.743632,3.623359E-03
+Irrigation efficiency,65,,0.75,0.5,0.95,efflovsil,eff,0.857318,3.881618E-03
+Irrigation efficiency,67,,0.75,0.5,0.95,effmidval,eff,0.748692,3.623200E-03
+Irrigation efficiency,70,,0.75,0.5,0.95,effnorthfk,eff,0.732506,3.623188E-03
+Irrigation efficiency,72,,0.75,0.5,0.95,effpurdum,eff,0.719518,3.623380E-03
+Irrigation efficiency,73,,0.75,0.5,0.95,effquigley,eff,0.767771,3.663697E-03
+Irrigation efficiency,76,,0.75,0.5,0.95,effriverwd,eff,0.771178,3.623189E-03
+Irrigation efficiency,78,,0.75,0.5,0.95,effsocomf,eff,0.766614,3.623188E-03
+Irrigation efficiency,79,,0.75,0.5,0.95,effsprkegi,eff,0.728564,3.625109E-03
+Irrigation efficiency,80,,0.75,0.5,0.95,effstarlit,eff,0.728205,3.623191E-03
+Irrigation efficiency,81,,0.75,0.5,0.95,effstarwxr,eff,0.74854,3.642958E-03
+Irrigation efficiency,82,,0.75,0.5,0.95,effstonega,eff,0.752227,3.623191E-03
+Irrigation efficiency,83,,0.75,0.5,0.95,effsuntree,eff,0.716942,3.623188E-03
+Irrigation efficiency,84,,0.75,0.5,0.95,effsvwsd,eff,0.843519,3.631143E-03
+Irrigation efficiency,85,,0.75,0.5,0.95,effthomas,eff,0.75,3.623202E-03
+Irrigation efficiency,86,,0.75,0.5,0.95,efftimber,eff,0.701404,3.624483E-03
+Irrigation efficiency,87,,0.75,0.5,0.95,effwillow,eff,0.673826,4.983182E-03
+Tributary underflow scalar,1,,1,0.01,4.1,adm,ltrb,1.00E-02,1.005891E-02
+Tributary underflow scalar,2,,1,0.01,102.6,ubw,ltrb,21.856,1.097840E-03
+Tributary underflow scalar,3,,1,0.01,4,chg,ltrb,1.00E-02,1.748284E-04
+Tributary underflow scalar,4,,1,0.01,4,clr,ltrb,1.11E-02,2.106109E-04
+Tributary underflow scalar,5,,1,0.01,4,cld,ltrb,0.692403,3.367082E-04
+Tributary underflow scalar,6,,1,0.01,15.7,cov,ltrb,2.52207,1.764599E-04
+Tributary underflow scalar,7,,1,0.01,6.8,cry,ltrb,1.21912,5.023269E-03
+Tributary underflow scalar,8,,1,0.01,10.1,drc,ltrb,1.88215,5.800987E-03
+Tributary underflow scalar,9,,1,0.01,3.4,eag,ltrb,3.39862,2.625843E-03
+Tributary underflow scalar,10,,1,0.01,50.8,estf,ltrb,1.29787,3.520991E-02
+Tributary underflow scalar,11,,1,0.01,48.6,elk,ltrb,1.00E-02,1.807174E-04
+Tributary underflow scalar,12,,1,0.01,8.9,grn,ltrb,1.00E-02,3.223998E-02
+Tributary underflow scalar,13,,1,0.01,0.8,ins,strb,0.327603,4.028579E-02
+Tributary underflow scalar,14,,1,0.01,1.4,lak,strb,1.4359,5.380457E-03
+Tributary underflow scalar,15,,1,0.01,4,lee,ltrb,2.98995,9.492796E-05
+Tributary underflow scalar,16,,1,0.01,4,ohg,ltrb,1.01E-02,1.788286E-03
+Tributary underflow scalar,17,,1,0.01,4,org,ltrb,3.71531,6.195125E-04
+Tributary underflow scalar,18,,1,0.01,5.5,qgc,ltrb,0.208358,1.993460E-03
+Tributary underflow scalar,19,,1,0.01,1.9,sea,strb,1.45634,1.813975E-03
+Tributary underflow scalar,20,,1,0.01,4.7,slh,ltrb,1.00E-02,1.120486E-03
+Tributary underflow scalar,21,,1,0.01,4,twn,ltrb,2.31E-02,3.430111E-05
+Tributary underflow scalar,22,,1,0.01,7.8,trl,ltrb,4.13083,5.323485E-03
+Tributary underflow scalar,23,,1,0.01,74.2,wms,ltrb,3.74629,8.858565E-03
+Seasonal amplitude reduction factor,,,2,0.001,10,red,ltrb,10,3.481893E-04
+Moving average duration,,d,275,1,730.5,nday,ltrb,248.589,1.669091E-05

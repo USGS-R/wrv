@@ -1,0 +1,306 @@
+Changes in Version 0.8.1
+
+  o  ...
+
+Changes in Version 0.8.0
+
+  o  Reorganize model archive to comply with new open data requirements.
+
+  o  Remove suggested git2r R-package, version control is no longer used when constructing the model archive.
+
+  o  Add USGS software disclaimer to the package startup message.
+
+  o  Fix bug that prevented package compilation on R version 3.3.0.
+
+  o  Address editorial review comments in package vignettes.
+
+Changes in Version 0.7.2
+
+  o  Change LaTeX bibliography engine from natbib to biblatex.
+
+Changes in Version 0.7.1
+
+  o  Fix bug with scientific-notation format of axis-tickmark labels in the PlotGraph function.
+
+  o  Calculate the relative composite sensitivity in the sensitivity dataset.
+
+Changes in Version 0.7.0
+
+  o  Vignettes ready for editorial review.
+
+  o  Update PEST sensitivity dataset with results from final model calibration run.
+
+Changes in Version 0.6.4
+
+  o  All colleague review comments pertaining to package vignettes have been addressed.
+
+  o  Fix bug in PlotMap function that was introduced with sp version 1.2-2.
+     Function sp::gridlines now returns the correct ID attribute order for labels "EW" and "NS".
+
+  o  Change default value for auto.flow.reduce argument in the WriteModflowInput function to FALSE.
+
+Changes in Version 0.6.3
+
+  o  For sampling purposes the BumpRiverStage function requires a random number generator (RNG).
+     The RNG state is now set using the set.seed function and results are reproducible.
+
+  o  Add make.intervals argument to the PlotMap function.
+
+Changes in Version 0.6.2
+
+  o  Add auto.flow.reduce argument to the WriteModflowInput function, its default is TRUE.
+     The MODFLOW-USG option "AUTOFLOWREDUCE" is now set for all model formulations, not just the "convertible" formulation.
+     Pumping rates that have been automatically reduced will be written to a model output file ("*.afr").
+
+  o  Shorten a few of the long function names in order to tidy the manual vignette.
+
+  o  Add PEST sensitivity dataset, this will be updated after final calibration.
+     Plotting routines for this dataset were added to the miscellaneous vignette.
+
+  o  Fix minor bug with PlotCrossSection function that may have prevented improper cell coloring.
+
+Changes in Version 0.6.1
+
+  o  Use more robust estimate of riverbed conductance.
+
+  o  Change number of time steps per stress period to 4, previously was 1.
+
+  o  Change format for package version numbering from #.#-# to #.#.#
+
+Changes in Version 0.6-0
+
+  o  Fix bug in steady-state calculation using the ss.interval argument in the UpdateWaterBudget function.
+
+Changes in Version 0.5-6
+
+  o  Add iwelcb argument to the UpdateWaterBudget function.
+
+  o  Require R version greater than or equal to 3.2, was previously 3.1.
+
+  o  Change UpdateWaterBudget function to write well configuration data to the "qa-well-config.csv" file.
+
+  o  Rename exported CSV files from "wrv-summary-*.csv" to "qa-*.csv", where the "qa" stands for quality assurance.
+
+  o  Add ss.interval argument to the UpdateWaterBudget function.
+     Specifying this interval overrides the default time period representing steady-state boundary conditions.
+
+Changes in Version 0.5-5
+
+  o  River cells in lower model layers have been removed.
+     Cell geometries were changed to compensate for river stage elevations located beneath the bottom of a river cell.
+
+Changes in Version 0.5-3
+
+  o  The criterion for selecting lower-layer river cells has changed from riverbed bottom to river stage.
+
+Changes in Version 0.5-2
+
+  o  Consolidate ./inst/templates and ./inst/references folder files in ./inst/misc folder, and add README file.
+
+  o  Remove links to external package functions in manual.
+     This prevents broken links in manual vignette.
+
+  o  Add Rd2.tex file to facilitate building of vignette manual, see Rd2pdf command.
+
+  o  Add model.area field to "wrv-summary-incidental.csv"; see RunWaterBalanceModel function.
+
+Changes in Version 0.5-0
+
+  o  Change UpdateWaterBudget-function argument to allow toggling of output units in summary tables.
+
+  o  Change file format for "wrv-summary-pumping.csv".
+
+  o  Rename vignettes to reflect report appendices.
+
+  o  Add suggested number of axis intervals as new arguments in the PlotGraph function.
+
+  o  Add ToLatexScientific function to format scientific notation as m x 10^n.
+
+  o  Add subreach.recharge dataset, used to calculate stream-aquifer flow-exchange ratios.
+
+  o  Revised GetWellConfig function to be more general; although, it's still hard-coded for three model layers.
+
+  o  Changed MODFLOW solver options NONLINMETH and IACL to 1 and 0 (were previously 2 and 2), respectively.
+     These new solver options coincide with the current PEST run.
+
+  o  Fixed minor bug in ReadModflowBinaryFile function that was causing it to get stuck in a continuous loop when a variable description was not recognized.
+
+Changes in Version 0.4-6
+
+  o  Change October streamflows in the "Big Wood, Wood River Ranch to Stanton Crossing" reach to non-dry-bed conditions.
+
+Changes in Version 0.4-5
+
+  o  Add dry-bed conditions to the "Big Wood, Wood River Ranch to Stanton Crossing" reach.
+
+  o  Add new vignette titled "Parameter Estimation of the Groundwater Flow Model".
+
+  o  The viridis and git2r R-packages are now suggested to improve plot colors and add version control to the model archive, respectively.
+
+Changes in Version 0.4-4
+
+  o  Update tributary underflow datasets to account for the raw-data measurement resolution and the addition of a new tributary boundary at Oregon Gulch.
+
+  o  Add AddInsetMap function to draw an inset map in the current graphics device.
+
+  o  The animation R-package is now suggested and used to create animations showing the depth-to-water over time.
+
+Changes in Version 0.4-3
+
+  o  The Hailey precipitation data was found to be much less than what is shown in the design document.
+     All precipitation data was recalculated from raw data and validated with the design document.
+
+  o  Add new vignette titled "Natural Groundwater Recharge".
+
+  o  Renamed vignette files.
+
+Changes in Version 0.4-2
+
+  o  Fix error associated with the units of soil percolation rate; units changed from meters per day to meters per month.
+
+  o  Fix minor bug in the SetPolygons function that may have interfered with polygon intersections.
+
+Changes in Version 0.4-1
+
+  o  Add new vignette titled "Incidental Recharge and Groundwater Pumping Demand".
+
+  o  Annual flow rate in the "BWR Upper" tributary canyon was changed from 145 acre-feet to 602 acre-feet.
+
+  o  Add PlotCrossSection, AddColorKey, and AddScaleBar functions.
+
+  o  Fix transient stream stage on Big Wood River between Hailey and Stanton Crossing streamgages.
+
+  o  Reference data filenames were changed back to "EFF.csv", "TRIB.csv", and "SEEP.csv".
+
+Changes in Version 0.4-0
+
+  o  New package vignette "wrv-process" that begins to document the instructions for processing the calibrated model.
+
+  o  Reference data filenames were changed from "EFF.csv", "TRIB.csv", "SEEP.csv" to "EFF.ref", "TRIB.ref", "SEEP.ref", respectively.
+
+  o  Batch filenames were changed from "Run.bat", "Update.bat" to "RunModflow.bat", "UpdateBudget.bat", respectively.
+
+  o  Output from "wrv-model" vignette adheres to the recommended USGS model archive structure.
+
+  o  Add "README.md" to the "./inst/extdata/" folder; the files and folders were reorganized under this folder.
+
+  o  MODFLOW-USG (version 1.2) source code is included in the package source.
+     A MODFLOW-USG executable is included with the precompiled binary versions of the package.
+
+Changes in Version 0.3-0
+
+  o  Add content to post-processing analysis of transient model simulation in the wrv-model vignette.
+
+  o  Improve performance for reading MODFLOW binary flow data in the ReadModflowBinaryFile function.
+
+  o  Add SummariseBudget function to summarize cell-by-cell flow for model boundary components.
+
+  o  The sfsmisc R-package is now suggested to improve figure axes labels.
+
+Changes in Version 0.2-7
+
+  o  Write volumetric budget for every stress period, was previously only written for the last stress period.
+
+  o  The dplyr R-package is now required.
+
+  o  Change from using base::merge and stats::aggregate functions to dplyr equivalents.
+     Use of dplyr::left_join function will fix bug with base::merge auto-arranging row order.
+
+  o  Remove perianal dry-bed conditions for the "Big Wood, Wood River Ranch to Stanton Crossing" river reach.
+
+Changes in Version 0.2-6
+
+  o  Normalize the Big Wood River gage-height using median rather than mean.
+     This prevents stream-stage elevations from being lower than streambed elevations.
+
+Changes in Version 0.2-5
+
+  o  Change calculation for missing gage-height data at the USGS 13140800 streamgage.
+
+Changes in Version 0.2-4
+
+  o  Modeling transient stage conditions in the Big Wood River.
+
+  o  Change option for reading hydraulic parameters in the model.
+     The model now expects Specific Storage rather than the Storage Coefficient.
+
+  o  Tidy help documentation.
+
+Changes in Version 0.2-3
+
+  o  Improve computational efficiency of RunWaterBalanceModel function.
+
+  o  The UpdateWaterBudget function call in Update.bat now passes the default local directory.
+
+Changes in Version 0.2-2
+
+  o  Account for recharge from miscellaneous seepage sites (Bypass Canal and Bellevue WWTP Ponds).
+
+  o  Add support for writing raster stack to disk as a KLM file.
+
+  o  Update numerous raw data files.
+
+Changes in Version 0.2-1
+
+  o  Account for episodic dry periods in the stream reaches located between Glendale and Wood River Ranch.
+     Requires passing river data as a data.frame-class object to the WriteModflowInputFiles function.
+
+  o  Update SetPolygons function to handle point and line artifacts.
+
+  o  Tidy code for UpdateWaterBudget function and add output that is more descriptive.
+
+  o  Update numerous raw data files.
+
+  o  Revise area calculation in summary table for recharge on non-irrigated lands.
+
+Changes in Version 0.2-0
+
+  o  Add UpdateWaterBudget function; only used during parameter estimation.
+
+  o  Add model options for (1) steady-state or transient conditions, (2) confined or convertible conditions, and (3) verbose output.
+
+  o  All areal recharge and specified flows in the major tributary canyons are placed in the MODFLOW Well Package.
+     The MODFLOW Recharge Package and MODFLOW Flow and Head Boundary Package are no longer in use.
+
+  o  Update numerous raw data files.
+
+  o  Fix bug with calculation of recharge on non-irrigated lands.
+
+  o  Revise calculation of river stage and river bottom elevations.
+
+Changes in Version 0.1-5
+
+  o  Remove dependence on png package.
+
+  o  Components of recharge and pumping added to model.
+
+  o  The FindConnectedCells function was replaced by a new BumpDisconnectedCells function.
+     Model cells producing vertical disconnects between adjacent cells are no longer removed.
+
+  o  Many changes and additions to raw data files and package datasets.
+
+  o  Revise method for calculating groundwater inflow in the tributary canyons.
+     The GetSesonalMultiplier function was added to assist with the temporal distribution of flow in the tributary canyons.
+
+  o  The DownloadFile function attempts to re-download a file if the previous attempt fails.
+
+Changes in Version 0.1-4
+
+  o  Add an additional hydrogeologic zone that is composed entirely of the alluvium unit under confined conditions.
+     The horizontal hydraulic conductivity for all hydrogeologic zones has been changed to better reflect values given by Bartolino and Adkins (2012, pg. 25-26).
+
+  o  New package vignette that documents the construction of package datasets.
+
+  o  There is no longer the need to specify the number of bytes when reading MODFLOW binary files in the ReadModflowBinaryFile function.
+
+Changes in Version 0.1-3
+
+  o  Add ReadModflowListFile function to read and parse volumetric budget information from the MODFLOW listing file.
+
+  o  Simulate stream-aquifer flow exchange in the Big Wood River and Silver Creek.
+
+  o  Add SetPolygons function to determine the intersection or difference between two multi-polygon objects.
+
+Changes in Version 0.1-2
+
+  o  First public release coinciding with Modeling Technical Advisory Committee meeting Dec. 2013.

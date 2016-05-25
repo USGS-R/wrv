@@ -1,0 +1,41 @@
+\name{weather.stations}
+
+\alias{weather.stations}
+
+\docType{data}
+
+\title{Weather Stations}
+
+\description{
+Weather stations in the WRV and surrounding areas.
+}
+
+\usage{weather.stations}
+
+\format{
+An object of \code{SpatialPointsDataFrame} class containing 5 points and the following variables:
+\describe{
+  \item{name}{is the name of the weather station.}
+  \item{id}{is a unique identifier for the weather station.}
+  \item{type}{is the type of weather stations:
+    \code{"HADS"}, a Hydrometeorological Automated Data System operated by the National Weather Service Office of Dissemination;
+    \code{"AgriMet"}, a satellite-telemetry network of automated agricultural weather stations operated and maintained by the Bureau of Reclamation; and
+    \code{"SNOTEL"}, an automated system of snowpack and related climate sensors operated by the Natural Resources Conservation Service.}
+  \item{organization}{is the managing organization.}
+  \item{elevation}{is the elevation of the weather station in meters above the North American Vertical Datum of 1988 (NAVD 88).}
+}
+Geographic coordinates are in units of meters, in conformance with the North American Datum of 1983 (NAD 83), and placed in the
+Idaho Transverse Mercator projection (\href{https://www.idwr.idaho.gov/GIS/IDTM/}{IDTM}).
+}
+
+\source{
+National Oceanic and Atmospheric Administration (NOAA), Bureau of Reclamation, Natural Resources Conservation Service (NRCS), accessed on May 1, 2015
+}
+
+\examples{
+plot(alluvium.extent)
+plot(weather.stations, col = "red", add = TRUE)
+str(weather.stations@data)
+}
+
+\keyword{datasets}

@@ -1,0 +1,323 @@
+% \VignetteIndexEntry{Appendix A. Package Introduction}
+% \VignetteEngine{knitr::knitr}
+% \VignetteDepends{wrv}
+
+\documentclass[twoside]{article}
+
+\input{\Sexpr{shQuote(system.file("misc", "preamble.tex", package="wrv"))}}
+\addbibresource{\Sexpr{system.file("misc", "references.bib", package="wrv")}}
+
+\renewcommand{\thefigure}{A\arabic{figure}}
+\renewcommand{\thetable}{A\arabic{table}}
+\renewcommand{\thepage}{A\arabic{page}}
+
+\setcounter{page}{1}
+
+% =========================================================================
+
+\begin{document}
+
+<<setup, include=FALSE>>=
+t0 <- Sys.time()
+try(knitr::opts_chunk$set(tidy=FALSE, comment="#", fig.align="center"), silent=TRUE)
+@
+
+\title{Appendix A.\enspace An Introduction to the R-Package `wrv'\vspace{2ex}}
+\author{}
+\date{}
+\pretitle{\begin{flushleft}\LARGE\bfseries\sffamily}
+\posttitle{\end{flushleft}}
+\maketitle
+
+\tableofcontents
+
+\renewcommand*\listfigurename{Figures}
+\listoffigures
+
+\renewcommand*\listtablename{Tables}
+\listoftables
+
+\clearpage
+
+% =========================================================================
+
+\section{Introduction}
+
+\href{http://www.r-project.org/}{\R{}} is a language and environment for statistical computing and graphics \citep{R2014}.
+In \R{}, the primary mechanism for sharing with others is the \emph{package}.
+Packages are collections of computer code, data, and documentation in a well-defined format.
+Instructions, datasets, and functions for processing and analyzing the groundwater-flow model of the Wood River Valley (WRV) aquifer system, south-central Idaho,
+are bundled together in an \R{} package named \textbf{wrv}.
+This document is a \emph{vignette} in the \textbf{wrv} package that describes an overview of processing steps for model construction.
+A package vignette is a \href{http://latex-project.org/}{\LaTeX{}} document with embedded \R{} code;
+the code is run when the vignette is built, and all data analysis output (figures, tables, etc.) is created extemporaneously and inserted into the final document.
+Small chunks of stylized code are typically shown throughout a vignette and are intended to be used interactively.
+It is not necessary to have \R{}-programming experience to follow the logic in these code chunks,
+but it may be useful for testing, development, and validation purposes.
+The \textbf{wrv} package includes multiple vignettes that explain and run all processing steps of model construction and analysis;
+the exception to this being the model-calibration process, which was not made programmatically reproducible, and executed outside of the \R{}-programming environment.
+Model calibration is one aspect of model construction that was considered too arduous to implement in a reproducible manner because of its long run times.
+
+% =========================================================================
+
+\section{Software}
+
+Software items needed to run the processing instructions include \R{}, \href{http://water.usgs.gov/ogw/mfusg/}{MODFLOW-USG}, and \href{http://www.pesthomepage.org/}{PEST}.
+If \R{} (version $\geq$ 3.1) is not already installed on your computer, download and install the latest binary distribution from the
+Comprehensive R Archive Network (\href{http://cran.r-project.org/}{CRAN}).
+Next, extend the capabilities of \R{} by installing an assorted group of user-contributed packages available on CRAN and
+the Geological Survey \R{} Archive Network (\href{http://owi.usgs.gov/R/gran.html}{GRAN}).
+That is, start an \R{} session and type the following commands in your \R{}-console window, or any other command-line interface where \R{} is accessible
+(not required if the packages were previously installed):
+
+<<eval=FALSE>>=
+repos <- c("http://owi.usgs.gov/R", getOption("repos"))
+update.packages(ask = FALSE, repos = repos)
+install.packages("wrv", repos = repos, dependencies = TRUE, type = "both")
+@
+
+Once the packages are installed, load the \textbf{wrv} package in the current \R{} session:
+
+<<warning=FALSE, message=FALSE, results="hide">>=
+library("wrv")
+@
+
+Help documentation for functions and datasets in the \textbf{wrv} package (appendix B) are made accessible with the following command:
+
+<<eval=FALSE>>=
+help(package = "wrv")
+@
+
+MODFLOW-USG is a computer program for simulating three-dimensional, steady-state and transient groundwater flow using a control volume finite-difference formulation \citep{Panday2013}.
+Source code and executable files for MODFLOW-USG (version 1.2) are provided in the \textbf{wrv} package.
+
+PEST is a software suite that allows model-independent parameter estimation, sensitivity analysis, and uncertainty estimation, developed by \citet{Doherty2005}.
+If PEST (version $\geq$ 13.0) is not already installed on your computer, download and install the latest binary distribution and enable it to run from the command line.
+
+% =========================================================================
+
+\section{Input/Output}
+
+A complete list of input-output file formats, organized by filename extension, is provided in \hyperref[table_io]{table~\ref{table_io}}.
+Files that require additional clarification are described in \hyperref[table_files]{table~\ref{table_files}}.
+All processing output (that is files and folders) are written to the current user-specified `working directory'.
+Specify an absolute path to the working directory below (change path as needed).
+
+<<eval=FALSE>>=
+path <- file.path(getwd(), "SIR2016-XXXX")
+dir.create(path, recursive = TRUE)
+setwd(path)
+@
+
+<<table_io, echo=FALSE, results="asis">>=
+x <- c(".adf", "binary", "ArcGRID format, compressed in a ZIP file; raster graphic",
+       ".tif", "binary", "Geo-referenced tagged Image File Format; raster graphic",
+       ".shp", "binary", "Shapefile, compressed in a ZIP file; spatial points, poly-lines, and polygons",
+       ".csv", "text",   "Comma-Separated Values; data table",
+       ".kml", "text",   "Keyhole Markup Language; spatial polygons",
+       ".ref", "text",   "Data reference file",
+       ".rda", "binary", "R datasets",
+       ".nam", "text",   "MODFLOW Name File",
+       ".ba6", "text",   "MODFLOW Basic Package File",
+       ".dis", "text",   "MODFLOW Structured Discretization File",
+       ".sms", "text",   "MODFLOW Sparse Matrix Solver Package",
+       ".oc",  "text",   "MODLFOW Output Control Option",
+       ".lpf", "text",   "MODFLOW Layer-Property Flow Package",
+       ".drn", "text",   "MODFLOW Drain Package",
+       ".riv", "text",   "MODFLOW River Package",
+       ".wel", "text",   "MODFLOW Well Package",
+       ".exe", "binary", "MODFLOW compiled executable",
+       ".bat", "text",   "Script file containing commands to execute",
+       ".lst", "text",   "MODFLOW List File",
+       ".hds", "binary", "MODFLOW Head File",
+       ".bud", "binary", "MODFLOW Budget File",
+       ".ptf", "text",   "PEST Template File")
+d <- as.data.frame(matrix(x, ncol=3, byrow=TRUE), stringsAsFactors=FALSE)
+d <- d[order(d[, 1]), ]
+columns <- c("Extension", "Type", "Description")
+colnames(d) <- sprintf("\\textbf{\\shortstack{%s}}", columns)
+tbl <- xtable::xtable(d, label="table_io")
+xtable::caption(tbl) <- "Input/output file formats."
+print(tbl, include.rownames=FALSE, caption.placement="top", booktabs=TRUE,
+      sanitize.colnames.function=function(x){x},
+      sanitize.text.function=identity, size="\\small")
+@
+
+<<table_files, echo=FALSE, results="asis">>=
+x <- c("mfusg.exe", "MODFLOW-USG executable",
+       "RunModflow.bat", "Command to run the groundwater-flow model",
+       "hk1.ref, hk2.ref, hk3.ref", "Hydraulic conductivity distribution in model layers 1, 2, and 3",
+       "ss1.ref, ss2.ref, ss3.ref", "Storage coefficient distribution in model layers 1, 2, and 3",
+       "model.rda", "Multiple datasets describing the model grid, stress periods, and so forth",
+       "UpdateBudget.bat", "Command to update the water budget, requires access to \\R{}",
+       "eff.csv", "Irrigation efficiencies",
+       "trib.csv", "Flow conditions in the major tributary canyons",
+       "seep.csv", "Canal seepage as a fraction of diversion",
+       "qa-incidental.csv", "Quality assurance for incidental groundwater recharge on irrigated lands",
+       "qa-natural.csv", "Quality assurance for natural groundwater recharge and discharge on non-irrigated lands",
+       "qa-pumping.csv", "Quality assurance for groundwater diversions",
+       "qa-well-config.csv", "Quality assurance for well configurations")
+
+d <- as.data.frame(matrix(x, ncol=2, byrow=TRUE), stringsAsFactors=FALSE)
+d <- d[order(d[, 1]), ]
+columns <- c("Name", "Description")
+colnames(d) <- sprintf("\\textbf{\\shortstack{%s}}", columns)
+tbl <- xtable::xtable(d, label="table_files")
+xtable::caption(tbl) <- "Files requiring additional clarification."
+print(tbl, include.rownames=FALSE, caption.placement="top", booktabs=TRUE,
+      sanitize.colnames.function=function(x){x},
+      sanitize.text.function=identity, size="\\small")
+@
+
+\clearpage
+
+% =========================================================================
+
+\section{Uncalibrated Model}
+
+Stepwise instructions for processing the uncalibrated groundwater-flow model are dependent on running \R{} code within the following \textbf{wrv}-package vignettes:
+(1) appendix C, used to create \textbf{wrv}-package datasets from unprocessed data residing in
+    a \href{https://git-scm.com/}{Git} repository hosted on \href{https://github.com/USGS-R/wrv}{GitHub}, and
+(2) appendix D, used to process, run, and analyze the results of the uncalibrated groundwater-flow model.
+\hyperref[fig:flowchart_model]{Figure~\ref{fig:flowchart_model}} shows a process flowchart for the interactions between these two vignettes.
+
+\subsection{Package Dataset Creation}
+
+The \textbf{wrv}-package datasets are created by running \R{} code in the appendix C vignette (\hyperref[fig:flowchart_model]{fig.~\ref{fig:flowchart_model}}).
+The resulting datasets from running this code are compared with existing package datasets and a warning given if differences are detected.
+These differences are likely the result of web-based data being out of synchronization with the archived datasets in this package.
+The following command runs the vignette's embedded \R{} code; however,
+it takes several hours to run, requires about 10 gigabytes of memory, and has no effect on subsequent processing steps; therefore, you may want to skip it.
+
+<<eval=FALSE>>=
+vignette("C-package-datasets")  # open the vignette
+file <- system.file("doc", "C-package-datasets.R", package = "wrv")
+source(file, echo = TRUE)  # or open the file in a text editor and copy/paste into R
+@
+
+\subsection{Uncalibrated Model Construction}
+
+The uncalibrated model is constructed by running \R{} code in the appendix D vignette (\hyperref[fig:flowchart_model]{fig.~\ref{fig:flowchart_model}}).
+Output from this processing step is used as a template for a `new' model archive.
+
+<<eval=FALSE>>=
+vignette("D-uncalibrated-model")  # open the vignette
+file <- system.file("doc", "D-uncalibrated-model.R", package = "wrv")
+source(file, echo = TRUE)  # or open the file in a text editor and copy/paste into R
+@
+
+The archive directory ``SIR2016-XXXX'' is located under the working directory.
+
+\begin{landscape}
+\begin{figure}
+\centering
+\includegraphics{flowchart_model.pdf}
+
+<<include=FALSE>>=
+v <- "Procedures used to create the \\textbf{wrv}-package datasets and process the uncalibrated groundwater-flow model."
+v <- c(paste("Diagram showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(v)))), v)
+@
+\caption[{\Sexpr{v[1]}}]{{\Sexpr{v[2]}}}
+
+\label{fig:flowchart_model}
+\end{figure}
+\end{landscape}
+
+\clearpage
+
+% =========================================================================
+
+\section{Model Calibration}
+
+Most of the model-calibration processing steps were not made programmatically reproducible and are not easily documented within concise processing instructions.
+Nevertheless, a general description of these processing steps is provided in this vignette and thought to be adequate for understanding the model calibration workflow.
+Additional information regarding the model calibration setup for the WRV groundwater-flow model
+(such as, which parameters were adjusted through the calibration process, and the set of observations used to infer these parameters)
+is provided in appendix H.
+
+Model calibration requires many individual PEST runs to finalize a set of believable model parameters that adequately minimize the model-to-measurement fit.
+\hyperref[fig:flowchart_pest]{Figure~\ref{fig:flowchart_pest}} shows the general processing steps for a PEST run.
+An iterative method is implemented by PEST to generate a sequence of improving parameter estimates.
+During each iteration of a PEST run, external calls are made to both the MODFLOW-USG program and an \R{} function, specific to this study, that updates the \textit{water budget} (\texttt{UpdateWaterBudget}).
+The water budget is an algorithm for calculating
+tributary basin underflow into the WRV aquifer system (appendix E),
+natural groundwater recharge and discharge on non-irrigated lands (appendix F),
+incidental groundwater recharge on irrigated lands (appendix G),
+and pumping demands (appendix G).
+
+Many of the parameters adjusted during model calibration (such as the horizontal hydraulic conductivity) are contained within MODFLOW input files (including data reference files [`.ref'] read by MODFLOW).
+At the end of each PEST iteration the newly updated parameter values are written to these model input files.
+The exception to this method of directly updating parameter values in the model input files occurs when the calibrated parameter values are used as input for a pre-processing program that generates a model input file(s).
+For example, in this study, the \texttt{UpdateWaterBudget} function (appendix B, p. B67-B69) is used to create the MODFLOW well file (`.wel'), an input file containing specified flow boundary conditions.
+Input parameters for this function include, but are not limited to, the following:
+irrigation efficiency, tributary-underflow control parameters, and horizontal hydraulic conductivity---all
+of which are varied during the model-calibration process.
+Parameter values for irrigation efficiency and tributary-underflow are contained within the `eff.csv' and `trib.csv' files, respectively.
+And at the end of each PEST iteration the newly updated parameter values are written to these files.
+The horizontal hydraulic conductivity values are contained within data reference files (`.ref') and read by both MODFLOW-USG and the \texttt{UpdateWaterBudget} function.
+
+The general procedure used when updating the water budget is show in \hyperref[fig:flowchart_update]{figure~\ref{fig:flowchart_update}}.
+Prior to a PEST run, initialize the water-budget input files with parameter values specified for the uncalibrated model (appendix D),
+and output quality-assurance tables for the water-budget calculation:
+
+<<eval=FALSE>>=
+help("UpdateWaterBudget")  # open help documentation for function call
+UpdateWaterBudget(file.path(getwd(), "Model Run"), "wrv_mfusg", qa.tables = "english")
+@
+
+\begin{figure}
+\centering
+\includegraphics{flowchart_pest.pdf}
+<<include=FALSE>>=
+v <- "Procedures used in a single PEST run."
+v <- c(paste("Diagram showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(v)))), v)
+@
+\caption[{\Sexpr{v[1]}}]{{\Sexpr{v[2]}}}
+\label{fig:flowchart_pest}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics{flowchart_update.pdf}
+<<include=FALSE>>=
+v <- "Procedures used when updating the water budget."
+v <- c(paste("Diagram showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(v)))), v)
+@
+\caption[{\Sexpr{v[1]}}]{{\Sexpr{v[2]}}}
+\label{fig:flowchart_update}
+\end{figure}
+
+The general processing steps for model calibration are shown in \hyperref[fig:flowchart_calibrate]{Figure~\ref{fig:flowchart_calibrate}}.
+Notice that the processing steps are represented in a linear workflow.
+This is an oversimplification of the approach taken for model calibration;
+in reality, the workflow was very non-linear because a new PEST run was required following any change in model conceptualization.
+Rather than starting the PEST run each time using the parameter set described for the uncalibrated model (appendix D),
+the optimized parameter set from the previous PEST run was instead used.
+This approach substantially reduced the overall computation time for model calibration,
+although it resulted in a set of model-calibration processing instructions that are not easily reproducible.
+
+\begin{figure}
+\centering
+\includegraphics{flowchart_calibrate.pdf}
+<<include=FALSE>>=
+v <- "Procedures used in the model-calibration process."
+v <- c(paste("Diagram showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(v)))), v)
+@
+\caption[{\Sexpr{v[1]}}]{{\Sexpr{v[2]}}}
+\label{fig:flowchart_calibrate}
+\end{figure}
+
+After completing the model-calibration process, manually update the model archive with the calibrated model files.
+
+% =========================================================================
+
+\clearpage
+\phantomsection
+\addcontentsline{toc}{section}{References Cited}
+\printbibliography
+
+% =========================================================================
+
+% \vfill\centerline{Created on \Sexpr{format(Sys.time(), "%B %e, %Y")}; total processing time was \Sexpr{format(difftime(Sys.time(), t0), digits=3)}.}
+
+\end{document}
