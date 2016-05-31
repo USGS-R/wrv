@@ -14,7 +14,7 @@
 \raggedright{}
 \item[Type]\AsIs{Package}
 \item[Version]\AsIs{0.8.1}
-\item[Date]\AsIs{2016-05-25}
+\item[Date]\AsIs{2016-05-31}
 \item[Title]\AsIs{Wood River Valley Groundwater-Flow Model}
 \item[Author]\AsIs{Jason C. Fisher}
 \item[Maintainer]\AsIs{Jason C. Fisher }\email{jfisher@usgs.gov}\AsIs{}
@@ -3118,7 +3118,7 @@ plot(rs.rech.non.irr[["199507"]])
 \keyword{manip}{RunWaterBalance}
 %
 \begin{Description}\relax
-This function estimates groundwater flow across the water table, and pumping demand at production wells.
+This function estimates areal recharge, and pumping demand at production wells.
 A water-balance approach is used to calculate these volumetric flow rate estimates,
 where positive values are flow into the aqufer system (groundwater recharge),
 and negative values are flow out of the system (groundwater discharge).
@@ -3680,7 +3680,7 @@ ToScientific(x, digits = 2, lab.type = "plotmath")
 \end{ExampleCode}
 \end{Examples}
 \inputencoding{utf8}
-\HeaderA{tributaries}{Groundwater Flow in the Tributary Canyons}{tributaries}
+\HeaderA{tributaries}{Tributary Basin Underflow}{tributaries}
 \keyword{datasets}{tributaries}
 %
 \begin{Description}\relax
@@ -4027,7 +4027,7 @@ WriteModflowInput(rs.model, rech, well, trib, misc, river, drain, id, dir.run,
 \begin{Arguments}
 \begin{ldescription}
 \item[\code{rs.model}] \code{RasterStack}; a collection of \code{RasterLayer} objects with the same extent and resolution, see `Details' for required raster layers.
-\item[\code{rech}] \code{data.frame}; is the groundwater flow across the water table, in cubic meters per day.
+\item[\code{rech}] \code{data.frame}; is the areal recharge rate, in cubic meters per day.
 Variables describe the model cell location (\code{lay}, \code{row}, \code{col}) and volumetric rate during each stress period (\code{ss}, \code{199501}, \code{199502}, \dots, \code{201012}).
 \item[\code{well}] \code{data.frame}; is the well pumping at point locations in cubic meters per day.
 Variables describe the model cell location and volumetric rate during each stress period.

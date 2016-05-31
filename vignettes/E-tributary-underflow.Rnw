@@ -494,7 +494,7 @@ Precipitation data were also considered as a basis for calculating a seasonal in
 (1) only two weather stations in the WRV have sufficient data to make such an estimate,
 (2) these stations likely do not represent conditions in the higher elevations of the tributary valleys, and
 (3) snowmelt and infiltration may occur several months after the precipitation falls as snow thus requiring another adjustment.
-Weather data were used to adjust the timing of precipitation and snowmelt for natural groundwater recharge across the water table (appendix F),
+Weather data were used to adjust the timing of precipitation and snowmelt for areal recharge (appendix F),
 but surface elevations among weather stations range over only 430 m (1,400 ft) within the model domain.
 Because elevations in tributary canyons may range over 1,950 m (6,400 ft), with large variability between tributaries,
 existing weather data are not likely to adequately represent conditions in the tributaries.

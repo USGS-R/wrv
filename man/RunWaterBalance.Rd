@@ -5,7 +5,7 @@
 \title{Run Water Balance}
 
 \description{
-This function estimates groundwater flow across the water table, and pumping demand at production wells.
+This function estimates areal recharge, and pumping demand at production wells.
 A water-balance approach is used to calculate these volumetric flow rate estimates,
 where positive values are flow into the aqufer system (groundwater recharge),
 and negative values are flow out of the system (groundwater discharge).
