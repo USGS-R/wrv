@@ -300,11 +300,11 @@ FUN <- function(i) {
 
 Something... (\hyperref[fig:graph_areal_rech]{fig.~\ref{fig:graph_areal_rech}}).
 
-<<graph_areal_rech, echo=FALSE, fig.width=fin.graph.short[1], fig.height=fin.graph.short[2], fig.cap="{Total groundwater flow across the water table.}">>=
+<<graph_areal_rech, echo=FALSE, fig.width=fin.graph.short[1], fig.height=fin.graph.short[2], fig.cap="{Total areal recharge.}">>=
 d <- TidyBudget(b, "wells", 1L)[, c("totim.date", "flow.total", "flow.total")]
 d[d[, 2] < 0, 2] <- 0
 d[d[, 3] > 0, 3] <- 0
-ylab <- paste("Total flow across the water table, in", c("cubic meters per day", "acre-feet per year"))
+ylab <- paste("Total areal recharge, in", c("cubic meters per day", "acre-feet per year"))
 col <- c("#67A9CF", "#C80C0B")
 PlotGraph(d, ylab=ylab, col=col, fill=paste0(col, "66"),
           conversion.factor=m3.per.d.to.af.per.yr, scientific=TRUE,
@@ -314,7 +314,7 @@ legend("topright", c("Recharge", "Discharge"), col=col, lty=1,
 invisible(dev.off())
 @
 
-Descriptive statistics for volumetric recharge rates across the water table, in cubic meters per day:
+Descriptive statistics for areal recharge rates, in cubic meters per day:
 
 <<echo=FALSE>>=
 summary(round(TidyBudget(b, "wells", 1L)$flow.total))

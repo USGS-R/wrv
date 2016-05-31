@@ -1401,7 +1401,7 @@ CheckStatus("drains")
 
 % =========================================================================
 
-\subsubsection{Groundwater flow in the tributary canyons (tributaries)}
+\subsubsection{Tributary basin underflow (tributaries)}
 
 Data that describe the location and average flow conditions for model boundaries in the major tributary canyons of the WRV.
 Spatial polygons are used to define the boundary locations in the study area.
@@ -1413,7 +1413,7 @@ p <- spTransform(p, crs)
 p@data$Description <- NULL
 @
 
-For each tributary canyon, the mean groundwater flow rate is first estimated using a \href{http://en.wikipedia.org/wiki/Darcy_law}{Darcian} analysis.
+For each tributary canyon, the mean rate of tributary basin underflow is first estimated using a \href{http://en.wikipedia.org/wiki/Darcy_law}{Darcian} analysis.
 The lower-half of an ellipse is used to describe the geometry of the saturated cross-sectional area.
 
 <<>>=
@@ -1949,7 +1949,7 @@ CheckStatus("rs.entities")
 
 \subsubsection{Rasterized monthly recharge on non-irrigated lands (rs.rech.non.irr)}
 
-Calculate rasterized monthly volumetric flow rates across the water table and beneath the non-irrigated lands.
+Calculate rasterized monthly volumetric flow rates of areal recharge beneath non-irrigated lands.
 
 <<>>=
 r.zones <- ratify(rasterize(precip.zones, land.surface, "ID", silent = TRUE))

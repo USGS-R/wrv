@@ -4,7 +4,7 @@
 
 \docType{data}
 
-\title{Groundwater Flow in the Tributary Canyons}
+\title{Tributary Basin Underflow}
 
 \description{
 The location and average flow conditions for model boundaries in the major tributary canyons and upper part of the Wood River Valley, south-central Idaho.

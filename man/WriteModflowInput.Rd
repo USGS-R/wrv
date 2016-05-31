@@ -17,7 +17,7 @@ WriteModflowInput(rs.model, rech, well, trib, misc, river, drain, id, dir.run,
 
 \arguments{
 \item{rs.model}{\code{RasterStack}; a collection of \code{RasterLayer} objects with the same extent and resolution, see \sQuote{Details} for required raster layers.}
-\item{rech}{\code{data.frame}; is the groundwater flow across the water table, in cubic meters per day.
+\item{rech}{\code{data.frame}; is the areal recharge rate, in cubic meters per day.
   Variables describe the model cell location (\code{lay}, \code{row}, \code{col}) and volumetric rate during each stress period (\code{ss}, \code{199501}, \code{199502}, \dots, \code{201012}).}
 \item{well}{\code{data.frame}; is the well pumping at point locations in cubic meters per day.
   Variables describe the model cell location and volumetric rate during each stress period.}

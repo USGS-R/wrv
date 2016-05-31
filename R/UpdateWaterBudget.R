@@ -84,7 +84,7 @@ UpdateWaterBudget <- function(dir.run, id,
     rs <- stack(rs, r)
   }
 
-  # Process groundwater flow across the water table and pumping demand
+  # Process areal recharge and pumping demand
 
   l <- RunWaterBalance(tr.stress.periods, rs[["lay1.bot"]], eff, seep,
                        ss.stress.periods=ss.stress.periods, verbose=qa.write)

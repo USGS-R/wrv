@@ -77,12 +77,10 @@ credit <- paste("Base derived from U.S. Geological Survey National Elevation Dat
 
 \section{Introduction}
 
-
-
 The process of natural groundwater recharge and discharge occurs at the water-table surface.
 Natural groundwater recharge is the fraction of precipitation (rain, snow, sleet, etc.) that infiltrates the land surface and percolates downward through the soil and rock to fill the aquifer below.
 Whereas, natural groundwater discharge is water that is removed from the aquifer by means of evaporation processes.
-For this study, the volumetric flow rate across the water table is dependent on the rate and duration of precipitation and evapotranspiration (ET), land cover land use, and soil type.
+For this study, the areal recharge rate is dependent on the rate and duration of precipitation and evapotranspiration (ET), land cover land use, and soil type.
 All other factors that affect natural recharge and discharge rates (such as the antecedent soil moisture, slope, and aspect) are neglected.
 The purpose of this document is to describe the water-balance model used to calculate estimates of natural groundwater recharge and discharge rates on non-irrigated lands during the model simulation period (1995--2010).
 
@@ -130,7 +128,7 @@ R = \left\{\begin{array}{l l}
     \end{array} \right.
 \end{equation}
 
-Natural groundwater recharge and discharge are only applicable on non-irrigated lands, where flow across the water table is unaffected by irrigation and water diversions.
+Natural groundwater recharge and discharge are only applicable on non-irrigated lands, where areal recharge is unaffected by irrigation and water diversions.
 The spatial distribution of irrigated lands (including semi-irrigated lands) changes throughout the model simulation period (1995--2010).
 During the non-growing season (November through March), all land-surface areas of the WRV are classified as non-irrigated;
 whereas, during the growing season (April through October) much of the land surface is irrigated.
@@ -1017,7 +1015,7 @@ invisible(dev.off())
 
 \section{Groundwater Recharge and Discharge Rate}
 
-The water-balance model (equation~\ref{eq:rech}) was used to calculate the volumetric flow rate across the water table of natural groundwater recharge and discharge ($Q_{\mathit{nat}}$) beneath non-irrigated lands during each month of the transient simulation (1995--2010).
+The water-balance model (equation~\ref{eq:rech}) was used to calculate the volumetric flow rate of areal recharge beneath non-irrigated lands ($Q_{\mathit{nat}}$) during each month of the transient simulation (1995--2010).
 For example, \hyperref[fig:map_rate]{figure~\ref{fig:map_rate}} shows the spatial distribution of natural groundwater recharge and discharge rates in
 February (\hyperref[fig:map_rate_a]{fig.~\ref{fig:map_rate_a}}) and August (\hyperref[fig:map_rate_b]{fig.~\ref{fig:map_rate_b}}) of 2008.
 Recall that a positive volumetric flow rate represents groundwater entering the aquifer system, and a negative value represents groundwater leaving the system.
