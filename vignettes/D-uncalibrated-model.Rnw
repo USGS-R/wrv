@@ -1673,7 +1673,7 @@ v <- c(paste("Graph showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, ncha
 
 <<graph_budget, echo=FALSE, fig.width=fin.graph[1], fig.height=fin.graph[2], fig.scap=sprintf("{%s}", v[1]), fig.cap=sprintf("{%s}", v[2])>>=
 cols <- format(seq(tr.interval[1], tr.interval[2] - 1, "year"), "%Y")
-rows <- c("Areal recharge", "Streamflow losses", "Tributary fluxes",
+rows <- c("Areal recharge", "Streamflow losses", "Tributary bain underflow",
           "Areal discharge", "Streamflow gains", "Well pumping", "Outlet boundaries")
 m <- matrix(NA, nrow=length(rows), ncol=length(cols), dimnames=list(rows, cols))
 for (i in cols) {
@@ -2116,7 +2116,7 @@ FUN <- function(desc) {
   x <- cbind(x=c(xlim, rev(xlim)), y=arith.mean + c(rep(-sdev * 2, 2), rep(sdev * 2, 2)))
   bg.polygon <- list(x=x, col="#FAFAD2")
   xlab <- "Simulated hydraulic head, in meters above the NAVD88"
-  ylab <- paste("Water-table residual, in", c("meters (m)", "feet"))
+  ylab <- paste("Hydraulic head residual, in", c("meters (m)", "feet"))
   PlotGraph(dd, xlab=xlab, ylab=ylab, type="n", xlim=xlim, ylim=ylim,
             conversion.factor=m.to.ft, bg.polygon=bg.polygon)
   abline(h=0, col="#333333", lwd=1)
@@ -2171,7 +2171,7 @@ FUN <- function(desc) {
     @
   \end{subfigure}
   <<include=FALSE>>=
-  v <- "Water-table residuals in (\\textit{\\textbf{A}}) U.S. Geological Survey (USGS) groundwater-monitoring network wells, (\\textit{\\textbf{B}}) geolocated driller wells, (\\textit{\\textbf{C}}) Public Land Survey System (PLSS)-located driller wells, and (\\textit{\\textbf{D}}) two of the Sun Valley Water and Sewer District (SVWSD) production wells and The Nature Conservancy (TNC) groundwater-monitoring network wells---based on uncalibrated model results. \\label{fig:graph_res_sim}"
+  v <- "Hydraulic head residuals in (\\textit{\\textbf{A}}) U.S. Geological Survey (USGS) groundwater-monitoring network wells, (\\textit{\\textbf{B}}) geolocated driller wells, (\\textit{\\textbf{C}}) Public Land Survey System (PLSS)-located driller wells, and (\\textit{\\textbf{D}}) two of the Sun Valley Water and Sewer District (SVWSD) production wells and The Nature Conservancy (TNC) groundwater-monitoring network wells---based on uncalibrated model results. \\label{fig:graph_res_sim}"
   v <- c(paste("Graphs showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(v)))), v)
   @
   \caption[{\Sexpr{v[1]}}]{{\Sexpr{v[2]}}}
