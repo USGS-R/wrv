@@ -110,7 +110,7 @@ Package datasets are primarily created from unprocessed data files located on \h
 The top-level uniform resource locator (URL) for these files is specified as:
 
 <<>>=
-url.git <- "https://raw.githubusercontent.com/jfisher-usgs/wrv/master/inst/extdata/"
+url.git <- "https://raw.githubusercontent.com/USGS-R/wrv/master/inst/extdata/"
 @
 
 The data file containing land-surface elevations was deemed too large in file size (about 500 megabytes) to be placed in the package repository.
