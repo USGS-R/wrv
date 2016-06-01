@@ -1,5 +1,7 @@
 Changes in Version 0.8.1
 
+  o  Move remote repository location from https://github.com/jfisher-usgs/wrv to https://github.com/USGS-R/wrv
+
   o  Add BSD license for the .ReduceAmp function.
 
 Changes in Version 0.8.0
