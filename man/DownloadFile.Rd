@@ -37,7 +37,7 @@ Returns the file path(s) to the downloaded file (or uncompressed files).
 }
 
 \examples{\dontrun{
-url <- paste0("https://raw.githubusercontent.com/jfisher-usgs/",
+url <- paste0("https://raw.githubusercontent.com/USGS-R/",
               "wrv/master/inst/extdata/alluvium.extent.zip")
 files <- DownloadFile(url)
 unlink(files)}
