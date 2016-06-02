@@ -31,9 +31,7 @@ help(package = "wrv")
 
 ## Bugs
 
-Please consider reporting bugs and asking questions on the Issues page:
-
-https://github.com/USGS-R/wrv/issues
+Please consider reporting bugs and asking questions on the [Issues page](https://github.com/USGS-R/wrv/issues).
 
 ## Disclaimer
 
