@@ -206,7 +206,7 @@ file <- system.file("doc", "D-uncalibrated-model.R", package = "wrv")
 source(file, echo = TRUE)  # or open the file in a text editor and copy/paste into R
 @
 
-The archive directory ``SIR2016-XXXX'' is located under the working directory.
+The archive folder named `SIR2016-XXXX' is located under the working directory.
 
 \begin{landscape}
 \begin{figure}
