@@ -20,6 +20,7 @@
 <<setup, include=FALSE>>=
 t0 <- Sys.time()
 try(knitr::opts_chunk$set(tidy=FALSE, comment="#", fig.align="center"), silent=TRUE)
+try(knitr::opts_chunk$set(warning=FALSE), silent=TRUE)  # TODO(JCF): temporary fix for warning thrown by raster package 2.5-2 in R 3.3.0
 grDevices::pdf.options(useDingbats=FALSE)
 options(preferRaster=TRUE, scipen=0, digits=2)
 library(wrv)
