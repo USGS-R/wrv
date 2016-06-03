@@ -46,7 +46,7 @@ J.C. Fisher, U.S. Geological Survey, Idaho Water Science Center
 }
 
 \examples{\dontrun{
-f <- file.path(getwd(), "SIR2016-XXXX/output/output.model1/wrv_mfusg.bud")
+f <- file.path(getwd(), "SIR2016-5080/output/output.model1/wrv_mfusg.bud")
 d <- SummariseBudget(f)
 str(d)}
 }

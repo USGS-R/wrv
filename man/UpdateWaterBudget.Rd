@@ -105,7 +105,7 @@ The well configuration data are described in the \sQuote{Value} section of the \
 \seealso{\code{\link{RunWaterBalance}}, \code{\link{GetSeasonalMult}}}
 
 \examples{\dontrun{
-dir.run <- "C:/Users/jfisher/Documents/SIR2016-XXXX/model/model1"
+dir.run <- "C:/Users/jfisher/Documents/SIR2016-5080/model/model1"
 UpdateWaterBudget(dir.run, "wrv_mfusg", qa.tables = "si",
                   ss.interval = c("1998-01-01", "2011-01-01"))}
 }

@@ -40,7 +40,7 @@ select one of the given FTP locations, enter directory \file{win32}, download \f
 \seealso{\code{writeRaster}}
 
 \examples{\dontrun{
-f <- file.path(getwd(), "SIR2016-XXXX/ancillary/uncalibrated/data/rda/rasters.rda")
+f <- file.path(getwd(), "SIR2016-5080/ancillary/uncalibrated/data/rda/rasters.rda")
 load(file = f)
 ExportRasterStack(rs, tempdir())}
 }

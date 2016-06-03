@@ -40,7 +40,7 @@ List components are \code{list} objects with the following components:
 \seealso{\code{\link{SummariseBudget}}}
 
 \examples{\dontrun{
-path <- file.path(getwd(), "SIR2016-XXXX/output/output.model1")
+path <- file.path(getwd(), "SIR2016-5080/output/output.model1")
 hds <- ReadModflowBinary(file.path(path, "wrv_mfusg.hds"), "array")
 bud <- ReadModflowBinary(file.path(path, "wrv_mfusg.bud"), "flow")}
 }
