@@ -1,4 +1,4 @@
-# SIR2016-XXXX Model Archive
+# SIR2016-5080 Model Archive
 
 This is an archive for the groundwater-flow model of the Wood River Valley aquifer system, south-central Idaho.
 The purpose of this model archive is to:

@@ -104,7 +104,7 @@ All processing output (that is files and folders) are written to the current use
 Specify an absolute path to the working directory below (change path as needed).
 
 <<eval=FALSE>>=
-path <- file.path(getwd(), "SIR2016-XXXX")
+path <- file.path(getwd(), "SIR2016-5080")
 dir.create(path, recursive = TRUE)
 setwd(path)
 @
@@ -206,7 +206,7 @@ file <- system.file("doc", "D-uncalibrated-model.R", package = "wrv")
 source(file, echo = TRUE)  # or open the file in a text editor and copy/paste into R
 @
 
-The archive folder named `SIR2016-XXXX' is located under the working directory.
+The archive folder named `SIR2016-5080' is located under the working directory.
 
 \begin{landscape}
 \begin{figure}

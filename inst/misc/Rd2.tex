@@ -1257,7 +1257,7 @@ J.C. Fisher, U.S. Geological Survey, Idaho Water Science Center
 \begin{Examples}
 \begin{ExampleCode}
 ## Not run: 
-f <- file.path(getwd(), "SIR2016-XXXX/ancillary/uncalibrated/data/rda/rasters.rda")
+f <- file.path(getwd(), "SIR2016-5080/ancillary/uncalibrated/data/rda/rasters.rda")
 load(file = f)
 ExportRasterStack(rs, tempdir())
 ## End(Not run)
@@ -2902,7 +2902,7 @@ J.C. Fisher, U.S. Geological Survey, Idaho Water Science Center
 \begin{Examples}
 \begin{ExampleCode}
 ## Not run: 
-path <- file.path(getwd(), "SIR2016-XXXX/output/output.model1")
+path <- file.path(getwd(), "SIR2016-5080/output/output.model1")
 hds <- ReadModflowBinary(file.path(path, "wrv_mfusg.hds"), "array")
 bud <- ReadModflowBinary(file.path(path, "wrv_mfusg.bud"), "flow")
 ## End(Not run)
@@ -3591,7 +3591,7 @@ J.C. Fisher, U.S. Geological Survey, Idaho Water Science Center
 \begin{Examples}
 \begin{ExampleCode}
 ## Not run: 
-f <- file.path(getwd(), "SIR2016-XXXX/output/output.model1/wrv_mfusg.bud")
+f <- file.path(getwd(), "SIR2016-5080/output/output.model1/wrv_mfusg.bud")
 d <- SummariseBudget(f)
 str(d)
 ## End(Not run)
@@ -3886,7 +3886,7 @@ J.C. Fisher, U.S. Geological Survey, Idaho Water Science Center
 \begin{Examples}
 \begin{ExampleCode}
 ## Not run: 
-dir.run <- "C:/Users/jfisher/Documents/SIR2016-XXXX/model/model1"
+dir.run <- "C:/Users/jfisher/Documents/SIR2016-5080/model/model1"
 UpdateWaterBudget(dir.run, "wrv_mfusg", qa.tables = "si",
                   ss.interval = c("1998-01-01", "2011-01-01"))
 ## End(Not run)
