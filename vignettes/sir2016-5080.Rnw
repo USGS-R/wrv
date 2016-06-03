@@ -1,4 +1,4 @@
-% \VignetteIndexEntry{U.S. Geological Survey Scientific Investigations Report 2016-XXXX}
+% \VignetteIndexEntry{U.S. Geological Survey Scientific Investigations Report 2016-5080}
 % \VignetteEngine{knitr::knitr}
 % \VignetteDepends{wrv}
 
@@ -10,7 +10,7 @@
 
 \begin{document}
 
-\title{U.S. Geological Survey Scientific Investigations Report 2016-XXXX\vspace{2ex}}
+\title{U.S. Geological Survey Scientific Investigations Report 2016-5080\vspace{2ex}}
 \author{}
 \date{}
 \pretitle{\begin{flushleft}\LARGE\bfseries\sffamily}
