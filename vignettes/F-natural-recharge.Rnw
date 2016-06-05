@@ -274,6 +274,8 @@ legend("topright", leg, col=col, lty=1, inset=0.02, cex=0.7, box.lty=1,
 invisible(dev.off())
 @
 
+\newpage
+
 The monthly precipitation redistribution model is mathematically expressed as:
 
 \begin{subequations} \label{eq:precip_melt}
@@ -721,6 +723,8 @@ print(tbl, include.rownames=FALSE, caption.placement="top", booktabs=TRUE,
       sanitize.text.function=identity)
 @
 
+\newpage
+
 % =========================================================================
 
 \subsubsection{Interpolation method}
@@ -920,6 +924,8 @@ FUN <- function(xlim) {
   \caption{---Continued}
 \end{figure}
 \captionsetup[figure]{list=yes}
+
+\newpage
 
 % =========================================================================
 

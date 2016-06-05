@@ -121,6 +121,8 @@ Available surface-water diversion datasets are as follows:
   \item Monthly diversions of treated effluent from the Bellevue wastewater treatment plant to a land application site adjacent to the plant were available from the Idaho Department of Environmental Quality (IDEQ) for 1999 through 2012.
 \end{itemize}
 
+\newpage
+
 \subsubsection{Groundwater diversions}
 
 Available groundwater diversion datasets are as follows:
@@ -611,6 +613,8 @@ The basis for using irrigation entities is as follows:
 
   \item Some areas are irrigated by diversions from domestic wells without recorded water rights.
 \end{itemize}
+
+\newpage
 
 Irrigation entities (\hyperref[fig:map_entities]{fig.~\ref{fig:map_entities}}) are used in the calculation of monthly water supply, crop irrigation requirement, and incidental recharge.
 

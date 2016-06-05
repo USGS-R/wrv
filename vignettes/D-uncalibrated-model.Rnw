@@ -107,6 +107,8 @@ FmtFlow <- function(x, u=c("m\\textsuperscript{3}/d", "acre-ft/yr"), conv=m3.per
 
 \tableofcontents
 
+\newpage
+
 \renewcommand*\listfigurename{Figures}
 \listoffigures
 
@@ -263,6 +265,8 @@ r <- rs.data[["land.surface"]] - depth.to.basalt.bottom
 r[r > rs.data[["alluvium.bottom"]] | is.na(rs.data[["basalt.extent"]])] <- NA
 rs.data[["bedrock"]] <- cover(r, rs.data[["alluvium.bottom"]])
 @
+
+\newpage
 
 Subtracting bedrock-surface elevations from land-surface elevations gives the thickness of the WRV aquifer system (\hyperref[fig:map_aquifer_thickness]{fig.~\ref{fig:map_aquifer_thickness}}).
 
@@ -449,6 +453,8 @@ r <- RmSmallCellChunks(r)  # ensure horizontal connectivity among cells
 names(r) <- "lay1.bot"
 rs.model <- stack(r)  # start new raster stack
 @
+
+\newpage
 
 Subtracting the aquitard (confining unit) thickness (5 m [16 ft]) from the bottom of model layer 1 gives the bottom elevation of model layer 2.
 Cell values lying beneath the bedrock surface are replaced with bedrock elevations.
@@ -808,6 +814,8 @@ print(tbl, include.rownames=FALSE, caption.placement="top", booktabs=TRUE,
       sanitize.text.function=identity, size="\\small")
 @
 
+\newpage
+
 % =========================================================================
 
 \subsection{Hydrologic Boundaries}
@@ -1139,6 +1147,8 @@ where
 \item[h_{r}] is the stream-stage elevation, in meters above NAVD 88.
 \end{description}
 
+\newpage
+
 The elevation of the bottom of the riverbed sediments is defined as:
 
 \begin{equation} \label{eq:rbot}
@@ -1297,6 +1307,8 @@ is.bwr <- river$Reach %in% grep("^Big Wood", levels(river$Reach), value = TRUE)
 river$northing <- yFromCell(r, cellFromRowCol(r, river$row, river$col))
 @
 
+\newpage
+
 The modeled stream stage is calculated by subtracting the interpolated normalized mean monthly gage-height from the estimated median stream depth.
 
 <<>>=
@@ -1344,6 +1356,8 @@ River boundary conditions are placed in a single table.
 river[, tr.yr.mo] <- stage
 river <- river[order(river$id, river$lay), ]
 @
+
+\newpage
 
 Steady-state stream-stage elevations are calculated by averaging elevations over time.
 
@@ -1502,6 +1516,8 @@ levels(r) <- d
 rs.model[["misc.seepage"]] <- r
 @
 
+\newpage
+
 Water-table and pumping boundary conditions are placed in a single data table.
 
 <<>>=
@@ -1570,6 +1586,8 @@ r <- rs.model[["lay1.strt"]]
 r[is.na(rs.model[["lay3.bot"]])] <- NA
 rs.model[["lay3.strt"]] <- r
 @
+
+\newpage
 
 % =========================================================================
 
