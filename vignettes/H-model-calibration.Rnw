@@ -1319,8 +1319,6 @@ AddInsetMap(alluvium.extent, width=1, main.label=list("AQUIFER", adj=c(0, -9)),
 invisible(dev.off())
 @
 
-\clearpage
-
 % =========================================================================
 
 \section{Adjustable Model Parameters}
@@ -1664,8 +1662,6 @@ legend("topright", leg, fill=cols, border="#FFFFFFCC", inset=0.02, cex=0.7, box.
 invisible(dev.off())
 @
 
-\clearpage
-
 % =========================================================================
 
 \section{Prior Information}
@@ -1692,6 +1688,8 @@ PEST will only deviate from the starting value in order to calibrate the model.
 While there is considerable uncertainty in the actual value of irrigation efficiency within each irrigation entity,
 the preferred value was included as prior information to discourage PEST from influencing flux between model layers
 by adjusting irrigation efficiency in lieu of adjusting hydraulic properties.
+
+\newpage
 
 % =========================================================================
 

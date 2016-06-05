@@ -105,6 +105,8 @@ Previous estimates of tributary recharge, such as \citet{Smith1959} and \citet{W
 Because \citet{Bartolino2009} constructed a volumetric water budget for the entire aquifer system no effort was made to differentiate subsurface volumetric flow rates from recharged tributary streamflow.
 Thus, the recharge estimates made by \citet{Bartolino2009} are not directly comparable to estimates of tributary basin underflow calculated for the groundwater-flow model.
 
+\newpage
+
 % =========================================================================
 
 \section{Tributary Basin Underflow}
@@ -391,6 +393,8 @@ A drainage basin area for a tributary canyon is defined as the area of land wher
 Smaller basins were identified by plotting basin areas for each tributary canyon on a logarithmic scale (\hyperref[fig:graph_basin_areas]{fig.~\ref{fig:graph_basin_areas}}).
 A natural break was found at about 26 square-kilometers (10 square-miles) and tributary basins less than this break were designated as `small', and all others were designated as `big'.
 
+\newpage
+
 Assuming all precipitation infiltrates and recharges the water table in the tributary basin,
 a secondary estimate (or maximum threshold value) of the mean tributary basin underflow ($\overline{Q}$ in equation~\ref{eq:flux}) is calculated by multiplying a basin's average rate of precipitation by its drainage area,
 and expressed as:
@@ -535,6 +539,8 @@ PlotGraph(d, ylab = ylab, xlim=xlim, col="#3399CC", lty=1,
           scientific=c(FALSE, TRUE, TRUE))
 @
 
+\newpage
+
 \subsection{Moving Average}
 
 A simple moving (or running) average of the daily streamflow measurements is used to smooth out short-term fluctuations in flow, and integrate and lag specific recharge events (as described in the previous paragraph).
@@ -579,6 +585,8 @@ where
 \end{description}
 
 For the purpose of simplifying the derivation of the seasonal scaling index, the mean seasonal moving average streamflow is referred to as the `moving average' in the remainder of this document.
+
+\newpage
 
 \subsection{Amplitude Reduction}
 
@@ -635,6 +643,8 @@ where
 \begin{description}
 \item[\mathit{SI}_{i}] is the scaling index for month $i$, a dimensionless quantity.
 \end{description}
+
+\newpage
 
 \section{Sensitivity Analysis}
 

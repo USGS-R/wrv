@@ -64,6 +64,8 @@ CheckStatus <- function(s) {
 
 \tableofcontents
 
+\newpage
+
 \renewcommand*\listfigurename{Figures}
 \listoffigures
 
@@ -1815,7 +1817,7 @@ CheckStatus("et")
 
 \section{Level 2 Data}
 
-Datasets processed at level~2 result from analyses of level~1 data.
+Datasets processed at level~2 result from analysis of level~1 data.
 
 % =========================================================================
 
