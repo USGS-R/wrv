@@ -192,9 +192,9 @@ The following command runs the vignette's embedded \R{} code; however,
 it takes several hours to run, requires about 10 gigabytes of memory, and has no effect on subsequent processing steps; therefore, you may want to skip it.
 
 <<eval=FALSE>>=
-vignette("C-package-datasets")  # open the vignette
-file <- system.file("doc", "C-package-datasets.R", package = "wrv")
-source(file, echo = TRUE)  # or open the file in a text editor and copy/paste into R
+vignette("sir16-5080_AppendixC")  # open appendix C
+file <- system.file("doc", "sir16-5080_AppendixC.R", package = "wrv")
+source(file, echo = TRUE)  # or open file in a text editor and copy/paste into R console
 @
 
 \subsection{Uncalibrated Model Construction}
@@ -203,9 +203,9 @@ The uncalibrated model is constructed by running \R{} code in the appendix D vig
 Output from this processing step is used as a template for a `new' model archive.
 
 <<eval=FALSE>>=
-vignette("D-uncalibrated-model")  # open the vignette
-file <- system.file("doc", "D-uncalibrated-model.R", package = "wrv")
-source(file, echo = TRUE)  # or open the file in a text editor and copy/paste into R
+vignette("sir16-5080_AppendixD")  # open appendix D
+file <- system.file("doc", "sir16-5080_AppendixD.R", package = "wrv")
+source(file, echo = TRUE)  # or open file in a text editor and copy/paste into R console
 @
 
 \noindent The archive folder named `SIR2016-5080' is located under the working directory.
