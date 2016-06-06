@@ -69,6 +69,8 @@ credit <- paste("Base derived from U.S. Geological Survey National Elevation Dat
 
 \tableofcontents
 
+\newpage
+
 \renewcommand*\listfigurename{Figures}
 \listoffigures
 
@@ -76,6 +78,8 @@ credit <- paste("Base derived from U.S. Geological Survey National Elevation Dat
 \listoftables
 
 \clearpage
+
+\RaggedRight
 
 % =========================================================================
 
@@ -409,13 +413,13 @@ where
 \item[A_{b}] is the drainage area of the tributary basin, in square meters (\hyperref[table_tribs]{table~\ref{table_tribs}}).
 \end{description}
 
-The ratio of Darcy to precipitation mean tributary basin underflow estimates ($r$) (\hyperref[table_tribs]{table~\ref{table_tribs}}) is then expressed as:
+\noindent The ratio of Darcy to precipitation mean tributary basin underflow estimates ($r$) (\hyperref[table_tribs]{table~\ref{table_tribs}}) is then expressed as:
 
 \begin{equation} \label{eq:ratio}
 r = \frac{\overline{Q}_{d}}{\overline{Q}_{p}}.
 \end{equation}
 
-And the mean tributary basin underflow ratio for the larger tributary canyons ($\overline{r}_{\mathit{big}}$) is \Sexpr{format(mean(with(tributaries@data, FlowRatio[BasinAreaType == "big"])), digits=1)}, and expressed as:
+\noindent And the mean tributary basin underflow ratio for the larger tributary canyons ($\overline{r}_{\mathit{big}}$) is \Sexpr{format(mean(with(tributaries@data, FlowRatio[BasinAreaType == "big"])), digits=1)}, and expressed as:
 
 \begin{equation} \label{eq:ratio_big}
 \overline{r}_{\mathit{big}} = \frac{1}{n} \sum_{\mathit{Trib}} r_{\mathit{Trib}}
@@ -574,7 +578,7 @@ where
 \item[\overline{D}_{\mathit{ma}, j}] is the mean seasonal moving average streamflow, in cubic meters per day.
 \end{description}
 
-And the mean of these seasonal values expressed as:
+\noindent And the mean of these seasonal values expressed as:
 
 \begin{equation} \label{eq:ma_ave}
 \overline{\overline{D}}_{\mathit{ma}} = \frac{1}{64}\, \sum_{j = 1}^{64} \overline{D}_{\mathit{ma}, j}
@@ -584,7 +588,7 @@ where
 \item[\overline{\overline{D}}_{\mathit{ma}}] is the mean of the mean seasonal moving average streamflow during the 1995 through 2010 time period, in cubic meters per day.
 \end{description}
 
-For the purpose of simplifying the derivation of the seasonal scaling index, the mean seasonal moving average streamflow is referred to as the `moving average' in the remainder of this document.
+\noindent For the purpose of simplifying the derivation of the seasonal scaling index, the mean seasonal moving average streamflow is referred to as the `moving average' in the remainder of this document.
 
 \newpage
 
@@ -610,7 +614,7 @@ where
 \item[\mathit{RF}] is the reduction factor, a dimensionless quantity.
 \end{description}
 
-And the mean of these amplitude reduced seasonal values is expressed as:
+\noindent And the mean of these amplitude reduced seasonal values is expressed as:
 
 \begin{equation} \label{eq:ar_ave}
 \overline{D}_{\mathit{ar}, \mathit{ma}} = \frac{1}{64}\, \sum_{j = 1}^{64} D_{\mathit{ar}, \mathit{ma}, j}
@@ -634,7 +638,7 @@ where
 \item[\mathit{SI}_{j}] is the scaling index for season $j$, a dimensionless quantity.
 \end{description}
 
-And the monthly seasonal scaling index is then expressed as:
+\noindent And the monthly seasonal scaling index is then expressed as:
 
 \begin{equation} \label{eq:si_i}
 \mathit{SI}_{i} = \mathit{SI}_{j} \quad \text{where } j = \left\lceil \frac{i}{3} \right\rceil \quad \text{for } i = 1, 2, \dots , 192.

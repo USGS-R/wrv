@@ -63,6 +63,8 @@ credit <- paste("Base derived from U.S. Geological Survey National Elevation Dat
 
 \tableofcontents
 
+\newpage
+
 \renewcommand*\listfigurename{Figures}
 \listoffigures
 
@@ -70,6 +72,8 @@ credit <- paste("Base derived from U.S. Geological Survey National Elevation Dat
 \listoftables
 
 \clearpage
+
+\RaggedRight
 
 % =========================================================================
 
@@ -120,7 +124,7 @@ where
 \item[b_{max, \, k}] is the upper bound for adjustable model parameter $k$.
 \end{description}
 
-The algorithm PEST uses to solve equation~(\ref{eq:min}) is a modified Gauss-Newton method, assisted by a Levenberg-Marquardt formulation \citep[chapter 2]{Doherty2005}.
+\noindent The algorithm PEST uses to solve equation~(\ref{eq:min}) is a modified Gauss-Newton method, assisted by a Levenberg-Marquardt formulation \citep[chapter 2]{Doherty2005}.
 
 Model-simulation results are output from \href{http://water.usgs.gov/ogw/mfusg/}{MODFLOW-USG}, a numerical model that simulates three-dimensional,
 steady-state and transient groundwater flow using a control volume finite-difference formulation \citep{Panday2013}.
@@ -736,7 +740,7 @@ where
 \item[\mathit{DIV}] is the volumetric outflow from a stream diversion on the river reach, in cubic meters per day.
 \end{description}
 
-To facilitate a comparison with model-simulated results, equation~(\ref{eq:reach_gain}) is expressed in terms of aquifer recharge as,
+\noindent To facilitate a comparison with model-simulated results, equation~(\ref{eq:reach_gain}) is expressed in terms of aquifer recharge as,
 
 \begin{equation} \label{eq:reach_rech}
 Q = \sum \mathit{RIV}_{\mathit{in}} - \mathit{RIV}_{\mathit{out}} + \sum \mathit{TRIB} + \sum \mathit{RET} - \sum \mathit{DIV}
@@ -1235,7 +1239,7 @@ where
 \item[Q_{j}]is the average stream-aquifer flow exchange of river reach $j$ determined from continuous streamflow records, in cubic meters per day.
 \end{description}
 
-Note that river subreach $i$ is a component of river reach $j$.
+\noindent Note that river subreach $i$ is a component of river reach $j$.
 For each iteration of PEST, the model-simulated ratio is calculated every August, October, and March of the 2000 through 2010 time period and compared to its corresponding 2012 through 2013 monthly estimate.
 The differences between simulated and measured ratios are minimized during model calibration (equation~\ref{eq:min}).
 

@@ -73,6 +73,8 @@ credit <- paste("Base derived from U.S. Geological Survey National Elevation Dat
 
 \clearpage
 
+\RaggedRight
+
 % =========================================================================
 
 \section{Introduction}
@@ -120,7 +122,8 @@ where
 \item[p] is the estimated percolation rate for the soil type, in meters per month.
 \end{description}
 
-And estimates of surface runoff can be expressed as:
+\noindent And estimates of surface runoff can be expressed as:
+
 \begin{equation} \label{eq:runoff}
 R = \left\{\begin{array}{l l}
       A \left(P - \mathit{ET} - p\right) & \quad \text{if $P - \mathit{ET} > p$,}\\
@@ -311,7 +314,7 @@ where
 \item[P_{K, m}\text{, } P_{H, m}\text{, } P_{P, m}] are the precipitation rates recorded at the Ketchum, Hailey, and Picabo weather stations during the month of $m$, in meters, respectively.
 \end{description}
 
-The precipitation-redistribution model assumes that at least 25 percent of a recorded winter-month precipitation is available for immediate deep percolation and surface runoff during the same month.
+\noindent The precipitation-redistribution model assumes that at least 25 percent of a recorded winter-month precipitation is available for immediate deep percolation and surface runoff during the same month.
 
 <<echo=FALSE>>=
 elev <- weather.stations@data[, "elevation"]
@@ -691,12 +694,11 @@ where
 \item[F_{r, \mathit{ndvi}}] is the regressed estimate of the realized fraction of evapotranspiration, a dimensionless quantity.
 \end{description}
 
-ET estimates based on the NDVI method are then expressed as:
+\noindent ET estimates based on the NDVI method are then expressed as:
 
 \begin{equation} \label{eq:et-ndvi}
 \mathit{ET} = \sum\limits_{i} F_{r, \mathit{ndvi}, i}\, \mathit{ET}_{r, i}
 \end{equation}
-
 where
 \begin{description}
 \item[\mathit{ET}_{r, i}] is the reference evapotranspiration rate recorded at the Picabo AgriMet weather station on day $i$, in meters per day.
@@ -805,7 +807,7 @@ The ET estimates based on the METRIC-NDVI method are expressed as:
                \end{array} \right.
 \end{equation}
 
-The METRIC-NDVI method assumes that the ratio $r$ is constant throughout the WRV.
+\noindent The METRIC-NDVI method assumes that the ratio $r$ is constant throughout the WRV.
 
 % =========================================================================
 

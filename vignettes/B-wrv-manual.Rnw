@@ -8,6 +8,7 @@
 \usepackage[scaled=0.92]{helvet}
 \usepackage[utf8, latin1]{inputenc}
 \usepackage{makeidx}
+\usepackage{ragged2e}
 
 \usepackage[tmargin=1.00in, bmargin=0.67in, lmargin=0.58in, rmargin=0.75in]{geometry}
 \usepackage{tocloft}
@@ -39,6 +40,11 @@
 \titlespacing*{\chapter}{0pt}{25pt}{55pt}
 \titleformat{\chapter}[display]{\LARGE\bfseries\sffamily}{}{0pt}{\LARGE}
 
+%%% Paragraph
+\usepackage{indentfirst}
+\setlength\RaggedRightParindent{15pt}
+\RaggedRight
+
 \renewcommand{\thepage}{B\arabic{page}}
 
 \setcounter{page}{1}
@@ -49,14 +55,14 @@
 
 \chapter*{Appendix B.\enspace Manual for Functions and Datasets\newline in the R-Package `wrv'}
 
-{\setlength{\parindent}{0cm}
+\RaggedRight
+
 This vignette is a reference manual for functions and datasets in the \textbf{wrv} package (version \Sexpr{packageVersion("wrv")}).
 A short description and \R{} usage information (such as examples of how to use a function) are given for all functions and datasets.
 Dataset documentation include sections describing the format of a dataset (such as a vector or matrix) and details on the original or secondary data source.
 Functions and datasets are named according to the following conventions.
 The form for function names is no separator between words and initial capital letters (such as \code{AddScaleBar});
 dataset names have words separated with dots and all lower case letters (such as \code{alluvium.extent}).
-}
 
 \vspace{10 mm}
 
