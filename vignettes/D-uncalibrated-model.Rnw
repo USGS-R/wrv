@@ -117,6 +117,8 @@ FmtFlow <- function(x, u=c("m\\textsuperscript{3}/d", "acre-ft/yr"), conv=m3.per
 
 \clearpage
 
+\RaggedRight
+
 % =========================================================================
 
 \section{Introduction}
@@ -136,7 +138,7 @@ Load the \textbf{wrv} package in the current \R{} session:
 library("wrv")
 @
 
-The memory requirement for running \R{} code in this vignette is about 5 gigabytes.
+\noindent The memory requirement for running \R{} code in this vignette is about 5 gigabytes.
 All output from this vignette is placed in the current `working directory'.
 The following command will print the path to the current working directory:
 
@@ -199,14 +201,16 @@ AddInsetMap(idaho, width=1, main.label=list("IDAHO", adj=c(-0.4, -4.9)),
 invisible(dev.off())
 @
 
-The elevation of the pre-Quaternary bedrock surface and top of Quaternary basalt is calculated by subtracting the thickness of the Quaternary sediments from land-surface elevations.
+\noindent The elevation of the pre-Quaternary bedrock surface and top of Quaternary basalt is calculated by subtracting the thickness of the Quaternary sediments from land-surface elevations.
 
 <<>>=
 r <- rs.data[["land.surface"]] - rs.data[["alluvium.thickness"]]
 rs.data[["alluvium.bottom"]] <- r
 @
 
-The estimated areal extent of the basalt unit in the WRV aquifer system, as defined by \citet[plate~1]{Bartolino2012},
+\newpage
+
+\noindent The estimated areal extent of the basalt unit in the WRV aquifer system, as defined by \citet[plate~1]{Bartolino2012},
 is shown in \hyperref[fig:map_basalt_extent]{figure~\ref{fig:map_basalt_extent}}.
 
 <<>>=
@@ -266,9 +270,7 @@ r[r > rs.data[["alluvium.bottom"]] | is.na(rs.data[["basalt.extent"]])] <- NA
 rs.data[["bedrock"]] <- cover(r, rs.data[["alluvium.bottom"]])
 @
 
-\newpage
-
-Subtracting bedrock-surface elevations from land-surface elevations gives the thickness of the WRV aquifer system (\hyperref[fig:map_aquifer_thickness]{fig.~\ref{fig:map_aquifer_thickness}}).
+\noindent Subtracting bedrock-surface elevations from land-surface elevations gives the thickness of the WRV aquifer system (\hyperref[fig:map_aquifer_thickness]{fig.~\ref{fig:map_aquifer_thickness}}).
 
 <<>>=
 rs.data[["aquifer.thickness"]] <- rs.data[["land.surface"]] - rs.data[["bedrock"]]
@@ -289,6 +291,8 @@ plot(cities, pch=15, cex=0.8, col="#333333", add=TRUE)
 text(cities, labels=cities@data$FEATURE_NA, col="#333333", cex=0.5, pos=1, offset=0.4)
 invisible(dev.off())
 @
+
+\newpage
 
 The clay unit represents an aquitard or confining unit separating the unconfined aquifer from the underlying confined aquifer.
 The estimated extent of the clay confining unit in the WRV aquifer system, as defined by \citet{Moreland1977}, is shown in \hyperref[fig:map_clay_extent]{figure~\ref{fig:map_clay_extent}}.
@@ -318,7 +322,7 @@ legend("topright", "Clay confining unit", fill=col, border=NA, inset=0.02, cex=0
 invisible(dev.off())
 @
 
-Well-driller reports and geophysical surveys describe the clay confining unit as about 5 m (16 ft) thick, and generally lying at a depth of about 30 m (98 ft) below land surface.
+\noindent Well-driller reports and geophysical surveys describe the clay confining unit as about 5 m (16 ft) thick, and generally lying at a depth of about 30 m (98 ft) below land surface.
 
 <<>>=
 aquitard.thickness <- 5  # in meters
@@ -361,7 +365,7 @@ text(cities, labels=cities@data$FEATURE_NA, col="#333333", cex=0.5, pos=1, offse
 invisible(dev.off())
 @
 
-The total number of vertically adjusted cells is \Sexpr{format(length(adj.cells), big.mark=",")}, or \Sexpr{round(length(adj.cells) / length(cells) * 100)} percent of active cells,
+\noindent The total number of vertically adjusted cells is \Sexpr{format(length(adj.cells), big.mark=",")}, or \Sexpr{round(length(adj.cells) / length(cells) * 100)} percent of active cells,
 with a mean and standard deviation of the adjusted distance of
 \Sexpr{round(x <- mean(r[adj.cells]), digits=1)} m (\Sexpr{round(x * m.to.ft, digits=1)} ft) and
 \Sexpr{round(x <- sd(r[adj.cells]), digits=1)} m (\Sexpr{round(x * m.to.ft, digits=1)} ft), respectively.
@@ -454,9 +458,7 @@ names(r) <- "lay1.bot"
 rs.model <- stack(r)  # start new raster stack
 @
 
-\newpage
-
-Subtracting the aquitard (confining unit) thickness (5 m [16 ft]) from the bottom of model layer 1 gives the bottom elevation of model layer 2.
+\noindent Subtracting the aquitard (confining unit) thickness (5 m [16 ft]) from the bottom of model layer 1 gives the bottom elevation of model layer 2.
 Cell values lying beneath the bedrock surface are replaced with bedrock elevations.
 
 <<>>=
@@ -467,7 +469,7 @@ r[(rs.model[["lay1.bot"]] - r) < min.thickness] <- NA  # enforce minimum thickne
 rs.model[["lay2.bot"]] <- RmSmallCellChunks(r)
 @
 
-The bottom elevation of model layer 3 represents the top of the bedrock (bedrock surface).
+\noindent The bottom elevation of model layer 3 represents the top of the bedrock (bedrock surface).
 
 <<>>=
 r <- rs.data[["bedrock"]]
@@ -476,7 +478,9 @@ r[(rs.model[["lay2.bot"]] - r) < min.thickness] <- NA  # enforce minimum thickne
 rs.model[["lay3.bot"]] <- RmSmallCellChunks(r)
 @
 
-Bottom elevations of model layer 1 are adjusted to the bedrock surface in cells where the layer 1 bottom elevation is above bedrock and the vertically adjacent layer 2 cell is classified as inactive.
+\newpage
+
+\noindent Bottom elevations of model layer 1 are adjusted to the bedrock surface in cells where the layer 1 bottom elevation is above bedrock and the vertically adjacent layer 2 cell is classified as inactive.
 
 <<>>=
 r <- rs.model[["lay1.bot"]]
@@ -485,7 +489,7 @@ r[is.adjusted] <- rs.data[["bedrock"]][is.adjusted]
 rs.model[["lay1.bot"]] <- RmSmallCellChunks(r)
 @
 
-The top elevation of model layer 1 is at land surface.
+\noindent The top elevation of model layer 1 is at land surface.
 
 <<>>=
 r <- rs.data[["land.surface"]]
@@ -564,6 +568,8 @@ All subsequent stress periods are transient and simulate groundwater flow condit
 The transient simulation period is subdivided into 192 stress periods of 1 month each.
 The length of each stress period is dependent on the number of days in the corresponding month and date of year.
 
+\newpage
+
 <<>>=
 ss.interval <- as.Date(c("2004-04-01", "2005-04-01"), tz = "MST")  # steady state
 tr.interval <- as.Date(c("1995-01-01", "2011-01-01"), tz = "MST")  # transient
@@ -571,7 +577,7 @@ ss.stress.periods <- seq(ss.interval[1], ss.interval[2], "1 month")
 tr.stress.periods <- seq(tr.interval[1], tr.interval[2], "1 month")
 @
 
-Stress period identifiers are specified using a concatenation of year and month.
+\noindent Stress period identifiers are specified using a concatenation of year and month.
 
 <<>>=
 ss.yr.mo <- format(head(ss.stress.periods, -1), "%Y%m")  # steady state
@@ -616,11 +622,13 @@ where
 
 The WRV groundwater-flow model may be formulated to solve three different versions of equation~(\ref{eq:gw_flow}).
 These model formulations, arranged in order of increasing solution difficulty, simulate the following:
+
 \begin{enumerate}
   \item Steady-state flow conditions by setting the right-hand-side of equation~(\ref{eq:gw_flow}) equal to zero.
   \item Transient flow conditions with saturated thickness ($b$ in equation~\ref{eq:gw_flow}) held constant over time at the model cell thickness.
   \item Transient flow conditions with saturated thickness dependent on head.
 \end{enumerate}
+
 Model results analyzed in this vignette simulate transient flow conditions and implement the specified-thickness approximation; that is, model formulation 2.
 Note, however, that both model formulation 1 and 2 are called during the model-calibration process (appendix A, fig. A4).
 Model formulation 3 was not calibrated because of its very long run times, on the order of hours, and possible numerical instability.
@@ -657,12 +665,15 @@ Therefore, transmissivities, rather than horizontal hydraulic conductivities, ar
 Hydraulic properties (such as horizontal hydraulic conductivity) are specified for all cells using the MODFLOW Layer-Property Flow Package \citep{Harbaugh2000, Harbaugh2005}.
 Prior to model calibration, the distribution of hydraulic properties is based on hydrogeologic zones, groups of model cells with uniform hydraulic properties that compose part or all of a hydrogeologic unit.
 The model consists of four hydrogeologic zones described as follows:
-\begin{enumerate}[label=Zone \arabic*, topsep=0mm, labelindent=5mm, leftmargin=*]
+
+\begin{enumerate}[label=Zone \arabic*, labelindent=5mm, leftmargin=*]
   \item consists of the alluvium unit in the unconfined aquifer and is located in all three model layers;
   \item comprises the basalt and clay units and is located in model layers 2 and 3;
   \item consists of the clay confining unit and is located in model layer 2; and
   \item consists of the alluvium unit in the confined aquifer and is located in model layer 3.
 \end{enumerate}
+
+\newpage
 
 The delineation of hydrogeologic zones in model layers 1, 2, and 3 are shown in
 \hyperref[fig:map_zones_a]{figures~\ref{fig:map_zones_a}}, \ref{fig:map_zones_b}, and \ref{fig:map_zones_c}, respectively.
@@ -867,13 +878,13 @@ legend("topright", leg, lwd=1, col=cols, ncol=2,
 invisible(dev.off())
 @
 
-Steady-state volumetric flow rates are calculated for each boundary by averaging flows over time.
+\noindent Steady-state volumetric flow rates are calculated for each boundary by averaging flows over time.
 
 <<>>=
 flow <- cbind(flow, ss = apply(flow[, ss.yr.mo], 1, mean))
 @
 
-The volumetric flow rate for each boundary is uniformly distributed among its tributary cells.
+\noindent The volumetric flow rate for each boundary is uniformly distributed among its tributary cells.
 
 <<>>=
 r <- rasterize(trib.lines, rs.model)
@@ -907,7 +918,9 @@ print(tbl, include.rownames=FALSE, align="rlrrr", caption.placement="top", bookt
       size="\\small")
 @
 
-The tributary boundary conditions are placed in a single data table.
+\newpage
+
+\noindent The tributary boundary conditions are placed in a single data table.
 
 <<>>=
 cells <- which(!is.na(r[]))
@@ -915,6 +928,8 @@ rc <- rowColFromCell(r, cells)
 trib <- data.frame(cell = cells, lay = 1L, rc, deratify(r)[cells], check.names = FALSE)
 trib$Name <- as.factor(d$Name[trib$Name])
 @
+
+\newpage
 
 % =========================================================================
 
@@ -995,7 +1010,7 @@ legend("topright", leg, fill=cols, border=NA, inset=0.02, cex=0.7, box.lty=1,
 invisible(dev.off())
 @
 
-The drain boundary conditions are bundled into a single data table.
+\noindent The drain boundary conditions are bundled into a single data table.
 
 <<>>=
 cells <- sort(which(!is.na(r[])))
@@ -1147,9 +1162,7 @@ where
 \item[h_{r}] is the stream-stage elevation, in meters above NAVD 88.
 \end{description}
 
-\newpage
-
-The elevation of the bottom of the riverbed sediments is defined as:
+\noindent The elevation of the bottom of the riverbed sediments ($R_{\mathit{bot}}$ in equation~\ref{eq:river}) is defined as:
 
 \begin{equation} \label{eq:rbot}
 R_{\mathit{bot}} = h_{r} - d_{r} - T_{r}
@@ -1159,20 +1172,20 @@ where
 \item[d_{r}] is the water depth, or distance between the water surface and the top of the riverbed sediments, in meters.
 \end{description}
 
-The stream-stage elevation ($h_{r}$ in equations~\ref{eq:river} and \ref{eq:rbot}) is initialized at land surface.
+\noindent The stream-stage elevation ($h_{r}$ in equations~\ref{eq:river} and \ref{eq:rbot}) is initialized at land surface.
 
 <<>>=
 rs.model[["riv.stage"]] <- mask(rs.model[["lay1.top"]], rs.model[["riv.reach"]])
 @
 
-And lowered if the stream stage in the adjacent upstream river-reach cell is less than the estimated stage of the current downstream cell.
+\noindent And lowered if the stream stage in the adjacent upstream river-reach cell is less than the estimated stage of the current downstream cell.
 
 <<>>=
 r <- BumpRiverStage(rs.model[["riv.stage"]], drain.lines)
 rs.model[["riv.stage"]] <- rs.model[["riv.stage"]] + r
 @
 
-Subtracting the average water depth and riverbed thickness from stream stage gives the elevation of the riverbed bottom (equation~\ref{eq:rbot}).
+\noindent Subtracting the average water depth and riverbed thickness from stream stage gives the elevation of the riverbed bottom ($R_{\mathit{bot}}$ in equation~\ref{eq:rbot}).
 
 <<>>=
 r.riv.depth <- deratify(rs.model[["riv.reach"]], "Depth")
@@ -1180,7 +1193,7 @@ r.riv.thick <- deratify(rs.model[["riv.reach"]], "BedThk")
 rs.model[["riv.bottom"]] <- rs.model[["riv.stage"]] - r.riv.depth - r.riv.thick
 @
 
-Flow between adjacent river cells is ensured by lowering the riverbed bottom elevations in those cells prohibiting vertical connectivity.
+\noindent Flow between adjacent river cells is ensured by lowering the riverbed bottom elevations in those cells prohibiting vertical connectivity.
 
 <<>>=
 rs <- subset(rs.model, c("riv.stage", "riv.bottom"))
@@ -1188,7 +1201,7 @@ r <- BumpDisconnectCells(rs, min.overlap = 0.2)
 rs.model[["riv.bottom"]] <- rs.model[["riv.bottom"]] + r
 @
 
-Subtracting the riverbed top elevation from the stream-stage elevation gives the modeled surface-water depth.
+\noindent Subtracting the riverbed top elevation from the stream-stage elevation gives the modeled surface-water depth.
 
 <<>>=
 rs.model[["riv.depth"]] <- rs.model[["riv.stage"]] - rs.model[["riv.bottom"]] - r.riv.thick
@@ -1197,7 +1210,8 @@ rs.model[["riv.depth"]] <- rs.model[["riv.stage"]] - rs.model[["riv.bottom"]] - 
 <<echo=FALSE>>=
 x <- as.numeric(na.omit((rs.model[["riv.depth"]])[]))
 @
-The modeled surface-water depth ranges from
+
+\noindent The modeled surface-water depth ranges from
 \Sexpr{format(y <- min(x),  digits=2)} m (\Sexpr{format(y * m.to.ft, digits=2)} ft) to
 \Sexpr{format(y <- max(x),  digits=2)} m (\Sexpr{format(y * m.to.ft, digits=2)} ft), with a mean and standard deviation of
 \Sexpr{format(y <- mean(x), digits=2)} m (\Sexpr{format(y * m.to.ft, digits=2)} ft) and
@@ -1213,7 +1227,7 @@ d <- data.frame(lay = 1L, rc, id = r[cells], bottom = rs.model[["riv.bottom"]][c
 river <- cbind(d, factorValues(r, d$id, att = c("cond", "Reach")))
 @
 
-Cell thickness is adjusted to prevent the river stage from ever being below the bottom of a river cell in model layer 1.
+\noindent Cell thickness is adjusted to prevent the river stage from ever being below the bottom of a river cell in model layer 1.
 
 <<>>=
 d$diff <- rs.model[["lay1.bot"]][cells] - d[, "bottom"]
@@ -1300,16 +1314,14 @@ legend("topright", colnames(y), lwd=c(1, 1, 1), col=cols, inset=0.02, cex=0.7,
 invisible(dev.off())
 @
 
-The northing-distance to the cell center is calculated for each of the river-boundary cells composing the Big Wood River.
+\noindent The northing-distance to the cell center is calculated for each of the river-boundary cells composing the Big Wood River.
 
 <<>>=
 is.bwr <- river$Reach %in% grep("^Big Wood", levels(river$Reach), value = TRUE)
 river$northing <- yFromCell(r, cellFromRowCol(r, river$row, river$col))
 @
 
-\newpage
-
-The modeled stream stage is calculated by subtracting the interpolated normalized mean monthly gage-height from the estimated median stream depth.
+\noindent The modeled stream stage is calculated by subtracting the interpolated normalized mean monthly gage-height from the estimated median stream depth.
 
 <<>>=
 stage <- matrix(river$stage, nrow = nrow(river), ncol = length(tr.yr.mo))
@@ -1350,16 +1362,14 @@ river.bottom <- matrix(river$bottom, nrow = nrow(river), ncol = length(tr.yr.mo)
 stage[is.drybed] <- river.bottom[is.drybed]
 @
 
-River boundary conditions are placed in a single table.
+\noindent River boundary conditions are placed in a single table.
 
 <<>>=
 river[, tr.yr.mo] <- stage
 river <- river[order(river$id, river$lay), ]
 @
 
-\newpage
-
-Steady-state stream-stage elevations are calculated by averaging elevations over time.
+\noindent Steady-state stream-stage elevations are calculated by averaging elevations over time.
 
 <<>>=
 river <- cbind(river, ss = apply(river[, ss.yr.mo], 1, mean))
@@ -1401,6 +1411,8 @@ rech <- cbind(lay = 1, row = rc[, 1], col = rc[, 2], l[["areal.rech"]][cells])
 wells <- pod.wells[match(l[["pod.rech"]]$WMISNumber, pod.wells@data$WMISNumber), ]
 wells@data <- dplyr::left_join(wells@data, l[["pod.rech"]], by = "WMISNumber")
 @
+
+\newpage
 
 The pumping rate is specified for each model cell intersecting a well's open interval(s)
 and calculated by multiplying the estimated pumping demand by the cell's transmissivity fraction.
@@ -1516,9 +1528,7 @@ levels(r) <- d
 rs.model[["misc.seepage"]] <- r
 @
 
-\newpage
-
-Water-table and pumping boundary conditions are placed in a single data table.
+\noindent Water-table and pumping boundary conditions are placed in a single data table.
 
 <<>>=
 cells <- which(!is.na(r[]))
@@ -1563,7 +1573,7 @@ PlotGraph(x, y, ylab=ylab, col=col, fill=paste0(col, "66"),
 invisible(dev.off())
 @
 
-Steady-state volumetric flow rates are calculated by averaging flows over time.
+\noindent Steady-state volumetric flow rates are calculated by averaging flows over time.
 
 <<>>=
 misc <- cbind(misc, ss = apply(misc[, ss.yr.mo], 1, mean))
@@ -1605,7 +1615,7 @@ WriteModflowInput(rs.model, rech, well, trib, misc, river, drain, id, dir.run,
                   ntime.steps = ntime.steps, verbose = FALSE)
 @
 
-Copy the MODFLOW-USG executable file to the appropriate directory:
+\noindent Copy the MODFLOW-USG executable file to the appropriate directory:
 
 <<results="hide">>=
 file <- ifelse(.Platform$OS.type == "windows", "mfusg.exe", "mfusg")
@@ -1614,7 +1624,7 @@ file.exe <- file.path(system.file("bin", arch, package = "wrv"), file)
 invisible(file.copy(file.exe, dir.run, copy.date = TRUE))
 @
 
-Create and execute a `batch file' containing commands that run MODFLOW-USG:
+\noindent Create and execute a `batch file' containing commands that run MODFLOW-USG:
 
 <<>>=
 file.bat <- file.path(dir.run, "RunModflow.bat")
@@ -1788,7 +1798,7 @@ print(tbl, include.rownames=FALSE, caption.placement="top", booktabs=TRUE,
       sanitize.text.function=identity, size="\\small")
 @
 
-\clearpage
+\newpage
 
 % =========================================================================
 

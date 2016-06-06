@@ -8,7 +8,7 @@
 \usepackage[backend=bibtex, style=authoryear-comp, maxbibnames=99, maxcitenames=3, natbib=true, dashed=false]{biblatex}
 \usepackage{xpatch}
 \usepackage{xcolor}
-\usepackage{parskip}
+\usepackage{ragged2e}
 \usepackage{caption}
 \usepackage{subcaption}
 \usepackage{titling}
@@ -137,6 +137,11 @@
 
 \widowpenalties 1 10000
 \raggedbottom
+
+%%% Paragraph
+\renewenvironment{knitrout}{\setlength{\topsep}{0mm}}{}
+\usepackage{indentfirst}
+\setlength\RaggedRightParindent{15pt}
 
 \makeatletter
 \setlength{\@fptop}{0pt}

@@ -71,6 +71,8 @@ CheckStatus <- function(s) {
 
 \clearpage
 
+\RaggedRight
+
 % =========================================================================
 
 \section{Introduction}
@@ -96,13 +98,13 @@ loadNamespace("dplyr")  # tool for working with data frame like objects
 loadNamespace("wrv")    # processor for groundwater-flow model
 @
 
-Set a \textbf{raster} package option to prevent the standardization of raster names:
+\noindent Set a \textbf{raster} package option to prevent the standardization of raster names:
 
 <<>>=
 rasterOptions(standardnames = FALSE)
 @
 
-The memory requirement for running R code in this vignette is about 10 gigabytes.
+\noindent The memory requirement for running R code in this vignette is about 10 gigabytes.
 
 % =========================================================================
 
@@ -115,7 +117,7 @@ The top-level uniform resource locator (URL) for these files is specified as:
 url.git <- "https://raw.githubusercontent.com/USGS-R/wrv/master/inst/extdata/"
 @
 
-The data file containing land-surface elevations was deemed too large in file size (about 500 megabytes) to be placed in the package repository.
+\noindent The data file containing land-surface elevations was deemed too large in file size (about 500 megabytes) to be placed in the package repository.
 These elevations are part of the National Elevation Dataset (\href{http://ned.usgs.gov/}{NED}) $\sfrac{1}{3}$-arc-second raster and available in a ArcGRID file format.
 The File Transfer Protocol (FTP) for this compressed file is specified as:
 
@@ -124,7 +126,7 @@ ftp.ned <- paste0("ftp://rockyftp.cr.usgs.gov/vdelivery/Datasets/Staged/NED/",
                   "13/ArcGrid/n44w115.zip")
 @
 
-Output from this vignette is placed in the current working directory.
+\noindent Output from this vignette is placed in the current working directory.
 
 <<>>=
 dir.create(dir.dat <- file.path(getwd(), "data"), showWarnings = FALSE)
@@ -148,7 +150,9 @@ af.per.y.to.m3.per.d <- 3.377        # acre-feet per year to cubic meters per da
 cfs.to.m3.per.d      <- 2446.57555   # cubic feet per second to cubic meters per day
 @
 
-The common coordinate reference system (CRS) applied to all spatial datasets is the
+\newpage
+
+\noindent The common coordinate reference system (CRS) applied to all spatial datasets is the
 Idaho Transverse Mercator projection (\href{https://www.idwr.idaho.gov/GIS/IDTM/}{IDTM83}).
 \href{http://trac.osgeo.org/proj/}{PROJ.4} projection arguments are used to specify a CRS in R.
 The CRS that all unprocessed data are converted into is specified as:
@@ -158,14 +162,14 @@ crs <- CRS(paste("+proj=tmerc +lat_0=42 +lon_0=-114 +k=0.9996 +x_0=2500000 +y_0=
                  "+datum=NAD83 +units=m +no_defs +ellps=GRS80 +towgs84=0,0,0"))
 @
 
-The common spatial grid applied to all gridded datasets is composed of 565 rows and 429 columns, and has a constant cell size of 100 meters by 100 meters.
+\noindent The common spatial grid applied to all gridded datasets is composed of 565 rows and 429 columns, and has a constant cell size of 100 meters by 100 meters.
 
 <<>>=
 ext <- extent(2453200, 2496100, 1344139, 1400639)  # xmin, xmax, ymin, ymax in IDTM
 spatial.grid <- raster(crs = crs, ext = ext, resolution = 100)
 @
 
-The transient model simulates groundwater flow from 1995 through 2010, using monthly stress periods.
+\noindent The transient model simulates groundwater flow from 1995 through 2010, using monthly stress periods.
 
 <<>>=
 tr.interval <- as.Date(c("1995-01-01", "2011-01-01"), tz = "MST")
@@ -314,7 +318,7 @@ swe.picabo$MonthDay <- format(as.Date(swe.picabo$Date, "%m/%d/%Y"), "%m%d")
 swe.picabo$SWE <- swe.picabo$SWE_in * in.to.m
 @
 
-Aggregate SWE data by day in a year:
+\noindent Aggregate SWE data by day in a year:
 
 <<>>=
 swe.choco  <- aggregate(swe.choco$SWE, list(swe.choco$MonthDay), mean)
@@ -322,7 +326,7 @@ swe.hailey <- aggregate(swe.hailey$SWE, list(swe.hailey$MonthDay), mean)
 swe.picabo <- aggregate(swe.picabo$SWE, list(swe.picabo$MonthDay), mean)
 @
 
-Combine datasets and write to disk:
+\noindent Combine datasets and write to disk:
 
 <<>>=
 swe <- swe.choco[order(swe.choco[[1]]), ]
@@ -353,7 +357,7 @@ d$Hailey_ft  <- NULL
 d$Picabo_ft  <- NULL
 @
 
-Create a linear regression model between the average of the precipitation depth recorded at the Picabo and Ketchum weather stations,
+\noindent Create a linear regression model between the average of the precipitation depth recorded at the Picabo and Ketchum weather stations,
 and the precipitation depth recorded at the Hailey weather station:
 
 <<>>=
@@ -362,7 +366,7 @@ y <- d$Hailey
 LM <- lm(y ~ x)
 @
 
-A strong positive correlation (R-squared of \Sexpr{format(summary(LM)$r.squared, digits=3)})
+\noindent A strong positive correlation (R-squared of \Sexpr{format(summary(LM)$r.squared, digits=3)})
 indicates that the regression model may be used to estimate missing data at the Hailey weather station (\hyperref[fig:graph_precip_hailey]{fig.~\ref{fig:graph_precip_hailey}}).
 
 <<>>=
@@ -394,7 +398,9 @@ legend("topright", c("Measured", "Estimated"), col=cols, lty=ltys, inset=0.02,
 invisible(dev.off())
 @
 
-Use a monthly precipitation redistribution model to account for frozen precipitation (snow):
+\newpage
+
+\noindent Use a monthly precipitation redistribution model to account for frozen precipitation (snow):
 
 <<>>=
 d <- precipitation
@@ -425,14 +431,14 @@ sites <- c("Ketchum", "Hailey", "Picabo")
 names(precipitation) <- c("YearMonth", paste0(sites, ".raw"), sites)
 @
 
-Remove precipitation records that occurred outside the model simulation period:
+\noindent Remove precipitation records that occurred outside the model simulation period:
 
 <<>>=
 date.time <- as.Date(paste0(precipitation[, "YearMonth"], "01"), "%Y%m%d")
 precipitation <- precipitation[date.time >= tr.interval[1] & date.time < tr.interval[2], ]
 @
 
-Add precipitation zone meta data:
+\noindent Add precipitation zone meta data:
 
 <<>>=
 d <- data.frame(YearMonth = as.factor(rep(as.character(precipitation$YearMonth), 3)),
@@ -443,7 +449,7 @@ d[d$PrecipZone == "Hailey",  3:4] <- precipitation[, c("Hailey", "Hailey.raw")]
 d[d$PrecipZone == "Picabo",  3:4] <- precipitation[, c("Picabo", "Picabo.raw")]
 @
 
-Save the dataset to disk:
+\noindent Save the dataset to disk:
 
 <<>>=
 precipitation <- d
@@ -535,7 +541,7 @@ gage.13139510.disch <- FUN("gage.13139510.disch.csv")
 gage.13140800.disch <- FUN("gage.13140800.disch.csv")
 @
 
-Combine discharge records into a single data table:
+\noindent Combine discharge records into a single data table:
 
 <<>>=
 dlim <- range(c(gage.13135500.disch$Date, gage.13139510.disch$Date,
@@ -552,6 +558,8 @@ save(gage.disch, file = file.path(dir.dat, "gage.disch.rda"), compress = "xz")
 <<echo=FALSE>>=
 CheckStatus("gage.disch")
 @
+
+\newpage
 
 % =========================================================================
 
@@ -579,7 +587,7 @@ gage.13139510.height <- FUN("gage.13139510.height.csv")
 gage.13140800.height <- FUN("gage.13140800.height.csv")
 @
 
-Combine gage-height records into a single data table:
+\noindent Combine gage-height records into a single data table:
 
 <<>>=
 dlim <- range(c(gage.13135500.height$Date, gage.13139510.height$Date,
@@ -591,13 +599,13 @@ d <- dplyr::left_join(d, gage.13140800.height, by = "Date")
 colnames(d) <- c("Date", "13135500", "13139510", "13140800")
 @
 
-Remove negative values of gage height (n = \Sexpr{length(which(d < 0))}):
+\noindent Remove negative values of gage height (n = \Sexpr{length(which(d < 0))}):
 
 <<>>=
 d[d < 0] <- NA
 @
 
-Create a linear regression model between gage-height data recorded at the Hailey gage and Near Ketchum gage:
+\noindent Create a linear regression model between gage-height data recorded at the Hailey gage and Near Ketchum gage:
 
 <<>>=
 x <- d[["13139510"]]
@@ -605,7 +613,7 @@ y <- d[["13135500"]]
 LM <- lm(y ~ x)
 @
 
-A strong positive correlation (R-squared of \Sexpr{format(summary(LM)$r.squared, digits=3)})
+\noindent A strong positive correlation (R-squared of \Sexpr{format(summary(LM)$r.squared, digits=3)})
 indicates that the regression model may be used to estimate missing data at the Near Ketchum gage.
 
 <<>>=
@@ -613,7 +621,7 @@ is.na.13135500 <- is.na(y)
 d[["13135500"]][is.na.13135500] <- predict(LM, data.frame(x))[is.na.13135500]
 @
 
-Missing data at the Stanton Crossing near Bellevue gage are replaced with average gage-height values recorded at this gage.
+\noindent Missing data at the Stanton Crossing near Bellevue gage are replaced with average gage-height values recorded at this gage.
 Substantial seepage losses and surface-water diversions between the Hailey gage and Stanton Crossing near Bellevue gage make regression inappropriate.
 
 <<>>=
@@ -631,7 +639,7 @@ is.na.13140800 <- is.na(d[["13140800"]])
 d[["13140800"]][is.na.13140800] <- ave.heights[is.na.13140800]
 @
 
-Save the dataset to disk:
+\noindent Save the dataset to disk:
 
 <<>>=
 gage.height <- d
@@ -748,7 +756,7 @@ rownames(drybed) <- perennial.reaches
 drybed[perennial.reaches, ] <- TRUE
 @
 
-Stream reaches on the Big Wood River between Glendale and Wood River Ranch are episodically dry;
+\noindent Stream reaches on the Big Wood River between Glendale and Wood River Ranch are episodically dry;
 dry bed conditions are specified each year beginning in the first month when the entire flow of the Big Wood River is diverted into the Bypass Canal before
 the $16\textsuperscript{th}$ of the month and ending at the end of October.
 Between Wood River Ranch and Stanton Crossing, the Big Wood River gains water from springs and seeps,
@@ -780,7 +788,7 @@ episodic.reaches <- c("Big Wood, Glendale to Sluder",
 for (i in episodic.reaches) drybed[i, ] <- is.drybed
 @
 
-During the month of October the water district stops monitoring diversions and much of the water diverted into the Bypass Canal is returned to the Big Wood River at Wood River Ranch.
+\noindent During the month of October the water district stops monitoring diversions and much of the water diverted into the Bypass Canal is returned to the Big Wood River at Wood River Ranch.
 Therefore, flows in the Big Wood, Wood River Ranch to Stanton Crossing reach are accounted for in the model.
 
 <<>>=
@@ -788,7 +796,7 @@ drybed["Big Wood, Wood River Ranch to Stanton Crossing",
        substr(colnames(drybed), 5, 6) == "10"] <- FALSE
 @
 
-Save the dataset to disk:
+\noindent Save the dataset to disk:
 
 <<>>=
 drybed <- data.frame(Reach = rownames(drybed), drybed, check.names = FALSE,
@@ -962,6 +970,8 @@ save(misc.locations, file = file.path(dir.dat, "misc.locations.rda"), compress =
 CheckStatus("misc.locations")
 @
 
+\newpage
+
 % =========================================================================
 
 \subsubsection{Weather Stations (weather.stations)}
@@ -1003,7 +1013,7 @@ d[d$TopOpen1 == 0 | d$BotOpen1 == 0, c("TopOpen1", "BotOpen1")] <- NA
 d[d$TopOpen2 == 0 | d$BotOpen2 == 0, c("TopOpen2", "BotOpen2")] <- NA
 @
 
-A missing well completion is assumed identical to the completion of its nearest-neighbor well.
+\noindent A missing well completion is assumed identical to the completion of its nearest-neighbor well.
 
 <<results="hide">>=
 is.pred <- is.na(d$TopOpen1)
@@ -1017,7 +1027,7 @@ pod.wells@data <- d[, columns]
 save(pod.wells, file = file.path(dir.dat, "pod.wells.rda"), compress = "xz")
 @
 
-There are a total of \Sexpr{format(nrow(d), big.mark=",")} pumping wells;
+\noindent There are a total of \Sexpr{format(nrow(d), big.mark=",")} pumping wells;
 \Sexpr{format(sum(is.pred), big.mark=",")} of these wells (\Sexpr{as.integer((sum(is.pred) / nrow(d)) * 100)} percent)
 are missing well completions (\hyperref[fig:map_completions]{fig.~\ref{fig:map_completions}}) and are mostly located in the upper WRV.
 
@@ -1066,6 +1076,8 @@ save(streamgages, file = file.path(dir.dat, "streamgages.rda"), compress = "xz")
 CheckStatus("streamgages")
 @
 
+\newpage
+
 % =========================================================================
 
 \subsubsection{Observation wells (obs.wells)}
@@ -1090,7 +1102,7 @@ d$TopOpen2 <- NA
 d$BotOpen2 <- NA
 @
 
-A missing well completion is assumed identical to the completion of its nearest-neighbor well.
+\noindent A missing well completion is assumed identical to the completion of its nearest-neighbor well.
 
 <<>>=
 is.pred <- is.na(d$TopOpen1)
@@ -1140,6 +1152,8 @@ save(seepage.study, file = file.path(dir.dat, "seepage.study.rda"), compress = "
 <<echo=FALSE>>=
 CheckStatus("seepage.study")
 @
+
+\newpage
 
 % =========================================================================
 
@@ -1226,6 +1240,8 @@ save(river.reaches, file = file.path(dir.dat, "river.reaches.rda"), compress = "
 <<echo=FALSE>>=
 CheckStatus("river.reaches")
 @
+
+\newpage
 
 % =========================================================================
 
@@ -1401,6 +1417,8 @@ save(drains, file = file.path(dir.dat, "drains.rda"), compress = "xz")
 CheckStatus("drains")
 @
 
+\newpage
+
 % =========================================================================
 
 \subsubsection{Tributary basin underflow (tributaries)}
@@ -1415,7 +1433,7 @@ p <- spTransform(p, crs)
 p@data$Description <- NULL
 @
 
-For each tributary canyon, the mean rate of tributary basin underflow is first estimated using a \href{http://en.wikipedia.org/wiki/Darcy_law}{Darcian} analysis.
+\noindent For each tributary canyon, the mean rate of tributary basin underflow is first estimated using a \href{http://en.wikipedia.org/wiki/Darcy_law}{Darcian} analysis.
 The lower-half of an ellipse is used to describe the geometry of the saturated cross-sectional area.
 
 <<>>=
@@ -1428,7 +1446,7 @@ d$SatArea <- (pi * d$TribWidth * d$BdrkDepth) / 4  # area of lower-half of ellip
 d$DarcyFlow <- d$K * d$SatArea * d$LandGrad
 @
 
-A drainage basin area for a tributary canyon is defined as the area of land where groundwater from rain or melting snow converges at the boundary.
+\noindent A drainage basin area for a tributary canyon is defined as the area of land where groundwater from rain or melting snow converges at the boundary.
 Smaller basins were identified by plotting basin areas for each tributary canyon on a logarithmic scale (appendix E, fig. E3).
 A natural break was found at about 26 square-kilometers (10 square-miles) and tributary basins less than this break were designated as ``small'',
 and all others were designated as ``big''.
@@ -1441,7 +1459,7 @@ is.small <- d$BasinArea < natural.basin.area.break
 d$BasinAreaType <- as.factor(c("big", "small")[is.small + 1L])
 @
 
-Multiplying a basin's average rate of precipitation by its drainage area gives a secondary estimate of the mean volumetric flow rate at the boundary.
+\noindent Multiplying a basin's average rate of precipitation by its drainage area gives a secondary estimate of the mean volumetric flow rate at the boundary.
 
 <<>>=
 d$PrecipRate <- d$PrecipRate_in.per.yr * in.per.y.to.m.per.d
@@ -1449,20 +1467,20 @@ d$PrecipRate_in.per.yr <- NULL
 d$PrecipFlow <- d$BasinArea * d$PrecipRate
 @
 
-The ratio of Darcy to precipitation volumetric flow rate estimates is then calculated.
+\noindent The ratio of Darcy to precipitation volumetric flow rate estimates is then calculated.
 
 <<>>=
 d$FlowRatio <- d$DarcyFlow / d$PrecipFlow
 @
 
-Finally, the mean volumetric flow rate of a small tributary canyon is calculated by multiplying its precipitation flow rate estimate by the average flow rate ratio for the larger tributary canyons.
+\noindent Finally, the mean volumetric flow rate of a small tributary canyon is calculated by multiplying its precipitation flow rate estimate by the average flow rate ratio for the larger tributary canyons.
 
 <<>>=
 d$Flow <- d$DarcyFlow
 d$Flow[is.small] <- d$PrecipFlow[is.small] * mean(d$FlowRatio[!is.small])
 @
 
-Save the dataset to disk:
+\noindent Save the dataset to disk:
 
 <<>>=
 p@data <- dplyr::left_join(p@data, d, by = "Name")
@@ -1473,6 +1491,8 @@ save(tributaries, file = file.path(dir.dat, "tributaries.rda"), compress = "xz")
 <<echo=FALSE>>=
 CheckStatus("tributaries")
 @
+
+\newpage
 
 % =========================================================================
 
@@ -1641,6 +1661,8 @@ save(wetlands, file = file.path(dir.dat, "wetlands.rda"), compress = "xz")
 CheckStatus("wetlands")
 @
 
+\newpage
+
 % =========================================================================
 
 \subsubsection{Bellevue WWTP ponds (bellevue.wwtp.ponds)}
@@ -1729,6 +1751,8 @@ save(alluvium.thickness, file = file.path(dir.dat, "alluvium.thickness.rda"),
 CheckStatus("alluvium.thickness")
 @
 
+\newpage
+
 % =========================================================================
 
 \subsubsection{Topography of land surface (land.surface)}
@@ -1750,7 +1774,7 @@ save(land.surface, file = file.path(dir.dat, "land.surface.rda"), compress = "xz
 CheckStatus("land.surface")
 @
 
-Hillshading based on the slope and aspect of land-surface elevations.
+\noindent Hillshading based on the slope and aspect of land-surface elevations.
 
 <<eval=TRUE>>=
 ext <- extent(spatial.grid)
@@ -1791,7 +1815,7 @@ et.raw <- lapply(seq_along(urls), FUN)
 names(et.raw) <- as.character(yr.mo)
 @
 
-Project the raster data into the model grid, and place an upper and lower limit on evapotranspiration that is 3 standard deviations from the mean value.
+\noindent Project the raster data into the model grid, and place an upper and lower limit on evapotranspiration that is 3 standard deviations from the mean value.
 
 <<>>=
 is.missing <- is.na(alluvium.thickness)
@@ -1845,7 +1869,7 @@ irr.by.entity <- p
 rm(list=c("irr.lands", "wetlands", "public.parcels"))
 @
 
-Irrigation entities are subdivided by water source; that is, ``surface-water only'', ``groundwater only'', or ``mixed source''.
+\noindent Irrigation entities are subdivided by water source; that is, ``surface-water only'', ``groundwater only'', or ``mixed source''.
 Aggregate irrigation entities by water source and calculate their area.
 
 <<>>=
@@ -1859,7 +1883,9 @@ FUN <- function(i) {
 area.by.entity <- lapply(irr.by.entity, FUN)
 @
 
-Calculate the volumetric components of evapotranspiration, precipitation, and crop irrigation requirement for each irrigation entity and water source.
+\newpage
+
+\noindent Calculate the volumetric components of evapotranspiration, precipitation, and crop irrigation requirement for each irrigation entity and water source.
 
 <<>>=
 FUN <- function(i) {
@@ -1922,6 +1948,8 @@ save(r.canals, file = file.path(dir.dat, "r.canals.rda"), compress = "xz")
 <<echo=FALSE>>=
 CheckStatus("r.canals")
 @
+
+\newpage
 
 % =========================================================================
 

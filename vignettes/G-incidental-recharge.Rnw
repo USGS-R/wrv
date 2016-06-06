@@ -64,6 +64,8 @@ credit <- paste("Base derived from U.S. Geological Survey National Elevation Dat
 
 \tableofcontents
 
+\newpage
+
 \renewcommand*\listfigurename{Figures}
 \listoffigures
 
@@ -71,6 +73,8 @@ credit <- paste("Base derived from U.S. Geological Survey National Elevation Dat
 \listoftables
 
 \clearpage
+
+\RaggedRight
 
 % =========================================================================
 
@@ -601,6 +605,8 @@ box(lwd=0.5)
 invisible(dev.off())
 @
 
+\newpage
+
 The WRV is subdivided into 88 irrigation entities (\hyperref[table_irr_entities]{table~\ref{table_irr_entities}}, \hyperref[fig:map_entities]{fig.~\ref{fig:map_entities}}),
 the resolution of these irrigation entities in terms of source water is consistent with available diversion and return flow data.
 For example, various diverters drawing from the same surface-water source could be grouped into a single irrigation entity.
@@ -614,10 +620,7 @@ The basis for using irrigation entities is as follows:
   \item Some areas are irrigated by diversions from domestic wells without recorded water rights.
 \end{itemize}
 
-\newpage
-
-Irrigation entities (\hyperref[fig:map_entities]{fig.~\ref{fig:map_entities}}) are used in the calculation of monthly water supply, crop irrigation requirement, and incidental recharge.
-
+\noindent Irrigation entities (\hyperref[fig:map_entities]{fig.~\ref{fig:map_entities}}) are used in the calculation of monthly water supply, crop irrigation requirement, and incidental recharge.
 The properties of an irrigation entity are only applicable over areas designated as `irrigated' or `semi-irrigated' (\hyperref[fig:map_land_use]{fig.~\ref{fig:map_land_use}}).
 For example, the irrigation entities mapped to irrigated lands in the southern part of the model grid during the 2008 growing season (April--October)
 are shown in \hyperref[fig:map_entities_2008]{figure~\ref{fig:map_entities_2008}}.
@@ -835,7 +838,7 @@ where
 \item[\mathit{eff}] is the irrigation efficiency, a dimensionless quantity.
 \end{description}
 
-Groundwater diversions are the sum of measured and estimated pumping records for the irrigation entity, and expressed as:
+\noindent Groundwater diversions are the sum of measured and estimated pumping records for the irrigation entity, and expressed as:
 
 \begin{equation} \label{eq:div_gw}
 \mathit{Div}_{gw} = \mathit{Div}_{gw, obs} + \mathit{Div}_{gw, est}
@@ -846,7 +849,7 @@ where
 \item[\mathit{Div}_{gw, est}] is the estimated groundwater diversions, in cubic meters per month.
 \end{description}
 
-The CIR is defined as the sum of the CIR values for each water source in an irrigation entity (\hyperref[fig:map_sources]{fig.~\ref{fig:map_sources}}):
+\noindent The CIR is defined as the sum of the CIR values for each water source in an irrigation entity (\hyperref[fig:map_sources]{fig.~\ref{fig:map_sources}}):
 
 \begin{equation} \label{eq:cir}
 \mathit{CIR} = \mathit{CIR}_{gw} + \mathit{CIR}_{sw} + \mathit{CIR}_{mix}

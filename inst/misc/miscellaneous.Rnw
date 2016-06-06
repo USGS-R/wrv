@@ -76,6 +76,8 @@ credit <- paste("Base derived from U.S. Geological Survey National Elevation Dat
 
 \clearpage
 
+\RaggedRight
+
 % =========================================================================
 
 \section{Introduction}
