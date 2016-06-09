@@ -534,7 +534,7 @@ att <- c("Number of rows", "Number of columns", "Number of layers",
          "Easting coordinate of model origin, in meters",
          "Northing coordinate of model origin, in meters")
 val <- c(nrow(rs.model), ncol(rs.model), 3, nactive,
-         res(rs.model), xmin(rs.model), ymin(rs.model))
+         res(rs.model), xmin(rs.model), ymax(rs.model))
 d <- as.data.frame(list(att, val))
 columns <- c("Attribute", "Value")
 colnames(d) <- sprintf("\\textbf{\\shortstack{%s}}", columns)
@@ -2899,13 +2899,21 @@ setwd(wd)
 # write model domain shapefile
 path <- file.path(getwd(), "georef")
 dir.create(path, showWarnings=FALSE, recursive=TRUE)
-r <- raster(rs.model)
-p <- as(extent(r), "SpatialPolygons")
-proj4string(p) <- crs(r)
-ids <- sapply(slot(p, "polygons"), function(x) slot(x, "ID"))
-d <- data.frame(value=rep(0, length(ids)), row.names=ids)
+p1 <- as(extent(rs.model), "SpatialPolygons")
+r <- is.na(rs.model[["lay1.bot"]])
+r[r == 1] <- NA
+p2 <- as(rasterToPolygons(r, dissolve=TRUE), "SpatialPolygons")
+slot(p2@polygons[[1]], "ID") <- "2"
+r <- is.na(rs.model[["lay1.bot"]])
+r[r == 0] <- NA
+p3 <- as(rasterToPolygons(!r, dissolve=TRUE), "SpatialPolygons")
+slot(p3@polygons[[1]], "ID") <- "3"
+p <- SpatialPolygons(list(p1=p1@polygons[[1]], p2=p2@polygons[[1]], p3=p3@polygons[[1]]),
+                     proj4string=crs(r))
+d <- data.frame(Area=c("maximum model extent", "active model domain", "inactive model domain"),
+                row.names=sapply(slot(p, "polygons"), function(x) slot(x, "ID")))
 p <- SpatialPolygonsDataFrame(p, d)
-writeOGR(p, dsn=path, layer="domain", driver="ESRI Shapefile",
+writeOGR(p, dsn=path, layer="sir2016_5080", driver="ESRI Shapefile",
          overwrite_layer=TRUE, encoding="UTF-8")
 
 # write model grid shapefile
@@ -3004,7 +3012,7 @@ dir.create(path, showWarnings=FALSE, recursive=TRUE)
 file <- system.file("misc", "usgsdatarelease.xml", package="wrv")
 invisible(file.copy(file, path))
 
-file <- file.path(path, "Thumbnail.png")
+file <- file.path(path, "sir2016-5080Thumbnail.png")
 png(file, width=fin.map.0[1], height=fin.map.0[2], units="in", res=100)
 r <- !is.na(rs.model[["lay1.bot"]])
 PlotMap(crs(r), xlim=usr.map[1:2], ylim=usr.map[3:4],
@@ -3017,7 +3025,7 @@ loc <- extent(raster(extend(r, buff <- 6L)))
 rect(loc[1], loc[3], loc[2], loc[4], col=NA, border="black", lwd=0.5)
 raster::image(r, maxpixels=length(r), useRaster=FALSE, col=c(NA, "#7FAF1B"), add=TRUE)
 legend("topleft",
-       c("Model extent", "Inactive model domain", "Active model domain"), pch=c(22, 22, 22),
+       c("Maximum model extent", "Inactive model domain", "Active model domain"), pch=c(22, 22, 22),
        col=c("#F02311", "#F0D878", "#7FAF1B"), pt.bg=c(NA, "#F0D878", "#7FAF1B"),
        pt.lwd=1, pt.cex=1, inset=0.02, cex=0.7, box.lty=1, box.lwd=0.5,
        bg="#FFFFFFE7", title=expression(bold("EXPLANATION")))
