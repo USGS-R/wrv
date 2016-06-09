@@ -10,8 +10,8 @@
 				<origin>Jennifer Sukow</origin>
 				<origin>Michael McVay</origin>
 				<pubdate>2016</pubdate>
-				<title>MODFLOW-USG model of groundwater flow in the Wood River Valley aquifer system in Blaine County, Idaho: U.S. Geological Survey Data Release</title>
-				<edition>Version 1.0 - The structure of the archive and associated download files were modified to exactly match the proposed U.S. Geological Survey Office of Groundwater groundwater model archive structure 05/23/2016</edition>
+				<title>MODFLOW-USG model of groundwater flow in the Wood River Valley aquifer system in Blaine County, Idaho</title>
+				<edition>Version 1.0 - original release 05/23/2016</edition>
 				<geoform>groundwater model</geoform>
 				<pubinfo>
 					<pubplace>Reston, VA, USA</pubplace>
@@ -30,7 +30,7 @@
 						<geoform>Publication</geoform>
 						<serinfo>
 							<sername>Scientific Investigations Report</sername>
-							<issue>2016-XXXX</issue>
+							<issue>2016-5080</issue>
 						</serinfo>
 						<pubinfo>
 							<pubplace>Reston, VA, USA</pubplace>
@@ -99,10 +99,10 @@
 				</cntperp>
 				<cntaddr>
 					<addrtype>mailing and physical</addrtype>
-					<address>6566 Cottonwood Cir Apt C</address>
-					<city>Dublin</city>
-					<state>CA</state>
-					<postal>94568</postal>
+					<address>230 Collins Road</address>
+					<city>Boise</city>
+					<state>ID</state>
+					<postal>83702</postal>
 					<country>USA</country>
 				</cntaddr>
 				<cntvoice>209-261-2905</cntvoice>
@@ -178,7 +178,7 @@
 	<eainfo>
 	<detailed>
 		<enttyp>
-			<enttypl>domain.shp</enttypl>
+			<enttypl>sir2016_5080.shp</enttypl>
 			<enttypd>ESRI Polygon shapefile</enttypd>
 			<enttypds>U.S. Geological Survey</enttypds>
 		</enttyp>
@@ -196,7 +196,7 @@
 </attr>
 	</detailed>
 		<overview>
-			<eaover>Fisher, J.C. and Bartolino, J.R. and Wylie, A.H. and Sukow, Jennifer and McVay, Michael, 2016, MODFLOW-USG model of groundwater flow in the Wood River Valley aquifer system in Blaine County, Idaho: U.S. Geological Survey Data Release: U.S. Geological Survey, Reston, VA, USA.</eaover>
+			<eaover>Fisher, J.C., Bartolino, J.R., Wylie, A.H., Sukow, Jennifer, and McVay, Michael, 2016, MODFLOW-USG model of groundwater flow in the Wood River Valley aquifer system in Blaine County, Idaho: U.S. Geological Survey Data Release.</eaover>
 			<eadetcit>http://dx.doi.org/10.5066/F7C827DT</eadetcit>
 		</overview>
 	</eainfo>
@@ -226,8 +226,8 @@
 					<formname>readme.txt</formname>
 					<formvern>1.0</formvern>
 					<formspec>ASCII</formspec>
-					<formcont>This text file contains a description of the archive folder structure and the files contained in each subfolder.</formcont>
-					<transize>XXXXXXXXXXXXXXXXXX</transize>
+					<formcont>The readme text file describes the model data release including model execution instructions, description of the archive folder structure, and files contained in each subfolder.</formcont>
+					<transize>0.012</transize>
 				</digtinfo>
 				<digtopt>
 					<onlinopt>
@@ -244,8 +244,8 @@
 					<formname>modelgeoref.txt</formname>
 					<formvern>1.0</formvern>
 					<formspec>ASCII</formspec>
-					<formcont>This text file contains geo-reference information, including latitude and longitude of the corners of a rectangle outlining the model study area and projection.</formcont>
-					<transize>XXXXXXXXXXXXXXXXXX</transize>
+					<formcont>This text file contains geo-reference information, including latitude and longitude in decmial degrees for the the four corners of the rectangle representing the maximum extent in the model.</formcont>
+					<transize>0.002</transize>
 				</digtinfo>
 				<digtopt>
 					<onlinopt>
@@ -263,7 +263,7 @@
 					<formvern>1.0</formvern>
 					<formspec>ZIP</formspec>
 					<formcont>This compressed folder contains ancillary data, including data exported during the model building process, a model-grid shapefile, and a PEST control file.</formcont>
-					<transize>XXXXXXXXXXXXXXXXXX</transize>
+					<transize>211.024</transize>
 				</digtinfo>
 				<digtopt>
 					<onlinopt>
@@ -280,8 +280,8 @@
 					<formname>bin.zip</formname>
 					<formvern>1.0</formvern>
 					<formspec>ZIP</formspec>
-					<formcont>This compressed folder contains the compiled code that was used in the study.</formcont>
-					<transize>XXXXXXXXXXXXXXXXXX</transize>
+					<formcont>This compressed folder contains the 64-bit executable that was used to run the simulation in the study. It also contains the Windows R-package installer that was used to construct the model in the study.</formcont>
+					<transize>101.645</transize>
 				</digtinfo>
 				<digtopt>
 					<onlinopt>
@@ -298,8 +298,8 @@
 					<formname>georef.zip</formname>
 					<formvern>1.0</formvern>
 					<formspec>ZIP</formspec>
-					<formcont>This compressed folder contains a polygon shapefile showing the maximum extent of the study area.</formcont>
-					<transize>XXXXXXXXXXXXXXXXXX</transize>
+					<formcont>This compressed folder contains a polygon shapefile showing the maximum extent and active and inactive areas in the model.</formcont>
+					<transize>0.002</transize>
 				</digtinfo>
 				<digtopt>
 					<onlinopt>
@@ -317,7 +317,7 @@
 					<formvern>1.0</formvern>
 					<formspec>ZIP</formspec>
 					<formcont>This compressed folder contains model input files.</formcont>
-					<transize>XXXXXXXXXXXXXXXXXX</transize>
+					<transize>22.588</transize>
 				</digtinfo>
 				<digtopt>
 					<onlinopt>
@@ -335,7 +335,7 @@
 					<formvern>1.0</formvern>
 					<formspec>ZIP</formspec>
 					<formcont>This compressed folder contains model output files for the model files included in the compressed model folder.</formcont>
-					<transize>XXXXXXXXXXXXXXXXXX</transize>
+					<transize>208.275</transize>
 				</digtinfo>
 				<digtopt>
 					<onlinopt>
@@ -352,8 +352,8 @@
 					<formname>source.zip</formname>
 					<formvern>1.0</formvern>
 					<formspec>ZIP</formspec>
-					<formcont>This compressed folder contains source code that was used in this study.</formcont>
-					<transize>XXXXXXXXXXXXXXXXXX</transize>
+					<formcont>This compressed folder contains source code that was used to construct the model and run the simulation in the study.</formcont>
+					<transize>103.383</transize>
 				</digtinfo>
 				<digtopt>
 					<onlinopt>
@@ -384,7 +384,7 @@
 					<postal>20192</postal>
 				</cntaddr>
 				<cntvoice>1-888-275-8747 (1-888-ASK-USGS)</cntvoice>
-				<cntemail>http://answers.usgs.gov/cgi-bin/gsanswers?pemail=h2oteam&amp;subject=GIS+Dataset+sir2016_5022_usgsdatarelease</cntemail>
+				<cntemail>http://answers.usgs.gov/cgi-bin/gsanswers?pemail=h2oteam&amp;subject=GIS+Dataset+sir2016_5080_usgsdatarelease</cntemail>
 			</cntinfo>
 		</metc>
 		<metstdn>FGDC Content Standards for Digital Geospatial Metadata</metstdn>

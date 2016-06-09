@@ -75,11 +75,11 @@ The purpose of this model archive is to:
     +-- bin (compiled code used in study)
     |   +-- mfusg.exe (MODFLOW-USG 64-bit executable)
     |   +-- wrv_@{packageDescription('wrv', fields = 'Version')}.zip (Windows binary installer for the R-package **wrv**)
-    +-- georef (polygon shapefile showing the maxiumum extent of the study area)
-    |   +-- domain.dbf
-    |   +-- domain.prj
-    |   +-- domain.shp
-    |   +-- domain.shx
+    +-- georef (polygon shapefile showing the maxiumum extent of the study area and active model area)
+    |   +-- sir2016_5080.dbf
+    |   +-- sir2016_5080.prj
+    |   +-- sir2016_5080.shp
+    |   +-- sir2016_5080.shx
     +-- model (model input files)
     |   +-- model1
     |       +-- hk1.ref (hydraulic conductivity in model layer 1)
