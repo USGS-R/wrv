@@ -2935,22 +2935,18 @@ writeOGR(p, dsn=path, layer="grid", driver="ESRI Shapefile",
 path <- getwd()
 r <- raster(rs.model)
 e <- rs.model@extent
-pts <- rbind(sw=c(e@xmin, e@ymin), se=c(e@xmax, e@ymin),
-             ne=c(e@xmax, e@ymax), nw=c(e@xmin, e@ymax))
-corners <- c("south-west", "south-east", "north-east", "north-west")
-crs.xy <- crs(r)
-pts.xy <- SpatialPoints(pts, proj4string=crs.xy)
-x <- coordinates(pts)[, 1]
-y <- coordinates(pts)[, 2]
-xy <- data.frame(Location=corners, Easting=x, Northing=y, row.names=NULL)
-xy <-  paste(knitr::kable(xy, "markdown"), collapse="\n")
+pts <- rbind(nw=c(e@xmin, e@ymax), ne=c(e@xmax, e@ymax),
+             se=c(e@xmax, e@ymin), sw=c(e@xmin, e@ymin))
+corners <- c("upper_left", "upper_right", "lower_right", "lower_left")
+pts.xy <- SpatialPoints(pts, proj4string=crs(r))
 crs.ll <- CRS("+proj=longlat +datum=WGS84")
 pts.ll <- spTransform(pts.xy, crs.ll)
 lng <- coordinates(pts.ll)[, 1]
 lat <- coordinates(pts.ll)[, 2]
 ll <- data.frame(Location=corners, Longitude=lng, Latitdue=lat, row.names=NULL)
-ll <- paste(knitr::kable(ll, "markdown", digits=6, format.args=list(nsmall=6)), collapse="\n")
-replacement <- list(xy=xy, crs.xy=crs.xy@projargs, ll=ll, crs.ll=crs.ll@projargs)
+ll <- capture.output(write.table(format(ll, nsmall=6), row.names=FALSE, col.names=FALSE, quote=FALSE))
+ll <- paste(ll, collapse="\n")
+replacement <- list(ll=ll, crs.ll=crs.ll@projargs)
 file <- system.file("misc", "modelgeoref-template.txt", package="wrv")
 text <- readLines(file, warn=FALSE)
 file <- file.path(path, "modelgeoref.txt")
