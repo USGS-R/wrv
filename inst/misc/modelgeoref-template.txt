@@ -4,7 +4,7 @@
 #   Valley aquifer system in Blaine County, Idaho: U.S. Geological Survey Data
 #   Release, http://dx.doi.org/10.5066/F7C827DT.
 # Publication:
-#   @{paste(strwrap(format(citation("wrv"), style="textVersion")), collapse="\n#   ")}
+#   @{paste(strwrap(format(citation("wrv"), style="textVersion"), width=76), collapse="\n#   ")}
 
 # Coordinate Reference System (CRS) described using PROJ.4 parameters:
 #   "$(crs.ll)"
