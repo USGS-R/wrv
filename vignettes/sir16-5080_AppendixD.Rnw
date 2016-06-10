@@ -2964,7 +2964,9 @@ replacement <- list(pkgs=pkgs, id=id)
 file <- system.file("misc", "readme-template.txt", package="wrv")
 text <- readLines(file, warn=FALSE)
 file <- file.path(path, "readme.txt")
+options(width=70)
 cat(ReplaceInTemplate(text, replacement), file=file, sep="\n")
+options(width=80)
 
 # write usgs.model.reference file
 path <- file.path(getwd(), "model/model1")
