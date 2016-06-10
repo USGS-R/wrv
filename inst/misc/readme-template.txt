@@ -185,7 +185,8 @@
         -------------------
         MODFLOW-USG 1.2.00 (2014-03-21)
         PEST 13.0 (2013-05-01)
-        @{paste(paste0("        ", capture.output(sessionInfo())), collapse = "\n")}
+
+        @{paste(capture.output(sessionInfo()), collapse="\n        ")}
 
         Running the model:
         ------------------
