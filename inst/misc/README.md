@@ -6,15 +6,15 @@ Files accessed during vignette and model-archive construction.
 
 ```
 .
-+-- Rd2.tex (something)
 +-- miscellaneous.Rnw (part of the analysis for main body of report)
-+-- modelgeoref-template.txt (template for modelgeoref file in the model-archive Contents folder)
-+-- preamble.tex (preamble for '.Rnw' files)
++-- modelgeoref-template.txt (template for modelgeoref.txt file in the model archive)
++-- preamble.tex (preamble of the LaTeX input files for package vignettes)
++-- Rd2.tex (documentation for package)
 +-- README.md
-+-- readme-template.txt (template for README file in the model-archive Contents folder)
++-- readme-template.txt (template for readme file in the model archive)
 +-- references.bib (database of all references)
++-- sir2016_5080_usgsdatarelease.xml (formal metadata for the model archive)
 +-- usgs.model.ref-template.txt (template for registering the model in space and time)
-+-- usgsdatarelease.xml (formal metadata for the model archive)
 ```
 
 ## File Formats
