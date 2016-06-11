@@ -189,7 +189,8 @@ The \textbf{wrv}-package datasets are created by running \R{} code in the append
 The resulting datasets from running this code are compared with existing package datasets and a warning given if differences are detected.
 These differences are likely the result of web-based data being out of synchronization with the archived datasets in this package.
 The following command runs the vignette's embedded \R{} code; however,
-it takes several hours to run, requires about 10 gigabytes of memory, and has no effect on subsequent processing steps; therefore, you may want to skip it.
+it requires an internet connection and about 10 gigabytes of memory, takes several hours to run, and has no effect on subsequent processing steps.
+Therefore, you may want to skip running these commands.
 
 <<eval=FALSE>>=
 vignette("sir16-5080_AppendixC")  # open appendix C
@@ -201,14 +202,13 @@ source(file, echo = TRUE)  # or open file in a text editor and copy/paste into R
 
 The uncalibrated model is constructed by running \R{} code in the appendix D vignette (\hyperref[fig:flowchart_model]{fig.~\ref{fig:flowchart_model}}).
 Output from this processing step is used as a template for a `new' model archive.
+An archive folder named `SIR2016-5080' is placed in the current working directory.
 
 <<eval=FALSE>>=
 vignette("sir16-5080_AppendixD")  # open appendix D
 file <- system.file("doc", "sir16-5080_AppendixD.R", package = "wrv")
 source(file, echo = TRUE)  # or open file in a text editor and copy/paste into R console
 @
-
-\noindent The archive folder named `SIR2016-5080' is located under the working directory.
 
 \begin{landscape}
 \begin{figure}
@@ -264,7 +264,7 @@ and output quality-assurance tables for the water-budget calculation:
 
 <<eval=FALSE>>=
 help("UpdateWaterBudget")  # open help documentation for function call
-UpdateWaterBudget(file.path(getwd(), "Model Run"), "wrv_mfusg", qa.tables = "english")
+UpdateWaterBudget(file.path(getwd(), "model/model1"), "wrv_mfusg", qa.tables = "english")
 @
 
 \begin{figure}
