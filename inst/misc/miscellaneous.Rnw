@@ -82,7 +82,7 @@ credit <- paste("Base derived from U.S. Geological Survey National Elevation Dat
 
 \section{Introduction}
 
-Set the path to the ``Model Run'' directory:
+Set the path to the calibrated model run directory:
 
 <<>>=
 path <- "C:/Users/jfisher/Desktop/Model Run"
