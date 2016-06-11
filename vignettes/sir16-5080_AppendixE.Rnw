@@ -128,7 +128,7 @@ One such technique is to apply a `seasonal-scaling index' to convert the long-te
 In this study, the seasonally adjusted tributary basin underflow is expressed as:
 
 \begin{equation} \label{eq:flux}
-Q_{\mathit{trib}, i} = \overline{Q}_{\mathit{trib}} \, \mathit{SI}_{i} \quad \text{if } i = 1, 2, \dots , 192
+Q_{\mathit{trib}, i} = \overline{Q}_{\mathit{trib}} \, \mathit{SI}_{i} \quad \text{for } i = 1, 2, \dots , 192
 \end{equation}
 where
 \begin{description}
