@@ -193,8 +193,8 @@ it requires an internet connection and about 10 gigabytes of memory, takes sever
 Therefore, you may want to skip running these commands.
 
 <<eval=FALSE>>=
-vignette("sir16-5080_AppendixC")  # open appendix C
-file <- system.file("doc", "sir16-5080_AppendixC.R", package = "wrv")
+vignette("sir20165080_AppendixC")  # open appendix C
+file <- system.file("doc", "sir20165080_AppendixC.R", package = "wrv")
 source(file, echo = TRUE)  # or open file in a text editor and copy/paste into R console
 @
 
@@ -205,8 +205,8 @@ Output from this processing step is used as a template for a `new' model archive
 An archive folder named `SIR2016-5080' is placed in the current working directory.
 
 <<eval=FALSE>>=
-vignette("sir16-5080_AppendixD")  # open appendix D
-file <- system.file("doc", "sir16-5080_AppendixD.R", package = "wrv")
+vignette("sir20165080_AppendixD")  # open appendix D
+file <- system.file("doc", "sir20165080_AppendixD.R", package = "wrv")
 source(file, echo = TRUE)  # or open file in a text editor and copy/paste into R console
 @
 
