@@ -2976,7 +2976,7 @@ replacement <- list(xul=coordinates(pts)["ne", 1], yul=coordinates(pts)["ne", 2]
                     proj4=proj4string(rs.model))
 file <- system.file("misc", "usgs.model.ref-template.txt", package="wrv")
 text <- readLines(file, warn=FALSE)
-file <- file.path(path, "usgs.model.reference.txt")
+file <- file.path(path, "usgs.model.reference")
 cat(ReplaceInTemplate(text, replacement), file=file, sep="\n")
 
 # remove temporary files
