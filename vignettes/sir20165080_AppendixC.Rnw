@@ -140,14 +140,14 @@ The length and time dimensions for datasets are in units of meters and days, res
 Conversion factors are listed with an explanation of how they are used:
 
 <<>>=
-in.to.m   <- 0.0254         # inches to meters
-ft.to.m   <- 0.3048         # feet to meters
-mm.to.m   <- 0.001          # millimeters to meters
-mi2.to.m2 <- 2589990        # square miles to square meters
-af.to.m3  <- 1233.48185532  # acre-feet to cubic meters
-in.per.y.to.m.per.d  <- 6.95429e-05  # inches per year to meters per day
-af.per.y.to.m3.per.d <- 3.377        # acre-feet per year to cubic meters per day
-cfs.to.m3.per.d      <- 2446.57555   # cubic feet per second to cubic meters per day
+in.to.m              <- 0.0254         # inches to meters
+ft.to.m              <- 0.3048         # feet to meters
+mm.to.m              <- 0.001          # millimeters to meters
+mi2.to.m2            <- 2589990        # square miles to square meters
+af.to.m3             <- 1233.48185532  # acre-feet to cubic meters
+in.per.y.to.m.per.d  <- 6.95429e-05    # inches per year to meters per day
+af.per.y.to.m3.per.d <- 3.377          # acre-feet per year to cubic meters per day
+cfs.to.m3.per.d      <- 2446.57555     # cubic feet per second to cubic meters per day
 @
 
 \newpage
