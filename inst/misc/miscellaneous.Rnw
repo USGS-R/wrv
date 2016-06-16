@@ -969,6 +969,8 @@ legend("topright", leg, lwd=1, col=cols, ncol=2,
 invisible(dev.off())
 @
 
+\clearpage
+
 % =========================================================================
 
 \section{Sensitivity Analysis}
