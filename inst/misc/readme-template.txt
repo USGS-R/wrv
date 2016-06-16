@@ -1,7 +1,7 @@
 @{paste(strwrap(format(citation("wrv"), style="textVersion"), width=79), collapse="\n ")}
 
    05/25/2016 Model archive created.
-   06/09/2016 Model archive update based on Watt, M.K. review of model archive.
+   06/16/2016 Model archive update based on Watt, M.K. review of model archive.
 
 --------------------------------------------------------------------------------
 
