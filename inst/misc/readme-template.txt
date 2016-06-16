@@ -117,8 +117,8 @@
         |       +-- ss1.ref (storage coefficient in model layer 1)
         |       +-- ss2.ref (storage coefficient in model layer 2)
         |       +-- ss3.ref (storage coefficient in model layer 3)
-        |       +-- usgs.model.reference.txt (data to register the model in
-        |                                     space and time)
+        |       +-- usgs.model.reference (data to register the model in
+        |                                 space and time)
         |       +-- $(id).ba6 (MODFLOW basic package)
         |       +-- $(id).dis (MODFLOW discretization data)
         |       +-- $(id).drn (MODFLOW drain package)
@@ -128,14 +128,14 @@
         |       +-- $(id).riv (MODFLOW river package)
         |       +-- $(id).sms (MODFLOW sparse-matrix solver package)
         |       +-- $(id).wel (MODFLOW well package)
-        +-- model (model output files)
+        +-- output (model output files)
         |   +-- output.model1
         |       +-- $(id).bud (MODFLOW budget data)
         |       +-- $(id).hds (MODFLOW hydraulic head data)
         |       +-- $(id).lst (MODFLOW run listing)
         +-- source (source code used in this study)
         |   +-- wrv_@{packageDescription('wrv', fields = 'Version')}.tar.gz (R-package wrv source code)
-        +-- modelgeoref.md (model geo-reference information)
+        +-- modelgeoref (model geo-reference information)
         +-- readme.txt
 
         File Formats
@@ -163,7 +163,6 @@
         |.kml      |text   |Keyhole Markup Language                    |
         |.lpf      |text   |MODFLOW                                    |
         |.lst      |text   |MODFLOW                                    |
-        |.md       |text   |Markdown                                   |
         |.nam      |text   |MODFLOW                                    |
         |.oc       |text   |MODFLOW                                    |
         |.png      |binary |Portable Network Graphics                  |
