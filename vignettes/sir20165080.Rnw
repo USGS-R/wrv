@@ -10,7 +10,7 @@
 
 \begin{document}
 
-\title{U.S. Geological Survey Scientific Investigations Report 2016-5080\vspace{2ex}}
+\title{U.S. Geological Survey \protect\\ Scientific Investigations Report 2016-5080\vspace{2ex}}
 \author{}
 \date{}
 \pretitle{\begin{flushleft}\LARGE\bfseries\sffamily}
@@ -19,8 +19,9 @@
 
 % =========================================================================
 
-\section{Vignette Placeholder}
+\section{File Placeholder}
 
-This document serves as a placeholder until package checks and compilation has been completed.
+This document serves as a placeholder until the Scientific Investigations Report 2016-5080 is made available on the
+U.S. Geological Survey Publications Warehouse at \url{http://dx.doi.org/10.3133/sir20165080}.
 
 \end{document}
