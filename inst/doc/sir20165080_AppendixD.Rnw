@@ -1,0 +1,3067 @@
+% \VignetteIndexEntry{Appendix D. Uncalibrated Groundwater-Flow Model}
+% \VignetteEngine{knitr::knitr}
+% \VignetteDepends{wrv}
+
+\documentclass[twoside]{article}
+
+\input{\Sexpr{shQuote(system.file("misc", "preamble.tex", package="wrv"))}}
+\addbibresource{\Sexpr{system.file("misc", "references.bib", package="wrv")}}
+
+\renewcommand{\thefigure}{D\arabic{figure}}
+\renewcommand{\thetable}{D\arabic{table}}
+\renewcommand{\thepage}{D\arabic{page}}
+
+\setcounter{page}{1}
+
+% =========================================================================
+
+\begin{document}
+
+<<setup, include=FALSE>>=
+t0 <- Sys.time()
+try(knitr::opts_chunk$set(tidy=FALSE, comment="#", fig.align="center"), silent=TRUE)
+grDevices::pdf.options(useDingbats=FALSE)
+options(preferRaster=TRUE, scipen=0, digits=2)
+loadNamespace("xtable")
+loadNamespace("sfsmisc")
+
+# Device dimension in inches (width, height)
+fin.graph         <- c(7.16, 7.16)
+fin.graph.short   <- c(7.16, 3.50)
+fig.graph.small   <- c(3.50, 3.50)
+fin.map           <- c(7.01, 9.32)
+fin.map.0         <- c(7.01, 8.65)
+fin.map.s         <- c(7.16, 5.31)
+fin.map.s.0       <- c(7.16, 4.64)
+fin.map.n         <- c(7.16, 7.00)
+fin.map.n.small   <- c(3.50, 3.83)
+fin.map.n.small.0 <- c(3.50, 3.16)
+fin.cs            <- c(7.16, 5.39)
+fin.cs.0          <- c(7.16, 4.73)
+
+# Extreme coordinates of plotting region (x1, x2, y1, y2)
+usr.map     <- c(2451504, 2497815, 1342484, 1402354)
+usr.map.s   <- c(2472304, 2497015, 1343284, 1358838)
+usr.map.n.1 <- c(2463000, 2475356, 1386500, 1398856)
+usr.map.n.2 <- c(2467500, 2479856, 1376500, 1388856)
+usr.map.n.3 <- c(2466696, 2479052, 1366501, 1378857)
+usr.map.n.4 <- c(2471500, 2483856, 1356482, 1368838)
+
+# Verticies of transect line from north-west to south-east (longitude, latitude)
+transect.coords <- rbind(c(-114.280851, 43.483026),
+                         c(-114.245614, 43.432551),
+                         c(-114.228996, 43.350930),
+                         c(-114.045926, 43.301372))
+
+# Unit conversions
+m.to.ft <- 3.280839895
+km.to.mi <- 0.62137119224
+m.to.yd <- 1.0936132983
+m2.to.km2 <- 1e-06
+m2.to.acre <- 0.00024710439202
+km2.to.acre <- 247.10439202
+m2.to.ft2 <- 10.763867316
+km2.to.mi2 <- 0.38610215855
+m3.to.af <- 0.00081070848625
+m3.to.ft3 <- 35.314666721
+m3.to.hm3 <- 1e-06
+m3.per.d.to.af.per.yr <- 0.296106669
+d.to.yr  <- 0.00273791
+cfs.to.m3.per.d <- 2446.57555
+
+# Map credit
+credit <- paste("Base derived from U.S. Geological Survey National Elevation Dataset 10-meter digital elevation model.",
+                "Idaho Transverse Mercator projection; North American Datum of 1983.", sep="\n")
+
+# Functions for formatting inline numbers
+FmtLength <- function(x, u=c("m", "ft"), conv=m.to.ft) {
+  FUN <- function(i) format(i, digits=2, nsmall=1L, big.mark=",")
+  if (length(x) == 1) {
+    s <- vapply(c(x[1], x[1] *  conv), FUN, "")
+    s <- sprintf("%s~%s (%s~%s)", s[1], u[1], s[2], u[2])
+  } else {
+    s <- vapply(c(x[1], x[2], x[1] *  conv, x[2] *  conv), FUN, "")
+    s <- sprintf("%s to %s~%s (%s to %s~%s)", s[1], s[2], u[1], s[3], s[4], u[2])
+  }
+  return(s)
+}
+FmtFlow <- function(x, u=c("m\\textsuperscript{3}/d", "acre-ft/yr"), conv=m3.per.d.to.af.per.yr) {
+  FUN <- function(i) ToScientific(i, 1)
+  if (length(x) == 1) {
+    s <- vapply(c(x[1], x[1] *  conv), FUN, "")
+    s <- sprintf("%s~%s (%s~%s)", s[1], u[1], s[2], u[2])
+  } else {
+    s <- vapply(c(x[1], x[2], x[1] *  conv, x[2] *  conv), FUN, "")
+    s <- sprintf("%s to %s~%s (%s to %s~%s)", s[1], s[2], u[1], s[3], s[4], u[2])
+  }
+  return(s)
+}
+@
+
+\title{Appendix D.\enspace Uncalibrated Groundwater-Flow Model for the Wood River Valley Aquifer System, South-Central Idaho\vspace{2ex}}
+\author{}
+\date{}
+\pretitle{\begin{flushleft}\LARGE\bfseries\sffamily}
+\posttitle{\end{flushleft}}
+\maketitle
+
+\tableofcontents
+
+\newpage
+
+\renewcommand*\listfigurename{Figures}
+\listoffigures
+
+\renewcommand*\listtablename{Tables}
+\listoftables
+
+\clearpage
+
+\RaggedRight
+
+% =========================================================================
+
+\section{Introduction}
+
+This document is a vignette in the \textbf{wrv} package that explains the steps taken to process the uncalibrated groundwater-flow model of the Wood River Valley (WRV) aquifer system, south-central Idaho.
+The vignette's `code chunks' comprise commands that are essential for processing the uncalibrated groundwater-flow model and describe approaches to model development and analysis decisions.
+It is assumed that the reader of this vignette is familiar with the \href{http://www.r-project.org/}{\R{}}-programming language and has read help pages for functions and datasets in the \textbf{wrv} package (appendix B).
+Flow in the WRV aquifer system is simulated using \href{http://water.usgs.gov/ogw/mfusg/}{MODFLOW-USG}, a numerical model that simulates three-dimensional, steady-state and transient groundwater flow using a control volume finite-difference formulation \citep{Panday2013}.
+
+% =========================================================================
+
+\section{R Environment}
+
+Load the \textbf{wrv} package in the current \R{} session:
+
+<<warning=FALSE, message=FALSE, results="hide">>=
+library("wrv")
+@
+
+\noindent The memory requirement for running \R{} code in this vignette is about 5 gigabytes.
+All output from this vignette is placed in the current `working directory'.
+The following command will print the path to the current working directory:
+
+<<results="hide">>=
+getwd()
+@
+
+% =========================================================================
+
+\section{Hydrogeologic Framework}
+
+The WRV aquifer system is composed of
+(1) a single unconfined aquifer that underlies the entire valley,
+(2) an underlying confined aquifer that is present only in the southern part of the valley, and
+(3) a confining unit separating the two aquifers \citep[p.~3]{Bartolino2012}.
+The land-surface topography and spatial extent of the aquifer system (study area) are shown in \hyperref[fig:map_alluvium_thickness]{figure~\ref{fig:map_alluvium_thickness}}.
+The aquifer system primarily consists of Quaternary deposits that can be divided into three hydrogeologic units:
+(1) a coarse-grained sand and gravel unit (alluvium unit),
+(2) a fine-grained silt and clay unit (clay unit), and
+(3) a basalt unit \citep[p.~3]{Bartolino2012}.
+
+% =========================================================================
+
+\section{Space-Time Model Grid}
+
+% =========================================================================
+
+\subsection{Model Grid Conceptualization}
+
+The creation of the model grid is the first step in developing the groundwater-flow model, because all model inputs including hydraulic properties and boundary conditions are assigned to the model cells.
+The three-dimensional model grid is rectilinear (square cells) horizontally, vertically discretized in layers of different thickness, and from the east-west and north-south axes.
+The decision to use a structured grid, rather than exploit the unstructured grid capabilities of MODFLOW-USG,
+was based on a desire to avoid the added complexities of designing processing algorithms for an unstructured grid.
+A preliminary sensitivity analysis to changes in grid resolution indicated that a 100 m (330 feet [ft]) resolution provides
+the optimal tradeoff between the inherent spatial variability of the measured data and adequate continuous grid converge in the narrow and steep tributary canyons of the WRV.
+
+A solid-boundary representation of the land surface and an estimated thickness for the Quaternary sediments (\hyperref[fig:map_alluvium_thickness]{fig.~\ref{fig:map_alluvium_thickness}})
+as defined by \citet[fig. 7]{Bartolino2012}, are used to generate the basic structure of the model grid.
+
+<<>>=
+rs.data <- stack(land.surface, alluvium.thickness)  # stack raster layers
+@
+
+<<include=FALSE>>=
+v <- "Extent and thickness of Quaternary sediments in the Wood River Valley aquifer system, south-central Idaho."
+v <- c(paste("Map showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(v)))), v)
+@
+
+<<map_alluvium_thickness, echo=FALSE, fig.width=fin.map[1], fig.height=fin.map[2], fig.scap=sprintf("{%s}", v[1]), fig.cap=sprintf("{%s}", v[2])>>=
+r <- rs.data[["alluvium.thickness"]]
+Pal <- colorRampPalette(c("#F02311", "#FFFFEA", "#107FC9"))
+PlotMap(r, breaks=pretty(range(r[], na.rm=TRUE), n=12), xlim=usr.map[1:2], ylim=usr.map[3:4],
+        bg.image=hill.shading, bg.image.alpha=0.6, dms.tick=TRUE,
+        pal=Pal, explanation="Thickness of the Quaternary sediments measured as depth below land surface, in meters.",
+        rivers=list(x=streams.rivers), lakes=list(x=lakes), credit=credit)
+plot(cities, pch=15, cex=0.8, col="#333333", add=TRUE)
+text(cities, labels=cities@data$FEATURE_NA, col="#333333", cex=0.5, pos=1, offset=0.4)
+AddInsetMap(idaho, width=1, main.label=list("IDAHO", adj=c(-0.4, -4.9)),
+            sub.label=list("Map area", adj=c(0.5, 2.5)), loc="topright")
+invisible(dev.off())
+@
+
+\noindent The elevation of the pre-Quaternary bedrock surface and top of Quaternary basalt is calculated by subtracting the thickness of the Quaternary sediments from land-surface elevations.
+
+<<>>=
+r <- rs.data[["land.surface"]] - rs.data[["alluvium.thickness"]]
+rs.data[["alluvium.bottom"]] <- r
+@
+
+\newpage
+
+\noindent The estimated areal extent of the basalt unit in the WRV aquifer system, as defined by \citet[plate~1]{Bartolino2012},
+is shown in \hyperref[fig:map_basalt_extent]{figure~\ref{fig:map_basalt_extent}}.
+
+<<>>=
+r <- raster(rs.data)
+r[rasterize(basalt.extent, r, getCover = TRUE) > 0] <- 1L
+r <- ratify(r)  # add raster attribute table
+levels(r) <- cbind(levels(r)[[1]], att = "basalt")
+rs.data[["basalt.extent"]] <- r
+@
+
+<<include=FALSE>>=
+v <- "Extent of basalt unit in the Wood River Valley aquifer system, south-central Idaho."
+v <- c(paste("Map showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(v)))), v)
+@
+
+<<map_basalt_extent, echo=FALSE, fig.width=fin.map.s.0[1], fig.height=fin.map.s.0[2], fig.scap=sprintf("{%s}", v[1]), fig.cap=sprintf("{%s}", v[2])>>=
+col <- "#BEAED4"
+PlotMap(r, xlim=usr.map.s[1:2], ylim=usr.map.s[3:4], bg.image=hill.shading, bg.image.alpha=0.6,
+        dms.tick=TRUE, col=col, roads=list(x=major.roads), rivers=list(x=streams.rivers),
+        lakes=list(x=lakes), draw.key=FALSE, credit=credit)
+plot(alluvium.extent, border="#FFFFFF7F", add=TRUE)
+plot(cities, pch=15, cex=0.8, col="#333333", add=TRUE)
+text(cities, labels=cities@data$FEATURE_NA, col="#333333", cex=0.5, pos=1, offset=0.3)
+lab <- cbind(map.labels@coords, map.labels@data)
+for (i in seq_len(nrow(lab))) {
+  text(lab$x[i], lab$y[i], labels=lab$label[i], cex=lab$cex[i], col=lab$col[i],
+       font=lab$font[i], srt=lab$srt[i])
+}
+plot(bypass.canal, col="#3399CC", lwd=0.5, add=TRUE)
+text(getSpatialLinesMidPoints(rgeos::gLineMerge(bypass.canal)), labels="Bypass Canal",
+     cex=0.5, col="#3399CC", font=3, srt=80, pos=4)
+plot(bellevue.wwtp.ponds, col="#CCFFFF", border="#3399CC", lwd=0.5, add=TRUE)
+text(suppressWarnings(getSpatialPolygonsLabelPoints(bellevue.wwtp.ponds)),
+     labels="Bellevue WWTP Ponds", cex=0.5, col="#3399CC", font=3, pos=2)
+plot(misc.locations, pch=21, cex=0.6, col="#333333", add=TRUE)
+text(misc.locations, labels=misc.locations@data$label, pos=c(3, 2, 2),
+     cex=0.5, offset=0.3)
+legend("topright", "Basalt unit", fill=col, border=NA, inset=c(0.02, 0.55),
+       cex=0.7, box.lty=1, box.lwd=0.5, xpd=NA, bg="#FFFFFFCD")
+AddInsetMap(alluvium.extent, width=1, main.label=list("AQUIFER", adj=c(0, -9)),
+            sub.label=list("Map area", adj=c(1.9, 0.5)), loc="topright")
+invisible(dev.off())
+@
+
+Basalt underlies the Quaternary sediments; however, very little data are available to describe the unit thickness of basalt.
+The few wells that penetrate the basalt unit are located at the Hayspur Fish Hatchery (\hyperref[fig:map_basalt_extent]{fig.~\ref{fig:map_basalt_extent}})
+and describe consistent unit thicknesses among wells of about 15 m (49 ft) for alluvium and 37 m (121 ft) for basalt.
+Summing these unit thicknesses gives the estimated depth, measured as the distance below land surface, to the bottom of the basalt unit at 52 m (170 ft).
+This depth is assumed constant throughout the extent of the basalt unit.
+Transmissive materials that may be present beneath the basalt unit are neglected because of insufficient data to describe these materials.
+The bedrock-surface elevation for the aquifer system is then calculated by integrating units.
+
+<<>>=
+depth.to.basalt.bottom <- 52  # in meters
+r <- rs.data[["land.surface"]] - depth.to.basalt.bottom
+r[r > rs.data[["alluvium.bottom"]] | is.na(rs.data[["basalt.extent"]])] <- NA
+rs.data[["bedrock"]] <- cover(r, rs.data[["alluvium.bottom"]])
+@
+
+\noindent Subtracting bedrock-surface elevations from land-surface elevations gives the thickness of the WRV aquifer system (\hyperref[fig:map_aquifer_thickness]{fig.~\ref{fig:map_aquifer_thickness}}).
+
+<<>>=
+rs.data[["aquifer.thickness"]] <- rs.data[["land.surface"]] - rs.data[["bedrock"]]
+@
+
+<<include=FALSE>>=
+v <- "Thickness of the aquifer system in the southern part of the Wood River Valley aquifer system, south-central Idaho."
+v <- c(paste("Map showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(v)))), v)
+@
+
+<<map_aquifer_thickness, echo=FALSE, fig.width=fin.map.s[1], fig.height=fin.map.s[2], fig.scap=sprintf("{%s}", v[1]), fig.cap=sprintf("{%s}", v[2])>>=
+r <- rs.data[["aquifer.thickness"]]
+PlotMap(r, breaks=pretty(range(r[], na.rm=TRUE), n=12), xlim=usr.map.s[1:2], ylim=usr.map.s[3:4],
+        bg.image=hill.shading, bg.image.alpha=0.6, dms.tick=TRUE, pal=Pal,
+        explanation="Thickness of the aquifer system measured as depth below land surface, in meters.",
+        rivers=list(x=streams.rivers), lakes=list(x=lakes), credit=credit)
+plot(cities, pch=15, cex=0.8, col="#333333", add=TRUE)
+text(cities, labels=cities@data$FEATURE_NA, col="#333333", cex=0.5, pos=1, offset=0.4)
+invisible(dev.off())
+@
+
+\newpage
+
+The clay unit represents an aquitard or confining unit separating the unconfined aquifer from the underlying confined aquifer.
+The estimated extent of the clay confining unit in the WRV aquifer system, as defined by \citet{Moreland1977}, is shown in \hyperref[fig:map_clay_extent]{figure~\ref{fig:map_clay_extent}}.
+
+<<>>=
+r <- raster(rs.data)
+r[rasterize(rgeos::gUnaryUnion(clay.extent), r, getCover = TRUE) > 0] <- 1L
+r <- ratify(r)
+levels(r) <- cbind(levels(r)[[1]], att = "clay")
+rs.data[["clay.extent"]] <- r
+@
+
+<<include=FALSE>>=
+v <- "Extent of clay confining unit in the Wood River Valley aquifer system, south-central Idaho."
+v <- c(paste("Map showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(v)))), v)
+@
+
+<<map_clay_extent, echo=FALSE, fig.width=fin.map.s.0[1], fig.height=fin.map.s.0[2], fig.scap=sprintf("{%s}", v[1]), fig.cap=sprintf("{%s}", v[2])>>=
+col <- "#FDC086"
+PlotMap(r, xlim=usr.map.s[1:2], ylim=usr.map.s[3:4], bg.image=hill.shading, bg.image.alpha=0.6,
+        dms.tick=TRUE, col=col, rivers=list(x=streams.rivers), lakes=list(x=lakes), draw.key=FALSE, credit=credit)
+plot(alluvium.extent, border="#FFFFFF7F", add=TRUE)
+plot(cities, pch=15, cex=0.8, col="#333333", add=TRUE)
+text(cities, labels=cities@data$FEATURE_NA, col="#333333", cex=0.5, pos=1, offset=0.4)
+legend("topright", "Clay confining unit", fill=col, border=NA, inset=0.02, cex=0.7, box.lty=1,
+       box.lwd=0.5, xpd=NA, bg="#FFFFFFCD")
+invisible(dev.off())
+@
+
+\noindent Well-driller reports and geophysical surveys describe the clay confining unit as about 5 m (16 ft) thick, and generally lying at a depth of about 30 m (98 ft) below land surface.
+
+<<>>=
+aquitard.thickness <- 5  # in meters
+depth.to.aquitard.top <- 30  # in meters
+r <- rs.data[["land.surface"]] - depth.to.aquitard.top
+r[r < rs.data[["alluvium.bottom"]] | is.na(rs.data[["clay.extent"]])] <- NA
+rs.data[["aquitard.top"]] <- r
+@
+
+Vertical connectivity among cells is ensured by setting a minimum vertical overlap between adjacent cells.
+Cells having less than 2 m (6.6 ft) of overlap are adjusted by incrementally lowering the cell's bottom elevation until the minimum vertical overlap is attained
+(\hyperref[fig:map_bedrock_adjusted]{fig.~\ref{fig:map_bedrock_adjusted}}).
+
+<<>>=
+min.overlap <- 2  # minimum vertical overlap between adjacent cells, in meters
+r <- BumpDisconnectCells(subset(rs.data, c("land.surface", "bedrock")), min.overlap)
+rs.data[["bedrock"]] <- rs.data[["bedrock"]] + r
+rs.data[["cell.adjustment"]] <- r
+@
+
+<<include=FALSE>>=
+v <- "Adjustment of bedrock-bottom elevations to account for vertically disconnected cells."
+v <- c(paste("Map showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(v)))), v)
+@
+
+<<map_bedrock_adjusted, eval=TRUE, echo=FALSE, fig.width=fin.map[1], fig.height=fin.map[2], fig.scap=sprintf("{%s}", v[1]), fig.cap=sprintf("{%s}", v[2])>>=
+cells <- which(!is.na(r[]))
+adj.cells <- cells[r[cells] < 0]
+Pal <- function(n) {
+  cols <- colorRampPalette(c("#FFE500", "#F02311"))(n)
+  cols[n] <- "#FFFFFF9A"
+  return(cols)
+}
+PlotMap(r, xlim=usr.map[1:2], ylim=usr.map[3:4], zlim=range(pretty(r[])),
+        bg.image=hill.shading, bg.image.alpha=0.6, dms.tick=TRUE,
+        pal=Pal, explanation="Adjustment to bedrock-bottom elevations, in meters.",
+        rivers=list(x=streams.rivers), lakes=list(x=lakes), credit=credit)
+plot(cities, pch=15, cex=0.8, col="#333333", add=TRUE)
+text(cities, labels=cities@data$FEATURE_NA, col="#333333", cex=0.5, pos=1, offset=0.4)
+invisible(dev.off())
+@
+
+\noindent The total number of vertically adjusted cells is \Sexpr{format(length(adj.cells), big.mark=",")}, or \Sexpr{round(length(adj.cells) / length(cells) * 100)} percent of active cells,
+with a mean and standard deviation of the adjusted distance of
+\Sexpr{round(x <- mean(r[adj.cells]), digits=1)} m (\Sexpr{round(x * m.to.ft, digits=1)} ft) and
+\Sexpr{round(x <- sd(r[adj.cells]), digits=1)} m (\Sexpr{round(x * m.to.ft, digits=1)} ft), respectively.
+
+Groundwater enters the model domain through specified-flow boundary cells located in the major tributary canyons and
+beneath the valley floor at the confluence of the Big Wood River and the North Fork Big Wood River (tributary No. \Sexpr{which(tributaries@data$Name == "BWR Upper")})
+in \hyperref[fig:map_tribs]{figure~\ref{fig:map_tribs}}.
+These boundary cells are hereafter refered to as `tributary cells'.
+The tributary cells are identified using hand-drawn horizontal polygons with a single polygon allocated to each of the \Sexpr{nrow(tributaries)} boundaries
+(\hyperref[fig:map_tribs]{fig.~\ref{fig:map_tribs}}).
+Active cells intersecting a polygon line segment are defined as tributary cells, and cells located within the body of a polygon are made inactive.
+
+<<>>=
+l <- rgeos::gIntersection(as(tributaries, "SpatialLinesDataFrame"), alluvium.extent, TRUE)
+trib.lines <- SpatialLinesDataFrame(l, data = tributaries@data, match.ID = FALSE)
+r <- setValues(raster(rs.data), rep(1L, ncell(r)))
+r <- mask(r, rs.data[["alluvium.bottom"]])
+r <- mask(r, tributaries, inverse = TRUE, updatevalue = 0L)
+r <- mask(r, trib.lines, inverse = TRUE, updatevalue = 2L)
+cells <- which(r[] %in% 2L)
+adj.cells <- adjacent(r, cells, directions = 4)
+is.valid <- adj.cells[, 2] %in% which(r[] == 1L)
+r[cells[!(cells %in% unique(adj.cells[is.valid, 1]))]] <- 0L
+r <- ratify(r)
+att <- paste(c("Inactive", "Active", "Tributary"), "cell")
+levels(r) <- cbind(levels(r)[[1]], att = att)
+rs.data[["ibound"]] <- r
+@
+
+<<include=FALSE>>=
+v <- "Model boundaries in the major tributary canyons and upper part of the Wood River Valley, south-central Idaho. Tributary identifiers are used as a cross reference with data in \\hyperref[table_tribs]{table~\\ref{table_tribs}}."
+v <- c(paste("Map showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(v)))), v)
+@
+
+<<map_tribs, echo=FALSE, fig.width=fin.map.0[1], fig.height=fin.map.0[2], fig.scap=sprintf("{%s}", v[1]), fig.cap=sprintf("{%s}", v[2])>>=
+cols <- c("#FF404B", "#A6CEE3", "#000000")
+PlotMap(r, xlim=usr.map[1:2], ylim=usr.map[3:4], bg.image=hill.shading, bg.image.alpha=0.6, dms.tick=TRUE,
+        col=cols, rivers=list(x=streams.rivers), lakes=list(x=lakes), draw.key=FALSE, credit=credit)
+plot(cities, pch=15, cex=0.8, col="#333333", add=TRUE)
+text(cities, labels=cities@data$FEATURE_NA, col="#333333", cex=0.5, pos=1, offset=0.4)
+pos <- c(2, 4, 2, 1, 2, 3, 3, 1, 4, 3,
+         3, 1, 1, 1, 2, 4, 2, 1, 1, 3,
+         2, 4, 1)
+text(getSpatialLinesMidPoints(trib.lines), labels=rownames(trib.lines@data),
+     col="#333333", cex=0.6, pos=pos, offset=0.4)
+leg <- as.character(levels(r)[[1]]$att)
+legend("topright", leg, fill=cols, border=NA, inset=0.02, cex=0.7, box.lty=1,
+       box.lwd=0.5, xpd=NA, bg="#FFFFFFCD")
+invisible(dev.off())
+@
+
+The presence of the clay confining unit significantly influences groundwater-level responses, necessitating a multi-layer model.
+Model layering was designed to allow accurate representation of the confining unit (\hyperref[fig:map_clay_extent]{fig.~\ref{fig:map_clay_extent}}).
+A schematic cross-section representation of the hydrogeologic units and the layered model grid is shown in \hyperref[fig:cs_schematic]{figure~\ref{fig:cs_schematic}}.
+Embedded clay within the basalt unit is assumed to have a negligible effect on groundwater flow and is not represented by the model.
+Model cells in layers 2 and 3 become inactive north of Hailey.
+Model cells that are too thin can lead to numerical instability in the model; therefore, cells less than 1 m (3.3 ft) thick are made inactive.
+
+\begin{figure}
+  \begin{subfigure}{\textwidth}
+    \caption{Hydrogeologic units \label{fig:cs_schematic_a}}
+    \includegraphics{cs_schematic_a.pdf}
+  \end{subfigure}
+
+  \vspace{0.5cm}%
+
+  \begin{subfigure}{\textwidth}
+    \caption{Layered model grid \label{fig:cs_schematic_b}}
+    \includegraphics{cs_schematic_b.pdf}
+  \end{subfigure}
+  <<include=FALSE>>=
+  v <- "Schematic cross-section representation of (\\textit{\\textbf{A}}) hydrogeologic units and (\\textit{\\textbf{B}}) the layered model grid. \\label{fig:cs_schematic}"
+  v <- c(paste("Diagrams showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(v)))), v)
+  @
+  \caption[{\Sexpr{v[1]}}]{{\Sexpr{v[2]}}}
+\end{figure}
+
+The bottom elevation of model layer 1 is calculated by subtracting the depth to the top of the aquitard (confining unit) (30 m [98 ft]) below land surface.
+Cell values lying beneath the pre-Quaternary bedrock surface and top of Quaternary basalt are replaced with alluvium-bottom elevations.
+
+<<>>=
+r <- rs.data[["land.surface"]] - depth.to.aquitard.top
+is.below <- rs.data[["alluvium.bottom"]] > r
+r[is.below] <- rs.data[["alluvium.bottom"]][is.below]
+min.thickness <- 1  # in meters
+r[(rs.data[["land.surface"]] - r) < min.thickness] <- NA  # enforce minimum layer thickness
+r[rs.data[["ibound"]] == 0L] <- NA
+r <- RmSmallCellChunks(r)  # ensure horizontal connectivity among cells
+names(r) <- "lay1.bot"
+rs.model <- stack(r)  # start new raster stack
+@
+
+\noindent Subtracting the aquitard (confining unit) thickness (5 m [16 ft]) from the bottom of model layer 1 gives the bottom elevation of model layer 2.
+Cell values lying beneath the bedrock surface are replaced with bedrock elevations.
+
+<<>>=
+r <- rs.model[["lay1.bot"]] - aquitard.thickness
+is.below <- rs.data[["bedrock"]] > r
+r[is.below] <- rs.data[["bedrock"]][is.below]
+r[(rs.model[["lay1.bot"]] - r) < min.thickness] <- NA  # enforce minimum thickness
+rs.model[["lay2.bot"]] <- RmSmallCellChunks(r)
+@
+
+\noindent The bottom elevation of model layer 3 represents the top of the bedrock (bedrock surface).
+
+<<>>=
+r <- rs.data[["bedrock"]]
+r[is.na(rs.model[["lay2.bot"]])] <- NA
+r[(rs.model[["lay2.bot"]] - r) < min.thickness] <- NA  # enforce minimum thickness
+rs.model[["lay3.bot"]] <- RmSmallCellChunks(r)
+@
+
+\newpage
+
+\noindent Bottom elevations of model layer 1 are adjusted to the bedrock surface in cells where the layer 1 bottom elevation is above bedrock and the vertically adjacent layer 2 cell is classified as inactive.
+
+<<>>=
+r <- rs.model[["lay1.bot"]]
+is.adjusted <- r > rs.data[["bedrock"]] & is.na(rs.model[["lay2.bot"]])
+r[is.adjusted] <- rs.data[["bedrock"]][is.adjusted]
+rs.model[["lay1.bot"]] <- RmSmallCellChunks(r)
+@
+
+\noindent The top elevation of model layer 1 is at land surface.
+
+<<>>=
+r <- rs.data[["land.surface"]]
+r[is.na(rs.model[["lay1.bot"]])] <- NA
+rs.model[["lay1.top"]] <- r
+@
+
+% =========================================================================
+
+\subsection{Spatial Discretization}
+
+<<echo=FALSE>>=
+nactive <- c(sum(!is.na(rs.model[["lay1.bot"]][])),
+             sum(!is.na(rs.model[["lay2.bot"]][])),
+             sum(!is.na(rs.model[["lay3.bot"]][])))
+active.lay1.area <- nactive[1] * (xres(rs.model) * yres(rs.model)) * m2.to.km2
+study.area <- rgeos::gArea(alluvium.extent) * m2.to.km2
+model.area <- rgeos::gArea(rgeos::gDifference(alluvium.extent, tributaries)) * m2.to.km2
+percent.of.study.area <- round(model.area / study.area * 100)
+dz1 <- as.numeric(na.omit(rs.model[["lay1.top"]][] - rs.model[["lay1.bot"]][]))
+dz2 <- as.numeric(na.omit(rs.model[["lay1.bot"]][] - rs.model[["lay2.bot"]][]))
+dz3 <- as.numeric(na.omit(rs.model[["lay2.bot"]][] - rs.model[["lay3.bot"]][]))
+cell.area <- xres(rs.model) * yres(rs.model)
+@
+
+Removing outer rows and columns that are composed entirely of inactive model cells results in the active horizontal model grid.
+A summary of the structured model grid attributes is shown in \hyperref[table_model_structure]{table~\ref{table_model_structure}}.
+The model domain covers \Sexpr{round(active.lay1.area)} square kilometers (\Sexpr{round(active.lay1.area * km2.to.mi2)} square miles),
+or \Sexpr{percent.of.study.area} percent of the WRV aquifer system area.
+
+<<>>=
+rs.model <- stack(crop(rs.model, extent(trim(rs.model[["lay1.top"]]))))
+@
+
+<<table_model_structure, echo=FALSE, results="asis">>=
+att <- c("Number of rows", "Number of columns", "Number of layers",
+         "Number of active cells in model layer 1",
+         "Number of active cells in model layer 2",
+         "Number of active cells in model layer 3",
+         "Uniform spacing in the easting direction, in meters ($\\Delta x$)",
+         "Uniform spacing in the northing direction, in meters ($\\Delta y$)",
+         "Easting coordinate of model origin, in meters",
+         "Northing coordinate of model origin, in meters")
+val <- c(nrow(rs.model), ncol(rs.model), 3, nactive,
+         res(rs.model), xmin(rs.model), ymax(rs.model))
+d <- as.data.frame(list(att, val))
+columns <- c("Attribute", "Value")
+colnames(d) <- sprintf("\\textbf{\\shortstack{%s}}", columns)
+cap1 <- "Summary description of the structured model grid attributes."
+cap2 <- "Easting and northing coordinates are based on the Idaho Transverse Mercator projection."
+tbl <- xtable::xtable(d, label="table_model_structure")
+xtable::caption(tbl) <- c(sprintf("%s [%s]", cap1, paste(cap2, collapse=" ")), cap1)
+xtable::digits(tbl)[3] <- 0
+print(tbl, include.rownames=FALSE, caption.placement="top", booktabs=TRUE,
+      format.args=list(big.mark=","), sanitize.colnames.function=function(x){x},
+      sanitize.text.function=identity, size="\\small")
+@
+
+% =========================================================================
+
+\subsection{Temporal Discretization}
+
+Groundwater flow in the WRV aquifer is simulated for January 1995 through December 2010, a 16-year duration.
+A 3-year `warm-up' period is included in the simulation to reduce uncertainties in model initialization.
+Therefore, the first 3 years of the simulation (January 1995 through December 1997) should be considered less reliable than the remaining 13 years of simulation (January 1998 through December 2010).
+
+The interval of discretization for time is the `time step'.
+Time steps are grouped into `stress periods', where time-dependent input data can be changed every stress period \citep[p.~8]{Harbaugh2000}.
+Individual stress periods in a simulation can either be steady-state or transient.
+The first stress period in the WRV groundwater-flow model is specified as steady state and all subsequent stress periods as transient;
+that is, the initial or starting conditions for the first transient stress period are the simulated values at the end of the steady-state simulation.
+The simulated steady-state head distribution represents the assumed conditions at the beginning of the 1995 calendar year.
+Steady-state flow was simulated using average recharge and discharge estimates from April 2004 through March 2005,
+because hydrologic conditions during this period generally were similar to the period preceding the beginning of 1995.
+All subsequent stress periods are transient and simulate groundwater flow conditions during 1995 through 2010.
+The transient simulation period is subdivided into 192 stress periods of 1 month each.
+The length of each stress period is dependent on the number of days in the corresponding month and date of year.
+
+\newpage
+
+<<>>=
+ss.interval <- as.Date(c("2004-04-01", "2005-04-01"), tz = "MST")  # steady state
+tr.interval <- as.Date(c("1995-01-01", "2011-01-01"), tz = "MST")  # transient
+ss.stress.periods <- seq(ss.interval[1], ss.interval[2], "1 month")
+tr.stress.periods <- seq(tr.interval[1], tr.interval[2], "1 month")
+@
+
+\noindent Stress period identifiers are specified using a concatenation of year and month.
+
+<<>>=
+ss.yr.mo <- format(head(ss.stress.periods, -1), "%Y%m")  # steady state
+tr.yr.mo <- format(head(tr.stress.periods, -1), "%Y%m")  # transient
+@
+
+Each stress period was uniformly subdivided into four time steps.
+A preliminary sensitivity analysis to changes in the number of time steps indicated that more than four time steps per stress period did not yield significant simulation differences or mass balance errors;
+therefore, four time steps was used.
+
+<<>>=
+ntime.steps <- 4L
+@
+
+% =========================================================================
+
+\section{Groundwater Flow Equation}
+
+A groundwater flow equation is used to describe the flow of water through the WRV aquifer system.
+The equation describes transient three-dimensional groundwater flow through a heterogeneous transversely isotropic geologic formation \citep[p.~2-1]{Harbaugh2005}.
+It is a parabolic partial differential equation defined in Cartesian coordinates as:
+
+\begin{equation} \label{eq:gw_flow}
+\left[ \frac{\partial}{\partial x} \left( K b \, \frac{\partial h}{\partial x} \right) +
+       \frac{\partial}{\partial y} \left( K b \, \frac{\partial h}{\partial y} \right) +
+       \frac{\partial}{\partial z} \left( \frac{K b}{a} \, \frac{\partial h}{\partial z} \right)
+\right] \Delta x \, \Delta y + Q = S \, \frac{\partial h}{\partial t} \, \Delta x \, \Delta y
+\end{equation}
+where
+\begin{description}
+\item[x \text{, } y] are easting and northing coordinate directions in meters, respectively;
+\item[z] is the direction of elevation, in meters;
+\item[t] is the time dimension, in days;
+\item[K] is the horizontal hydraulic conductivity, in meters per day;
+\item[a] is the vertical anisotropy defined as the ratio of horizontal to vertical hydraulic conductivity, a dimensionless quantity;
+\item[h] is the hydraulic head (head), in meters;
+\item[\Delta x \text{, } \Delta y] are the grid width in the $x$ and $y$ directions, respectively, in meters;
+\item[Q] is a volumetric flow rate representing sources and (or) sinks of water, where negative values are flow out of the aquifer system, and positive values are flow into the system, in cubic meters per day;
+\item[S] is the storage coefficient of the porous material, a dimensionless quantity; and
+\item[b] is the saturated thickness in the $z$ direction, in meters.
+\end{description}
+
+The WRV groundwater-flow model may be formulated to solve three different versions of equation~(\ref{eq:gw_flow}).
+These model formulations, arranged in order of increasing solution difficulty, simulate the following:
+
+\begin{enumerate}
+  \item Steady-state flow conditions by setting the right-hand-side of equation~(\ref{eq:gw_flow}) equal to zero.
+  \item Transient flow conditions with saturated thickness ($b$ in equation~\ref{eq:gw_flow}) held constant over time at the model cell thickness.
+  \item Transient flow conditions with saturated thickness dependent on head.
+\end{enumerate}
+
+Model results analyzed in this vignette simulate transient flow conditions and implement the specified-thickness approximation; that is, model formulation 2.
+Note, however, that both model formulation 1 and 2 are called during the model-calibration process (appendix A, fig. A4).
+Model formulation 3 was not calibrated because of its very long run times, on the order of hours, and possible numerical instability.
+
+% =========================================================================
+
+\subsection{Specified-Thickness Approximation}
+
+The specified-thickness approximation assumes that the saturated thickness is independent from head changes in the aquifer system.
+In reality, the saturated thickness in the unconfined aquifer changes as the water table fluctuates in response to groundwater pumping and climatic conditions.
+The specified-thickness approximation is implemented in the WRV groundwater-flow model by assuming all model cells are fully saturated.
+During the simulation period (1995--2010), the water table primarily resides in the unconfined alluvium deposits of model layer 1---the exception being
+a small area in the near vicinity of the southeastern model boundary where the water table resides in either layers 2 or 3.
+Because the top of model layer 1 is specified at land surface,
+the assumed saturated thickness is imprecisely represented in areas where the depth to groundwater can be large.
+Areas of large simulated water depths (greater than 10 m [32 ft]) occur in some of the tributary canyons (as a result of increased topographic gradients),
+downgradient from the city of Bellevue to about Baseline Road (\hyperref[fig:map_basalt_extent]{figure~\ref{fig:map_basalt_extent}}), and
+in the near vicinity of the southeastern model boundary where steep water-table gradients form just prior to entering the larger Eastern Snake River Plain aquifer.
+\citet{Sheets2015} note that errors in the assumed saturated thickness can directly affect calibrated estimates of hydraulic conductivity and storage properties.
+They also indicate, that in practice, errors associated with the specified-thickness approximation are relatively small in comparison to the uncertainties in hydraulic property estimates.
+
+The primary objective for the model is to simulate groundwater flow in the WRV aquifer system;
+thus allowing for improved predictions of aquifer responses to changes in aquifer stresses (such as pumping or natural climatic variability).
+Transmissivity, the horizontal hydraulic conductivity multiplied by the saturated thickness ($K b$ in equation~\ref{eq:gw_flow}),
+is of great importance in these predictions because it is a measure of how much water can be transmitted horizontally, such as to a pumping well.
+During model calibration horizontal hydraulic conductivity values were estimated by minimizing the difference between measured and simulated values;
+any inaccuracies in the assumed saturated thickness are compensated for in these calibrated estimates.
+Therefore, transmissivities, rather than horizontal hydraulic conductivities, are more accurately represented in the calibrated model.
+
+% =========================================================================
+
+\subsection{Hydraulic Properties}
+
+Hydraulic properties (such as horizontal hydraulic conductivity) are specified for all cells using the MODFLOW Layer-Property Flow Package \citep{Harbaugh2000, Harbaugh2005}.
+Prior to model calibration, the distribution of hydraulic properties is based on hydrogeologic zones, groups of model cells with uniform hydraulic properties that compose part or all of a hydrogeologic unit.
+The model consists of four hydrogeologic zones described as follows:
+
+\begin{enumerate}[label=Zone \arabic*, labelindent=5mm, leftmargin=*]
+  \item consists of the alluvium unit in the unconfined aquifer and is located in all three model layers;
+  \item comprises the basalt and clay units and is located in model layers 2 and 3;
+  \item consists of the clay confining unit and is located in model layer 2; and
+  \item consists of the alluvium unit in the confined aquifer and is located in model layer 3.
+\end{enumerate}
+
+\newpage
+
+The delineation of hydrogeologic zones in model layers 1, 2, and 3 are shown in
+\hyperref[fig:map_zones_a]{figures~\ref{fig:map_zones_a}}, \ref{fig:map_zones_b}, and \ref{fig:map_zones_c}, respectively.
+And the hydrogeologic zones along a vertical cross-section are shown in \hyperref[fig:cs_zones]{figure~\ref{fig:cs_zones}}.
+
+<<>>=
+r <- raster(rs.model)  # zones in model layer 1
+r[!is.na(rs.model[["lay1.bot"]])] <- 1L
+r <- ratify(r)
+levels(r) <- dplyr::left_join(levels(r)[[1]], zone.properties, by = "ID")
+rs.model[["lay1.zones"]] <- r
+r <- raster(rs.model)  # zones in model layer 2
+r[!is.na(rs.model[["lay2.bot"]])] <- 1L
+r[!is.na(r) & !is.na(crop(rs.data[["clay.extent"]], extent(r)))] <- 3L
+r[rs.model[["lay2.bot"]] < crop(rs.data[["alluvium.bottom"]], extent(r))] <- 2L
+r <- ratify(r)
+levels(r) <- dplyr::left_join(levels(r)[[1]], zone.properties, by = "ID")
+rs.model[["lay2.zones"]] <- r
+r <- raster(rs.model)  # zones in model layer 3
+r[!is.na(rs.model[["lay3.bot"]])] <- 1L
+r[!is.na(r) & rs.model[["lay2.zones"]] == 3L] <- 4L
+r[rs.model[["lay3.bot"]] < crop(rs.data[["alluvium.bottom"]], extent(r))] <- 2L
+r <- ratify(r)
+levels(r) <- dplyr::left_join(levels(r)[[1]], zone.properties, by = "ID")
+rs.model[["lay3.zones"]] <- r
+@
+
+<<echo=FALSE>>=
+transect <- SpatialLines(list(Lines(list(Line(transect.coords)), ID="Transect")),
+                         proj4string=CRS("+proj=longlat +datum=WGS84"))
+transect <- spTransform(transect, crs(hill.shading))
+verticies <- as(transect, "SpatialPoints")
+transect.ends <- verticies[c(1, length(verticies)), ]
+@
+
+<<echo=FALSE>>=
+FUN <- function(i) {
+  r <- rs.model[[i]]
+  cols <- c("#7FC97F", "#BEAED4", "#FDC086", "#ffff99")[levels(r)[[1]]$ID]
+  PlotMap(r, xlim=usr.map[1:2], ylim=usr.map[3:4], bg.image=hill.shading, bg.image.alpha=0.6,
+          dms.tick=TRUE, col=cols, rivers=list(x=streams.rivers), lakes=list(x=lakes), draw.key=FALSE, credit=credit)
+  plot(alluvium.extent, border="#FFFFFF7F", add=TRUE)
+  lines(transect, col="#1F1F1F")
+  text(transect.ends, labels=c("A", "A'"), col="#1F1F1F", cex=0.7, pos=c(3, 4), offset=0.1, font=4)
+  plot(cities, pch=15, cex=0.8, col="#333333", add=TRUE)
+  text(cities, labels=cities@data$FEATURE_NA, col="#333333", cex=0.5, pos=1, offset=0.4)
+  lab <- as.character(levels(r)[[1]]$name)
+  legend("topright", lab, fill=cols, ncol=1, border=NA, inset=0.02, cex=0.7,
+         box.lty=1, box.lwd=0.5, xpd=NA, bg="#FFFFFFCD")
+}
+@
+
+\begin{figure}
+  \begin{subfigure}{\textwidth}
+    \caption{Model layer 1 \label{fig:map_zones_a}}
+    <<map_zones_a, echo=FALSE, results="asis", fig.width=fin.map.0[1], fig.height=fin.map.0[2]>>=
+    FUN("lay1.zones")
+    @
+  \end{subfigure}
+  <<include=FALSE>>=
+  v <- "Spatial distribution of the hydrogeologic zones in (\\textit{\\textbf{A}}) model layer 1, (\\textit{\\textbf{B}}) model layer 2, and (\\textit{\\textbf{C}}) model layer 3. \\label{fig:map_zones}"
+  v <- c(paste("Maps showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(v)))), v)
+  @
+  \caption[{\Sexpr{v[1]}}]{{\Sexpr{v[2]}}}
+\end{figure}
+
+\captionsetup[figure]{list=no}
+\begin{figure}
+  \ContinuedFloat
+  \begin{subfigure}{\textwidth}
+    \caption{Model layer 2 \label{fig:map_zones_b}}
+    <<map_zones_b, echo=FALSE, results="asis", fig.width=fin.map.0[1], fig.height=fin.map.0[2]>>=
+    FUN("lay2.zones")
+    @
+  \end{subfigure}
+  \caption{---Continued}
+\end{figure}
+
+\begin{figure}
+  \ContinuedFloat
+  \begin{subfigure}{\textwidth}
+    \caption{Model layer 3 \label{fig:map_zones_c}}
+    <<map_zones_c, echo=FALSE, results="asis", fig.width=fin.map.0[1], fig.height=fin.map.0[2]>>=
+    FUN("lay3.zones")
+    invisible(dev.off())
+    @
+  \end{subfigure}
+  \caption{---Continued}
+\end{figure}
+\captionsetup[figure]{list=yes}
+
+<<cs_zones, echo=FALSE, fig.width=fin.cs.0[1], fig.height=fin.cs.0[2], fig.cap="{Vertical cross-section of hydrogeologic zones along transect line A--A' shown in \\hyperref[fig:map_zones]{figure~\\ref{fig:map_zones}}.}">>=
+geo.lays <- c("lay1.top", paste0("lay", 1:3, ".bot"))
+val.lays <- paste0("lay", 1:3, ".zones")
+cols <- c("#7FC97F", "#BEAED4", "#FDC086", "#ffff99")
+PlotCrossSection(transect, rs.model, geo.lays, val.lays, asp=80, col=cols,
+                 ylab="Elevation, in meters above the North American Vertical Datum of 1988",
+                 unit="METERS", features=cities[, "FEATURE_NA"], max.feature.dist=4000,
+                 is.categorical=TRUE, draw.key=FALSE)
+legend("topright", paste("Zone", 1:4), fill=cols, ncol=1, border=NA,
+       inset=c(0.02, 0), cex=0.7, box.lty=1, box.lwd=0.5, xpd=NA, bg="#FFFFFFCD")
+invisible(dev.off())
+@
+
+Hydraulic properties assigned to each hydrogeologic zone (zone) are given in \hyperref[table_zones]{table~\ref{table_zones}}.
+These values were allowed to vary during the model-calibration process---with the exception of specific storage and specific yield which were not included in the calibrated model (that is, model formulation~2).
+The horizontal hydraulic conductivity values ($K$ in equation~\ref{eq:gw_flow}) in zones~1 and 4 were specified as the unconfined and confined aquifer values, respectively, from \citet[p.~23, table~2]{Bartolino2012}.
+For zone~2 the horizontal hydraulic conductivity was estimated from a specific capacity test in a single well completed in basalt \citep[p.~26]{Bartolino2012},
+and for zone~3 the low hydraulic conductivity value for clay in \citet[p.~346]{Spitz1996} was specified in the model.
+Values of vertical anisotropy ($a$ in equation~\ref{eq:gw_flow}) can be 100 or more in the presence of clay layers (\citealp[p.~81]{Todd1959}; \citealp[p.~34]{Freeze1979});
+that is, the vertical hydraulic conductivity can be more than 100 times smaller than the horizontal hydraulic conductivity.
+A midrange value of 50 was specified for all zones (\hyperref[table_zones]{table~\ref{table_zones}}).
+
+Specific storage was specified as the mean of reported ranges for similar material types in \citet[p.~353]{Spitz1996}.
+For zones~1 and 4 the mean specific storage for gravel was used, for zone~2 the mean value for consolidated rock was used, and for zone~3 the mean value for clay was used (\hyperref[table_zones]{table~\ref{table_zones}}).
+In the same manner values for specific yield were taken from \citet[p.~345]{Spitz1996}.
+For zones~1 and 4 the mean specific yield for fine gravel was used, for zone~2 the mean value for limestone was used, and for zone~3 the mean value for clay was used (\hyperref[table_zones]{table~\ref{table_zones}}).
+Because all model layers were simulated using saturated conditions (an assumed condition for model formulation~2),
+the storage coefficient ($S$ in equation~\ref{eq:gw_flow}) in the partially-saturated (water-table) conditions of model layer~1 (or zone~1) is virtually equal to the specific yield.
+The storage coefficient of zone~1 in model layer 1 was specified at 0.1, that is, the low end of the specific yield range for all zones (\hyperref[table_zones]{table~\ref{table_zones}}).
+In the primarily saturated conditions of model layers 2 and 3 (zones~2--4) the storage coefficient is defined as the product of specific storage and saturated thickness.
+Because the saturated thickness varies throughout the aquifer, a unit thickness is assumed in the calculation of storage coefficient.
+
+<<table_zones, echo=FALSE, results="asis">>=
+d <- zone.properties[, c("name", "hk", "vani", "ss", "sy", "sc")]
+d$hk <- ToScientific(d$hk, digits=1)
+d$ss <- ToScientific(d$ss, digits=1)
+d$sc <- ToScientific(d$sc, digits=1)
+columns <- c("Name",
+             "Horizontal hydraulic \\\\ conductivity \\\\ $K$ \\\\ (m/d)",
+             "Vertical \\\\ anisotropy \\\\ $a$ \\\\ (1)",
+             "Specific \\\\ storage \\\\ $S_{s}$ \\\\ (1/m)",
+             "Specific \\\\ yield \\\\ $S_{y}$ \\\\ (1)",
+             "Storage \\\\ coefficient \\\\ $S$ \\\\ (1)")
+colnames(d) <- sprintf("\\textbf{\\shortstack{%s}}", columns)
+cap1 <- "Hydraulic properties specified for each hydrogeologic zone in the model. Values were allowed to vary during the model-calibration process--with the exception of specific storage and specific yield which were not specified in the calibrated model."
+cap2 <- c("\\textbf{Horizontal hydraulic conductivity}: is the ease with which water can move through pore spaces or fractures in the direction of the horizontal plane.",
+          "\\textbf{Vertical anisotropy}: is the ratio of horizontal to vertical hydraulic conductivity.",
+          "\\textbf{Specific storage}: is the amount of water that a portion of an aquifer releases from storage, per unit mass or volume of aquifer, per unit change in hydraulic head, while remaining fully saturated \\citep{Freeze1979}.",
+          "\\textbf{Specific yield}: is the volumetric fraction of the bulk aquifer volume that a given aquifer will yield when all the water is allowed to drain out of it under the forces of gravity.",
+          "\\textbf{Storage coefficient}: is the vertically integrated specific storage value for saturated conditions; and for partially-saturated conditions it is virtually equal to specific yield.",
+          "\\textbf{Abbreviations}: m/d, meters per day; 1/m, inverse meters")
+tbl <- xtable::xtable(d, label="table_zones")
+xtable::caption(tbl) <- c(sprintf("%s [%s]", cap1, paste(cap2, collapse=" ")), cap1)
+xtable::digits(tbl)[3:7] <- c(1, 0, 1, 1, 1)
+xtable::align(tbl) <- "lclclcl"
+print(tbl, include.rownames=FALSE, caption.placement="top", booktabs=TRUE,
+      format.args=list(big.mark=","), sanitize.colnames.function=function(x){x},
+      sanitize.text.function=identity, size="\\small")
+@
+
+\newpage
+
+% =========================================================================
+
+\subsection{Hydrologic Boundaries}
+
+% =========================================================================
+
+\subsubsection{Tributary basin underflow}
+
+Tributary basin underflow (underflow) is defined as groundwater flow into the model domain that originates as precipitation in the tributary basins.
+Underflow ($Q$ in equation~\ref{eq:gw_flow}) enters the active model grid through specified-flow boundaries located in the major tributary canyons and the upper part of the WRV,
+Underflow is simulated using the MODFLOW Well Package \citep{Harbaugh2000}.
+\hyperref[fig:map_tribs]{Figure~\ref{fig:map_tribs}} shows the location of these boundaries in the model.
+The average volumetric flow rate for each boundary is shown in \hyperref[table_tribs]{table~\ref{table_tribs}}.
+A scaling index is used to represent the temporal variation in volumetric flow rates (\hyperref[fig:graph_tribs]{fig.~\ref{fig:graph_tribs}}).
+The method used to estimate flows from the tributaries is discussed in detail in appendix E.
+
+<<>>=
+d <- gage.disch[, c("Date", "13139510")]
+reduction <- 2          # amplitude reduction, a dimensionless quantity
+d.in.mv.ave <- 273.932  # days in moving average (9 months)
+mult <- GetSeasonalMult(d, reduction, d.in.mv.ave, tr.stress.periods)
+mult <- data.frame(head(tr.stress.periods, -1), rep(mult$multiplier, each = 3))
+names(mult) <- c("Date", "multiplier")
+FUN <- function(i) mult$multiplier * i
+flow <- t(vapply(tributaries$Flow, FUN, rep(0, nrow(mult))))
+colnames(flow) <- format(mult$Date, format = "%Y%m")
+rownames(flow) <- tributaries$Name
+@
+
+<<include=FALSE>>=
+v <- "Tributary basin underflow in the Wood River Valley aquifer system, south-central Idaho."
+v <- c(paste("Graph showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(v)))), v)
+@
+
+<<graph_tribs, echo=FALSE, fig.width=fin.graph[1], fig.height=fin.graph[2], fig.scap=sprintf("{%s}", v[1]), fig.cap=sprintf("{%s}", v[2])>>=
+d <- data.frame(mult$Date, t(flow))
+d <- d[, c(1, sort(apply(d[, -1], 2, mean), decreasing=TRUE, index.return=TRUE)$ix + 1L)]
+ndays <- GetDaysInMonth(tail(rownames(d), 1))
+d <- rbind(d, d[nrow(d), , drop=FALSE])
+d[nrow(d), 1] <- d[nrow(d), 1] + ndays
+ylab <- paste("Tributary basin underflow, in", c("cubic meters per day", "acre-feet per year"))
+cols  <- rainbow(ncol(d), start=0.0, end=0.8)
+PlotGraph(d, ylab=ylab, conversion.factor=m3.per.d.to.af.per.yr, col=cols,
+          center.date.labels=TRUE, scientific=FALSE)
+leg <- format(match(colnames(d)[-1], make.names(tributaries@data$Name)))
+legend("topright", leg, lwd=1, col=cols, ncol=2,
+       pt.cex=1, inset=0.02, cex=0.7, box.lty=1, box.lwd=0.5,
+       bg="#FFFFFFCD", title=expression(bold("Tributary")))
+invisible(dev.off())
+@
+
+\noindent Steady-state volumetric flow rates are calculated for each boundary by averaging flows over time.
+
+<<>>=
+flow <- cbind(flow, ss = apply(flow[, ss.yr.mo], 1, mean))
+@
+
+\noindent The volumetric flow rate for each boundary is uniformly distributed among its tributary cells.
+
+<<>>=
+r <- rasterize(trib.lines, rs.model)
+r[crop(rs.data[["ibound"]], extent(r)) != 2] <- NA
+d <- levels(r)[[1]]
+d$count <- freq(r)[seq_len(nrow(d)), "count"]
+id <- match(row.names(flow), d$Name)
+d <- dplyr::left_join(d, data.frame(flow, ID = id, check.names = FALSE), by = "ID")
+d[, colnames(flow)] <- d[, colnames(flow)] / d$count
+levels(r) <- d
+rs.model[["tributaries"]] <- r
+@
+
+<<table_tribs, echo=FALSE, results="asis">>=
+x <- with(d, data.frame(Name, ID, Flow, Flow * m3.per.d.to.af.per.yr))
+columns <- c("Name",
+             "Tributary \\\\ No.",
+             "Flow rate \\\\ $Q$ \\\\ (m\\textsuperscript{3}/d)",
+             "Flow rate \\\\ (acre-ft/yr)")
+colnames(x) <- sprintf("\\textbf{\\shortstack{%s}}", columns)
+cap1 <- "Estimated long-term mean tributary basin underflow in the Wood River Valley aquifer system, south-central Idaho."
+cap2 <- c("\\textbf{Tributary No.}: is an identifier used to locate the tributary boundaries on the map in \\hyperref[fig:map_tribs]{figure~\\ref{fig:map_tribs}}.",
+          "\\textbf{Flow rate}: is the estimated long-term mean tributary basin underflow during the 1995 through 2010 time period.",
+          "Values are preliminary and were adjusted during the model-calibration process.",
+          "\\textbf{Abbreviations}: m\\textsuperscript{3}/d, cubic meters per day; acre-ft/yr, acre-feet per year")
+tbl <- xtable::xtable(x, label="table_tribs")
+xtable::caption(tbl) <- c(sprintf("%s [%s]", cap1, paste(cap2, collapse=" ")), cap1)
+xtable::digits(tbl)[3:5] <- 0
+print(tbl, include.rownames=FALSE, align="rlrrr", caption.placement="top", booktabs=TRUE,
+      format.args=list(big.mark=","), sanitize.colnames.function=function(x){x},
+      size="\\small")
+@
+
+\newpage
+
+\noindent The tributary boundary conditions are placed in a single data table.
+
+<<>>=
+cells <- which(!is.na(r[]))
+rc <- rowColFromCell(r, cells)
+trib <- data.frame(cell = cells, lay = 1L, rc, deratify(r)[cells], check.names = FALSE)
+trib$Name <- as.factor(d$Name[trib$Name])
+@
+
+\newpage
+
+% =========================================================================
+
+\subsubsection{Groundwater flow at outlet boundaries}
+
+Groundwater leaving the aquifer system beneath Silver Creek and Stanton Crossing outlet boundaries ($Q$ in equation~\ref{eq:gw_flow}; \hyperref[fig:map_drains]{fig.~\ref{fig:map_drains}})
+is simulated using the MODFLOW Drain Package \citep{Harbaugh2000}, a head-dependent flux boundary condition.
+If the head in a model cell that is an outlet-boundary cell falls below a certain threshold, the flux drops to zero;
+therefore, these model cells will only allow groundwater to leave the aquifer system.
+The boundary condition is mathematically expressed as:
+
+\begin{equation} \label{eq:outlet_drains}
+Q = \left\{\begin{array}{l l}
+      0 & \quad \text{if $h < d$,}\\
+      C_{d} \left( d - h \right) & \quad \text{if $h \geq d$;}
+    \end{array} \right.
+\end{equation}
+where
+\begin{description}
+\item[Q] is groundwater recharge, where negative values are flow out of the aquifer system, and positive values are flow into the system, in cubic meters per day;
+\item[h] is the head in the outlet-boundary cell, in meters above the NAVD 88;
+\item[d] is the elevation threshold, in meters above the NAVD 88; and
+\item[C_{d}] is the drain conductance, in square meters per day.
+\end{description}
+
+The location of drain cells in model layer 1 are shown in \hyperref[fig:map_drains]{figure~\ref{fig:map_drains}}.
+The Silver Creek drain cells also reside in model layers 2 and 3; mirroring the configuration of drain cells in layer 1.
+Drain cells were identified using hand-drawn horizontal polygons with a single polygon allocated to each outlet boundary.
+The resulting polylines from the intersection of these polygons with the aquifer boundary, were then used to identify the drain cells in each outlet boundary.
+The drain conductance and elevation threshold at Silver Creek and Stanton Crossing outlet boundaries are shown in \hyperref[table_drains]{table~\ref{table_drains}}.
+
+<<>>=
+l <- rgeos::gIntersection(drains, as(alluvium.extent, "SpatialLinesDataFrame"), TRUE)
+drain.lines <- SpatialLinesDataFrame(l, data = drains@data, match.ID = FALSE)
+r <- rasterize(drain.lines, rs.model)
+r[!is.na(r) & is.na(rs.model[["lay1.bot"]])] <- NA
+r <- ratify(r)
+levels(r) <- cbind(levels(r)[[1]], drains@data)
+rs.model[["drains"]] <- r
+@
+
+<<table_drains, echo=FALSE, results="asis">>=
+d <- drains@data
+columns <- c("Name",
+             "Drain \\\\ conductance \\\\ $C_{d}$ \\\\ (m\\textsuperscript{2}/d)",
+             "Elevation \\\\ threshold \\\\ $d$ \\\\ (m above NAVD 88)")
+colnames(d) <- sprintf("\\textbf{\\shortstack{%s}}", columns)
+cap1 <- "Drain conductance and elevation threshold for subsurface outlet boundaries."
+cap2 <- c("\\textbf{Drain conductance}: is the hydraulic conductance of the interface between the aquifer and the drain.",
+          "Conductance values are preliminary and were adjusted during the model-calibration process.",
+          "\\textbf{Elevation threshold}: is the elevation of the drain.",
+          "\\textbf{Abbreviations}: m\\textsuperscript{2}/d, square meters per day; m, meters; NAVD 88, North American Vertical Datum of 1988")
+tbl <- xtable::xtable(d, label="table_drains")
+xtable::caption(tbl) <- c(sprintf("%s [%s]", cap1, paste(cap2, collapse=" ")), cap1)
+xtable::digits(tbl)[3:4] <- c(0, 0)
+print(tbl, include.rownames=FALSE, caption.placement="top", booktabs=TRUE,
+      format.args=list(big.mark=","), sanitize.colnames.function=function(x){x},
+      size="\\small")
+@
+
+<<include=FALSE>>=
+v <- "Location of drain cells composing the subsurface outlet boundaries in model layer 1."
+v <- c(paste("Map showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(v)))), v)
+@
+
+<<map_drains, echo=FALSE, fig.width=fin.map.s.0[1], fig.height=fin.map.s.0[2], fig.scap=sprintf("{%s}", v[1]), fig.cap=sprintf("{%s}", v[2])>>=
+cols <- c("#F02311", "#FBB829")
+PlotMap(r, xlim=usr.map.s[1:2], ylim=usr.map.s[3:4], bg.image=hill.shading, bg.image.alpha=0.6,
+        dms.tick=TRUE, col=cols, rivers=list(x=streams.rivers), lakes=list(x=lakes), draw.key=FALSE,
+        draw.raster=FALSE, credit=credit)
+plot(alluvium.extent, border="#FFFFFF7F", add=TRUE)
+plot(r, col=cols, legend=FALSE, add=TRUE)
+plot(cities, pch=15, cex=0.8, col="#333333", add=TRUE)
+text(cities, labels=cities@data$FEATURE_NA, col="#333333", cex=0.5, pos=3, offset=0.4)
+leg <- as.character(levels(r)[[1]]$Name)
+legend("topright", leg, fill=cols, border=NA, inset=0.02, cex=0.7, box.lty=1,
+       box.lwd=0.5, xpd=NA, bg="#FFFFFFCD")
+invisible(dev.off())
+@
+
+\noindent The drain boundary conditions are bundled into a single data table.
+
+<<>>=
+cells <- sort(which(!is.na(r[])))
+d1 <- cbind(lay = 1L, rowColFromCell(r, cells))
+d1 <- cbind(d1, factorValues(r, r[cells], att = c("elev", "cond")))
+d1$id <- as.integer(r[cells])
+d2 <- d1[!is.na(rs.model[["lay2.bot"]][cells]), , drop = FALSE]
+d3 <- d1[!is.na(rs.model[["lay3.bot"]][cells]), , drop = FALSE]
+d2$lay <- 2L
+d3$lay <- 3L
+drain <- rbind(d1, d2, d3)
+rownames(drain) <- NULL
+@
+
+% =========================================================================
+
+\subsubsection{Stream-aquifer flow exchange in river reaches}
+
+Stream-aquifer flow exchange is simulated using the MODFLOW River Package \citep{Harbaugh2000}, a head-dependent flux boundary condition.
+Note that the River Package does not account for the amount of flow in streams.
+Use of a more sophisticated package that accounts for streamflow, such as the MODFLOW Streamflow-Routing Package \citep{Niswonger2005},
+is infeasible because of insufficient data to describe the streamflow contribution from tributary streams.
+To simplify the structural complexity of rivers in the model domain, the WRV river system was discretized into
+\Sexpr{sum(levels(river.reaches@data$BigReach) != "None")} river reaches (based on the locations of continuous streamflow gaging stations) and
+\Sexpr{nrow(river.reaches@data)} river subreaches (\hyperref[fig:map_rivers]{figure~\ref{fig:map_rivers}}).
+A river subreach is defined as a section of a stream that has a uniform riverbed conductance and riverbed thickness (\hyperref[table_rivers]{table~\ref{table_rivers}}).
+The preliminary estimate of riverbed conductance of a river subreach is expressed as:
+
+\begin{equation} \label{eq:cond}
+C_{r} = \frac{K_{r} \, A_{r}}{a \, T_{r}}
+\end{equation}
+where
+\begin{description}
+\item[C_{r}] is the hydraulic conductance of the riverbed sediments, in square meters per day;
+\item[K_{r}] is the horizontal hydraulic conductivity of riverbed deposits, in meters per day;
+\item[A_{r}] is the surface-water area of river segment(s) in a model cell, in square meters;
+\item[a] is the vertical anisotropy, a dimensionless quantity; and
+\item[T_{r}] is the thickness of riverbed sediments, in meters.
+\end{description}
+
+The horizontal hydraulic conductivity of riverbed deposits ($K_{r}$ in equation~\ref{eq:cond}) was estimated as 86.4 m/d (283 feet per day)--this
+is the low-end estimate for horizontal hydraulic conductivity values reported by \citet[table~2.2]{Freeze1979} for unconsolidated gravel deposits.
+The surface-water area varies among model cells, therefore, an average value ($A_{r}$ in equation~\ref{eq:cond}) is used and taken as one tenth of the area of a model cell (or 1,000 m\textsuperscript{2}).
+
+Surface-water features that are not accounted for by the river subreaches (such as tributary streams, canals, and ponds) are represented in the model as areal recharge;
+see `\hyperref[sec:recharge]{Areal recharge and pumping demand}' section for details.
+River-boundary cells are identified using horizontal polylines with a single polyline allocated to each of the river subreaches.
+
+<<>>=
+r <- rasterize(river.reaches, rs.model, field = "ReachNo")
+r[is.na(rs.model[["lay1.bot"]]) | !is.na(rs.model[["drains"]])] <- NA
+r <- ratify(r)
+d <- river.reaches@data
+d$cond <- (86.4 * 1000) / (with(zone.properties, vani[name == "Zone 1"]) * d$BedThk)
+d$ID <- d$ReachNo
+levels(r) <- dplyr::left_join(levels(r)[[1]], d, by = "ID")
+rs.model[["riv.reach"]] <- r
+@
+
+<<table_rivers, echo=FALSE, results="asis">>=
+d <- d[order(d$ReachNo), ]
+reach.no <- as.character(d$BigReach)
+reach.no[reach.no == "None"] <- NA
+reach.no <- as.integer(factor(reach.no, levels=unique(reach.no)))
+d <- data.frame(BigReachNo=reach.no, d)
+d <- d[, c("Reach", "ReachNo", "BigReachNo", "Depth", "BedThk", "cond")]
+columns <- c("Name",
+             "Subreach \\\\ No.",
+             "Reach \\\\ No.",
+             "Water \\\\ depth \\\\ $d_{r}$ \\\\ (m)",
+             "Riverbed \\\\ thickness \\\\ $T_{r}$ \\\\ (m)",
+             "Riverbed \\\\ conductance \\\\ $C_{r}$ \\\\ (m\\textsuperscript{2}/d)")
+colnames(d) <- sprintf("\\textbf{\\shortstack{%s}}", columns)
+cap1 <- "Description of river subreaches in the Wood River Valley, Idaho."
+cap2 <- c("\\textbf{Subreach No.}: is an identifier used to locate river subreaches on the map in \\hyperref[fig:map_rivers]{figure~\\ref{fig:map_rivers}}.",
+          "\\textbf{Reach No.}: is an identifier for river reaches.",
+          "\\textbf{Water depth}: is the average water depth in the river.",
+          "\\textbf{Riverbed thickness}: is the average vertical thickness of the riverbed sediments.",
+          "\\textbf{Riverbed conductance}: is the average hydraulic conductance of the riverbed sediments.",
+          "Conductance values are preliminary and were adjusted during the model-calibration process.",
+          "\\textbf{Abbreviations}: m\\textsuperscript{2}/d, square meters per day; m, meters; --, a river subreach that is not associated with a river reach")
+tbl <- xtable::xtable(d, label="table_rivers")
+xtable::caption(tbl) <- c(sprintf("%s [%s]", cap1, paste(cap2, collapse=" ")), cap1)
+xtable::digits(tbl) <- c(0, 0, 0, 0, 1, 1, 0)
+print(tbl, include.rownames=FALSE, caption.placement="top", booktabs=TRUE,
+      format.args=list(big.mark=","), sanitize.colnames.function=function(x){x},
+      sanitize.text.function=identity, size="\\small", NA.string="--")
+@
+
+<<include=FALSE>>=
+v <- "River subreaches in the Wood River Valley, Idaho."
+v <- c(paste("Map showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(v)))), v)
+@
+
+<<map_rivers, echo=FALSE, fig.width=fin.map[1], fig.height=fin.map[2], fig.scap=sprintf("{%s}", v[1]), fig.cap=sprintf("{%s}", v[2])>>=
+r <- deratify(rs.model[["riv.reach"]], att="ID")
+Pal <- function(...) {
+  cols1 <- rainbow(..., s=0.5, v=1)
+  cols2 <- rainbow(..., s=1, v=0.5)
+  is.even <- seq_along(cols1) %% 2 == 0
+  cols1[is.even] <- cols2[is.even]
+  return(cols1)
+}
+at <- unique(r)
+PlotMap(r, breaks=seq(min(at) - 0.5, max(at) + 0.5),
+        xlim=usr.map[1:2], ylim=usr.map[3:4], bg.image=hill.shading,
+        bg.image.alpha=0.6, explanation="An identifier for the river subreach.",
+        dms.tick=TRUE, pal=Pal, labels=list(at=at), credit=credit)
+plot(bypass.canal, col="#3399CC", lwd=0.5, add=TRUE)
+text(getSpatialLinesMidPoints(rgeos::gLineMerge(bypass.canal)), labels="Bypass Canal",
+     cex=0.5, col="#3399CC", font=3, srt=80, pos=1, offset=1)
+plot(alluvium.extent, border="#FFFFFF7F", add=TRUE)
+pos <- c(4, 4, 4, 4, 4, 4, 4, 2, 2, 2,
+         3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
+         1, 3)
+text(getSpatialLinesMidPoints(river.reaches), labels=river.reaches@data$ReachNo,
+     col="#333333", cex=0.6, pos=pos, offset=0.4)
+bwr.gages <- streamgages[streamgages@data$SiteNo %in% c("13140800", "13139510", "13135500"), ]
+points(bwr.gages, pch=17, col="#333333")
+text(bwr.gages, labels=bwr.gages@data$SiteNo, col="#333333", cex=0.6, pos=2)
+plot(cities, pch=15, cex=0.8, col="#333333", add=TRUE)
+text(cities, labels=cities@data$FEATURE_NA, col="#333333", cex=0.5, pos=1, offset=0.4)
+plot(misc.locations, pch=21, cex=0.6, col="#333333", add=TRUE)
+text(misc.locations, labels=misc.locations@data$label, pos=c(3, 2, 2),
+     cex=0.5, offset=0.3)
+legend("topright", "Streamgage", pch=17, col="#333333", pt.cex=1,
+       inset=0.02, cex=0.7, box.lty=1, box.lwd=0.5, bg="#FFFFFFCD")
+invisible(dev.off())
+@
+
+If the head in a model cell that contains a river subreach falls below the bottom of the riverbed,
+water enters the aquifer from the river (also known as groundwater recharge or river loss) at a constant rate that is dependent on river stage and riverbed conductance.
+Furthermore, groundwater recharge occurs when the head is above the bottom of the riverbed and below the stream-stage elevation,
+albeit at a reduced rate that is dependent on a riverbed conductance term and the head difference between the head in the cell and the head in the river.
+For head values that are above or equal to the stream-stage elevation, water enters the river from the aquifer at a reduced rate.
+Stream-aquifer flow exchange is mathematically expressed as:
+
+\begin{equation} \label{eq:river}
+Q = \left\{\begin{array}{l l}
+      C_{r} \left( h_{r} - R_{\mathit{bot}} \right) & \quad \text{if $h < R_{\mathit{bot}}$,}\\
+      C_{r} \left( h_{r} - h \right) & \quad \text{if $h \geq R_{\mathit{bot}}$;}
+    \end{array} \right.
+\end{equation}
+where
+\begin{description}
+\item[Q] is the flow exchange between the river and the aquifer, where negative values are flow out of the aquifer system, and positive values are flow into the system, in cubic meters per day;
+\item[h] is the head in the river-boundary cell, in meters above the NAVD 88;
+\item[R_{\mathit{bot}}] is the elevation of the bottom of the riverbed sediments; and
+\item[h_{r}] is the stream-stage elevation, in meters above NAVD 88.
+\end{description}
+
+\noindent The elevation of the bottom of the riverbed sediments ($R_{\mathit{bot}}$ in equation~\ref{eq:river}) is defined as:
+
+\begin{equation} \label{eq:rbot}
+R_{\mathit{bot}} = h_{r} - d_{r} - T_{r}
+\end{equation}
+where
+\begin{description}
+\item[d_{r}] is the water depth, or distance between the water surface and the top of the riverbed sediments, in meters.
+\end{description}
+
+\noindent The stream-stage elevation ($h_{r}$ in equations~\ref{eq:river} and \ref{eq:rbot}) is initialized at land surface.
+
+<<>>=
+rs.model[["riv.stage"]] <- mask(rs.model[["lay1.top"]], rs.model[["riv.reach"]])
+@
+
+\noindent And lowered if the stream stage in the adjacent upstream river-reach cell is less than the estimated stage of the current downstream cell.
+
+<<>>=
+r <- BumpRiverStage(rs.model[["riv.stage"]], drain.lines)
+rs.model[["riv.stage"]] <- rs.model[["riv.stage"]] + r
+@
+
+\noindent Subtracting the average water depth and riverbed thickness from stream stage gives the elevation of the riverbed bottom ($R_{\mathit{bot}}$ in equation~\ref{eq:rbot}).
+
+<<>>=
+r.riv.depth <- deratify(rs.model[["riv.reach"]], "Depth")
+r.riv.thick <- deratify(rs.model[["riv.reach"]], "BedThk")
+rs.model[["riv.bottom"]] <- rs.model[["riv.stage"]] - r.riv.depth - r.riv.thick
+@
+
+\noindent Flow between adjacent river cells is ensured by lowering the riverbed bottom elevations in those cells prohibiting vertical connectivity.
+
+<<>>=
+rs <- subset(rs.model, c("riv.stage", "riv.bottom"))
+r <- BumpDisconnectCells(rs, min.overlap = 0.2)
+rs.model[["riv.bottom"]] <- rs.model[["riv.bottom"]] + r
+@
+
+\noindent Subtracting the riverbed top elevation from the stream-stage elevation gives the modeled surface-water depth.
+
+<<>>=
+rs.model[["riv.depth"]] <- rs.model[["riv.stage"]] - rs.model[["riv.bottom"]] - r.riv.thick
+@
+
+<<echo=FALSE>>=
+x <- as.numeric(na.omit((rs.model[["riv.depth"]])[]))
+@
+
+\noindent The modeled surface-water depth ranges from
+\Sexpr{format(y <- min(x),  digits=2)} m (\Sexpr{format(y * m.to.ft, digits=2)} ft) to
+\Sexpr{format(y <- max(x),  digits=2)} m (\Sexpr{format(y * m.to.ft, digits=2)} ft), with a mean and standard deviation of
+\Sexpr{format(y <- mean(x), digits=2)} m (\Sexpr{format(y * m.to.ft, digits=2)} ft) and
+\Sexpr{format(y <- sd(x),   digits=2)} m (\Sexpr{format(y * m.to.ft, digits=2)} ft), respectively.
+River boundary conditions are placed into a single data table.
+
+<<>>=
+r <- rs.model[["riv.reach"]]
+cells <- sort(which(!is.na(r[])))
+rc <- rowColFromCell(r, cells)
+d <- data.frame(lay = 1L, rc, id = r[cells], bottom = rs.model[["riv.bottom"]][cells],
+                stage = rs.model[["riv.stage"]][cells])
+river <- cbind(d, factorValues(r, d$id, att = c("cond", "Reach")))
+@
+
+\noindent Cell thickness is adjusted to prevent the river stage from ever being below the bottom of a river cell in model layer 1.
+
+<<>>=
+d$diff <- rs.model[["lay1.bot"]][cells] - d[, "bottom"]
+d$diff[d$diff < 0] <- 0
+rs.model[["lay1.bot"]][cells] <- rs.model[["lay1.bot"]][cells] - d$diff
+rs.model[["lay2.bot"]][cells] <- rs.model[["lay2.bot"]][cells] - d$diff
+rs.model[["lay3.bot"]][cells] <- rs.model[["lay3.bot"]][cells] - d$diff
+@
+
+The stream stage calculated thus far is assumed an adequate representation of median stream-stage conditions in the WRV during the model simulation period (1995--2010).
+A rapid hydraulic-head response to changes in stream-stage elevation in the Big Wood River indicates that it is hydraulically connected to the modeled aquifer system for most of its length.
+This hydraulic connection necessitates a transient representation of Big Wood River stage in the model.
+The transient river conditions are calculated using the historical stream stage, or gage height, measurements at streamgages located along the
+Big Wood River near Ketchum (\href{http://waterdata.usgs.gov/id/nwis/uv/?site_no=13135500}{13135500}),
+at Hailey (\href{http://waterdata.usgs.gov/id/nwis/uv/?site_no=13139510}{13139510}), and
+at Stanton Crossing near Bellevue (\href{http://waterdata.usgs.gov/id/nwis/uv/?site_no=13140800}{13140800}) (\hyperref[fig:map_rivers]{fig.~\ref{fig:map_rivers}}).
+The normalized mean monthly gage-height at each streamgage is shown in \hyperref[fig:graph_gage_height]{figure~\ref{fig:graph_gage_height}}.
+Normalization is done by subtracting the median of the monthly mean gage-height from individual measurements.
+
+<<>>=
+d <- gage.height
+d <- d[d$Date >= tr.interval[1] & d$Date < tr.interval[2], ]
+d <- data.frame(Date = format(d$Date, "%Y%m"), d[, -1], check.names = FALSE)
+d <- aggregate(d[, -1], by = list(YearMonth = d$Date), mean, na.rm = TRUE)
+d[, -1] <- apply(d[, -1], 2, function(x) x - median(x, na.rm = TRUE))
+norm.gage.height <- d
+@
+
+The distribution of normalized gage-heights over the length of the Big Wood River and during the period of simulation is interpolated from the measured data.
+Surface water in the Big Wood River between the Near Ketchum (13135500) and Hailey (13139510) streamgages is hydraulically connected;
+as indicated by a strong temporal correlation between gage-height measurements recorded at these streamgages (R-squared of 0.964).
+Because of this strong correlation, and for each model stress period,
+a linear interpolation model is constructed between the Near Ketchum and Hailey streamgages using the normalized mean gage-height as the dependent variable and
+the rivers northing-measured distance as the independent variable.
+
+Surface water in the Big Wood River between the Hailey (13139510) and Stanton Crossing (13140800) streamgages is typically hydraulically disconnected;
+this is because of seepage losses and irrigation diversions that result in substantial decreases in streamflow between these sites.
+Furthermore, the river channel is seasonally dry between Glendale Road and Wood River Ranch when the water district diverts the entire river flow into the Bypass Canal (\hyperref[fig:map_rivers]{fig.~\ref{fig:map_rivers}}).
+Therefore, for each model stress period, a piecewise constant interpolation model is constructed between these two streamgages.
+That is, the normalized monthly mean gage-height of the Big Wood River between Hailey and the Bypass Canal diversion (located near the Glendale Road) is set equal to the gage-height recorded at the Hailey streamgage;
+between Glendale Road and the Wood River Ranch is set equal to the median stream stage;
+and between the Wood River Ranch and Stanton Crossing is set equal to the mean monthly gage-height recorded at the Stanton Crossing streamgage.
+
+<<>>=
+sites <- c("13135500", "13139510", "13140800")
+gages <- coordinates(streamgages[streamgages@data$SiteNo %in% sites, ])[, 2]
+names(gages) <- sites
+d <- river.reaches@data
+reach <- river.reaches[d$Reach == "Big Wood, Wood River Ranch to Stanton Crossing", ]
+wrr <- max(coordinates(as(reach, "SpatialPoints"))[, 2])
+reach <- river.reaches[d$Reach == "Big Wood, Glendale to Sluder", ]
+glendale <- max(coordinates(as(reach, "SpatialPoints"))[, 2])
+FUN <- function(i) {
+  gage <- data.frame(northing = gages, height = unlist(i))
+  args <- list(x = NULL, gage = gage, wrr = wrr, glendale = glendale)
+  body <- quote({
+    y <- rep(NA, length(x))
+    is <- x < gage["13139510", "northing"]
+    xy <- rbind(gage["13140800", ], c(wrr, 0), c(glendale, gage["13139510", "height"]))
+    y[is] <- approx(xy.coords(xy), xout = x[is], rule = 2, method = "constant")$y
+    xy <- gage[c("13139510", "13135500"), ]
+    y[!is] <- approx(xy.coords(xy), xout = x[!is], rule = 2, method = "linear")$y
+    return(y)
+  })
+  return(as.function(c(args, body)))
+}
+interp.funs <- apply(norm.gage.height[, names(gages)], 1, FUN)
+names(interp.funs) <- norm.gage.height$YearMonth
+@
+
+<<include=FALSE>>=
+v <- "Normalized mean monthly gage-height at streamgages located along the Big Wood River, Idaho."
+v <- c(paste("Graph showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(v)))), v)
+@
+
+<<graph_gage_height, echo=FALSE, fig.width=fin.graph.short[1], fig.height=fin.graph.short[2], fig.scap=sprintf("{%s}", v[1]), fig.cap=sprintf("{%s}", v[2])>>=
+x <- tr.stress.periods
+y <- rbind(norm.gage.height[, -1], norm.gage.height[nrow(norm.gage.height), -1])
+ylab <- paste("Normalized mean gage-height, in", c("meters", "feet"))
+cols <- c("#1B9E77", "#D95F02", "#7570B3")
+PlotGraph(x, y, ylab=ylab, col=cols, conversion.factor=m.to.ft, center.date.labels=TRUE)
+legend("topright", colnames(y), lwd=c(1, 1, 1), col=cols, inset=0.02, cex=0.7,
+       box.lty=1, box.lwd=0.5, bg="#FFFFFFCD", title=expression(bold("Streamgages")))
+invisible(dev.off())
+@
+
+\noindent The northing-distance to the cell center is calculated for each of the river-boundary cells composing the Big Wood River.
+
+<<>>=
+is.bwr <- river$Reach %in% grep("^Big Wood", levels(river$Reach), value = TRUE)
+river$northing <- yFromCell(r, cellFromRowCol(r, river$row, river$col))
+@
+
+\noindent The modeled stream stage is calculated by subtracting the interpolated normalized mean monthly gage-height from the estimated median stream depth.
+
+<<>>=
+stage <- matrix(river$stage, nrow = nrow(river), ncol = length(tr.yr.mo))
+colnames(stage) <- tr.yr.mo
+northing <- river$northing[is.bwr]
+for (i in tr.yr.mo) stage[is.bwr, i] <- stage[is.bwr, i] + interp.funs[[i]](northing)
+@
+
+<<echo=FALSE>>=
+if (any(stage < matrix(river$bottom, nrow = nrow(river), ncol = length(tr.yr.mo)))) {
+  warning("some stream-stage elevations are below the riverbed bottom")
+}
+
+is.drybed <- apply(drybed[, -1], 1, all)
+FUN <- function(is) {
+  reach <- drybed$Reach[is]
+  reach.no <- with(river.reaches@data, ReachNo[match(reach, Reach)])
+  idxs <- order(reach.no)
+  s <- sprintf("%s (subreach No.~%d)", reach[idxs], reach.no[idxs])
+  s[length(s)] <- paste("and", s[length(s)])
+  paste(s, collapse="; ")
+}
+@
+
+Seepage losses and irrigation diversions from the main river channel of the Big Wood River are known to result in dry riverbed conditions for some of the river subreaches.
+Dry-bed conditions are represented in the model by specifying the stream stage at the riverbed bottom elevation.
+Spring fed creek reaches are also represented in this manner.
+Ephemeral dry-bed conditions in the Big Wood River are specified for the following river subreaches: \Sexpr{FUN(!is.drybed)}.
+Perennial spring fed creeks are specified for the following river subreaches of Willow and Silver Creeks: \Sexpr{FUN(is.drybed)}.
+The dry-bed conditions allow groundwater to discharge into the spring-fed streams,
+but does not allow the surface water in these streams to infiltrate the riverbed and recharge the aquifer.
+
+<<>>=
+is.drybed <- suppressWarnings(dplyr::left_join(river, drybed, by = "Reach"))
+is.drybed <- as.matrix(is.drybed[, tr.yr.mo])
+is.drybed[is.na(is.drybed)] <- FALSE
+river.bottom <- matrix(river$bottom, nrow = nrow(river), ncol = length(tr.yr.mo))
+stage[is.drybed] <- river.bottom[is.drybed]
+@
+
+\noindent River boundary conditions are placed in a single table.
+
+<<>>=
+river[, tr.yr.mo] <- stage
+river <- river[order(river$id, river$lay), ]
+@
+
+\noindent Steady-state stream-stage elevations are calculated by averaging elevations over time.
+
+<<>>=
+river <- cbind(river, ss = apply(river[, ss.yr.mo], 1, mean))
+@
+
+% =========================================================================
+
+\subsubsection{Areal recharge and pumping demand}
+\label{sec:recharge}
+
+Areal recharge (that is natural and incidental groundwater recharge and discharge) and pumping demand (that is groundwater diverted from the aquifer by means of pumping wells and flowing-artesian wells)
+are simulated using the MODFLOW Well Package \citep{Harbaugh2000}, a specified-flow boundary condition.
+For model cells containing this boundary type, a single net flow value ($Q$ in equation~\ref{eq:gw_flow}) is specified for each cell and model stress period.
+A positive volumetric flow rate indicates the addition of water to the saturated zone and a negative value indicates a loss.
+
+In this study, two water-balance models were developed and used to reconstruct areal recharge and pumping demand during the simulation period (1995--2010).
+The first water-balance model (appendix F, equation 2) calculates natural groundwater recharge and discharge beneath non-irrigated lands with proxy inputs of precipitation and evapotranspiration.
+A detailed description of this model is provided in appendix F.
+The second water-balance model (appendix G, equation 1) calculates incidental groundwater recharge beneath irrigated lands and unlined canals, and groundwater discharge at production well sites.
+Inputs to the model are:
+surface-water diversions (includes municipal spring diversions),
+surface-water return flow,
+canal seepage,
+groundwater diversions,
+municipal wastewater treatment plant discharge, and
+crop irrigation requirements.
+A detailed description of this model is provided in appendix G.
+
+Areal recharge and pumping demand are specified for each month in the model simulation period
+(\hyperref[fig:graph_areal_rech]{figs.~\ref{fig:graph_areal_rech}} and \ref{fig:graph_wells}).
+The steady-state areal recharge is shown in \hyperref[fig:map_areal_rech]{figure~\ref{fig:map_areal_rech}}.
+
+<<>>=
+l <- RunWaterBalance(tr.stress.periods, rs.model[["lay1.bot"]], efficiency,
+                     canal.seep, ss.stress.periods)
+cells <- which(!is.na(l[["areal.rech"]][[1]][]))
+rc <- rowColFromCell(l[["areal.rech"]], cells)
+rech <- cbind(lay = 1, row = rc[, 1], col = rc[, 2], l[["areal.rech"]][cells])
+wells <- pod.wells[match(l[["pod.rech"]]$WMISNumber, pod.wells@data$WMISNumber), ]
+wells@data <- dplyr::left_join(wells@data, l[["pod.rech"]], by = "WMISNumber")
+@
+
+\newpage
+
+The pumping rate is specified for each model cell intersecting a well's open interval(s)
+and calculated by multiplying the estimated pumping demand by the cell's transmissivity fraction.
+The transmissivity fraction is calculated by dividing a cell's aquifer transmissivity ($K b$ in equation~\ref{eq:gw_flow}) by the sum of all transmissivity values for cells belonging to the same well.
+
+<<>>=
+rs.model[["lay1.hk"]] <- deratify(rs.model[["lay1.zones"]], "hk")
+rs.model[["lay2.hk"]] <- deratify(rs.model[["lay2.zones"]], "hk")
+rs.model[["lay3.hk"]] <- deratify(rs.model[["lay3.zones"]], "hk")
+well <- GetWellConfig(rs.model, wells, "WMISNumber", names(l[["pod.rech"]][-1]))
+@
+
+<<include=FALSE>>=
+v <- "Location of production wells in the Wood River Valley aquifer system, south-central Idaho."
+v <- c(paste("Map showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(v)))), v)
+@
+
+<<map_wells, echo=FALSE, fig.width=fin.map.0[1], fig.height=fin.map.0[2], fig.scap=sprintf("{%s}", v[1]), fig.cap=sprintf("{%s}", v[2])>>=
+PlotMap(crs(hill.shading), xlim=usr.map[1:2], ylim=usr.map[3:4], bg.image=hill.shading, dms.tick=TRUE,
+        bg.image.alpha=0.6, rivers=list(x=streams.rivers), lakes=list(x=lakes), credit=credit)
+plot(alluvium.extent, border="#FFFFFFCC", add=TRUE)
+x <- pod.wells[pod.wells@data$WMISNumber %in% unique(well$WMISNumber), ]
+col <- "#F02311CB"
+points(x, pch=21, cex=0.5, lwd=0.5, col=NA, bg=col)
+plot(cities, pch=15, cex=0.8, col="#333333", add=TRUE)
+text(cities, labels=cities@data$FEATURE_NA, col="#333333", cex=0.5, pos=1, offset=0.4)
+legend("topright", "Pumping well", pch=21, col=NA, pt.bg=col, pt.cex=0.5,
+       inset=0.02, cex=0.7, box.lty=1, box.lwd=0.5, bg="#FFFFFFCD")
+invisible(dev.off())
+@
+
+<<include=FALSE>>=
+v <- "Total areal recharge. Values are preliminary and were modified by adjustments to irrigation efficiency during the model-calibration process."
+v <- c(paste("Graph showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(v)))), v)
+@
+
+<<graph_areal_rech, echo=FALSE, fig.width=fin.graph.short[1], fig.height=fin.graph.short[2], fig.scap=sprintf("{%s}", v[1]), fig.cap=sprintf("{%s}", v[2])>>=
+x <- tr.stress.periods
+y <- colSums(rech[, tr.yr.mo], na.rm=TRUE)
+y <- c(y, tail(y, 1))
+d <- data.frame(x, y, y)
+d[d[, 2] < 0, 2] <- 0
+d[d[, 3] > 0, 3] <- 0
+ylab <- paste("Total flow across water table, in", c("cubic meters per day", "acre-feet per year"))
+col <- c("#67A9CF", "#C80C0B")
+PlotGraph(d, ylab=ylab, col=col, fill=paste0(col, "66"),
+          conversion.factor=m3.per.d.to.af.per.yr, scientific=TRUE, center.date.labels=TRUE)
+legend("topright", c("Recharge", "Discharge"), col=col, lty=1,
+       inset=0.02, cex=0.7, box.lty=1, box.lwd=0.5, bg="#FFFFFFCD")
+invisible(dev.off())
+@
+
+<<include=FALSE>>=
+v <- "Total groundwater withdrawals from production wells in the model domain. Values are preliminary and were modified by adjustments to irrigation efficiency during the model-calibration process."
+v <- c(paste("Graph showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(v)))), v)
+@
+
+<<graph_wells, echo=FALSE, fig.width=fin.graph.short[1], fig.height=fin.graph.short[2], fig.scap=sprintf("{%s}", v[1]), fig.cap=sprintf("{%s}", v[2])>>=
+y <- colSums(well[, tr.yr.mo], na.rm=TRUE)
+y <- c(y, y[length(y)])
+x <- tr.stress.periods
+ylab <- paste("Total withdrawals from wells, in", c("cubic meters per day", "acre-feet per year"))
+col <- "#C80C0B"
+PlotGraph(x, y, ylab=ylab, col=col, fill=paste0(col, "66"),
+          conversion.factor=m3.per.d.to.af.per.yr, scientific=TRUE, center.date.labels=TRUE)
+invisible(dev.off())
+@
+
+<<include=FALSE>>=
+v <- "Steady-state areal recharge. Values are preliminary and were modified by adjustments to irrigation efficiency during the model-calibration process."
+v <- c(paste("Map showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(v)))), v)
+@
+
+<<map_areal_rech, echo=FALSE, fig.width=fin.map[1], fig.height=fin.map[2], fig.scap=sprintf("{%s}", v[1]), fig.cap=sprintf("{%s}", v[2])>>=
+r <- l[["areal.rech"]][["ss"]]
+zlim <- range(pretty(r[], n=8))
+if (zlim[1] < 0) {
+  ratio <- abs(zlim[1]) / diff(zlim)
+  Pal <- function(...) {
+    Pal1 <- colorRampPalette(c("#F02311", "#F02311", "#FFD0D4"))
+    Pal2 <- colorRampPalette(c("#FCFBE3", rep("#67A9CF", 3)))
+    n1 <- round(... * ratio)
+    n2 <- ... - n1
+    return(c(Pal1(n1), Pal2(n2)))
+  }
+} else {
+  Pal <- colorRampPalette(c("#FCFBE3", "#67A9CF"))
+}
+PlotMap(r, xlim=usr.map[1:2], ylim=usr.map[3:4], zlim=zlim, bg.image=hill.shading,
+        bg.image.alpha=0.6, dms.tick=TRUE, pal=Pal,
+        explanation="Volumetric flow rate in cubic meters per day.",
+        rivers=list(x=streams.rivers), lakes=list(x=lakes), credit=credit)
+plot(cities, pch=15, cex=0.8, col="#333333", add=TRUE)
+text(cities, labels=cities@data$FEATURE_NA, col="#333333", cex=0.5, pos=1, offset=0.4)
+invisible(dev.off())
+@
+
+Seepage beneath the Bypass Canal and Bellevue Wastewater Treatment Plant Ponds (Bellevue WWTP Ponds) (locations shown in \hyperref[fig:map_basalt_extent]{fig.~\ref{fig:map_basalt_extent}})
+are known sources of areal recharge that are assigned directly to model cells.
+The volumetric flow rate beneath the Bypass Canal and Bellevue WWTP Ponds are shown in \hyperref[fig:graph_bypass_canal]{figures~\ref{fig:graph_bypass_canal}} and \ref{fig:graph_wwtp_ponds}, respectively.
+
+<<>>=
+r <- raster(rs.model)
+r[!is.na(rasterize(bypass.canal, r)[])] <- 1L
+r[rasterize(bellevue.wwtp.ponds, r, getCover = TRUE) > 0] <- 2L
+r <- ratify(r, count = TRUE)
+d <- data.frame(RechSite = c("Bypass Canal", "Bellevue WWTP Ponds"))
+d <- dplyr::left_join(d, misc.seepage, by = "RechSite")
+d <- cbind(levels(r)[[1]], d)
+d[, tr.yr.mo] <- as.matrix(d[, tr.yr.mo]) %*% diag(1 / GetDaysInMonth(tr.yr.mo))
+d[, tr.yr.mo] <- d[, tr.yr.mo] / d$COUNT
+levels(r) <- d
+rs.model[["misc.seepage"]] <- r
+@
+
+\noindent Water-table and pumping boundary conditions are placed in a single data table.
+
+<<>>=
+cells <- which(!is.na(r[]))
+cells <- cells[order(r[cells])]
+rc <- rowColFromCell(r, cells)
+misc <- data.frame(lay = 1L, rc, deratify(r)[cells], check.names = FALSE)
+misc$RechSite <- as.factor(d$RechSite[misc$RechSite])
+misc$COUNT <- NULL
+@
+
+<<include=FALSE>>=
+v <- "Seepage beneath the Bypass Canal."
+v <- c(paste("Graph showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(v)))), v)
+@
+
+<<graph_bypass_canal, echo=FALSE, fig.width=fin.graph.short[1], fig.height=fin.graph.short[2], fig.scap=sprintf("{%s}", v[1]), fig.cap=sprintf("{%s}", v[2])>>=
+m <- t(as.matrix(misc[misc$RechSite == "Bypass Canal", tr.yr.mo]))
+m <- matrix(rowSums(m), dimnames=list(rownames(m), "Bellevue WWTP Ponds"))
+x <- tr.stress.periods
+y <- rbind(m, m[nrow(m), , drop=FALSE])
+ylab <- paste("Seepage rate, in", c("cubic meters per day", "acre-feet per year"))
+col <- "#67A9CF"
+PlotGraph(x, y, ylab=ylab, col=col, fill=paste0(col, "66"),
+          conversion.factor=m3.per.d.to.af.per.yr, scientific=c(FALSE, TRUE, FALSE), center.date.labels=TRUE)
+invisible(dev.off())
+@
+
+<<include=FALSE>>=
+v <- "Seepage beneath the Bellevue Waste Water Treatment Plant Ponds."
+v <- c(paste("Graph showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(v)))), v)
+@
+
+<<graph_wwtp_ponds, echo=FALSE, fig.width=fin.graph.short[1], fig.height=fin.graph.short[2], fig.scap=sprintf("{%s}", v[1]), fig.cap=sprintf("{%s}", v[2])>>=
+m <- t(as.matrix(misc[misc$RechSite == "Bellevue WWTP Ponds", tr.yr.mo]))
+m <- matrix(rowSums(m), dimnames=list(rownames(m), "Bellevue WWTP Ponds"))
+x <- tr.stress.periods
+y <- rbind(m, m[nrow(m), , drop=FALSE])
+ylab <- paste("Seepage rate, in", c("cubic meters per day", "acre-feet per year"))
+col <- "#67A9CF"
+PlotGraph(x, y, ylab=ylab, col=col, fill=paste0(col, "66"),
+          conversion.factor=m3.per.d.to.af.per.yr, scientific=FALSE, center.date.labels=TRUE)
+invisible(dev.off())
+@
+
+\noindent Steady-state volumetric flow rates are calculated by averaging flows over time.
+
+<<>>=
+misc <- cbind(misc, ss = apply(misc[, ss.yr.mo], 1, mean))
+@
+
+% =========================================================================
+
+\subsubsection{Starting hydraulic head distribution}
+
+The starting head distribution for the initial steady-state stress period is specified at 1 meter below land surface.
+
+<<>>=
+starting.head.depth <- 1  # in meters
+r <- rs.model[["lay1.top"]] - starting.head.depth
+rs.model[["lay1.strt"]] <- r
+r <- rs.model[["lay1.strt"]]
+r[is.na(rs.model[["lay2.bot"]])] <- NA
+rs.model[["lay2.strt"]] <- r
+r <- rs.model[["lay1.strt"]]
+r[is.na(rs.model[["lay3.bot"]])] <- NA
+rs.model[["lay3.strt"]] <- r
+@
+
+\newpage
+
+% =========================================================================
+
+\section{Model Run}
+
+Groundwater flow in the WRV aquifer system is simulated using the MODFLOW-USG numerical model.
+This model was chosen for its ability to solve complex unconfined groundwater flow simulations.
+The model-input files are written to disk.
+
+<<>>=
+id <- "wrv_mfusg"  # model run identifier
+dir.run <- file.path(getwd(), "model/model1")
+WriteModflowInput(rs.model, rech, well, trib, misc, river, drain, id, dir.run,
+                  is.convertible = FALSE, tr.stress.periods = tr.stress.periods,
+                  ntime.steps = ntime.steps, verbose = FALSE)
+@
+
+\noindent Copy the MODFLOW-USG executable file to the appropriate directory:
+
+<<results="hide">>=
+file <- ifelse(.Platform$OS.type == "windows", "mfusg.exe", "mfusg")
+arch <- ifelse(Sys.getenv("R_ARCH") == "/x64", "x64", "i386")
+file.exe <- file.path(system.file("bin", arch, package = "wrv"), file)
+invisible(file.copy(file.exe, dir.run, copy.date = TRUE))
+@
+
+\noindent Create and execute a `batch file' containing commands that run MODFLOW-USG:
+
+<<>>=
+file.bat <- file.path(dir.run, "RunModflow.bat")
+cmd <- paste(sub("\\.exe$", "", basename(file.exe)), shQuote(paste0(id, ".nam")))
+cat(cmd, file = file.bat)
+Sys.chmod(file.bat, mode = "755")
+wd <- setwd(dir.run)
+system2(file.bat, stdout = FALSE, stderr = FALSE)
+setwd(wd)
+@
+
+% =========================================================================
+
+\section{Simulation Output Analysis}
+
+% =========================================================================
+
+\subsection{Volumetric Water Budget}
+
+The overall water budget for the WRV aquifer system
+averaged over the duration of the uncalibrated model simulation period (1995--2010) is provided in \hyperref[table_budget]{table~\ref{table_budget}}.
+Water budget components are as follows:
+(1) areal recharge, includes incidental and natural groundwater recharge and discharge;
+(2) streamflow losses and gains, that is, the stream-aquifer flow exchange;
+(3) groundwater pumping from wells; and
+(4) groundwater discharge at the Stanton Crossing and Silver Creek outlet boundaries.
+\hyperref[fig:graph_budget]{Figure~\ref{fig:graph_budget}} shows the annual water budget components and change in aquifer system storage during the uncalibrated model simulation period (1995--2010).
+
+<<>>=
+file.bud <- file.path(dir.run, paste0(id, ".bud"))
+budget <- ReadModflowBinary(file.bud, "flow", rm.totim.0 = TRUE)
+budget <- SummariseBudget(budget)
+budget <- dplyr::mutate(budget, totim.date = as.Date(totim, origin = tr.interval[1]))
+@
+
+<<echo=FALSE>>=
+b <- budget[, c("desc", "id", "flow.dir", "totim.date")]
+b$flow <- budget$flow.sum
+
+d <- b[b$desc == "river leakage", ]
+d <- dplyr::summarise(dplyr::group_by(d, totim.date, flow.dir), flow=sum(flow))
+d <- merge(d[d$flow.dir == "in",  c("totim.date", "flow")],
+           d[d$flow.dir == "out", c("totim.date", "flow")],
+           by="totim.date", all=TRUE, suffixes=c(".in", ".out"))
+d <- cbind(d, flow.total=rowSums(d[, c("flow.in", "flow.out")]))
+d.river <- d
+
+d <- b[b$desc == "drains" & b$flow.dir == "out", ]
+d$id <- as.factor(d$id)
+levels(d$id) <- levels(rs.model[["drains"]])[[1]]$Name
+d.drain.1 <- d[d$id == "Stanton Crossing", c("totim.date", "flow")]
+d.drain.2 <- d[d$id == "Silver Creek",     c("totim.date", "flow")]
+
+d.wells <- b[b$desc == "wells", ]
+d.wells$id <- as.factor(d.wells$id)
+levels(d.wells$id) <- c("rech", "well", "trib", "misc")
+d <- d.wells[d.wells$id %in% c("rech", "misc"), ]
+d <- dplyr::summarise(dplyr::group_by(d, totim.date, flow.dir), flow=sum(flow))
+d <- merge(d[d$flow.dir == "in",  c("totim.date", "flow")],
+           d[d$flow.dir == "out", c("totim.date", "flow")],
+           by="totim.date", all=TRUE, suffixes=c(".in", ".out"))
+d <- cbind(d, flow.total=rowSums(d[, c("flow.in", "flow.out")]))
+d.rech <- d
+d.well <- d.wells[d.wells$id == "well" & d.wells$flow.dir == "out",
+                  c("totim.date", "flow")]
+d.trib <- d.wells[d.wells$id == "trib" & d.wells$flow.dir == "in",
+                  c("totim.date", "flow")]
+@
+
+<<include=FALSE>>=
+v <- "Volumetric water budget components by year, including annual change in storage, for the entire simulation period, 1995--2010, south-central Idaho---based on the uncalibrated model results."
+v <- c(paste("Graph showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(v)))), v)
+@
+
+<<graph_budget, echo=FALSE, fig.width=fin.graph[1], fig.height=fin.graph[2], fig.scap=sprintf("{%s}", v[1]), fig.cap=sprintf("{%s}", v[2])>>=
+cols <- format(seq(tr.interval[1], tr.interval[2] - 1, "year"), "%Y")
+rows <- c("Areal recharge", "Streamflow losses", "Tributary bain underflow",
+          "Areal discharge", "Streamflow gains", "Well pumping", "Outlet boundaries")
+m <- matrix(NA, nrow=length(rows), ncol=length(cols), dimnames=list(rows, cols))
+for (i in cols) {
+  idxs <- which(format(d$totim.date, "%Y") == i)
+  ndays <- diff(as.integer(d$totim.date[c(idxs, max(idxs) + 1L)]))
+  m[1, i] <- sum(d.rech$flow.in[idxs] * ndays)
+  m[2, i] <- sum(d.river$flow.in[idxs] * ndays)
+  m[3, i] <- sum(d.trib$flow[idxs] * ndays)
+  m[4, i] <- sum(d.rech$flow.out[idxs] * ndays)
+  m[5, i] <- sum(d.river$flow.out[idxs] * ndays)
+  m[6, i] <- sum(d.well$flow[idxs] * ndays)
+  m[7, i] <- sum(d.drain.1$flow[idxs] * ndays) +
+             sum(d.drain.2$flow[idxs] * ndays)
+}
+par(mar=c(2.1, 4.1, 0.5, 4.1), mgp=c(3, 0.5, 0))
+cex <- 0.7
+tcl <- 7.2 / par("cra")[2]
+cols <- c("#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
+pos.idxs <- order(apply(m[1:3, ], 1, median), decreasing=TRUE)
+neg.idxs <- order(apply(m[4:7, ], 1, median)) + 3L
+y1at <- pretty(c(colSums(m[pos.idxs, ]), colSums(m[neg.idxs, ])))
+mid <- barplot(m[pos.idxs, ], col=cols[pos.idxs], ylim=range(y1at),
+               cex.names=cex, yaxt="n", las=3)
+mid <- barplot(m[neg.idxs, ], col=cols[neg.idxs], ylim=range(y1at),
+               cex.names=cex, yaxt="n", xaxt="n", add=TRUE)
+abline(h=y1at, col="#D3D3D3B3", lwd=0.5)
+lines(mid, colSums(m), lwd=2, col="#0F0A06")
+axis(1, mid, tcl=tcl, labels=FALSE, lwd=-1, lwd.ticks=0.5)
+axis(3, mid, tcl=tcl, labels=FALSE, lwd=-1, lwd.ticks=0.5)
+legend("topleft", "Change in aquifer storage", lwd=2, col="#0F0A06",
+       inset=0.02, cex=cex, box.lty=1, box.lwd=0.5, xpd=NA,
+       bg="#FFFFFFCD")
+y1lab <- ToScientific(y1at, lab.type="plotmath")
+sfsmisc::eaxis(2, at=y1at, labels=y1lab, at.small=FALSE, tcl=tcl, cex.axis=cex,
+               lwd=-1, lwd.ticks=0.5)
+title(ylab="Annual volume, in cubic meters", cex.lab=cex)
+y2at <- pretty(y1at * m3.to.af)
+y2lab <- ToScientific(y2at, lab.type="plotmath")
+at <- y2at / m3.to.af
+sfsmisc::eaxis(4, at=at, tcl=tcl, labels=y2lab, at.small=FALSE, tcl=tcl,
+               cex.axis=cex, lwd=-1, lwd.ticks=0.5)
+mtext("Annual volume, in acre-feet", side=4, line=par("mgp")[1] - 0.5, cex=cex)
+idxs <- c(rev(pos.idxs), neg.idxs)
+legend("topright", rows[idxs], fill=cols[idxs], inset=0.02, cex=cex, box.lty=1,
+       box.lwd=0.5, xpd=NA, bg="#FFFFFFE7", title=expression(bold("Component")))
+box(lwd=0.5)
+invisible(dev.off())
+@
+
+<<table_budget, echo=FALSE, results="asis">>=
+sdate <- as.Date("1995-01-01", tz="MST")
+is.date <- colnames(m) >= format(sdate, "%Y")
+flow <- c("Water-table recharge"             = as.integer(mean(d.rech$flow.in[is.date])),
+          "Streamflow losses"                = as.integer(mean(d.river$flow.in[is.date])),
+          "Tributary basin underflow"        = as.integer(mean(d.trib$flow[is.date])),
+          " "                                = NA,
+          "Water-table discharge"            = as.integer(abs(mean(d.rech$flow.out[is.date]))),
+          "Streamflow gains"                 = as.integer(abs(mean(d.river$flow.out[is.date]))),
+          "Production well pumping"          = as.integer(abs(mean(d.well$flow[is.date]))),
+          "Stanton Crossing outlet boundary" = as.integer(abs(mean(d.drain.1$flow[is.date]))),
+          "Silver Creek outlet boundary"     = as.integer(abs(mean(d.drain.2$flow[is.date]))),
+          " "                                = NA,
+          "Change in aquifer storage"        = NA)
+flow[11] <- sum(flow[1:3]) - sum(flow[5:9])
+d <- data.frame(c("\\textbf{Inflow}", "", "", "",
+                  "\\textbf{Outflow}", "", "", "", "", "",
+                  "\\textbf{Inflow - Outflow}"),
+                names(flow), flow, flow * m3.per.d.to.af.per.yr)
+rownames(d) <- NULL
+
+d$percent <- NA
+d$percent[1:3] <- (flow[1:3] / sum(flow[1:3])) * 100
+d$percent[5:9] <- (flow[5:9] / sum(flow[5:9])) * 100
+d$percent <- formatC(d$percent, format="f", digits=1)
+d$percent[c(4, 10)] <- NA
+
+columns <- c("",
+             "Component",
+             "Rate \\\\ (m\\textsuperscript{3}/d)",
+             "Rate \\\\ (acre-ft/yr)",
+             "Percent")
+colnames(d) <- sprintf("\\textbf{\\shortstack{%s}}", columns)
+cap1 <- "Water budget for the uncalibrated model, specified as volumetric flow rates average over the 1998 through 2010 time period."
+cap2 <- c("\\textbf{Inflow}: water entering the aquifer system.",
+          "\\textbf{Outflow}: water leaving the aquifer system.",
+          "\\textbf{Component}: a water budget component in the groundwater-flow model.",
+          "\\textbf{Rate}: is the mean volumetric flow rate.",
+          "\\textbf{Percent}: is the percentage of total inflow or outflow.",
+          "\\textbf{Abbreviations}: m\\textsuperscript{3}/d, cubic meters per day; acre-ft/yr, acre-feet per year; NA, not applicable")
+tbl <- xtable::xtable(d, label="table_budget", align="lllrrr", digits=0)
+xtable::caption(tbl) <- c(sprintf("%s [%s]", cap1, paste(cap2, collapse=" ")), cap1)
+print(tbl, include.rownames=FALSE, caption.placement="top", booktabs=TRUE,
+      format.args=list(big.mark=","), sanitize.colnames.function=function(x){x},
+      sanitize.text.function=identity, size="\\small")
+@
+
+\newpage
+
+% =========================================================================
+
+\subsection{Hydraulic Head}
+
+The simulated hydraulic head values are read for each of the 193 monthly model stress periods and placed in a raster stack.
+Recall that the model simulates head distributions for an initial steady-state stress period followed by 768 weekly time steps (4 time steps per stress period) during the 1995 through 2010 time period.
+
+<<>>=
+heads <- ReadModflowBinary(file.path(dir.run, paste0(id, ".hds")))
+dates <- as.Date(vapply(heads, function(i) i$totim, 0), origin = tr.interval[1])
+layer <- vapply(heads, function(i) i$ilay, 0L)
+FUN <- function(i) {return(setValues(raster(rs.model), i$d))}
+rs.heads.lay1 <- mask(stack(lapply(heads[layer == 1L], FUN)), rs.model[["lay1.bot"]])
+rs.heads.lay2 <- mask(stack(lapply(heads[layer == 2L], FUN)), rs.model[["lay2.bot"]])
+rs.heads.lay3 <- mask(stack(lapply(heads[layer == 3L], FUN)), rs.model[["lay3.bot"]])
+raster.names <- format(dates[layer == 1L])
+names(rs.heads.lay1) <- raster.names
+names(rs.heads.lay2) <- raster.names
+names(rs.heads.lay3) <- raster.names
+@
+
+Simulated head values that exceed land-surface indicate complete saturation at land surface,
+and should be considered an overprediction of head because land surface is the top of model layer 1 and the cells in model layer 1 are conceptualized as unconfined.
+The simulated water table is represented using model layer 1 head values bounded by the land-surface elevation;
+that is, head values that are above land surface are specified at land surface.
+
+<<>>=
+land <- mask(crop(rs.data[["land.surface"]], raster(rs.model)), rs.heads.lay1[[1]])
+FUN <- function(i) {
+  r <- rs.heads.lay1[[i]]
+  r[r > land] <- NA
+  return(cover(r, land))
+}
+rs.wt <- stack(lapply(names(rs.heads.lay1), FUN))
+names(rs.wt) <- raster.names
+@
+
+<<echo=FALSE>>=
+FUN <- function(i) sum(rs.heads.lay1[[i]][] > rs.wt[[i]][], na.rm=TRUE)
+x <- vapply(seq_len(nlayers(rs.wt)), FUN, 0L)
+names(x) <- names(rs.wt)
+nactive <- sum(is.na(rs.heads.lay1[[1]][]))
+x <- round((x[-1] / nactive) * 100, digits=1)
+names(x) <- format(as.Date(names(x)), "%B %Y")
+@
+
+The percentage of model area where simulated heads exceed land surface ranged from
+\Sexpr{idx <- which.min(x); x[idx]} percent during \Sexpr{names(x)[idx]} to
+\Sexpr{idx <- which.max(x); x[idx]} percent during \Sexpr{names(x)[idx]}.
+The head exceedance during the final model stress period (December 2010) is shown in \hyperref[fig:map_head_exceedance]{figure~\ref{fig:map_head_exceedance}}.
+The simulated water table during December 2010 is shown in \hyperref[fig:map_wt_full]{figures~\ref{fig:map_wt_full}}, \ref{fig:map_wt}, and \ref{fig:cs_heads}.
+
+<<include=FALSE>>=
+v <- "Exceedance of hydraulic head above land surface in model layer 1, December 2010---based on uncalibrated model results."
+v <- c(paste("Map showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(v)))), v)
+@
+
+<<map_head_exceedance, echo=FALSE, fig.width=fin.map[1], fig.height=fin.map[2], fig.scap=sprintf("{%s}", v[1]), fig.cap=sprintf("{%s}", v[2])>>=
+n <- nlayers(rs.wt)
+r <- rs.heads.lay1[[n]] - rs.wt[[n]]
+zlim <- range(pretty(range(r[], na.rm=TRUE)))
+Pal <- function(n) {
+  cols <- colorRampPalette(c("#FFE500", "#F02311"))(n)
+  cols[1] <- "#FFFFFF9A"
+  return(cols)
+}
+PlotMap(r, xlim=usr.map[1:2], ylim=usr.map[3:4], zlim=zlim, bg.image=hill.shading,
+        bg.image.alpha=0.6, dms.tick=TRUE, pal=Pal,
+        explanation="Hydraulic head exceedance, in meters above land surface.",
+        rivers=list(x=streams.rivers), lakes=list(x=lakes), credit=credit)
+plot(cities, pch=15, cex=0.8, col="#333333", add=TRUE)
+text(cities, labels=cities@data$FEATURE_NA, col="#333333", cex=0.5, pos=1, offset=0.4)
+invisible(dev.off())
+@
+
+<<include=FALSE>>=
+v <- "Simulated water table in the Wood River Valley aquifer system, south-central Idaho, during December 2010---based on uncalibrated model results."
+v <- c(paste("Map showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(v)))), v)
+@
+
+<<map_wt_full, echo=FALSE, fig.width=fin.map[1], fig.height=fin.map[2], fig.scap=sprintf("{%s}", v[1]), fig.cap=sprintf("{%s}", v[2])>>=
+r <- rs.wt[[nlayers(rs.wt)]]
+zlim <- range(pretty(range(r[], na.rm=TRUE)))
+PlotMap(r, xlim=usr.map[1:2], ylim=usr.map[3:4], zlim=zlim, bg.image=hill.shading,
+        bg.image.alpha=0.6, dms.tick=TRUE,
+        explanation="Hydraulic head, in meters above the North American Vertical Datum of 1988.",
+        rivers=list(x=streams.rivers), lakes=list(x=lakes), credit=credit)
+plot(extent(usr.map.n.1), add=TRUE)
+plot(extent(usr.map.n.2), add=TRUE)
+plot(extent(usr.map.n.3), add=TRUE)
+plot(extent(usr.map.n.4), add=TRUE)
+plot(extent(usr.map.s),   add=TRUE)
+x <- c(usr.map.n.1[2], usr.map.n.2[2], usr.map.n.3[2], usr.map.n.4[2], usr.map.s[2])
+y <- c(usr.map.n.1[4], usr.map.n.2[4], usr.map.n.3[4], usr.map.n.4[4], usr.map.s[4])
+text(x, y, LETTERS[seq_along(x)], adj=c(1.4, 1.4), cex=0.6, lwd=0.75, font=4)
+lines(transect, col="#1F1F1F")
+text(transect.ends, labels=c("A", "A'"), col="#1F1F1F", cex=0.7, pos=c(3, 4), offset=0.1, font=4)
+plot(cities, pch=15, cex=0.8, col="#333333", add=TRUE)
+text(cities, labels=cities@data$FEATURE_NA, col="#333333", cex=0.5, pos=1, offset=0.4)
+leg <- c("Inset areas, fig. D23", "Line of cross section, fig. D24")
+legend("topright", leg, lwd=c(NA, 1), pch=c(22, NA), col=c("#000000", "#1F1F1F"),
+       pt.bg=c(NA, NA), pt.cex=c(1.5, NA), inset=0.02, cex=0.7, box.lty=1,
+       box.lwd=0.5, bg="#FFFFFFCD")
+invisible(dev.off())
+@
+
+<<echo=FALSE>>=
+FUN <- function(usr, credit=NULL, max.dev.dim=c(21, 56), add.legend=FALSE) {
+  r <- rs.wt[[nlayers(rs.wt)]]
+  r <- crop(r, extent(usr))
+  zlim <- range(pretty(range(r[], na.rm=TRUE)))
+  if (max.dev.dim[1] == 21)
+    txt <- "NAVD 88"
+  else
+    txt <- "North American Vertical Datum of 1988 (NAVD 88)"
+  explanation <- paste("Hydraulic head, in meters above the", txt)
+  PlotMap(r, xlim=usr[1:2], ylim=usr[3:4], zlim=zlim, bg.image=hill.shading,
+          bg.image.alpha=0.6, dms.tick=TRUE, max.dev.dim=max.dev.dim,
+          credit=credit, rivers=list(x=streams.rivers), lakes=list(x=lakes),
+          explanation=explanation, contour.lines=list(col="#1F1F1F"))
+  if (add.legend)
+    legend("topright", "Water-table contour", col="#1F1F1F", lty=1, lwd=0.5,
+           inset=0.02, cex=0.7, box.lty=1, box.lwd=0.5, bg="#FFFFFFCD")
+}
+@
+
+\begin{figure}
+  \begin{subfigure}{0.5\textwidth}
+    \caption{North of Ketchum \label{fig:map_wt_a}}
+    <<map_wt_a, echo=FALSE, results="asis", fig.width=fin.map.n.small[1], fig.height=fin.map.n.small[2]>>=
+    FUN(usr.map.n.1)
+    @
+  \end{subfigure}%
+  \begin{subfigure}{0.5\textwidth}
+    \caption{South of Ketchum and north of Gimlet \label{fig:map_wt_b}}
+    <<map_wt_b, echo=FALSE, results="asis", fig.width=fin.map.n.small[1], fig.height=fin.map.n.small[2]>>=
+    FUN(usr.map.n.2, add.legend=TRUE)
+    @
+  \end{subfigure}
+
+  \vspace{0.5cm}%
+
+  \begin{subfigure}{0.5\textwidth}
+    \caption{South of Gimlet and north of Hailey \label{fig:map_wt_c}}
+    <<map_wt_c, echo=FALSE, results="asis", fig.width=fin.map.n.small[1], fig.height=fin.map.n.small[2]>>=
+    FUN(usr.map.n.3)
+    @
+  \end{subfigure}%
+  \begin{subfigure}{0.5\textwidth}
+    \caption{South of Hailey and north of Bellevue \label{fig:map_wt_d}}
+    <<map_wt_d, echo=FALSE, results="asis", fig.width=fin.map.n.small[1], fig.height=fin.map.n.small[2]>>=
+    FUN(usr.map.n.4)
+    invisible(dev.off())
+    @
+  \end{subfigure}
+
+  <<include=FALSE>>=
+  v <- "Simulated water table in model layer 1 (\\textit{\\textbf{A}}) north of Ketchum, (\\textit{\\textbf{B}}) south of Ketchum and north of Gimlet, (\\textit{\\textbf{C}}) south of Gimlet and north of Hailey, (\\textit{\\textbf{D}}) south of Hailey and north of Bellevue, and (\\textit{\\textbf{E}}) south of Bellevue, December 2010---based on uncalibrated model results. \\label{fig:map_wt}"
+  v <- c(paste("Maps showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(v)))), v)
+  @
+  \caption[{\Sexpr{v[1]}}]{{\Sexpr{v[2]}}}
+\end{figure}
+
+\captionsetup[figure]{list=no}
+\begin{figure}
+  \ContinuedFloat
+  \begin{subfigure}{\textwidth}
+    \caption{South of Bellevue \label{fig:map_wt_e}}
+    <<map_wt_e, echo=FALSE, results="asis", fig.width=fin.map.s[1], fig.height=fin.map.s[2]>>=
+    FUN(usr.map.s, credit, max.dev.dim=c(43, 56), add.legend=TRUE)
+    invisible(dev.off())
+    @
+  \end{subfigure}
+  \caption{---Continued}
+\end{figure}
+\captionsetup[figure]{list=yes}
+
+<<cs_heads, echo=FALSE, fig.width=fin.cs[1], fig.height=fin.cs[2], fig.cap="{Vertical cross-section of simulated hydraulic heads along transect line A--A', December 2010---based on uncalibrated model results.}">>=
+geo.lays <- c("lay1.top", paste0("lay", 1:3, ".bot"))
+val.lays <- paste0("lay", 1:3, ".head")
+wt.lay <- "lay1.head"
+n <- nlayers(rs.heads.lay1)
+rs <- stack(rs.wt[[n]], rs.heads.lay2[[n]], rs.heads.lay3[[n]])
+names(rs) <- val.lays
+rs <- stack(rs, subset(rs.model, geo.lays))
+PlotCrossSection(transect, rs, geo.lays, val.lays, wt.lay, asp=80,
+                 ylab="Elevation, in meters above the North American Vertical Datum of 1988",
+                 unit="METERS", features=cities[, "FEATURE_NA"], max.feature.dist=4000, is.categorical=FALSE,
+                 explanation="Hydraulic head, in meters above the North American Vertical Datum of 1988.",
+                 contour.lines=list(col="#1F1F1F"), draw.sep=FALSE, wt.col="#3B80F4")
+leg <- c("Head contour", "Water table")
+legend("bottomleft", leg, col=c("#1F1F1F", "#3B80F4"), lty=c(1, 1), lwd=c(0.5, 1),
+       inset=0.02, cex=0.7, box.lty=1, box.lwd=0.5, bg="#FFFFFFCD")
+invisible(dev.off())
+@
+
+\clearpage
+
+% ===
+
+A comparison between simulated and measured water-table maps is shown in \hyperref[fig:map_contours]{figure~\ref{fig:map_contours}}.
+The measured water-table map \citep[p.~21, plate~2]{Skinner2007} was constructed from 88 groundwater-level observations distributed non-uniformly throughout the model area.
+Groundwater-level measurements (that is, depth-to-water measurements referenced to the NAVD88) were made by USGS employees during October 23--27, 2006 in wells completed in the unconfined aquifer.
+Measured groundwater-level contour lines, contour interval of about 6 m (20 ft), were created from a water-level surface map interpolated (and extrapolated) from these groundwater-level measurements \citep[p.~14]{Skinner2007}.
+In contrast, the simulated contour lines were interpolated from simulated heads located at the center of each cell in model layer 1 during the October 2006 stress period.
+Contour intervals are comparable between simulated and measured water-table maps (\hyperref[fig:map_contours]{fig.~\ref{fig:map_contours}}).
+
+<<include=FALSE>>=
+v <- "Comparison of measured and simulated (uncalibrated model) water-table contours, contour interval about 6 meters (20 feet), October 2006, southern part of the Wood River Valley aquifer system, south-central Idaho. Contour elevations specified in meters above the North American Vertical Datum of 1988."
+v <- c(paste("Map showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(v)))), v)
+@
+
+<<map_contours, echo=FALSE, fig.width=fin.map.s.0[1], fig.height=fin.map.s.0[2], fig.scap=sprintf("{%s}", v[1]), fig.cap=sprintf("{%s}", v[2])>>=
+wl <- wl.200610
+wl@data$CONTOUR <- wl@data$CONTOUR * m.to.ft
+r <- raster(rs.model)
+idxs <- which(format(dates, "%Y%m") == "200610" & layer == 1L)
+m <- do.call("rbind", lapply(idxs, function(i) as.vector(heads[[i]]$d)))
+r[] <- matrix(colMeans(m, na.rm=TRUE), dim(heads[[1]]$d))
+r[r > land] <- NA
+r <- cover(r, land)
+r[is.na(rs.model[["lay1.bot"]])] <- NA
+r[] <- r[] * m.to.ft
+names(r) <- "lay1.head.200610.ft"
+r0 <- r
+r0[!is.na(r0[])] <- 1L
+r0 <- as.factor(r0)
+PlotMap(r0, xlim=usr.map.s[1:2], ylim=usr.map.s[3:4], bg.image=hill.shading, bg.image.alpha=0.6,
+        dms.tick=TRUE, rivers=list(x=streams.rivers), lakes=list(x=lakes),
+        col="#FFFFFFE6", draw.key=FALSE, credit=credit)
+cols <- c("#D33F6A", "#000000")
+levs <- sort(unique(wl@data$CONTOUR))
+labs <- formatC(round(levs / m.to.ft), big.mark=",")
+contour(r, levels=levs, labels=labs, col=cols[1], labcex=0.5, add=TRUE)
+is.good <- wl@data$certainty == "good"
+plot(wl[ is.good, ], col=cols[2], lty=1, add=TRUE)
+plot(wl[!is.good, ], col=cols[2], lty=2, add=TRUE)
+levs <- wl@data$CONTOUR
+labs <- formatC(round(levs / m.to.ft), big.mark=",")
+locs <- getSpatialLinesMidPoints(wl)
+text(locs, labels=labs, cex=0.5, pos=1, offset=0.1, col=cols[2])
+leg <- c("Simulated contour", "Measured contour (interpolated)", "Measured contour (extrapolated)")
+legend("topright", leg, col=c(cols, cols[2]), lwd=1, lty=c(1, 1, 2), inset=0.02, cex=0.7, box.lty=1,
+       box.lwd=0.5, bg="#FFFFFFCD")
+invisible(dev.off())
+@
+
+<<echo=FALSE>>=
+p <- obs.wells
+d <- obs.wells.head
+well.config <- GetWellConfig(rs.model, p, "PESTNAME")
+FUN <- function(i) {
+  idxs <- which(well.config$PESTNAME == i)
+  return(max(well.config[idxs, "lay"])) # return deepest layer
+}
+p@data$lay <- vapply(unique(well.config$PESTNAME), FUN, 0L)
+d <- dplyr::left_join(d, p@data[, c("PESTNAME", "desc", "lay")], by="PESTNAME")
+d$Date <- as.Date(d$DateTime)
+
+d$head.obs <- d$Head
+FUN <- function(i) {
+  loc <- p[match(d$PESTNAME[i], p@data$PESTNAME), ]
+  idx <- findInterval(d$Date[i], as.Date(raster.names), all.inside=TRUE)
+  rs <- subset(get(paste0("rs.heads.lay", d$lay[i])), c(idx, idx + 1L))
+  y <- extract(rs, loc)
+  x <- as.numeric(as.Date(raster.names)[c(idx, idx + 1L)])
+  return((y[2] - y[1]) / (x[2] - x[1]) * (as.numeric(d$Date[i]) - x[1]) + y[1])
+}
+d$head.sim <- vapply(seq_len(nrow(d)), FUN, 0)
+d$head.res <- d$head.obs - d$head.sim
+x <- aggregate(d[, c("head.obs", "head.sim", "head.res")], by=list(PESTNAME=d$PESTNAME), mean)
+p@data <- dplyr::left_join(p@data, x, by="PESTNAME")
+@
+
+Groundwater-levels were classified into five well groups that include:
+(1) USGS groundwater-monitoring network wells,
+(2) geolocated driller wells,
+(3) Public Land Survey System (PLSS)-located driller wells,
+(4) Sun Valley Water and Sewer District (SVWSD) production wells, and
+(5) The Nature Conservancy (TNC) groundwater-monitoring network wells.
+For each well group, statistical and graphical comparisons were made between the simulated and measured groundwater-level data.
+An evaluation of model-to-measurement fit is not included in this vignette because model parameters are uncalibrated.
+The number of groundwater-level observations varied for each well, as did the period-of-record for each well.
+
+The USGS groundwater-monitoring network consists of \Sexpr{sum(p@data$desc == "Observation well")} wells, with
+\Sexpr{x <- na.omit(d[d$desc %in% "Observation well", "head.res"]); length(x)}
+groundwater-level measurements recorded in these wells during the duration of the model simulation period (1995--2010).
+The \emph{residual} (or error) of a measured value is the difference between the measured and simulated values of the groundwater level.
+A scatterplot of the residuals compared to simulated values at the USGS wells is shown in \hyperref[fig:graph_res_sim_a]{figure~\ref{fig:graph_res_sim_a}}.
+Positive values for the residual indicate the simulated value was too small,
+and negative values indicate the simulated value was too large;
+while zero indicates an exact match with the observation.
+Residual values range from \Sexpr{FmtLength(range(x))}, with a mean absolute error (MAE) and standard deviation (SD) of
+\Sexpr{FmtLength(mean(abs(x)))} and \Sexpr{FmtLength(sd(x))}, respectively.
+The mean residual of groundwater-level observations in a well, averaged during 1995--2010, are shown spatially and proportionally
+in \hyperref[fig:map_res_usgs]{figure~\ref{fig:map_res_usgs}}.
+
+There are \Sexpr{sum(p@data$desc == "Geo-located driller well")} geolocated driller wells;
+for each well, a single groundwater-level measurement was recorded when the well was completed.
+A scatterplot of the residuals compared to simulated values at the geolocated wells is shown in \hyperref[fig:graph_res_sim_b]{figure~\ref{fig:graph_res_sim_b}}.
+Residual values range from \Sexpr{x <- na.omit(d[d$desc %in% "Geo-located driller well", "head.res"]); FmtLength(range(x))},
+with a MAE and SD of \Sexpr{FmtLength(mean(abs(x)))} and \Sexpr{FmtLength(sd(x))}, respectively.
+The residuals are shown spatially and proportionally in \hyperref[fig:map_res_geo_loc]{figure~\ref{fig:map_res_geo_loc}}.
+
+There are \Sexpr{sum(p@data$desc == "Driller-located driller well")} PLSS-located driller wells.
+Again, a single groundwater-level measurement was recorded when each well was completed.
+A scatterplot of the residuals compared to simulated values at the PLSS-located wells is shown in \hyperref[fig:graph_res_sim_c]{figure~\ref{fig:graph_res_sim_c}}.
+Residual values range from \Sexpr{x <- na.omit(d[d$desc %in% "Driller-located driller well", "head.res"]); FmtLength(range(x))},
+with a MAE and SD of \Sexpr{FmtLength(mean(abs(x)))} and \Sexpr{FmtLength(sd(x))}, respectively.
+The residuals are shown spatially and proportionally in \hyperref[fig:map_res_drl_loc]{figure~\ref{fig:map_res_drl_loc}}.
+
+Intermittent groundwater-level measurements were recorded in \Sexpr{sum(p@data$desc == "Sun Valley Water and Sewer well")} of the SVWSD production wells;
+with \Sexpr{x <- na.omit(d[d$desc %in% "Sun Valley Water and Sewer well", "head.res"]); length(x)}
+groundwater-levels recorded in these wells during the 1995 through 2010 time period.
+A scatterplot of the residuals compared to simulated values at the SVWSD production wells is shown in \hyperref[fig:graph_res_sim_d]{figure~\ref{fig:graph_res_sim_d}}.
+Residual values range from \Sexpr{FmtLength(range(x))}, with a MAE and SD of
+\Sexpr{FmtLength(mean(abs(x)))} and \Sexpr{FmtLength(sd(x))}, respectively.
+The mean residual of groundwater-level observations in a well, averaged during 1995--2010, are shown spatially and proportionally
+in \hyperref[fig:map_res_svwsd_tnc]{figure~\ref{fig:map_res_svwsd_tnc}}.
+
+TNC's groundwater-monitoring network consists of \Sexpr{sum(p@data$desc == "Nature Conservancy well")} wells; with
+\Sexpr{x <- na.omit(d[d$desc %in% "Nature Conservancy well", "head.res"]); format(length(x), big.mark=",")}
+groundwater-level observations (average daily values) recorded in these wells during the 1995 through 2010 time period.
+The period-of-record for groundwater-level observations is relatively short in duration, spanning the last 9 months of the 16-year simulation.
+A scatterplot of the residuals compared to simulated values at the TNC wells is shown in \hyperref[fig:graph_res_sim_d]{figure~\ref{fig:graph_res_sim_d}}.
+Residual values range from \Sexpr{FmtLength(range(x))}, with a MAE and SD of
+\Sexpr{FmtLength(mean(abs(x)))} and \Sexpr{FmtLength(sd(x))}, respectively.
+The mean residual of groundwater-level observations in a well, averaged during 1995--2010, are shown spatially and proportionally
+in \hyperref[fig:map_res_svwsd_tnc]{figure~\ref{fig:map_res_svwsd_tnc}}.
+
+<<echo=FALSE>>=
+xlim <- range(pretty(d[, "head.sim"]))
+ylim <- range(pretty(d[, "head.res"]))
+
+FUN <- function(desc) {
+  dd <- d[d$desc %in% desc, c("head.sim", "head.res")]
+  n <- length(na.omit(dd$head.res))
+  arith.mean <- mean(dd$head.res, na.rm=TRUE)
+  mae  <- mean(abs(dd$head.res), na.rm=TRUE)
+  sdev <- sd(dd$head.res, na.rm=TRUE)
+  col <- if (length(desc) == 1) "#2A8FBDCB" else c("#fc8d62", "#8da0cb")
+  x <- cbind(x=c(xlim, rev(xlim)), y=arith.mean + c(rep(-sdev * 2, 2), rep(sdev * 2, 2)))
+  bg.polygon <- list(x=x, col="#FAFAD2")
+  xlab <- "Simulated hydraulic head, in meters above the NAVD88"
+  ylab <- paste("Hydraulic head residual, in", c("meters (m)", "feet"))
+  PlotGraph(dd, xlab=xlab, ylab=ylab, type="n", xlim=xlim, ylim=ylim,
+            conversion.factor=m.to.ft, bg.polygon=bg.polygon)
+  abline(h=0, col="#333333", lwd=1)
+  for (i in seq_along(desc))
+    points(d[d$desc %in% desc[i], c("head.sim", "head.res")], pch=20, col=col[i])
+  box(lwd=0.5)
+  usr <- par("usr")
+  labs <- sprintf("Sample size: %s\nMean absolute error: %s m\nStandard deviation: %s m",
+                  format(n, big.mark=","), format(mae, digits=2, nsmall=1),
+                  format(sdev, digits=2, nsmall=1))
+  text(x=usr[1] + diff(usr[1:2]) * 0.03, y=usr[3] + diff(usr[3:4]) * 0.10,
+       labels=labs, cex=0.7, pos=4)
+  if ("Observation well" %in% desc) {
+    leg <- c("Residual versus simulated", "95-percent confidence interval")
+    legend("top", leg, pch=c(20, 15), col=c(col, "#FAFAD2"), pt.cex=c(1, 1.5),
+           inset=0.02, cex=0.7, box.lty=1, box.lwd=0.5, xpd=NA, bg="#FFFFFFCD")
+  } else if (length(col) > 1) {
+    leg <- c("SVWSD well", "TNC well")
+    legend("top", leg, pch=c(20, 20), col=col, pt.cex=1,
+           inset=0.02, cex=0.7, box.lty=1, box.lwd=0.5, xpd=NA, bg="#FFFFFFCD")
+  }
+}
+@
+
+\begin{figure}
+  \begin{subfigure}{0.5\textwidth}
+    \caption{USGS wells \label{fig:graph_res_sim_a}}
+    <<graph_res_sim_a, echo=FALSE, results="asis", fig.width=fig.graph.small[1], fig.height=fig.graph.small[2]>>=
+      FUN("Observation well")
+    @
+  \end{subfigure}%
+  \begin{subfigure}{0.5\textwidth}
+    \caption{Geolocated driller wells \label{fig:graph_res_sim_b}}
+    <<graph_res_sim_b, echo=FALSE, results="asis", fig.width=fig.graph.small[1], fig.height=fig.graph.small[2]>>=
+      FUN("Geo-located driller well")
+    @
+  \end{subfigure}
+
+  \vspace{0.5cm}%
+
+  \begin{subfigure}{0.5\textwidth}
+    \caption{PLSS-located driller wells \label{fig:graph_res_sim_c}}
+    <<graph_res_sim_c, echo=FALSE, results="asis", fig.width=fig.graph.small[1], fig.height=fig.graph.small[2]>>=
+    FUN("Driller-located driller well")
+    @
+  \end{subfigure}%
+  \begin{subfigure}{0.5\textwidth}
+    \caption{SVWSD and TNC wells \label{fig:graph_res_sim_d}}
+    <<graph_res_sim_d, echo=FALSE, results="asis", fig.width=fig.graph.small[1], fig.height=fig.graph.small[2]>>=
+    FUN(c("Sun Valley Water and Sewer well", "Nature Conservancy well"))
+    invisible(dev.off())
+    @
+  \end{subfigure}
+  <<include=FALSE>>=
+  v <- "Hydraulic head residuals in (\\textit{\\textbf{A}}) U.S. Geological Survey (USGS) groundwater-monitoring network wells, (\\textit{\\textbf{B}}) geolocated driller wells, (\\textit{\\textbf{C}}) Public Land Survey System (PLSS)-located driller wells, and (\\textit{\\textbf{D}}) two of the Sun Valley Water and Sewer District (SVWSD) production wells and The Nature Conservancy (TNC) groundwater-monitoring network wells---based on uncalibrated model results. \\label{fig:graph_res_sim}"
+  v <- c(paste("Graphs showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(v)))), v)
+  @
+  \caption[{\Sexpr{v[1]}}]{{\Sexpr{v[2]}}}
+\end{figure}
+
+<<echo=FALSE>>=
+desc <- rep(c("Observation well", "Sun Valley Water and Sewer well",
+              "Nature Conservancy well"), each=2)
+well.names <- c("01S 18E 14AAB1", "01N 18E 01DAA2", "04N 18E 07ADD", "04N 18E 19DCDC1",
+                "02N 18E 09BCD1", "02N 18E 35ACC1")
+FUN <-  function(i) which(p@data$desc == desc[i] & p@data$WELLNUMBER %in% well.names[i])
+pp <- p[vapply(seq_along(well.names), FUN, 0L), ]
+well.labs <- sprintf("%d (%s)", pp$id, well.names)
+
+Pal.pos <- function(...) {
+  cols <- colorRampPalette(c("#b30000", "#e34a33", "#fc8d59", "#fdcc8a"))(...)
+  return(paste0(cols, "CD"))
+}
+Pal.neg <- function(...) {
+  cols <- colorRampPalette(c("#045a8d", "#2b8cbe", "#74a9cf", "#bdc9e1"))(...)
+  return(paste0(cols, "CD"))
+}
+
+FUN <- function(desc) {
+  p <- p[p@data$desc %in% desc, ]
+  z <- p@data$head.res
+  breaks <- pretty(z, n=8)
+  PlotMap(crs(hill.shading), xlim=usr.map[1:2], ylim=usr.map[3:4],
+          bg.image=hill.shading, dms.tick=TRUE, bg.image.alpha=0.6,
+          rivers=list(x=streams.rivers), lakes=list(x=lakes), credit=credit)
+  plot(alluvium.extent, border="#FFFFFFCC", col=NA, add=TRUE)
+  AddBubbles(coordinates(p), z=z, breaks=breaks, inches=c(0, 0.18),
+             title="Residual", subtitle="in meters",
+             bg.pos=Pal.pos, bg.neg=Pal.neg, fg="#FFFFFF40",
+             loc="topright", make.intervals=TRUE)
+  plot(cities, pch=15, cex=0.8, col="#333333", add=TRUE)
+  text(cities, labels=cities@data$FEATURE_NA, col="#333333", cex=0.5, pos=1, offset=0.4)
+}
+@
+
+<<include=FALSE>>=
+v <- "Spatial distribution of average hydraulic head differences between measured and simulated (uncalibrated model) values (residuals) in wells located in the U.S. Geological Survey groundwater monitoring network."
+v <- c(paste("Map showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(v)))), v)
+@
+
+<<map_res_usgs, echo=FALSE, fig.width=fin.map.0[1], fig.height=fin.map.0[2], fig.scap=sprintf("{%s}", v[1]), fig.cap=sprintf("{%s}", v[2])>>=
+FUN("Observation well")
+points(pp[1:2, ], pch=18)
+text(pp[1:2, ], labels=well.labs[1:2], col="#333333", cex=0.6, pos=c(2, 4), offset=0.4)
+legend("topleft", "Wells in fig. D31", pch=18, inset=0.02,
+       cex=0.7, box.lty=1, box.lwd=0.5, xpd=NA, bg="#FFFFFFCD")
+@
+
+<<include=FALSE>>=
+v <- "Spatial distribution of average hydraulic head differences between measured and simulated (uncalibrated model) values (residuals) in the geolocated driller wells."
+v <- c(paste("Map showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(v)))), v)
+@
+
+<<map_res_geo_loc, echo=FALSE, fig.width=fin.map.0[1], fig.height=fin.map.0[2], fig.scap=sprintf("{%s}", v[1]), fig.cap=sprintf("{%s}", v[2])>>=
+FUN("Geo-located driller well")
+@
+
+<<include=FALSE>>=
+v <- "Spatial distribution of average hydraulic head differences between measured and simulated (uncalibrated model) values (residuals) in the Public Land Survey System -located driller wells."
+v <- c(paste("Map showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(v)))), v)
+@
+
+<<map_res_drl_loc, echo=FALSE, fig.width=fin.map.0[1], fig.height=fin.map.0[2], fig.scap=sprintf("{%s}", v[1]), fig.cap=sprintf("{%s}", v[2])>>=
+FUN("Driller-located driller well")
+@
+
+<<include=FALSE>>=
+v <- "Spatial distribution of average hydraulic head differences between measured and simulated (uncalibrated model) values (residuals) in two production wells (the two most northern well sites on the map) of the Sun Valley Water and Sewer District and wells in The Nature Conservancy groundwater monitoring network."
+v <- c(paste("Map showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(v)))), v)
+@
+
+<<map_res_svwsd_tnc, echo=FALSE, fig.width=fin.map.0[1], fig.height=fin.map.0[2], fig.scap=sprintf("{%s}", v[1]), fig.cap=sprintf("{%s}", v[2])>>=
+FUN(c("Sun Valley Water and Sewer well", "Nature Conservancy well"))
+points(pp[3:6, ], pch=18)
+text(pp[3:6, ], labels=well.labs[3:6], col="#333333", cex=0.6, pos=c(4, 4, 2, 2), offset=0.4)
+legend("topleft", "Wells in figs. D32 and D33", pch=18, inset=0.02,
+       cex=0.7, box.lty=1, box.lwd=0.5, xpd=NA, bg="#FFFFFFCD")
+invisible(dev.off())
+@
+
+Comparisons between simulated and measured groundwater levels over time are made for selected wells in the WRV
+(\hyperref[fig:map_res_usgs]{figs.~\ref{fig:map_res_usgs}} and \ref{fig:map_res_svwsd_tnc}).
+Those wells selected for comparison provide a representative sample of the transient groundwater-level observations in each of the relevant well groups with adequate spatial coverage in the model domain.
+Selected wells were completed in the unconfined alluvial aquifer---with the exception of USGS well
+\Sexpr{well.name <- "01S 18E 14AAB1"; sprintf("%d (%s)", pp@data$id[pp@data$WELLNUMBER == well.name], well.name)},
+which was completed in the confined alluvial aquifer.
+Simulated groundwater levels in relation to measured groundwater levels are presented in the groundwater-level hydrographs shown in
+\hyperref[fig:graph_wells_usgs]{figures~\ref{fig:graph_wells_usgs}} (selected USGS wells), \ref{fig:graph_wells_svwsd} (selected SVWSD wells), and \ref{fig:graph_wells_tnc} (selected TNC wells).
+
+<<echo=FALSE>>=
+FUN <- function(idx, add.legend=FALSE) {
+  rs <- get(paste0("rs.heads.lay", pp@data[idx, "lay"]))
+  ext <- t(extract(rs, coordinates(pp[idx, ])))
+  dd.sim <- data.frame(Date=as.Date(rownames(ext)), head.sim=ext[, 1])
+  dd.obs <- d[d$PESTNAME == pp@data$PESTNAME[idx], , drop=FALSE]
+  xlim <- range(dd.sim$Date)
+  ylim <- range(pretty(range(c(dd.sim$head.sim, dd.obs$head.obs))))
+  cols <- c("#2A8FBDE5", "#A40802", "#FAFAD2")
+  xbuf <- as.Date(c("1995-01-01", "1998-01-01"))
+  bg.polygon <- list(x=xy.coords(c(xbuf, rev(xbuf)), c(rep(ylim[1], 2), rep(ylim[2], 2))), col=cols[3])
+  ylab <- paste("Hydraulic head in", c("meters", "feet"), "above the NAVD88")
+  PlotGraph(dd.sim, xlim=xlim, ylim=ylim, ylab=ylab, col=cols[2],
+            conversion.factor=m.to.ft, bg.polygon=bg.polygon, center.date.labels=TRUE)
+  lines(x=as.Date(dd.obs$DateTime), y=dd.obs$head.obs, type="b", pch=20, lwd=0.5, col=cols[1])
+  if (add.legend) {
+    labs <- c("Measured groundwater level", "Simulated groundwater level", "Warm-up period in simulation")
+    legend("topright", labs, pch=c(20, NA, 22), lwd=c(0.5, 1, NA),
+           col=c(cols[1:2], "lightgray"), pt.bg=c(NA, NA, cols[3]), pt.lwd=c(NA, NA, 0.5),
+           pt.cex=c(1, NA, 1.5), inset=0.02, cex=0.7, box.lty=1, box.lwd=0.5, xpd=NA,
+           bg="#FFFFFFCD")
+  }
+}
+@
+
+\begin{figure}
+  \begin{subfigure}{\textwidth}
+    \caption{\Sexpr{paste("Well No.", well.labs[1])} \label{fig:graph_wells_usgs_a}}
+    <<graph_wells_usgs_a, echo=FALSE, fig.width=fin.graph.short[1], fig.height=fin.graph.short[2]>>=
+    FUN(1, TRUE)
+    @
+  \end{subfigure}
+
+  \vspace{0.5cm}%
+
+  \begin{subfigure}{\textwidth}
+    \caption{\Sexpr{paste("Well No.", well.labs[2])} \label{fig:graph_wells_usgs_b}}
+    <<graph_wells_usgs_b, echo=FALSE, fig.width=fin.graph.short[1], fig.height=fin.graph.short[2]>>=
+    FUN(2)
+    @
+  \end{subfigure}
+  <<include=FALSE>>=
+  v <- "Measured and simulated (uncalibrated model) groundwater-level hydrographs for U.S. Geological Survey wells (\\textit{\\textbf{A}}) 01S 18E 14AAB1 and (\\textit{\\textbf{B}}) 01N 18E 01DAA2, Wood River Valley, Idaho. \\label{fig:graph_wells_usgs}"
+  v <- c(paste("Graphs showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(v)))), v)
+  @
+  \caption[{\Sexpr{v[1]}}]{{\Sexpr{v[2]}}}
+\end{figure}
+
+\begin{figure}
+  \begin{subfigure}{\textwidth}
+    \caption{\Sexpr{paste("Well No.", well.labs[3])} \label{fig:graph_wells_svwsd_a}}
+    <<graph_wells_svwsd_a, echo=FALSE, fig.width=fin.graph.short[1], fig.height=fin.graph.short[2]>>=
+    FUN(3, TRUE)
+    @
+  \end{subfigure}
+
+  \vspace{0.5cm}%
+
+  \begin{subfigure}{\textwidth}
+    \caption{\Sexpr{paste("Well No.", well.labs[4])} \label{fig:graph_wells_svwsd_b}}
+    <<graph_wells_svwsd_b, echo=FALSE, fig.width=fin.graph.short[1], fig.height=fin.graph.short[2]>>=
+    FUN(4)
+    @
+  \end{subfigure}
+  <<include=FALSE>>=
+  v <- "Measured and simulated (uncalibrated model) groundwater-level hydrographs for Sun Valley Water and Sewer District wells (\\textit{\\textbf{A}}) 04N 18E 07ADD and (\\textit{\\textbf{B}}) 04N 18E 19DCDC1, Wood River Valley, Idaho. \\label{fig:graph_wells_svwsd}"
+  v <- c(paste("Graphs showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(v)))), v)
+  @
+  \caption[{\Sexpr{v[1]}}]{{\Sexpr{v[2]}}}
+\end{figure}
+
+\begin{figure}
+  \begin{subfigure}{\textwidth}
+    \caption{\Sexpr{paste("Well No.", well.labs[5])} \label{fig:graph_wells_tnc_a}}
+    <<graph_wells_tnc_a, echo=FALSE, fig.width=fin.graph.short[1], fig.height=fin.graph.short[2]>>=
+    FUN(5, TRUE)
+    @
+  \end{subfigure}
+
+  \vspace{0.5cm}%
+
+  \begin{subfigure}{\textwidth}
+    \caption{\Sexpr{paste("Well No.", well.labs[6])} \label{fig:graph_wells_tnc_b}}
+    <<graph_wells_tnc_b, echo=FALSE, fig.width=fin.graph.short[1], fig.height=fin.graph.short[2]>>=
+    FUN(6)
+    invisible(dev.off())
+    @
+  \end{subfigure}
+  <<include=FALSE>>=
+  v <- "Measured and simulated (uncalibrated model) groundwater-level hydrographs for The Nature Conservancy wells (\\textit{\\textbf{A}}) 02N 18E 09BCD1 and (\\textit{\\textbf{B}}) 02N 18E 35ACC1, Wood River Valley, Idaho. \\label{fig:graph_wells_tnc}"
+  v <- c(paste("Graphs showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(v)))), v)
+  @
+  \caption[{\Sexpr{v[1]}}]{{\Sexpr{v[2]}}}
+\end{figure}
+
+\clearpage
+
+% =========================================================================
+
+\subsection{Stream-Aquifer Flow Exchange}
+
+Stream gains and losses from and to groundwater are represented in the model as stream-aquifer flow exchange:
+a negative value indicates that groundwater is flowing into the stream through the streambed or by way of bankside seepage,
+whereas a positive value indicates that stream water is flowing into the aquifer system through the streambed.
+The simulated stream-aquifer flow exchange values are extracted from the simulated water-budget dataset.
+\hyperref[fig:graph_rivers]{Figure~\ref{fig:graph_rivers}} shows the simulated total stream-aquifer flow exchange values in river-boundary cells
+(cells shown in \hyperref[fig:map_rivers]{fig.~\ref{fig:map_rivers}}) during each model stress period.
+Flow exchange values range from \Sexpr{x <- d.river$flow.total; FmtFlow(range(x))}, with a mean, median, and SD of
+\Sexpr{FmtFlow(mean(x))}, \Sexpr{FmtFlow(median(x))}, and \Sexpr{FmtFlow(sd(x))}, respectively.
+In general, the WRV river system is gaining water from the aquifer system; that is, groundwater is contributing to surface water.
+
+<<include=FALSE>>=
+v <- "Simulated total stream-aquifer flow exchange in the model domain---based on uncalibrated model results."
+v <- c(paste("Graph showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(v)))), v)
+@
+
+<<graph_rivers, echo=FALSE, fig.width=fin.graph.short[1], fig.height=fin.graph.short[2], fig.scap=sprintf("{%s}", v[1]), fig.cap=sprintf("{%s}", v[2])>>=
+d <- d.river[, c("totim.date", "flow.total", "flow.total")]
+ylab <- paste("Total stream-aquifer flow exchange, in", c("cubic meters per day", "acre-feet per year"))
+d[d[, 2] < 0, 2] <- 0
+d[d[, 3] > 0, 3] <- 0
+col <- c("#67A9CF", "#C80C0B")
+PlotGraph(d, ylab=ylab, col=col, fill=paste0(col, "66"),
+          conversion.factor=m3.per.d.to.af.per.yr, scientific=TRUE, center.date.labels=TRUE)
+legend("bottomright", c("Recharge", "Discharge"), col=col, lty=1,
+       inset=0.02, cex=0.7, box.lty=1, box.lwd=0.5, bg="#FFFFFFCD")
+invisible(dev.off())
+@
+
+% ===
+
+<<echo=FALSE>>=
+FUN <- function(reach.name, reach.ids) {
+  d1 <- reach.recharge
+  ndays <- GetDaysInMonth(tail(d1$YearMonth, 1))
+  d1 <- data.frame(Date=as.Date(paste0(d1$YearMonth, "01"), "%Y%m%d"), d1[, -1])
+  d1 <- rbind(d1, d1[nrow(d1), , drop=FALSE])
+  d1$Date[nrow(d1)] <- d1$Date[nrow(d1)] + ndays
+  d1 <- d1[, c("Date", reach.name)]
+  d2 <- budget[budget$desc == "river leakage" & budget$id %in% reach.ids, ]
+  d2 <- aggregate(d2$flow.sum, by=list(d2$totim.date), FUN=sum)
+  names(d2) <- c("Date", "flow.sum")
+  d <- dplyr::left_join(d1, d2, by="Date")
+  colnames(d) <- c("Date", paste("exch", c("obs", "sim"), sep="."))
+  d$exch.res <- d$exch.obs - d$exch.sim
+  return(d)
+}
+d1 <- FUN("nKet_Hai", 1:4)
+d2 <- FUN("Hai_StC", c(5:10, 12))
+d3 <- FUN("WillowCr", 11)
+d4 <- FUN("SilverAbv", 13:21)
+d5 <- FUN("SilverBlw", 22)
+@
+
+Measured mean monthly stream-aquifer flow exchange along river reaches
+(\hyperref[table_rivers]{table~\ref{table_rivers}}, \hyperref[fig:map_rivers]{fig.~\ref{fig:map_rivers}}) were estimated using a flow difference method.
+A comparison between simulated and measured stream-aquifer flow exchange over time are made for each of the WRV river reaches
+(\hyperref[fig:graph_reaches_bwr]{figs.~\ref{fig:graph_reaches_bwr}}, \ref{fig:graph_reaches_wc}, and \ref{fig:graph_reaches_sc}).
+The residual of a stream-aquifer flow exchange for a selected month is defined as the difference between the measured and simulated values.
+Scatterplots of the residuals compared to simulated values along each of the river reaches is shown in \hyperref[fig:graph_exch]{figure~\ref{fig:graph_exch}}.
+Descriptive statistics for stream-aquifer flow-exchange residuals along each river reach are given in \hyperref[table_exch_res]{table~\ref{table_exch_res}}.
+
+<<table_exch_res, echo=FALSE, results="asis">>=
+m <- sapply(list(d1, d2, d3, d4, d5), function(d) summary(na.omit(d$exch.res)))
+d <- data.frame(m)
+colnames(d) <- sprintf("Reach No. %s", seq_len(ncol(d)))
+columns <- paste(colnames(d), "\\\\ (m\\textsuperscript{3}/d)")
+colnames(d) <- sprintf("\\textbf{\\shortstack{%s}}", columns)
+save.rownames <- rownames(d)
+dd <- apply(d, 2, ToScientific, digits=1)
+rownames(dd) <- save.rownames
+cap1 <- "Descriptive statistics for the residual of stream-aquifer flow exchange along river reaches in the Wood River Valley, Idaho---based on uncalibrated model results."
+cap2 <- c("\\textbf{Reach No.}: is an identifier for the river reach.",
+          "\\textbf{Abbreviations}: Min., minimum; Qu., quartile; Max., maximum; m\\textsuperscript{3}/d, cubic meters per day")
+tbl <- xtable::xtable(dd, label="table_exch_res")
+xtable::caption(tbl) <- c(sprintf("%s [%s]", cap1, paste(cap2, collapse=" ")), cap1)
+xtable::align(tbl) <- c("r", rep("r", ncol(d)))
+print(tbl, include.rownames=TRUE, caption.placement="top", booktabs=TRUE,
+      format.args=list(big.mark=","), sanitize.colnames.function=function(x){x},
+      sanitize.text.function=identity, size="\\small")
+@
+
+<<echo=FALSE>>=
+FUN <- function(d, add.legend=FALSE) {
+  xlim <- as.Date(c("1995-01-01", "2011-01-01"), tz="MST")
+  ylim <- range(pretty(range(d[, 2:3], na.rm=TRUE)))
+  cols <- c("#2A8FBD", "#A40802", "#FAFAD2")
+  xbuf <- as.Date(c("1995-01-01", "1998-01-01"))
+  bg.polygon <- list(x=xy.coords(c(xbuf, rev(xbuf)), c(rep(ylim[1], 2), rep(ylim[2], 2))), col=cols[3])
+  ylab <- paste("Stream-aquifer flow exchange, in", c("cubic meters per day", "cubic feet per second"))
+  PlotGraph(d[, 1:3], xlim=xlim, ylab=ylab, col=cols[1:2],
+            conversion.factor=1 / cfs.to.m3.per.d, bg.polygon=bg.polygon,
+            scientific=c(FALSE, TRUE, FALSE), center.date.labels=TRUE)
+  if (add.legend) {
+    labs <- c("Measured", "Simulated", "Warm-up period")
+    legend("topright", labs, pch=c(NA, NA, 22), lwd=c(1, 1, NA),
+           col=c(cols[1:2], "lightgray"), pt.bg=c(NA, NA, cols[3]), pt.lwd=c(NA, NA, 0.5),
+           pt.cex=c(1, NA, 1.5), inset=0.02, cex=0.7, box.lty=1, box.lwd=0.5, xpd=NA,
+           bg="#FFFFFFCD")
+  }
+}
+@
+
+\begin{figure}
+  \begin{subfigure}{\textwidth}
+    \caption{Near Ketchum to Hailey river reach \label{fig:graph_reaches_bwr_a}}
+    <<graph_reaches_bwr_a, echo=FALSE, fig.width=fin.graph.short[1], fig.height=fin.graph.short[2]>>=
+    FUN(d1, TRUE)
+    @
+  \end{subfigure}
+
+  \vspace{0.5cm}%
+
+  \begin{subfigure}{\textwidth}
+    \caption{Hailey to Stanton Crossing river reach \label{fig:graph_reaches_bwr_b}}
+    <<graph_reaches_bwr_b, echo=FALSE, fig.width=fin.graph.short[1], fig.height=fin.graph.short[2]>>=
+    FUN(d2)
+    @
+  \end{subfigure}
+  <<include=FALSE>>=
+  v <- "Measured and simulated (uncalibrated model) stream-aquifer flow exchange in the Big Wood River, (\\textit{\\textbf{A}}) near Ketchum to Hailey river reach and (\\textit{\\textbf{B}}) Hailey to Stanton Crossing river reach. \\label{fig:graph_reaches_bwr}"
+  v <- c(paste("Graphs showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(v)))), v)
+  @
+  \caption[{\Sexpr{v[1]}}]{{\Sexpr{v[2]}}}
+\end{figure}
+
+<<include=FALSE>>=
+v <- "Measured and simulated (uncalibrated model) stream-aquifer flow exchange in the Willow Creek river reach."
+v <- c(paste("Graph showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(v)))), v)
+@
+
+<<graph_reaches_wc, echo=FALSE, fig.width=fin.graph.short[1], fig.height=fin.graph.short[2], fig.scap=sprintf("{%s}", v[1]), fig.cap=sprintf("{%s}", v[2])>>=
+FUN(d3, TRUE)
+@
+
+\begin{figure}
+  \begin{subfigure}{\textwidth}
+    \caption{Silver Creek, above Sportsman Access river reach \label{fig:graph_reaches_sc_a}}
+    <<graph_reaches_sc_a, echo=FALSE, fig.width=fin.graph.short[1], fig.height=fin.graph.short[2]>>=
+    FUN(d4, TRUE)
+    @
+  \end{subfigure}
+
+  \vspace{0.5cm}%
+
+  \begin{subfigure}{\textwidth}
+    \caption{Silver Creek, Sportsman Access to near Picabo river reach \label{fig:graph_reaches_sc_b}}
+    <<graph_reaches_sc_b, echo=FALSE, fig.width=fin.graph.short[1], fig.height=fin.graph.short[2]>>=
+    FUN(d5)
+    invisible(dev.off())
+    @
+  \end{subfigure}
+  <<include=FALSE>>=
+  v <- "Measured and simulated (uncalibrated model) stream-aquifer flow exchange along (\\textit{\\textbf{A}}) Silver Creek, above Sportsman Access river reach, and (\\textit{\\textbf{B}}) Silver Creek, Sportsman Access to near Picabo river reach. \\label{fig:graph_reaches_sc}"
+  v <- c(paste("Graphs showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(v)))), v)
+  @
+  \caption[{\Sexpr{v[1]}}]{{\Sexpr{v[2]}}}
+\end{figure}
+
+<<echo=FALSE>>=
+ylim <- range(pretty(c(d1[, 4], d2[, 4], d3[, 4], d4[, 4], d5[, 4])))
+
+FUN <- function(d, add.legend=FALSE) {
+  dd <- d[, c("exch.sim", "exch.res")]
+  xn <- 3L
+  xlim <- range(pretty(dd$exch.sim))
+  n <- length(na.omit(dd$exch.res))
+  arith.mean <- mean(dd$exch.res, na.rm=TRUE)
+  mae  <- mean(abs(dd$exch.res), na.rm=TRUE)
+  sdev <- sd(dd$exch.res, na.rm=TRUE)
+  col <- "#2A8FBDCB"
+  x <- cbind(x=c(xlim, rev(xlim)), y=arith.mean + c(rep(-sdev * 2, 2), rep(sdev * 2, 2)))
+  bg.polygon <- list(x=x, col="#FAFAD2")
+  xlab <- "Simulated stream-aquifer flow exchange, in cubic meters per day"
+  ylab <- paste("Residual, in", c("cubic meters per day (m\u00B3/d)", "cubic feet per second"))
+  PlotGraph(dd, xlab=xlab, ylab=ylab, type="n", xlim=xlim, ylim=ylim, xn=3L,
+            conversion.factor=1 / cfs.to.m3.per.d, bg.polygon=bg.polygon,
+            scientific=c(TRUE, TRUE, FALSE))
+  abline(h=0, col="#333333", lwd=1)
+  points(dd, pch=20, col=col)
+  box(lwd=0.5)
+  usr <- par("usr")
+  labs <- sprintf("Sample size: %s\nMean absolute error: %s m\u00B3/d\nStandard deviation: %s m\u00B3/d",
+                  format(n, big.mark=","),
+                  format(as.integer(mae), big.mark=","),
+                  format(as.integer(sdev), big.mark=","))
+  text(x=usr[1] + diff(usr[1:2]) * 0.02, y=usr[3] + diff(usr[3:4]) * 0.10,
+       labels=labs, cex=0.7, pos=4)
+}
+@
+
+\begin{figure}
+  \begin{subfigure}{0.5\textwidth}
+    \caption{Near Ketchum to Hailey \label{fig:graph_exch_a}}
+    <<graph_exch_a, echo=FALSE, results="asis", fig.width=fig.graph.small[1], fig.height=fig.graph.small[2]>>=
+    FUN(d1)
+    @
+  \end{subfigure}%
+  \begin{subfigure}{0.5\textwidth}
+    \caption{Hailey to Stanton Crossing \label{fig:graph_exch_b}}
+    <<graph_exch_b, echo=FALSE, results="asis", fig.width=fig.graph.small[1], fig.height=fig.graph.small[2]>>=
+    FUN(d2)
+    @
+  \end{subfigure}
+
+  \vspace{0.5cm}%
+
+  \begin{subfigure}{0.5\textwidth}
+    \caption{Willow Creek \label{fig:graph_exch_c}}
+    <<graph_exch_c, echo=FALSE, results="asis", fig.width=fig.graph.small[1], fig.height=fig.graph.small[2]>>=
+    FUN(d3)
+    @
+  \end{subfigure}%
+  \begin{subfigure}{0.5\textwidth}
+    <<graph_exch_leg, echo=FALSE, results="asis", fig.width=fig.graph.small[1], fig.height=fig.graph.small[2]>>=
+    plot(1, type="n", axes=FALSE, xlab="", ylab="")
+    leg <- c("Residual versus simulated", "95-percent confidence interval")
+    cols <- c("#2A8FBDCB", "#FAFAD2")
+    legend("center", leg, pch=c(20, 15), col=cols, pt.cex=c(1, 1.5),
+           pt.lwd=0.5, inset=0.02, cex=0.7, bty="n", xpd=NA, bg="#FFFFFFCD",
+           title=expression(bold("EXPLANATION")))
+    invisible(dev.off())
+    @
+  \end{subfigure}
+  <<include=FALSE>>=
+  v <- "Mean stream-aquifer flow-exchange residuals along river reaches (\\textit{\\textbf{A}}) Big Wood River, near Ketchum to Hailey and (\\textit{\\textbf{B}}) Hailey to Stanton Crossing; (\\textit{\\textbf{C}}) Willow Creek; (\\textit{\\textbf{D}}) Silver Creek, above Sportsman Access; and  (\\textit{\\textbf{E}}) Silver Creek, Sportsman Access to near Picabo---based on uncalibrated model results. \\label{fig:graph_exch}"
+  v <- c(paste("Graphs showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(v)))), v)
+  @
+  \caption[{\Sexpr{v[1]}}]{{\Sexpr{v[2]}}}
+\end{figure}
+
+\captionsetup[figure]{list=no}
+\begin{figure}
+  \ContinuedFloat
+  \begin{subfigure}{0.5\textwidth}
+    \caption{Above Sportsman Access \label{fig:graph_exch_d}}
+    <<graph_exch_d, echo=FALSE, results="asis", fig.width=fig.graph.small[1], fig.height=fig.graph.small[2]>>=
+    FUN(d4)
+    @
+  \end{subfigure}%
+  \begin{subfigure}{0.5\textwidth}
+    \caption{Sportsman Access to near Picabo \label{fig:graph_exch_e}}
+    <<graph_exch_e, echo=FALSE, results="asis", fig.width=fig.graph.small[1], fig.height=fig.graph.small[2]>>=
+    FUN(d5)
+    invisible(dev.off())
+    @
+  \end{subfigure}
+  \caption{---Continued}
+\end{figure}
+\captionsetup[figure]{list=yes}
+
+% ===
+
+Using a flow difference method the stream-aquifer flow exchange along river subreaches (\hyperref[table_rivers]{table~\ref{table_rivers}}, \hyperref[fig:map_rivers]{fig.~\ref{fig:map_rivers}})
+was estimated from streamflow measurements recorded during August 2012, October 2012, and March 2013 \citep{Bartolino2014}.
+These flow-exchange estimates occurred outside the model-calibration period (1998--2010), therefore,
+to include this dataset in the model-calibration process,
+it was necessary to relate these values to estimates of mean monthly stream-aquifer flow exchange along river reaches during the 2000 through 2010 time period.
+The ratio between subreach flow-exchange estimates and their corresponding reach values were calculated for August, October, and March.
+This calculation is described in more detail in appendix H.
+
+The residual of a stream-aquifer flow-exchange ratio for a selected month is defined as the difference between measured and simulated values.
+Scatterplots of the residuals compared to simulated values during March, August, and October are shown
+in \hyperref[fig:graph_ratio]{figure~\ref{fig:graph_ratio}}.
+
+<<echo=FALSE>>=
+d <- reach.recharge
+is <- as.Date(paste0(d$YearMo, "01"), format="%Y%m%d") >= as.Date("2000-01-01")
+reach.ave <- apply(d[is, c("nKet_Hai", "Hai_StC", "SilverAbv")], 2, mean, na.rm=TRUE)
+reach.ave <- data.frame(BigReachNo=c(1L, 2L, 4L), reach.ave)
+d1 <- dplyr::left_join(subreach.recharge, reach.ave, by="BigReachNo")
+d1[, c("Aug.obs", "Oct.obs", "Mar.obs")] <- d1[, c("Aug", "Oct", "Mar")] / d1$reach.ave
+
+d <- budget[budget$desc == "river leakage" & budget$id %in% d1$ReachNo, ]
+d$BigReachNo <- d1$BigReachNo[match(d$id, d1$ReachNo)]
+d$month <- as.factor(months(d$totim.date, abbreviate=TRUE))
+d <- d[d$totim.date >= as.Date("2000-01-01") & d$month %in% c("Aug", "Oct", "Mar"), ]
+
+d2 <- aggregate(d[, "flow.sum"], by=list(ReachNo=d$id, totim.date=d$totim.date, month=d$month), sum)
+d2 <- aggregate(d2$flow.sum, by=list(ReachNo=d2$ReachNo, month=d2$month), mean)
+colnames(d2) <- c("ReachNo", "month", "subreach.ave")
+d2$BigReachNo <- d1$BigReachNo[match(d2$ReachNo, d1$ReachNo)]
+
+reach.ave <- aggregate(d[, "flow.sum"], by=list(BigReachNo=d$BigReachNo, totim.date=d$totim.date, month=d$month), sum)
+reach.ave <- aggregate(reach.ave$flow.sum, by=list(BigReachNo=reach.ave$BigReachNo, month=reach.ave$month), mean)
+colnames(reach.ave) <- c("BigReachNo", "month", "reach.ave")
+
+d2 <- dplyr::left_join(d2, reach.ave, by=c("BigReachNo", "month"))
+d2$ratio <- d2$subreach.ave / d2$reach.ave
+
+d3 <- dplyr::left_join(d2[d2$month == "Aug", c("ReachNo", "ratio")],
+                       d2[d2$month == "Oct", c("ReachNo", "ratio")], by="ReachNo")
+d3 <- dplyr::left_join(d3,
+                       d2[d2$month == "Mar", c("ReachNo", "ratio")], by="ReachNo")
+colnames(d3) <- c("ReachNo", "Aug.sim", "Oct.sim", "Mar.sim")
+
+d <- dplyr::left_join(d1, d3, by="ReachNo")
+d$is.bwr <- grepl("Big Wood", d$Reach)
+d$Aug.res <- d$Aug.obs - d$Aug.sim
+d$Oct.res <- d$Oct.obs - d$Oct.sim
+d$Mar.res <- d$Mar.obs - d$Mar.sim
+
+xlim <- range(pretty(unlist(d[, c("Aug.sim", "Oct.sim", "Mar.sim")])))
+ylim <- range(pretty(unlist(d[, c("Aug.res", "Oct.res", "Mar.res")])))
+
+FUN <- function(mo) {
+  dd <- d[, paste0(mo, c(".sim", ".res"))]
+  colnames(dd) <- c("ratio.sim", "ratio.res")
+  n <- length(na.omit(dd$ratio.res))
+  arith.mean <- mean(dd$ratio.res, na.rm=TRUE)
+  mae <- mean(abs(dd$ratio.res), na.rm=TRUE)
+  sdev <- sd(dd$ratio.res, na.rm=TRUE)
+  cols <- c("#FAFAD2", "#333333", "#7FC97F", "#BEAED4")
+  x <- cbind(x=c(xlim, rev(xlim)), y=arith.mean + c(rep(-sdev * 2, 2), rep(sdev * 2, 2)))
+  bg.polygon <- list(x=x, col=cols[1])
+  xlab <- "Simulated stream-aquifer flow-exchange ratio"
+  ylab <- "Residual"
+  PlotGraph(dd, xlab=xlab, ylab=ylab, type="n", xlim=xlim, ylim=ylim,
+            bg.polygon=bg.polygon)
+  abline(h=0, col=cols[2], lwd=1)
+  points(dd[ d$is.bwr, ], pch=20, col=cols[3])
+  points(dd[!d$is.bwr, ], pch=18, col=cols[4])
+  box(lwd=0.5)
+  usr <- par("usr")
+  labs <- sprintf("Sample size: %s\nMean absolute error: %s\nStandard deviation: %s",
+                  format(n, big.mark=","), format(mae, digits=2, nsmall=1),
+                  format(sdev, digits=2, nsmall=1))
+  text(x=usr[1] + diff(usr[1:2]) * 0.05, y=usr[3] + diff(usr[3:4]) * 0.10,
+       labels=labs, cex=0.7, pos=4)
+}
+@
+
+\begin{figure}
+  \begin{subfigure}{0.5\textwidth}
+    \caption{March \label{fig:graph_ratio_a}}
+    <<graph_ratio_a, echo=FALSE, results="asis", fig.width=fig.graph.small[1], fig.height=fig.graph.small[2]>>=
+    FUN("Mar")
+    @
+  \end{subfigure}%
+  \begin{subfigure}{0.5\textwidth}
+    \caption{August \label{fig:graph_ratio_b}}
+    <<graph_ratio_b, echo=FALSE, results="asis", fig.width=fig.graph.small[1], fig.height=fig.graph.small[2]>>=
+    FUN("Aug")
+
+    @
+  \end{subfigure}
+
+  \vspace{0.5cm}%
+
+  \begin{subfigure}{0.5\textwidth}
+    \caption{October \label{fig:graph_ratio_c}}
+    <<graph_ratio_c, echo=FALSE, results="asis", fig.width=fig.graph.small[1], fig.height=fig.graph.small[2]>>=
+    FUN("Oct")
+    @
+  \end{subfigure}%
+  \begin{subfigure}{0.5\textwidth}
+    <<graph_ratio_d, echo=FALSE, results="asis", fig.width=fig.graph.small[1], fig.height=fig.graph.small[2]>>=
+    plot(1, type="n", axes=FALSE, xlab="", ylab="")
+    leg <- c("Big Wood River", "Spring-fed tributaries of Silver Creek", "95-percent confidence interval")
+    cols <- c("#7FC97F", "#BEAED4", "#FAFAD2")
+    legend("center", leg, pch=c(20, 18, 15), col=cols, pt.cex=c(1, 1, 1.5),
+           pt.lwd=0.5, inset=0.02, cex=0.7, bty="n", xpd=NA, bg="#FFFFFFCD",
+           title=expression(bold("EXPLANATION")))
+    invisible(dev.off())
+    @
+  \end{subfigure}
+  <<include=FALSE>>=
+  v <- "Mean stream-aquifer flow-exchange ratio residuals for river subreaches during (\\textit{\\textbf{A}}) March, (\\textit{\\textbf{B}}) August, and (\\textit{\\textbf{C}}) October---based on uncalibrated model results. \\label{fig:graph_ratio}"
+  v <- c(paste("Graphs showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(v)))), v)
+  @
+  \caption[{\Sexpr{v[1]}}]{{\Sexpr{v[2]}}}
+\end{figure}
+
+\clearpage
+
+% =========================================================================
+
+\subsection{Groundwater Flow Across the Outlet Boundaries}
+
+Simulated groundwater outflow beneath the Stanton Crossing and Silver Creek outlet boundaries (\hyperref[fig:map_drains]{fig.~\ref{fig:map_drains}})
+is shown in \hyperref[fig:graph_drain_stn_cross]{figures~\ref{fig:graph_drain_stn_cross}} and \ref{fig:graph_drain_silver_crk}, respectively.
+Recall that a negative value of groundwater outflow indicates aquifer discharge.
+For the Stanton Crossing outlet boundary, groundwater outflow ranged from \Sexpr{x <- d.drain.1$flow; FmtFlow(range(x))},
+with a mean and SD of \Sexpr{FmtFlow(mean(x))} and \Sexpr{FmtFlow(sd(x))}, respectively.
+And for the Silver Creek outlet boundary, groundwater outflow ranged from \Sexpr{x <- d.drain.2$flow; FmtFlow(range(x))},
+with a mean and SD of \Sexpr{FmtFlow(mean(x))} and \Sexpr{FmtFlow(sd(x))}, respectively.
+
+<<include=FALSE>>=
+v <- "Groundwater discharge across the Stanton Crossing outlet boundary---based on uncalibrated model results."
+v <- c(paste("Graph showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(v)))), v)
+@
+
+<<graph_drain_stn_cross, echo=FALSE, fig.width=fin.graph.short[1], fig.height=fin.graph.short[2], fig.scap=sprintf("{%s}", v[1]), fig.cap=sprintf("{%s}", v[2])>>=
+ylab <- paste("Groundwater discharge, in", c("cubic meters per day", "acre-feet per year"))
+col <- "#C80C0B"
+PlotGraph(d.drain.1, ylab=ylab, col=col, fill=paste0(col, "66"),
+          conversion.factor=m3.per.d.to.af.per.yr, scientific=FALSE, center.date.labels=TRUE)
+invisible(dev.off())
+@
+
+<<include=FALSE>>=
+v <- "Groundwater discharge across the Silver Creek outlet boundary---based on uncalibrated model results."
+v <- c(paste("Graph showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(v)))), v)
+@
+
+<<graph_drain_silver_crk, echo=FALSE, fig.width=fin.graph.short[1], fig.height=fin.graph.short[2], fig.scap=sprintf("{%s}", v[1]), fig.cap=sprintf("{%s}", v[2])>>=
+ylab <- paste("Groundwater discharge, in", c("cubic meters per day", "acre-feet per year"))
+col <- "#C80C0B"
+PlotGraph(d.drain.2, ylab=ylab, col=col, fill=paste0(col, "66"),
+          conversion.factor=m3.per.d.to.af.per.yr, scientific=TRUE, center.date.labels=TRUE)
+invisible(dev.off())
+@
+
+% =========================================================================
+
+<<echo=FALSE, message=FALSE>>=
+# save R objects that will be used to update the water budget
+layers <-  c("lay1.top", sprintf("lay%s.bot", 1:3), sprintf("lay%s.zones", 1:3))
+rs <- subset(rs.model, layers)
+save(rs, misc, trib, tr.stress.periods, ss.stress.periods, reduction, d.in.mv.ave,
+     file=file.path(dir.run, "model.rda"), compress=FALSE)
+
+# read raster data from from reference file and store in stack
+FUN <- function(f, mv.flag=1e+09) {
+  x <- scan(f, quiet=TRUE)
+  x[x == mv.flag] <- NA
+  r <- raster(rs)
+  r[] <- x
+  return(r)
+}
+if (file.exists(file.path(dir.run, "hk1.ref"))) {
+  rs.model[["lay1.hk"]] <- FUN(file.path(dir.run, "hk1.ref"))
+  rs.model[["lay2.hk"]] <- FUN(file.path(dir.run, "hk2.ref"))
+  rs.model[["lay3.hk"]] <- FUN(file.path(dir.run, "hk3.ref"))
+}
+if (file.exists(file.path(dir.run, "ss1.ref"))) {
+  rs.model[["lay1.ss"]] <- FUN(file.path(dir.run, "ss1.ref"))
+  rs.model[["lay2.ss"]] <- FUN(file.path(dir.run, "ss2.ref"))
+  rs.model[["lay3.ss"]] <- FUN(file.path(dir.run, "ss3.ref"))
+}
+if (file.exists(file.path(dir.run, "sy1.ref"))) {
+  rs.model[["lay1.sy"]] <- FUN(file.path(dir.run, "sy1.ref"))
+  rs.model[["lay2.sy"]] <- FUN(file.path(dir.run, "sy2.ref"))
+  rs.model[["lay3.sy"]] <- FUN(file.path(dir.run, "sy3.ref"))
+}
+
+# write raster stacks
+path <- file.path(getwd(), "ancillary", "uncalibrated")
+ExportRasterStack(rs.data,  file.path(path, "data"))
+ExportRasterStack(rs.model, file.path(path, "model"))
+
+# write water-table animations
+
+dir.create(p <- file.path(path, "animation"), showWarnings=FALSE)
+wd <- setwd(p)
+Pal <- function(...) rev(rainbow(..., start=0.1, end=0.6))
+FUN <- function(i, usr) {
+  PlotMap(rs[[i]], xlim=usr[1:2], ylim=usr[3:4], zlim=zlim,
+          bg.image=hill.shading, bg.image.alpha=0.6, dms.tick=TRUE, pal=Pal,
+          credit="", explanation="Simulated depth to water table, in meters.",
+          rivers=list(x=streams.rivers), lakes=list(x=lakes),
+          labels=list(at=at, labels=labs))
+  dx <- diff(par("usr")[1:2]) * 0.05
+  text(par("usr")[2] - dx, par("usr")[4] - dx, i, pos=2, offset=0,
+       font=2, cex=1.5, col="#1F1F1F")
+}
+rs <- land - rs.wt
+max.depth <- 40  # in meters
+rs[rs > max.depth] <- max.depth
+names(rs) <- names(rs.wt)
+rs <- subset(rs, seq(1, nlayers(rs), by=ntime.steps))
+at <- pretty(c(minValue(rs), maxValue(rs)), 8)
+labs <- formatC(at)
+n <- length(at)
+labs[n] <- paste0(">", labs[n])
+zlim <- range(at)
+
+animation::saveHTML({
+  animation::ani.options(interval=0.2, nmax=nlayers(rs))
+  png(animation::ani.options("img.fmt"), width=fin.map[1], height=fin.map[2],
+      units="in", pointsize=12, res=72, antialias="cleartype")
+  for (i in names(rs)) FUN(i, usr.map)
+  dev.off()
+}, img.name="wt_a_", global.opts="$.fn.scianimator.defaults.theme = 'light';",
+   use.dev=FALSE, ani.type="png", htmlfile="water-table.html",
+   navigator=FALSE, verbose=FALSE, autobrowse=FALSE, autoplay=FALSE)
+rs <- crop(rs, extent(usr.map.s))
+at <- pretty(c(minValue(rs), maxValue(rs)), 8)
+zlim <- range(at)
+
+animation::saveHTML({
+  animation::ani.options(interval=0.2, nmax=nlayers(rs))
+  png(animation::ani.options("img.fmt"), width=fin.map.s[1], height=fin.map.s[2],
+      units="in", pointsize=12, res=72, antialias="cleartype")
+  for (i in names(rs)) FUN(i, usr.map.s)
+  dev.off()
+}, img.name="wt_b_", global.opts="$.fn.scianimator.defaults.theme = 'light';",
+   use.dev=FALSE, ani.type="png", htmlfile="water-table.html",
+   navigator=FALSE, verbose=FALSE, autobrowse=FALSE, autoplay=FALSE)
+
+setwd(wd)
+
+# write model domain shapefile
+path <- file.path(getwd(), "georef")
+dir.create(path, showWarnings=FALSE, recursive=TRUE)
+p1 <- as(extent(rs.model), "SpatialPolygons")
+r <- is.na(rs.model[["lay1.bot"]])
+r[r == 1] <- NA
+p2 <- as(rasterToPolygons(r, dissolve=TRUE), "SpatialPolygons")
+slot(p2@polygons[[1]], "ID") <- "2"
+r <- is.na(rs.model[["lay1.bot"]])
+r[r == 0] <- NA
+p3 <- as(rasterToPolygons(!r, dissolve=TRUE), "SpatialPolygons")
+slot(p3@polygons[[1]], "ID") <- "3"
+p <- SpatialPolygons(list(p1=p1@polygons[[1]], p2=p2@polygons[[1]], p3=p3@polygons[[1]]),
+                     proj4string=crs(r))
+d <- data.frame(Area=c("maximum model extent", "active model domain", "inactive model domain"),
+                row.names=sapply(slot(p, "polygons"), function(x) slot(x, "ID")))
+p <- SpatialPolygonsDataFrame(p, d)
+writeOGR(p, dsn=path, layer="sir2016_5080", driver="ESRI Shapefile",
+         overwrite_layer=TRUE, encoding="UTF-8")
+
+# write model grid shapefile
+path <- file.path(getwd(), "ancillary/modelgrid")
+dir.create(path, showWarnings=FALSE, recursive=TRUE)
+r <- raster(rs.model)
+r[] <- seq_len(ncell(r))
+names(r) <- "cell"
+p <- rasterToPolygons(r)
+p@data <- cbind(p@data, rowColFromCell(r, p@data$cell),
+                lay1.top=rs.model[["lay1.top"]][p@data$cell],
+                lay1.bot=rs.model[["lay1.bot"]][p@data$cell],
+                lay2.bot=rs.model[["lay2.bot"]][p@data$cell],
+                lay3.bot=rs.model[["lay3.bot"]][p@data$cell])
+writeOGR(p, dsn=path, layer="grid", driver="ESRI Shapefile",
+         overwrite_layer=TRUE, encoding="UTF-8")
+
+# write modelgeoref file
+path <- getwd()
+r <- raster(rs.model)
+e <- rs.model@extent
+pts <- rbind(nw=c(e@xmin, e@ymax), ne=c(e@xmax, e@ymax),
+             se=c(e@xmax, e@ymin), sw=c(e@xmin, e@ymin))
+corners <- c("upper_left", "upper_right", "lower_right", "lower_left")
+pts.xy <- SpatialPoints(pts, proj4string=crs(r))
+crs.ll <- CRS("+proj=longlat +datum=WGS84")
+pts.ll <- spTransform(pts.xy, crs.ll)
+lng <- coordinates(pts.ll)[, 1]
+lat <- coordinates(pts.ll)[, 2]
+ll <- data.frame(Location=corners, Longitude=lng, Latitdue=lat, row.names=NULL)
+ll <- capture.output(write.table(format(ll, nsmall=6), row.names=FALSE, col.names=FALSE, quote=FALSE))
+ll <- paste(ll, collapse="\n")
+replacement <- list(ll=ll, crs.ll=crs.ll@projargs)
+file <- system.file("misc", "modelgeoref-template.txt", package="wrv")
+text <- readLines(file, warn=FALSE)
+file <- file.path(path, "modelgeoref")
+cat(ReplaceInTemplate(text, replacement), file=file, sep="\n")
+
+# write readme file
+path <- getwd()
+desc <- packageDescription("wrv")
+fields <- c("Depends", "Imports", "Suggests")
+FUN <- function(i) strsplit(gsub("\n", " ", desc[[i]]), ", ")[[1]]
+pkgs <- shQuote(unlist(lapply(fields, FUN))[-1])
+pkgs <- strwrap(paste(pkgs, collapse=", "), width=60)
+pkgs <- paste(pkgs, collapse="\n                    ")
+replacement <- list(pkgs=pkgs, id=id)
+file <- system.file("misc", "readme-template.txt", package="wrv")
+text <- readLines(file, warn=FALSE)
+file <- file.path(path, "readme.txt")
+options(width=70)
+cat(ReplaceInTemplate(text, replacement), file=file, sep="\n")
+options(width=80)
+
+# write usgs.model.reference file
+path <- file.path(getwd(), "model/model1")
+replacement <- list(xul=coordinates(pts)["ne", 1], yul=coordinates(pts)["ne", 2],
+                    start_date=format(sdate, "%m/%d/%Y"),
+                    model="modflow-usg",
+                    proj4=proj4string(rs.model))
+file <- system.file("misc", "usgs.model.ref-template.txt", package="wrv")
+text <- readLines(file, warn=FALSE)
+file <- file.path(path, "usgs.model.reference")
+cat(ReplaceInTemplate(text, replacement), file=file, sep="\n")
+
+# remove temporary files
+path <- file.path(getwd(), "model/model1")
+file <- file.path(path, "fort.6")
+if (file.exists(file)) invisible(file.remove(file))
+
+# move modflow output files
+path <- file.path(getwd(), "output/output.model1")
+dir.create(path, showWarnings=FALSE, recursive=TRUE)
+file.names <- paste(id, c("bud", "hds", "lst"), sep=".")
+invisible(file.rename(file.path(getwd(), "model/model1", file.names),
+                      file.path(path, file.names)))
+
+# move modflow executable file
+path <- file.path(getwd(), "bin")
+dir.create(path=path, showWarnings=FALSE, recursive=TRUE)
+invisible(file.rename(file.path(getwd(), "model/model1/mfusg.exe"),
+                      file.path(path, "mfusg.exe")))
+
+# create source directory
+path <- file.path(getwd(), "source")
+dir.create(path=path, showWarnings=FALSE, recursive=TRUE)
+
+# write xml metadata and thumbnail image
+
+path <- file.path(getwd(), "webrelease")
+dir.create(path, showWarnings=FALSE, recursive=TRUE)
+
+file <- system.file("misc", "sir2016_5080_usgsdatarelease.xml", package="wrv")
+invisible(file.copy(file, path))
+
+file <- file.path(path, "sir2016-5080Thumbnail.png")
+png(file, width=fin.map.0[1], height=fin.map.0[2], units="in", res=100)
+r <- !is.na(rs.model[["lay1.bot"]])
+PlotMap(crs(r), xlim=usr.map[1:2], ylim=usr.map[3:4],
+        bg.image=hill.shading, bg.image.alpha=0.6,
+        dms.tick=TRUE, rivers=list(x=streams.rivers), lakes=list(x=lakes),
+        draw.key=FALSE, credit=credit, scale.loc=NULL)
+loc <- extent(r)
+rect(loc[1], loc[3], loc[2], loc[4], col="#F0D878A6", border="#F02311", lwd=1)
+loc <- extent(raster(extend(r, buff <- 6L)))
+rect(loc[1], loc[3], loc[2], loc[4], col=NA, border="black", lwd=0.5)
+raster::image(r, maxpixels=length(r), useRaster=FALSE, col=c(NA, "#7FAF1B"), add=TRUE)
+legend("topleft",
+       c("Maximum model extent", "Inactive model domain", "Active model domain"), pch=c(22, 22, 22),
+       col=c("#F02311", "#F0D878", "#7FAF1B"), pt.bg=c(NA, "#F0D878", "#7FAF1B"),
+       pt.lwd=1, pt.cex=1, inset=0.02, cex=0.7, box.lty=1, box.lwd=0.5,
+       bg="#FFFFFFE7", title=expression(bold("EXPLANATION")))
+AddScaleBar(asp=1, "m", loc="topright", offset=c(-0.4, -0.5))
+plt <- c(grconvertX(loc[1:2], "user", "nfc"), grconvertY(loc[3:4], "user", "nfc"))
+par(plt=plt, bg="#FFFFFFCC", new=TRUE)
+m <- seq(0.5 - buff, dim(r)[1] + 0.5 + buff, by=1)
+n <- seq(0.5 - buff, dim(r)[2] + 0.5 + buff, by=1)
+xlim <- range(n)
+ylim <- rev(range(m))
+plot(cities, pch=15, cex=0.8, col="#333333", add=TRUE)
+text(cities, labels=cities@data$FEATURE_NA, col="#333333", cex=0.5, pos=1, offset=0.4)
+plot.window(xlim=xlim, ylim=ylim, asp=1, xaxt="n", yaxt="n", xaxs="i", yaxs="i", mar=c(0, 0, 0, 0))
+xat <- pretty(seq_len(dim(r)[2]))
+yat <- pretty(seq_len(dim(r)[1]))
+yat <- seq(min(yat), max(yat), by=diff(xat)[1])
+abline(v=xat, col="#00000023", lwd=0.3)
+abline(h=yat, col="#00000023", lwd=0.3)
+cex <- 0.7
+tcl <- 0.25
+mgp <- c(1, 0.2, 0)
+axis(2, at=yat, tcl=tcl, las=1, cex.axis=cex, lwd=-1, lwd.ticks=0.3, mgp=mgp, font=2)
+axis(3, at=xat, tcl=tcl, las=1, cex.axis=cex, lwd=-1, lwd.ticks=0.3, mgp=mgp, font=2)
+axis(1, at=xat, tcl=tcl, lwd=-1, lwd.ticks=0.3, labels=FALSE, mgp=mgp)
+axis(4, at=yat, tcl=tcl, lwd=-1, lwd.ticks=0.3, labels=FALSE, mgp=mgp)
+mtext("Columns", side=3, line=1, cex=cex, font=2)
+mtext("Rows",    side=2, line=1, cex=cex, font=2)
+invisible(dev.off())
+@
+
+% =========================================================================
+
+\clearpage
+\phantomsection
+\addcontentsline{toc}{section}{References Cited}
+\printbibliography
+
+% =========================================================================
+
+% \vfill\centerline{Created on \Sexpr{format(Sys.time(), "%B %e, %Y")}; total processing time was \Sexpr{format(difftime(Sys.time(), t0), digits=3)}.}
+
+\end{document}

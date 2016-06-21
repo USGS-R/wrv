@@ -1,6 +1,6 @@
 Changes in Version 1.0.1
 
-  o  ...
+  o  Place vignette source, R-code, and PDF (optimized for viewing) files in the ./inst/doc folder.
 
 Changes in Version 1.0.0
 

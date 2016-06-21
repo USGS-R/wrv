@@ -1,0 +1,2016 @@
+% \VignetteIndexEntry{Appendix C. Package Dataset Creation}
+% \VignetteEngine{knitr::knitr}
+% \VignetteDepends{wrv}
+
+\documentclass[twoside]{article}
+
+\input{\Sexpr{shQuote(system.file("misc", "preamble.tex", package="wrv"))}}
+
+\renewcommand{\thefigure}{C\arabic{figure}}
+\renewcommand{\thetable}{C\arabic{table}}
+\renewcommand{\thepage}{C\arabic{page}}
+
+\setcounter{page}{1}
+
+% =========================================================================
+
+\begin{document}
+
+<<setup, include=FALSE>>=
+t0 <- Sys.time()
+try(knitr::opts_chunk$set(tidy=FALSE, comment="#", fig.align="center"), silent=TRUE)
+grDevices::pdf.options(useDingbats=FALSE)
+
+# Device dimension in inches (width, height)
+fin.graph         <- c(7.16, 7.16)
+fin.graph.short   <- c(7.16, 3.50)
+fin.map           <- c(7.01, 9.32)
+fin.map.0         <- c(7.01, 8.65)
+fin.map.s         <- c(7.16, 5.31)
+fin.map.s.0       <- c(7.16, 4.64)
+fin.map.n         <- c(7.16, 7.00)
+fin.map.n.small   <- c(3.50, 3.83)
+fin.map.n.small.0 <- c(3.50, 3.16)
+fin.cs            <- c(7.16, 5.39)
+fin.cs.0          <- c(7.16, 4.73)
+
+# Extreme coordinates of plotting region (x1, x2, y1, y2)
+usr.map     <- c(2451504, 2497815, 1342484, 1402354)
+usr.map.s   <- c(2472304, 2497015, 1343284, 1358838)
+usr.map.n.1 <- c(2463000, 2475356, 1386500, 1398856)
+usr.map.n.2 <- c(2467500, 2479856, 1376500, 1388856)
+usr.map.n.3 <- c(2466696, 2479052, 1366501, 1378857)
+usr.map.n.4 <- c(2471500, 2483856, 1356482, 1368838)
+
+# Map credit
+credit <- paste("Base derived from U.S. Geological Survey National Elevation Dataset 10-meter digital elevation model.",
+                "Idaho Transverse Mercator projection; North American Datum of 1983.", sep="\n")
+
+CheckStatus <- function(s) {
+  if (interactive()) {
+    if (!isTRUE(all.equal(get(s), eval(parse(text=paste0("wrv::", s))), showwarning=FALSE, tolerance=1e-5))) {
+      warning(paste0("dataset '", s, "' has changed"), call.=FALSE)
+    }
+  }
+}
+@
+
+\title{Appendix C. Creating Datasets for the R-Package `wrv'\vspace{2ex}}
+\author{}
+\date{}
+\pretitle{\begin{flushleft}\LARGE\bfseries\sffamily}
+\posttitle{\end{flushleft}}
+\maketitle
+
+\tableofcontents
+
+\newpage
+
+\renewcommand*\listfigurename{Figures}
+\listoffigures
+
+\clearpage
+
+\RaggedRight
+
+% =========================================================================
+
+\section{Introduction}
+
+This vignette explains the processing steps for creating \R{} datasets in the \textbf{wrv} package.
+Datasets are processed at two levels: \emph{level~1} is unprocessed data mapped on a uniform space-time grid scale; and \emph{level~2} results from analyses of level~1 data.
+Considerable effort was placed on minimizing the number and complexity of processing steps required for dataset creation.
+However, some datasets (such as the level~2 datasets) are necessary for parameter estimation, and computationally too expensive to recreate during each iteration of model calibration;
+including these datasets in the \textbf{wrv} package avoids these long run times.
+It is assumed that the reader of this vignette is familiar with the \R{}-programming language and has read help documentation for functions and datasets in the \textbf{wrv} package (appendix B).
+
+% =========================================================================
+
+\section{R Environment}
+
+Load the following user-contributed packages into the current \R{} session:
+
+<<warning=FALSE, message=FALSE, results="hide">>=
+library("rgdal")        # bindings for the geospatial data abstraction library
+library("raster")       # gridded spatial data toolkit
+loadNamespace("rgeos")  # interface to geometry engine
+loadNamespace("dplyr")  # tool for working with data frame like objects
+loadNamespace("wrv")    # processor for groundwater-flow model
+@
+
+\noindent Set a \textbf{raster} package option to prevent the standardization of raster names:
+
+<<>>=
+rasterOptions(standardnames = FALSE)
+@
+
+\noindent The memory requirement for running R code in this vignette is about 10 gigabytes.
+
+% =========================================================================
+
+\section{Input/Output Paths}
+
+Package datasets are primarily created from unprocessed data files located on \href{https://github.com/USGS-R/wrv}{GitHub}, a web-based distributed revision control system.
+The top-level uniform resource locator (URL) for these files is specified as:
+
+<<>>=
+url.git <- "https://raw.githubusercontent.com/USGS-R/wrv/master/inst/extdata/"
+@
+
+\noindent The data file containing land-surface elevations was deemed too large in file size (about 500 megabytes) to be placed in the package repository.
+These elevations are part of the National Elevation Dataset (\href{http://ned.usgs.gov/}{NED}) $\sfrac{1}{3}$-arc-second raster and available in a ArcGRID file format.
+The File Transfer Protocol (FTP) for this compressed file is specified as:
+
+<<>>=
+ftp.ned <- paste0("ftp://rockyftp.cr.usgs.gov/vdelivery/Datasets/Staged/NED/",
+                  "13/ArcGrid/n44w115.zip")
+@
+
+\noindent Output from this vignette is placed in the current working directory.
+
+<<>>=
+dir.create(dir.dat <- file.path(getwd(), "data"), showWarnings = FALSE)
+@
+
+% =========================================================================
+
+\section{Space-Time Grid Scale}
+
+The length and time dimensions for datasets are in units of meters and days, respectively.
+Conversion factors are listed with an explanation of how they are used:
+
+<<>>=
+in.to.m              <- 0.0254         # inches to meters
+ft.to.m              <- 0.3048         # feet to meters
+mm.to.m              <- 0.001          # millimeters to meters
+mi2.to.m2            <- 2589990        # square miles to square meters
+af.to.m3             <- 1233.48185532  # acre-feet to cubic meters
+in.per.y.to.m.per.d  <- 6.95429e-05    # inches per year to meters per day
+af.per.y.to.m3.per.d <- 3.377          # acre-feet per year to cubic meters per day
+cfs.to.m3.per.d      <- 2446.57555     # cubic feet per second to cubic meters per day
+@
+
+\newpage
+
+\noindent The common coordinate reference system (CRS) applied to all spatial datasets is the
+Idaho Transverse Mercator projection (\href{https://www.idwr.idaho.gov/GIS/IDTM/}{IDTM83}).
+\href{http://trac.osgeo.org/proj/}{PROJ.4} projection arguments are used to specify a CRS in R.
+The CRS that all unprocessed data are converted into is specified as:
+
+<<>>=
+crs <- CRS(paste("+proj=tmerc +lat_0=42 +lon_0=-114 +k=0.9996 +x_0=2500000 +y_0=1200000",
+                 "+datum=NAD83 +units=m +no_defs +ellps=GRS80 +towgs84=0,0,0"))
+@
+
+\noindent The common spatial grid applied to all gridded datasets is composed of 565 rows and 429 columns, and has a constant cell size of 100 meters by 100 meters.
+
+<<>>=
+ext <- extent(2453200, 2496100, 1344139, 1400639)  # xmin, xmax, ymin, ymax in IDTM
+spatial.grid <- raster(crs = crs, ext = ext, resolution = 100)
+@
+
+\noindent The transient model simulates groundwater flow from 1995 through 2010, using monthly stress periods.
+
+<<>>=
+tr.interval <- as.Date(c("1995-01-01", "2011-01-01"), tz = "MST")
+tr.stress.periods <- seq(tr.interval[1] , tr.interval[2], "1 month")
+yr.mo <- format(head(tr.stress.periods, -1), "%Y%m")
+yr.mo.irr <- yr.mo[months(head(tr.stress.periods, -1), abbreviate = TRUE) %in%
+                   c("Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct")]
+@
+
+% =========================================================================
+
+\section{Level 1 Data}
+
+Datasets processed at level~1 are described as unprocessed data (that is, data read from files or specified in this vignette) mapped on a uniform space-time grid scale.
+Unprocessed data that is redundant, or deemed unnecessary for model processing or quality assurance, is removed.
+A few of the level~1 datasets require supplemental processing steps; descriptions of these steps are included alongside the relevant `code chunks'.
+Variable names, for the most part, are maintained between unprocessed and processed data.
+
+% =========================================================================
+
+\subsection{Tables}
+
+% =========================================================================
+
+\subsubsection{Canal seepage (canal.seep)}
+
+Canal seepage as a fraction of diversions for irrigation entities in the Wood River Valley (WRV).
+
+<<>>=
+file <- wrv::DownloadFile(paste0(url.git, "canal/canal.seep.csv"))
+canal.seep <- read.csv(file, strip.white = TRUE)
+save(canal.seep, file = file.path(dir.dat, "canal.seep.rda"), compress = "xz")
+@
+
+<<echo=FALSE>>=
+CheckStatus("canal.seep")
+@
+
+% =========================================================================
+
+\subsubsection{Combined surface-water irrigation diversions (comb.sw.irr)}
+
+Supplemental groundwater rights and associated surface-water rights.
+
+<<>>=
+file <- wrv::DownloadFile(paste0(url.git, "div/comb.sw.irr.csv"))
+comb.sw.irr <- read.csv(file, strip.white = TRUE)
+comb.sw.irr$Pdate <- as.Date(comb.sw.irr$Pdate, format = "%m/%d/%Y")
+comb.sw.irr$MaxDivRate <- comb.sw.irr$MaxDivRate * cfs.to.m3.per.d
+save(comb.sw.irr, file = file.path(dir.dat, "comb.sw.irr.rda"), compress = "xz")
+@
+
+<<echo=FALSE>>=
+CheckStatus("comb.sw.irr")
+@
+
+% =========================================================================
+
+\subsubsection{Evapotranspiration methods (et.method)}
+
+Methods used to calculate monthly distributions of evapotranspiration rate.
+
+<<>>=
+file <- wrv::DownloadFile(paste0(url.git, "et/et.method.csv"))
+et.method <- read.csv(file, strip.white = TRUE)
+et.method$YearMonth <- as.character(et.method$YearMonth)
+save(et.method, file = file.path(dir.dat, "et.method.rda"), compress = "xz")
+@
+
+<<echo=FALSE>>=
+CheckStatus("et.method")
+@
+
+% =========================================================================
+
+\subsubsection{Groundwater diversions (div.gw)}
+
+Groundwater diversions recorded by Water District 37 or municipal water providers.
+Groundwater is diverted from the aquifer by means of either pumping wells or flowing artesian wells.
+
+<<>>=
+file <- wrv::DownloadFile(paste0(url.git, "div/div.gw.csv"))
+div.gw <- read.csv(file, strip.white = TRUE)
+div.gw$YearMonth <- as.factor(div.gw$YearMonth)
+div.gw$GWDiv <- div.gw$GWDiv_af * af.to.m3
+div.gw$GWDiv_af <- NULL
+div.gw[is.na(div.gw$GWDiv), "GWDiv"] <- 0
+save(div.gw, file = file.path(dir.dat, "div.gw.rda"), compress = "xz")
+@
+
+<<echo=FALSE>>=
+CheckStatus("div.gw")
+@
+
+% =========================================================================
+
+\subsubsection{Irrigation efficiency (efficiency)}
+
+Irrigation efficiency for irrigation entities.
+
+<<>>=
+file <- wrv::DownloadFile(paste0(url.git, "irr/efficiency.csv"))
+efficiency <- read.csv(file, strip.white = TRUE)
+save(efficiency, file = file.path(dir.dat, "efficiency.rda"), compress = "xz")
+@
+
+<<echo=FALSE>>=
+CheckStatus("efficiency")
+@
+
+% =========================================================================
+
+\subsubsection{Irrigation lands for a given year (irr.lands.year)}
+
+The annual land classification for irrigation practices is only available for select years.
+For missing years, this dataset provides substitute years when land-classification was available.
+
+<<>>=
+file <- wrv::DownloadFile(paste0(url.git, "irr/irr.lands.year.csv"))
+irr.lands.year <- read.csv(file, strip.white = TRUE, colClasses = "character")
+save(irr.lands.year, file = file.path(dir.dat, "irr.lands.year.rda"), compress = "xz")
+@
+
+<<echo=FALSE>>=
+CheckStatus("irr.lands.year")
+@
+
+% =========================================================================
+
+\subsubsection{Snow Water Equivalent (swe)}
+
+Average daily snow water equivalent (SWE) at weather stations in the WRV and surrounding areas.
+
+<<>>=
+file <- wrv::DownloadFile(paste0(url.git, "precip/swe.choco.csv"))
+swe.choco <- read.csv(file, strip.white = TRUE)
+swe.choco$MonthDay <- format(as.Date(swe.choco$Date, "%m/%d/%Y"), "%m%d")
+swe.choco$SWE <- swe.choco$SWE_in * in.to.m
+file <- wrv::DownloadFile(paste0(url.git, "precip/swe.hailey.csv"))
+swe.hailey <- read.csv(file, strip.white = TRUE)
+swe.hailey$MonthDay <- format(as.Date(swe.hailey$Date, "%m/%d/%Y"), "%m%d")
+swe.hailey$SWE <- swe.hailey$SWE_in * in.to.m
+file <- wrv::DownloadFile(paste0(url.git, "precip/swe.picabo.csv"))
+swe.picabo <- read.csv(file, strip.white = TRUE)
+swe.picabo$MonthDay <- format(as.Date(swe.picabo$Date, "%m/%d/%Y"), "%m%d")
+swe.picabo$SWE <- swe.picabo$SWE_in * in.to.m
+@
+
+\noindent Aggregate SWE data by day in a year:
+
+<<>>=
+swe.choco  <- aggregate(swe.choco$SWE, list(swe.choco$MonthDay), mean)
+swe.hailey <- aggregate(swe.hailey$SWE, list(swe.hailey$MonthDay), mean)
+swe.picabo <- aggregate(swe.picabo$SWE, list(swe.picabo$MonthDay), mean)
+@
+
+\noindent Combine datasets and write to disk:
+
+<<>>=
+swe <- swe.choco[order(swe.choco[[1]]), ]
+swe <- dplyr::left_join(swe, swe.hailey, by = "Group.1")
+swe <- dplyr::left_join(swe, swe.picabo, by = "Group.1")
+names(swe) <- c("MonthDay", "Choco", "Hailey", "Picabo")
+save(swe, file = file.path(dir.dat, "swe.rda"), compress = "xz")
+@
+
+<<echo=FALSE>>=
+CheckStatus("swe")
+@
+
+% =========================================================================
+
+\subsubsection{Precipitation Rate (precipitation)}
+
+Precipitation rates in the WRV and surrounding areas.
+Combine precipitation records into a single data table:
+<<>>=
+file <- wrv::DownloadFile(paste0(url.git, "precip/precip.csv"))
+d <- read.csv(file, strip.white = TRUE)
+d$Ketchum <- d$Ketchum_ft * ft.to.m
+d$Hailey  <- d$Hailey_ft  * ft.to.m
+d$Picabo  <- d$Picabo_ft  * ft.to.m
+d$Ketchum_ft <- NULL
+d$Hailey_ft  <- NULL
+d$Picabo_ft  <- NULL
+@
+
+\noindent Create a linear regression model between the average of the precipitation depth recorded at the Picabo and Ketchum weather stations,
+and the precipitation depth recorded at the Hailey weather station:
+
+<<>>=
+x <- apply(d[, c("Picabo", "Ketchum")], 1, mean)
+y <- d$Hailey
+LM <- lm(y ~ x)
+@
+
+\noindent A strong positive correlation (R-squared of \Sexpr{format(summary(LM)$r.squared, digits=3)})
+indicates that the regression model may be used to estimate missing data at the Hailey weather station (\hyperref[fig:graph_precip_hailey]{fig.~\ref{fig:graph_precip_hailey}}).
+
+<<>>=
+is.na.hailey <- is.na(y)
+d$Hailey[is.na.hailey] <- predict(LM, data.frame(x))[is.na.hailey]
+precipitation <- d
+@
+
+<<include=FALSE>>=
+v <- "Monthly precipitation depth at the Hailey HADS weather station in the Wood River Valley aquifer system, south-central Idaho."
+v <- c(paste("Graph showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(v)))), v)
+@
+
+<<graph_precip_hailey, echo=FALSE, fig.width=fin.graph.short[1], fig.height=fin.graph.short[2], fig.scap=sprintf("{%s}", v[1]), fig.cap=sprintf("{%s}", v[2])>>=
+d <- precipitation
+d <- data.frame(Date=as.Date(paste0(d$YearMonth, "01"), format="%Y%m%d"),
+                Precip=d$Hailey)
+d1 <- d[!is.na.hailey, ]
+d2 <- d[ is.na.hailey, ]
+cols <- "#327CCB"
+ylab <- paste("Monthly precipitation, in", c("meters", "feet"))
+ltys <- c(1, 2)
+wrv::PlotGraph(d, xlim=tr.interval, ylab=ylab, col=cols, lty=0,
+               conversion.factor=1 / ft.to.m, center.date.labels=TRUE)
+lines(d1, lty=ltys[1], col=cols, type="s")
+lines(d2, lty=ltys[2], col=cols, type="s")
+legend("topright", c("Measured", "Estimated"), col=cols, lty=ltys, inset=0.02,
+       cex=0.7, box.lty=1, box.lwd=0.5, bg="#FFFFFFE7")
+invisible(dev.off())
+@
+
+\newpage
+
+\noindent Use a monthly precipitation redistribution model to account for frozen precipitation (snow):
+
+<<>>=
+d <- precipitation
+mo <- month.abb[as.integer(substr(precipitation$YearMonth, 5, 6))]
+for (i in seq_along(mo)) {
+  if (mo[i] == "Nov") {
+    precipitation$Ketchum[i] <- d$Ketchum[i] * 0.25
+    precipitation$Hailey[i]  <- d$Hailey[i]  * 0.75
+    precipitation$Picabo[i]  <- d$Picabo[i]  * 0.75
+  } else if (mo[i] %in% c("Dec", "Jan")) {
+    precipitation$Ketchum[i] <- d$Ketchum[i] * 0.25
+    precipitation$Hailey[i]  <- d$Hailey[i]  * 0.25
+    precipitation$Picabo[i]  <- d$Picabo[i]  * 0.25
+  } else if (mo[i] == "Feb") {
+    precipitation$Ketchum[i] <- d$Ketchum[i] * 0.25
+    precipitation$Hailey[i]  <- d$Hailey[i]  * 0.50
+    precipitation$Picabo[i]  <- d$Picabo[i]  * 0.75
+  } else if (mo[i] == "Mar") {
+    precipitation$Ketchum[i] <- d$Ketchum[i] * 0.25
+    precipitation$Hailey[i]  <- sum(d$Hailey[(i - 4L):i] * c(0.25, 0.75, 0.75, 0.50, 1))
+    precipitation$Picabo[i]  <- sum(d$Picabo[(i - 4L):i] * c(0.25, 0.75, 0.75, 0.25, 1))
+  } else if (mo[i] == "Apr") {
+    precipitation$Ketchum[i] <- sum(d$Ketchum[(i - 5L):i] * c(rep(0.75, 5), 1))
+  }
+}
+precipitation <- dplyr::left_join(d, precipitation, by = "YearMonth")
+sites <- c("Ketchum", "Hailey", "Picabo")
+names(precipitation) <- c("YearMonth", paste0(sites, ".raw"), sites)
+@
+
+\noindent Remove precipitation records that occurred outside the model simulation period:
+
+<<>>=
+date.time <- as.Date(paste0(precipitation[, "YearMonth"], "01"), "%Y%m%d")
+precipitation <- precipitation[date.time >= tr.interval[1] & date.time < tr.interval[2], ]
+@
+
+\noindent Add precipitation zone meta data:
+
+<<>>=
+d <- data.frame(YearMonth = as.factor(rep(as.character(precipitation$YearMonth), 3)),
+                PrecipZone = rep(sites, each = nrow(precipitation)),
+                Precip = NA, Precip.raw = NA)
+d[d$PrecipZone == "Ketchum", 3:4] <- precipitation[, c("Ketchum", "Ketchum.raw")]
+d[d$PrecipZone == "Hailey",  3:4] <- precipitation[, c("Hailey", "Hailey.raw")]
+d[d$PrecipZone == "Picabo",  3:4] <- precipitation[, c("Picabo", "Picabo.raw")]
+@
+
+\noindent Save the dataset to disk:
+
+<<>>=
+precipitation <- d
+save(precipitation, file = file.path(dir.dat, "precipitation.rda"), compress = "xz")
+@
+
+<<echo=FALSE>>=
+CheckStatus("precipitation")
+@
+
+% =========================================================================
+
+\subsubsection{Priority cuts (priority.cuts)}
+
+Priority cut dates applied to Big Wood River above Magic Reservoir and Silver Creek by Water District 37 and 37M at the end of each month.
+
+<<>>=
+file <- wrv::DownloadFile(paste0(url.git, "div/priority.cuts.csv"))
+priority.cuts <- read.csv(file, strip.white = TRUE)
+priority.cuts$YearMonth <- as.factor(priority.cuts$YearMonth)
+priority.cuts$Pdate_BWR <- as.Date(priority.cuts$Pdate_BWR, format = "%m/%d/%Y")
+priority.cuts$Pdate_SC <- as.Date(priority.cuts$Pdate_SC, format = "%m/%d/%Y")
+save(priority.cuts, file = file.path(dir.dat, "priority.cuts.rda"), compress = "xz")
+@
+
+<<echo=FALSE>>=
+CheckStatus("priority.cuts")
+@
+
+% =========================================================================
+
+\subsubsection{Surface-water diversions (div.sw)}
+
+Surface-water diversions recorded by Water District 37 or municipal water providers.
+
+<<>>=
+file <- wrv::DownloadFile(paste0(url.git, "div/div.sw.csv"))
+div.sw <- read.csv(file, strip.white = TRUE)
+div.sw$YearMonth <- as.factor(div.sw$YearMonth)
+div.sw$SWDiv <- div.sw$SWDiv_af * af.to.m3
+div.sw$SWDiv_af <- NULL
+div.sw[is.na(div.sw$SWDiv), "SWDiv"] <- 0
+save(div.sw, file = file.path(dir.dat, "div.sw.rda"), compress = "xz")
+@
+
+<<echo=FALSE>>=
+CheckStatus("div.sw")
+@
+
+% =========================================================================
+
+\subsubsection{Wastewater treatment plant diversions (div.ww)}
+
+Discharge from wastewater treatment plants.
+
+<<>>=
+file <- wrv::DownloadFile(paste0(url.git, "div/div.ww.csv"))
+div.ww <- read.csv(file, strip.white = TRUE)
+div.ww$YearMonth <- as.factor(div.ww$YearMonth)
+div.ww$WWDiv <- div.ww$WWTP_af * af.to.m3
+div.ww$WWTP_af <- NULL
+div.ww[is.na(div.ww$WWDiv), "WWDiv"] <- 0
+save(div.ww, file = file.path(dir.dat, "div.ww.rda"), compress = "xz")
+@
+
+<<echo=FALSE>>=
+CheckStatus("div.ww")
+@
+
+% =========================================================================
+
+\subsubsection{Daily mean discharge at streamgages (gage.disch)}
+
+Daily mean discharge at streamgages in the WRV:
+Big Wood River near Ketchum, Idaho (13135500);
+Big Wood River at Hailey, Idaho (13139510); and
+Big Wood River at Stanton Crossing near Bellevue, Idaho (13140800).
+
+<<>>=
+FUN <- function(i) {
+  file <- wrv::DownloadFile(paste0(url.git, "gage/", i))
+  d <- read.csv(file, colClasses = "character", strip.white = TRUE)
+  d$Date <- as.Date(d$Date, format = "%Y-%m-%d")
+  d$Disch <- suppressWarnings(as.numeric(d$Disch_cfs)) * cfs.to.m3.per.d
+  return(d[substr(d$Code, 1, 1) == "A" & !is.na(d$Disch), c("Date", "Disch")])
+}
+gage.13135500.disch <- FUN("gage.13135500.disch.csv")
+gage.13139510.disch <- FUN("gage.13139510.disch.csv")
+gage.13140800.disch <- FUN("gage.13140800.disch.csv")
+@
+
+\noindent Combine discharge records into a single data table:
+
+<<>>=
+dlim <- range(c(gage.13135500.disch$Date, gage.13139510.disch$Date,
+                gage.13140800.disch$Date))
+d <- data.frame(Date=seq(dlim[1], dlim[2], by = "day"))
+d <- dplyr::left_join(d, gage.13135500.disch, by = "Date")
+d <- dplyr::left_join(d, gage.13139510.disch, by = "Date")
+d <- dplyr::left_join(d, gage.13140800.disch, by = "Date")
+colnames(d) <- c("Date", "13135500", "13139510", "13140800")
+gage.disch <- d
+save(gage.disch, file = file.path(dir.dat, "gage.disch.rda"), compress = "xz")
+@
+
+<<echo=FALSE>>=
+CheckStatus("gage.disch")
+@
+
+\newpage
+
+% =========================================================================
+
+\subsubsection{Daily mean gage height at streamgages (gage.height)}
+
+Daily mean gage height at streamgages in the WRV:
+Big Wood River near Ketchum, Idaho (13135500);
+Big Wood River at Hailey, Idaho (13139510); and
+Big Wood River at Stanton Crossing near Bellevue, Idaho (13140800) (\hyperref[fig:graph_gage_height]{fig.~\ref{fig:graph_gage_height}}).
+
+<<>>=
+FUN <- function(i) {
+  file <- wrv::DownloadFile(paste0(url.git, "gage/", i))
+  d <- read.csv(file, colClasses = "character", strip.white = TRUE)
+  d$DateTime <- strptime(d$DateTime, "%Y-%m-%d %H:%M", tz = "MST")
+  d$Date <- as.Date(d$DateTime)
+  d$Height <- suppressWarnings(as.numeric(d$Height_ft)) * ft.to.m
+  d <- d[substr(d$Code, 1, 1) %in% c("W", "R", "A") & !is.na(d$Height), ]
+  d <- aggregate(d$Height, list(d$Date), mean, na.rm = TRUE)
+  names(d) <- c("Date", "Height")
+  return(d)
+}
+gage.13135500.height <- FUN("gage.13135500.height.csv")
+gage.13139510.height <- FUN("gage.13139510.height.csv")
+gage.13140800.height <- FUN("gage.13140800.height.csv")
+@
+
+\noindent Combine gage-height records into a single data table:
+
+<<>>=
+dlim <- range(c(gage.13135500.height$Date, gage.13139510.height$Date,
+                gage.13140800.height$Date))
+d <- data.frame(Date=seq(dlim[1], dlim[2], by = "day"))
+d <- dplyr::left_join(d, gage.13135500.height, by = "Date")
+d <- dplyr::left_join(d, gage.13139510.height, by = "Date")
+d <- dplyr::left_join(d, gage.13140800.height, by = "Date")
+colnames(d) <- c("Date", "13135500", "13139510", "13140800")
+@
+
+\noindent Remove negative values of gage height (n = \Sexpr{length(which(d < 0))}):
+
+<<>>=
+d[d < 0] <- NA
+@
+
+\noindent Create a linear regression model between gage-height data recorded at the Hailey gage and Near Ketchum gage:
+
+<<>>=
+x <- d[["13139510"]]
+y <- d[["13135500"]]
+LM <- lm(y ~ x)
+@
+
+\noindent A strong positive correlation (R-squared of \Sexpr{format(summary(LM)$r.squared, digits=3)})
+indicates that the regression model may be used to estimate missing data at the Near Ketchum gage.
+
+<<>>=
+is.na.13135500 <- is.na(y)
+d[["13135500"]][is.na.13135500] <- predict(LM, data.frame(x))[is.na.13135500]
+@
+
+\noindent Missing data at the Stanton Crossing near Bellevue gage are replaced with average gage-height values recorded at this gage.
+Substantial seepage losses and surface-water diversions between the Hailey gage and Stanton Crossing near Bellevue gage make regression inappropriate.
+
+<<>>=
+jday <- as.integer(julian(as.Date(paste0("1900-", format(d$Date, "%m-%d"))),
+                          origin = as.Date("1899-12-31")))
+m <- cbind(jday, height = d[["13140800"]])
+m <- m[rowSums(is.na(m)) == 0, ]
+m0 <- m[m[, "jday"] > 300, ]
+m1 <- m[m[, "jday"] < 66, ]
+m0[, "jday"] <- m0[, "jday"] - 365
+m1[, "jday"] <- m1[, "jday"] + 365
+LPM <- loess(height ~ jday, data.frame(rbind(m0, m, m1)), span = 1 / 35)
+ave.heights <- predict(LPM, newdata = 1:365)[jday]
+is.na.13140800 <- is.na(d[["13140800"]])
+d[["13140800"]][is.na.13140800] <- ave.heights[is.na.13140800]
+@
+
+\noindent Save the dataset to disk:
+
+<<>>=
+gage.height <- d
+save(gage.height, file = file.path(dir.dat, "gage.height.rda"), compress = "xz")
+@
+
+<<echo=FALSE>>=
+CheckStatus("gage.height")
+@
+
+<<include=FALSE>>=
+v <- "Gage heights recorded at streamgages along the Big Wood River."
+v <- c(paste("Graph showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(v)))), v)
+@
+
+<<graph_gage_height, echo=FALSE, fig.width=fin.graph.short[1], fig.height=fin.graph.short[2], fig.scap=sprintf("{%s}", v[1]), fig.cap=sprintf("{%s}", v[2])>>=
+d1 <- gage.height
+d2 <- gage.height
+d1[ is.na.13135500, "13135500"] <- NA
+d2[!is.na.13135500, "13135500"] <- NA
+d1[ is.na.13140800, "13140800"] <- NA
+d2[!is.na.13140800, "13140800"] <- NA
+x <- merge(d1, d2, by = "Date")[d$Date >= tr.interval[1] & d$Date < tr.interval[2], ]
+cols <- rep(c("#1B9E77", "#D95F02", "#7570B3"), 2)
+ltys <- c(rep(1, 3), rep(3, 3))
+ylab <- paste("Gage height, in", c("meters", "feet"))
+wrv::PlotGraph(x, ylab=ylab, col=cols, lty=ltys, conversion.factor=1 / ft.to.m,
+               center.date.labels=TRUE)
+leg <- c(sprintf("%s measured",  names(d)[-1]),
+         sprintf("%s estimated", names(d)[-1]))
+legend("topright", leg, col=cols, lty=ltys, inset=0.02, cex=0.7, box.lty=1,
+       box.lwd=0.5, bg="#FFFFFFE7")
+invisible(dev.off())
+@
+
+% =========================================================================
+
+\subsubsection{Points of diversion for groundwater (pod.gw)}
+
+Points of diversion for groundwater.
+
+<<>>=
+file <- wrv::DownloadFile(paste0(url.git, "div/pod.gw.csv"))
+d <- read.csv(file, strip.white = TRUE, stringsAsFactors = FALSE)
+d$Pdate <- as.Date(d$PriorityDa, format = "%m/%d/%Y")
+d$IrrRate <- d$IRRcfs * cfs.to.m3.per.d
+columns <- c("WMISNumber", "WaterRight", "EntityName", "EntitySrce", "Pdate", "IrrRate")
+pod.gw <- d[, columns]
+save(pod.gw, file = file.path(dir.dat, "pod.gw.rda"), compress = "xz")
+@
+
+<<echo=FALSE>>=
+CheckStatus("pod.gw")
+@
+
+% =========================================================================
+
+\subsubsection{Recharge at miscellaneous seepage sites (misc.seepage)}
+
+Recharge from miscellaneous seepage sites.
+
+<<>>=
+file <- wrv::DownloadFile(paste0(url.git, "misc.seepage.csv"))
+d <- read.csv(file, strip.white = TRUE)
+d$Rech <- d$Rech_af * af.to.m3
+FUN <- function(i) {
+  x <- d[d$YearMonth == i, c("RechSite", "Rech")]
+  colnames(x) <- c("RechSite", i)
+  return(x)
+}
+l <- lapply(yr.mo, FUN)
+misc.seepage <- Reduce(function(x, y) merge(x, y, all = TRUE, by = "RechSite"), l)
+save(misc.seepage, file = file.path(dir.dat, "misc.seepage.rda"), compress = "xz")
+@
+
+<<echo=FALSE>>=
+CheckStatus("misc.seepage")
+@
+
+% =========================================================================
+
+\subsubsection{Hydraulic properties of hydrogeologic zones (zone.properties)}
+
+Hydraulic properties for each hydrogeologic zone.
+
+<<>>=
+file <- wrv::DownloadFile(paste0(url.git, "zone.properties.csv"))
+d <- read.csv(file, strip.white = TRUE, stringsAsFactors = FALSE)
+d$hk <- d$hk_ft.per.d * ft.to.m
+d$hk_ft.per.d <- NULL
+d$ss <- d$ss_per.ft / ft.to.m
+d$ss_per.ft <- NULL
+zone.properties <- d
+save(zone.properties, file = file.path(dir.dat, "zone.properties.rda"), compress = "xz")
+@
+
+<<echo=FALSE>>=
+CheckStatus("zone.properties")
+@
+
+% =========================================================================
+
+\subsubsection{Dry river bed and stream fed creek conditions (drybed)}
+
+Spring fed creek conditions are specified for select stream reaches.
+The mathematical representation of spring fed creeks using the MODFLOW river package is identical to the mathematical representation for a dry stream bed.
+
+<<>>=
+file <- wrv::DownloadFile(paste0(url.git, "perennial.reaches.csv"))
+perennial.reaches <- read.csv(file, colClasses = "character", strip.white = TRUE)[, 1]
+drybed <- as.data.frame(matrix(NA, nrow = length(perennial.reaches), ncol = length(yr.mo)))
+colnames(drybed) <- yr.mo
+rownames(drybed) <- perennial.reaches
+drybed[perennial.reaches, ] <- TRUE
+@
+
+\noindent Stream reaches on the Big Wood River between Glendale and Wood River Ranch are episodically dry;
+dry bed conditions are specified each year beginning in the first month when the entire flow of the Big Wood River is diverted into the Bypass Canal before
+the $16\textsuperscript{th}$ of the month and ending at the end of October.
+Between Wood River Ranch and Stanton Crossing, the Big Wood River gains water from springs and seeps,
+thus this reach acts as a spring fed creek when dry bed conditions are specified between Glendale and Wood River Ranch and
+there is no return flow from the Bypass Canal to the Big Wood River.
+
+<<>>=
+file <- wrv::DownloadFile(paste0(url.git, "canal/bypass.canal.op.csv"))
+d <- read.csv(file, colClasses = "character", strip.white = TRUE)
+date1 <- as.Date(d$StartDate, tz = "MST")
+date2 <- as.Date(d$EndDate, tz = "MST")
+FUN <- function(i) {
+  d <- as.integer(format(i, format = "%d"))
+  m <- format(i, format = "%m")
+  while (format(i, format = "%m") == m) i <- i + 1L
+  return(d / as.integer(format(i - 1L, format = "%d")))
+}
+frac1 <- vapply(date1, FUN, 0)
+frac2 <- vapply(date2, FUN, 0)
+date1[frac1 > 0.5] <- date1[frac1 > 0.5] + 16L
+date2[frac2 < 0.5] <- date2[frac2 < 0.5] - 16L
+date1 <- as.Date(paste0(format(date1, format = "%Y-%m"), "-01"))
+date2 <- as.Date(paste0(format(date2, format = "%Y-%m"), "-01"))
+FUN <- function(i) format(seq(date1[i], date2[i], by = "month"), format = "%Y%m")
+is.drybed <- yr.mo %in% unlist(lapply(seq_along(date1), FUN))
+episodic.reaches <- c("Big Wood, Glendale to Sluder",
+                      "Big Wood, Sluder to Wood River Ranch",
+                      "Big Wood, Wood River Ranch to Stanton Crossing")
+for (i in episodic.reaches) drybed[i, ] <- is.drybed
+@
+
+\noindent During the month of October the water district stops monitoring diversions and much of the water diverted into the Bypass Canal is returned to the Big Wood River at Wood River Ranch.
+Therefore, flows in the Big Wood, Wood River Ranch to Stanton Crossing reach are accounted for in the model.
+
+<<>>=
+drybed["Big Wood, Wood River Ranch to Stanton Crossing",
+       substr(colnames(drybed), 5, 6) == "10"] <- FALSE
+@
+
+\noindent Save the dataset to disk:
+
+<<>>=
+drybed <- data.frame(Reach = rownames(drybed), drybed, check.names = FALSE,
+                     row.names = NULL, stringsAsFactors = FALSE)
+save(drybed, file = file.path(dir.dat, "drybed.rda"), compress = "xz")
+@
+
+<<echo=FALSE>>=
+CheckStatus("drybed")
+@
+
+% =========================================================================
+
+\subsubsection{Groundwater-level measurements (obs.wells.head)}
+
+Groundwater-level measurements recorded in observation wells in the WRV.
+Values used as observations in parameter estimation.
+
+<<>>=
+file <- wrv::DownloadFile(paste0(url.git, "opt/obs.wells.head.csv"))
+d <- read.csv(file, strip.white = TRUE, stringsAsFactors = FALSE)
+d$DateTime <- as.POSIXct(d$DateTime, tz = "MST", format = "%Y-%m-%d %H:%M:%S")
+d$Head <- as.numeric(d$Head_m)
+d$Head_m <- NULL
+obs.wells.head <- d
+save(obs.wells.head, file = file.path(dir.dat, "obs.wells.head.rda"), compress = "xz")
+@
+
+<<echo=FALSE>>=
+CheckStatus("obs.wells.head")
+@
+
+% =========================================================================
+
+\subsubsection{Stream-aquifer flow exchange along river reaches (reach.recharge)}
+
+Stream-aquifer flow exchange along river reaches specified as aquifer recharge.
+Values used as observations in parameter estimation.
+
+<<>>=
+file <- wrv::DownloadFile(paste0(url.git, "opt/reach.recharge.csv"))
+d <- read.csv(file, strip.white = TRUE, stringsAsFactors = FALSE)
+d$YearMonth <- as.character(d$YearMonth)
+d$nKet_Hai <- d$nKet_Hai_cfs * cfs.to.m3.per.d
+d$nKet_Hai_cfs <- NULL
+d$Hai_StC <- d$Hai_StC_cfs * cfs.to.m3.per.d
+d$Hai_StC_cfs <- NULL
+d$WillowCr <- d$WillowCr_cfs * cfs.to.m3.per.d
+d$WillowCr_cfs <- NULL
+d$SilverAbv <- d$SilverAbv_cfs * cfs.to.m3.per.d
+d$SilverAbv_cfs <- NULL
+d$SilverBlw <- d$SilverBlw_cfs * cfs.to.m3.per.d
+d$SilverBlw_cfs <- NULL
+reach.recharge <- d
+save(reach.recharge, file = file.path(dir.dat, "reach.recharge.rda"), compress = "xz")
+@
+
+<<echo=FALSE>>=
+CheckStatus("reach.recharge")
+@
+
+% =========================================================================
+
+\subsubsection{Stream-aquifer flow exchange along river subreaches (subreach.recharge)}
+
+Stream-aquifer flow exchange along river subreaches specified as aquifer recharge.
+Values used as observations in parameter estimation.
+
+<<>>=
+file <- wrv::DownloadFile(paste0(url.git, "opt/subreach.recharge.csv"))
+d <- read.csv(file, strip.white = TRUE, stringsAsFactors = FALSE)
+d[, c("Aug", "Oct", "Mar")] <- d[, c("Aug_cfs", "Oct_cfs", "Mar_cfs")] * cfs.to.m3.per.d
+d$Aug_cfs <- NULL
+d$Oct_cfs <- NULL
+d$Mar_cfs <- NULL
+subreach.recharge <- d
+save(subreach.recharge, file = file.path(dir.dat, "subreach.recharge.rda"),
+     compress = "xz")
+@
+
+<<echo=FALSE>>=
+CheckStatus("subreach.recharge")
+@
+
+% =========================================================================
+
+\subsubsection{PEST sensitivity analysis (sensitivity)}
+
+Calibrated parameter values and composite sensitivities generated by PEST during its last iteration.
+
+<<>>=
+file <- wrv::DownloadFile(paste0(url.git, "opt/sensitivity.csv"))
+sensitivity <- read.csv(file, strip.white = TRUE)
+sensitivity$parameter.name <- as.character(sensitivity$parameter.name)
+rel <- with(sensitivity, comp.sens * abs(value))  # Realtive Composite Sensitivity
+is.log <- sensitivity$parameter.desc %in% c("Horizontal hydraulic conductivity",
+                                            "Storage coefficient",
+                                            "Riverbed conductance",
+                                            "Drain conductance")
+rel[is.log] <- with(sensitivity, comp.sens * abs(log10(value)))[is.log]
+sensitivity$rel.comp.sens <- rel
+save(sensitivity, file = file.path(dir.dat, "sensitivity.rda"), compress = "xz")
+@
+
+<<echo=FALSE>>=
+CheckStatus("sensitivity")
+@
+
+% =========================================================================
+
+\subsection{Points}
+
+% =========================================================================
+
+\subsubsection{Cities and towns (cities)}
+
+Cities and towns in the WRV and surrounding areas.
+
+<<>>=
+files <- wrv::DownloadFile(paste0(url.git, "decorative/cities.zip"))
+layer <- sub(".shp$", "", basename(files[grep("*.shp$", files)]))
+cities <- readOGR(dsn = tempdir(), layer = layer, verbose = FALSE)
+cities <- spTransform(cities, crs)
+cities <- cities[cities@data$FEATURE_NA != "Elkhorn Village", ]
+save(cities, file = file.path(dir.dat, "cities.rda"), compress = "xz")
+@
+
+<<echo=FALSE>>=
+CheckStatus("cities")
+@
+
+% =========================================================================
+
+\subsubsection{Map labels (map.labels)}
+
+Map labels in the WRV and surrounding areas.
+
+<<>>=
+file <- wrv::DownloadFile(paste0(url.git, "decorative/map.labels.csv"))
+map.labels <- read.csv(file, strip.white = TRUE, stringsAsFactors = FALSE)
+map.labels$label <- sub("\\\\n", "\\\n", map.labels$label)
+coordinates(map.labels) <- 1:2
+colnames(map.labels@coords) <- c("x", "y")
+proj4string(map.labels) <- CRS("+init=epsg:4326")
+map.labels <- spTransform(map.labels, crs)
+save(map.labels, file = file.path(dir.dat, "map.labels.rda"), compress = "xz")
+@
+
+<<echo=FALSE>>=
+CheckStatus("map.labels")
+@
+
+% =========================================================================
+
+\subsubsection{Miscellaneous Locations (misc.locations)}
+
+Miscellaneous locations in the Bellevue triangle area.
+
+<<>>=
+file <- wrv::DownloadFile(paste0(url.git, "decorative/misc.locations.csv"))
+misc.locations <- read.csv(file, strip.white = TRUE, stringsAsFactors = FALSE)
+misc.locations$label <- sub("\\\\n", "\\\n", misc.locations$label)
+coordinates(misc.locations) <- 1:2
+colnames(misc.locations@coords) <- c("x", "y")
+proj4string(misc.locations) <- CRS("+init=epsg:4326")
+misc.locations <- spTransform(misc.locations, crs)
+save(misc.locations, file = file.path(dir.dat, "misc.locations.rda"), compress = "xz")
+@
+
+<<echo=FALSE>>=
+CheckStatus("misc.locations")
+@
+
+\newpage
+
+% =========================================================================
+
+\subsubsection{Weather Stations (weather.stations)}
+
+Weather stations in the WRV and surrounding areas.
+
+<<>>=
+file <- wrv::DownloadFile(paste0(url.git, "precip/weather.stations.csv"))
+weather.stations <- read.csv(file, strip.white = TRUE, stringsAsFactors = FALSE)
+weather.stations$elevation <- weather.stations$elevation_ft * ft.to.m
+weather.stations$elevation_ft <- NULL
+weather.stations$url <- NULL
+coordinates(weather.stations) <- 1:2
+colnames(weather.stations@coords) <- c("x", "y")
+proj4string(weather.stations) <- CRS("+init=epsg:4326")
+weather.stations <- spTransform(weather.stations, crs)
+save(weather.stations, file = file.path(dir.dat, "weather.stations.rda"), compress = "xz")
+@
+
+<<echo=FALSE>>=
+CheckStatus("weather.stations")
+@
+
+% =========================================================================
+
+\subsubsection{Well completions (pod.wells)}
+
+Well completions for pumping wells in the WRV aquifer system.
+
+<<>>=
+files <- wrv::DownloadFile(paste0(url.git, "div/pod.wells.zip"))
+layer <- sub(".shp$", "", basename(files[grep("*.shp$", files)]))
+pod.wells <- readOGR(dsn = tempdir(), layer = layer, verbose = FALSE)
+pod.wells <- spTransform(pod.wells, crs)
+d <- pod.wells@data
+columns <- c("TopOpen1", "BotOpen1", "TopOpen2", "BotOpen2")
+d[, columns] <- d[, columns] * ft.to.m
+d[d$TopOpen1 == 0 | d$BotOpen1 == 0, c("TopOpen1", "BotOpen1")] <- NA
+d[d$TopOpen2 == 0 | d$BotOpen2 == 0, c("TopOpen2", "BotOpen2")] <- NA
+@
+
+\noindent A missing well completion is assumed identical to the completion of its nearest-neighbor well.
+
+<<results="hide">>=
+is.pred <- is.na(d$TopOpen1)
+dists <- as.matrix(dist(coordinates(pod.wells)))
+dists <- dists[!is.pred & d$WellUse %in% "Irrigation", ]
+nearest.well <- as.integer(apply(dists, 2, function(i) names(which.min(i))))
+d$TopOpen1[is.pred] <- d$TopOpen1[nearest.well[is.pred]]
+d$BotOpen1[is.pred] <- d$BotOpen1[nearest.well[is.pred]]
+columns <- c("WMISNumber", "WellUse", "TopOpen1", "BotOpen1", "TopOpen2", "BotOpen2")
+pod.wells@data <- d[, columns]
+save(pod.wells, file = file.path(dir.dat, "pod.wells.rda"), compress = "xz")
+@
+
+\noindent There are a total of \Sexpr{format(nrow(d), big.mark=",")} pumping wells;
+\Sexpr{format(sum(is.pred), big.mark=",")} of these wells (\Sexpr{as.integer((sum(is.pred) / nrow(d)) * 100)} percent)
+are missing well completions (\hyperref[fig:map_completions]{fig.~\ref{fig:map_completions}}) and are mostly located in the upper WRV.
+
+<<include=FALSE>>=
+v <- "Location of pumping wells and their completion status in the Wood River Valley aquifer system, south-central Idaho."
+v <- c(paste("Map showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(v)))), v)
+@
+
+<<map_completions, echo=FALSE, fig.width=fin.map.0[1], fig.height=fin.map.0[2], fig.scap=sprintf("{%s}", v[1]), fig.cap=sprintf("{%s}", v[2])>>=
+wrv::PlotMap(crs, xlim=usr.map[1:2], ylim=usr.map[3:4], bg.image=wrv::hill.shading,
+             dms.tick=TRUE, bg.image.alpha=0.6, rivers=list(x=wrv::streams.rivers),
+             lakes=list(x=wrv::lakes), credit=credit)
+plot(wrv::alluvium.extent, border="#FFFFFFCC", add=TRUE)
+cols <- c("#9061C2D9", "#FBB829D9")
+pchs <- c(24, 21)
+pt.cexs <- c(0.5, 0.8)
+points(pod.wells[ is.pred, ], pch=pchs[1], cex=pt.cexs[1], lwd=0.5, col=NA, bg=cols[1])
+points(pod.wells[!is.pred, ], pch=pchs[2], cex=pt.cexs[2], lwd=0.5, col=NA, bg=cols[2])
+plot(wrv::cities, pch=15, cex=0.8, col="#333333", add=TRUE)
+text(wrv::cities, labels=wrv::cities@data$FEATURE_NA, col="#333333", cex=0.5, pos=1, offset=0.4)
+leg <- paste(c("Estimated", "Measured"), "well completion")
+legend("topright", leg, col=NA, pt.bg=cols, pch=pchs, pt.cex=pt.cexs, pt.lwd=0.5,
+       inset=0.02, cex=0.7, box.lty=1, box.lwd=0.5, bg="#FFFFFFE7")
+invisible(dev.off())
+@
+
+<<echo=FALSE>>=
+CheckStatus("pod.wells")
+@
+
+% =========================================================================
+
+\subsubsection{Streamgages (streamgages)}
+
+Select streamgages in the WRV.
+
+<<>>=
+files <- wrv::DownloadFile(paste0(url.git, "gage/streamgages.zip"))
+layer <- sub(".shp$", "", basename(files[grep("*.shp$", files)]))
+streamgages <- readOGR(dsn = tempdir(), layer = layer, verbose = FALSE)
+streamgages <- spTransform(streamgages, crs)
+save(streamgages, file = file.path(dir.dat, "streamgages.rda"), compress = "xz")
+@
+
+<<echo=FALSE>>=
+CheckStatus("streamgages")
+@
+
+\newpage
+
+% =========================================================================
+
+\subsubsection{Observation wells (obs.wells)}
+
+Observation wells in the WRV.
+
+<<>>=
+files <- wrv::DownloadFile(paste0(url.git, "opt/obs.wells.zip"))
+layer <- sub(".shp$", "", basename(files[grep("*.shp$", files)]))
+obs.wells <- readOGR(dsn = tempdir(), layer = layer, verbose = FALSE,
+                     stringsAsFactors = FALSE)
+obs.wells <- spTransform(obs.wells, crs)
+d <- obs.wells@data
+d$COMPLETION <- as.Date(d$COMPLETION, tz = "MST", format = "%Y-%m-%d")
+d$ALTMETHOD  <- as.factor(d$ALTMETHOD)
+d$XYMETHOD   <- as.factor(d$XYMETHOD)
+d$COUNTYNAME <- as.factor(d$COUNTYNAME)
+d$desc       <- as.factor(d$desc)
+d$TopOpen1 <- as.numeric(d$OPENINGMIN) * ft.to.m
+d$BotOpen1 <- as.numeric(d$OPENINGMAX) * ft.to.m
+d$TopOpen2 <- NA
+d$BotOpen2 <- NA
+@
+
+\noindent A missing well completion is assumed identical to the completion of its nearest-neighbor well.
+
+<<>>=
+is.pred <- is.na(d$TopOpen1)
+dists <- as.matrix(dist(coordinates(obs.wells)))[!is.pred, ]
+nearest.well <- as.integer(apply(dists, 2, function(i) names(which.min(i))))
+d$TopOpen1[is.pred] <- d$TopOpen1[nearest.well[is.pred]]
+d$BotOpen1[is.pred] <- d$BotOpen1[nearest.well[is.pred]]
+obs.wells@data <- d
+@
+
+There are a total of \Sexpr{format(nrow(d), big.mark=",")} observation wells;
+\Sexpr{format(sum(is.pred), big.mark=",")} of these wells (or \Sexpr{as.integer((sum(is.pred) / nrow(d)) * 100)} percent)
+are missing well completions.
+Well completion depths are not relevant in the northern portion of the model area where only model layer 1 is active.
+Well completion data were not compiled for this area.
+
+<<>>=
+save(obs.wells, file = file.path(dir.dat, "obs.wells.rda"), compress = "xz")
+@
+
+<<echo=FALSE>>=
+CheckStatus("obs.wells")
+@
+
+% =========================================================================
+
+\subsubsection{Stream seepage study (seepage.study)}
+
+A Wood River Valley stream seepage study with streamflow measurements made during the months of August 2012, October 2012, and March 2013.
+
+<<>>=
+files <- wrv::DownloadFile(paste0(url.git, "opt/seepage.study.zip"))
+layer <- sub(".shp$", "", basename(files[grep("*.shp$", files)]))
+seepage.study <- readOGR(dsn = tempdir(), layer = layer, verbose = FALSE)
+seepage.study <- spTransform(seepage.study, crs)
+d <- seepage.study@data
+d$Aug <- d$Aug_cfs * cfs.to.m3.per.d
+d$Oct <- d$Oct_cfs * cfs.to.m3.per.d
+d$Mar <- d$Mar_cfs * cfs.to.m3.per.d
+d$Aug_cfs <- NULL
+d$Oct_cfs <- NULL
+d$Mar_cfs <- NULL
+seepage.study@data <- d
+save(seepage.study, file = file.path(dir.dat, "seepage.study.rda"), compress = "xz")
+@
+
+<<echo=FALSE>>=
+CheckStatus("seepage.study")
+@
+
+\newpage
+
+% =========================================================================
+
+\subsubsection{Diversions, returns, and exchange wells (div.ret.exch)}
+
+Location of streamflow diversions, irrigation canal or pond returns, and exchange well returns.
+
+<<>>=
+files <- wrv::DownloadFile(paste0(url.git, "opt/div.ret.exch.zip"))
+layer <- sub(".shp$", "", basename(files[grep("*.shp$", files)]))
+div.ret.exch <- readOGR(dsn = tempdir(), layer = layer, verbose = FALSE)
+div.ret.exch <- spTransform(div.ret.exch, crs)
+save(div.ret.exch, file = file.path(dir.dat, "div.ret.exch.rda"), compress = "xz")
+@
+
+<<echo=FALSE>>=
+CheckStatus("div.ret.exch")
+@
+
+% =========================================================================
+
+\subsubsection{Pilot points (pilot.points)}
+
+Location of pilot points in the model domain.
+
+<<>>=
+files <- wrv::DownloadFile(paste0(url.git, "opt/pilot.points.zip"))
+layer <- sub(".shp$", "", basename(files[grep("*.shp$", files)]))
+pilot.points <- readOGR(dsn = tempdir(), layer = layer, verbose = FALSE)
+pilot.points <- spTransform(pilot.points, crs)
+save(pilot.points, file = file.path(dir.dat, "pilot.points.rda"), compress = "xz")
+@
+
+<<echo=FALSE>>=
+CheckStatus("pilot.points")
+@
+
+% =========================================================================
+
+\subsection{Lines}
+
+% =========================================================================
+
+\subsubsection{Canals (canals)}
+
+Canal systems in the WRV and surrounding areas.
+
+<<>>=
+files <- wrv::DownloadFile(paste0(url.git, "canal/canals.zip"))
+layer <- sub(".shp$", "", basename(files[grep("*.shp$", files)]))
+canals <- readOGR(dsn = tempdir(), layer = layer, verbose = FALSE)
+canals <- spTransform(canals, crs)
+canals@data$Name <- as.character(canals@data$NAME)
+canals@data <- canals@data[, c("EntityName", "Name")]
+save(canals, file = file.path(dir.dat, "canals.rda"), compress = "xz")
+@
+
+<<echo=FALSE>>=
+CheckStatus("canals")
+@
+
+% =========================================================================
+
+\subsubsection{Stream reaches of the Big Wood River and Silver Creek (river.reaches)}
+
+Stream reaches of the Big Wood River and Silver Creek.
+
+<<>>=
+files <- wrv::DownloadFile(paste0(url.git, "river.reaches.zip"))
+layer <- sub(".shp$", "", basename(files[grep("*.shp$", files)]))
+river.reaches <- readOGR(dsn = tempdir(), layer = layer, verbose = FALSE)
+river.reaches <- spTransform(river.reaches, crs)
+d <- river.reaches@data
+d$RchAvg <- d$RchAvg_cfs * cfs.to.m3.per.d
+d$BigRAv <- d$BigRAv_cfs * cfs.to.m3.per.d
+d$Depth  <- d$Depth_ft  * ft.to.m
+d$BedThk <- d$BedThk_ft * ft.to.m
+columns <- c("Reach", "BigReach", "DrainRiver", "RchAvg", "BigRAv", "ReachNo",
+             "Depth", "BedThk")
+river.reaches@data <- d[, columns]
+save(river.reaches, file = file.path(dir.dat, "river.reaches.rda"), compress = "xz")
+@
+
+<<echo=FALSE>>=
+CheckStatus("river.reaches")
+@
+
+\newpage
+
+% =========================================================================
+
+\subsubsection{Streams and rivers (streams.rivers)}
+
+Streams and rivers of the WRV and surrounding areas.
+
+<<>>=
+files <- wrv::DownloadFile(paste0(url.git, "decorative/rivers.zip"))
+layer <- sub(".shp$", "", basename(files[grep("*.shp$", files)]))
+streams.rivers <- readOGR(dsn = tempdir(), layer = layer, verbose = FALSE)
+streams.rivers <- spTransform(streams.rivers, crs)
+save(streams.rivers, file = file.path(dir.dat, "streams.rivers.rda"), compress = "xz")
+@
+
+<<echo=FALSE>>=
+CheckStatus("streams.rivers")
+@
+
+% =========================================================================
+
+\subsubsection{Tributary streams (tributary.streams)}
+
+Tributary streams of the upper WRV and surrounding areas.
+
+<<>>=
+files <- wrv::DownloadFile(paste0(url.git, "decorative/tributary.streams.zip"))
+layer <- sub(".shp$", "", basename(files[grep("*.shp$", files)]))
+tributary.streams <- readOGR(dsn = tempdir(), layer = layer, verbose = FALSE)
+tributary.streams <- spTransform(tributary.streams, crs)
+save(tributary.streams, file = file.path(dir.dat, "tributary.streams.rda"),
+     compress = "xz")
+@
+
+<<echo=FALSE>>=
+CheckStatus("tributary.streams")
+@
+
+% =========================================================================
+
+\subsubsection{Bypass canal (bypass.canal)}
+
+The location of the Bypass Canal.
+
+<<>>=
+files <- wrv::DownloadFile(paste0(url.git, "canal/bypass.canal.zip"))
+layer <- sub(".shp$", "", basename(files[grep("*.shp$", files)]))
+bypass.canal <- readOGR(dsn = tempdir(), layer = layer, verbose = FALSE)
+bypass.canal <- spTransform(bypass.canal, crs)
+bypass.canal <- as(bypass.canal, "SpatialLines")
+save(bypass.canal, file = file.path(dir.dat, "bypass.canal.rda"), compress = "xz")
+@
+
+<<echo=FALSE>>=
+CheckStatus("bypass.canal")
+@
+
+% =========================================================================
+
+\subsubsection{Groundwater-level contours for October 2006 (wl.200610)}
+
+Groundwater-level contours for the unconfined aquifer in the Wood River Valley, south-central Idaho, representing conditions during October 2006.
+
+<<>>=
+files <- wrv::DownloadFile(paste0(url.git, "wl.200610.zip"))
+layer <- sub(".shp$", "", basename(files[grep("*.shp$", files)]))
+wl.200610 <- readOGR(dsn = tempdir(), layer = layer, verbose = FALSE)
+wl.200610 <- spTransform(wl.200610, crs)
+wl.200610@data$CONTOUR <- wl.200610@data$CONTOUR * ft.to.m
+save(wl.200610, file = file.path(dir.dat, "wl.200610.rda"), compress = "xz")
+@
+
+<<echo=FALSE>>=
+CheckStatus("wl.200610")
+@
+
+% =========================================================================
+
+\subsubsection{Major roads (major.roads)}
+
+Major roads in the Wood River Valley and surrounding areas.
+
+<<>>=
+files <- wrv::DownloadFile(paste0(url.git, "decorative/major.roads.zip"))
+layer <- sub(".shp$", "", basename(files[grep("*.shp$", files)]))
+major.roads <- readOGR(dsn = tempdir(), layer = layer, verbose = FALSE)
+major.roads <- spTransform(major.roads, crs)
+save(major.roads, file = file.path(dir.dat, "major.roads.rda"), compress = "xz")
+@
+
+<<echo=FALSE>>=
+CheckStatus("major.roads")
+@
+
+% =========================================================================
+
+\subsection{Polygons}
+
+% =========================================================================
+
+\subsubsection{Extent of alluvium unit (alluvium.extent)}
+
+The estimated extent of the WRV aquifer system.
+
+<<>>=
+files <- wrv::DownloadFile(paste0(url.git, "extent/alluvium.extent.zip"))
+layer <- sub(".shp$", "", basename(files[grep("*.shp$", files)]))
+alluvium.extent <- readOGR(dsn = tempdir(), layer = layer, verbose = FALSE)
+alluvium.extent <- spTransform(alluvium.extent, crs)
+save(alluvium.extent, file = file.path(dir.dat, "alluvium.extent.rda"), compress = "xz")
+@
+
+<<echo=FALSE>>=
+CheckStatus("alluvium.extent")
+@
+
+% =========================================================================
+
+\subsubsection{Extent of clay unit (clay.extent)}
+
+The estimated extent of the confining hydrogeologic clay unit (aquitard) separating the unconfined aquifer from the underlying confined aquifer in the WRV.
+
+<<>>=
+files <- wrv::DownloadFile(paste0(url.git, "extent/clay.extent.zip"))
+layer <- sub(".shp$", "", basename(files[grep("*.shp$", files)]))
+clay.extent <- readOGR(dsn = tempdir(), layer = layer, verbose = FALSE)
+clay.extent <- spTransform(clay.extent, crs)
+save(clay.extent, file = file.path(dir.dat, "clay.extent.rda"), compress = "xz")
+@
+
+<<echo=FALSE>>=
+CheckStatus("clay.extent")
+@
+
+% =========================================================================
+
+\subsubsection{Extent of basalt (basalt.extent)}
+
+The estimated extent of the basalt hydrogeologic unit underlying the alluvial WRV aquifer system.
+
+<<>>=
+files <- wrv::DownloadFile(paste0(url.git, "extent/basalt.extent.zip"))
+layer <- sub(".shp$", "", basename(files[grep("*.shp$", files)]))
+basalt.extent <- readOGR(dsn = tempdir(), layer = layer, verbose = FALSE)
+basalt.extent <- spTransform(basalt.extent, crs)
+save(basalt.extent, file = file.path(dir.dat, "basalt.extent.rda"), compress = "xz")
+@
+
+<<echo=FALSE>>=
+CheckStatus("basalt.extent")
+@
+
+% =========================================================================
+
+\subsubsection{Drain boundaries at Stanton Crossing and Silver Creek (drains)}
+
+Polygons used to define the location of drain boundary conditions in the model domain.
+The polygons clip the line segments along the aquifer boundary (see alluvium.extent), and model cells intersecting these clipped-line segments are defined as boundary cells.
+
+<<>>=
+file <- wrv::DownloadFile(paste0(url.git, "drains.kml"))
+p <- suppressWarnings(readOGR(file, basename(file), verbose = FALSE))
+p@data$Description <- NULL
+file <- wrv::DownloadFile(paste0(url.git, "drains.csv"))
+d <- read.csv(file, strip.white = TRUE)
+p@data <- dplyr::left_join(p@data, d, by = "Name")
+p <- spTransform(p, crs)
+drains <- p
+save(drains, file = file.path(dir.dat, "drains.rda"), compress = "xz")
+@
+
+<<echo=FALSE>>=
+CheckStatus("drains")
+@
+
+\newpage
+
+% =========================================================================
+
+\subsubsection{Tributary basin underflow (tributaries)}
+
+Data that describe the location and average flow conditions for model boundaries in the major tributary canyons of the WRV.
+Spatial polygons are used to define the boundary locations in the study area.
+
+<<>>=
+file <- wrv::DownloadFile(paste0(url.git, "tributaries.kml"))
+p <- suppressWarnings(readOGR(file, basename(file), verbose = FALSE))
+p <- spTransform(p, crs)
+p@data$Description <- NULL
+@
+
+\noindent For each tributary canyon, the mean rate of tributary basin underflow is first estimated using a \href{http://en.wikipedia.org/wiki/Darcy_law}{Darcian} analysis.
+The lower-half of an ellipse is used to describe the geometry of the saturated cross-sectional area.
+
+<<>>=
+file <- wrv::DownloadFile(paste0(url.git, "tributaries.csv"))
+d <- read.csv(file, strip.white = TRUE)
+names(d) <- sub("_m$", "", names(d))
+d$K <- d$K_ft.per.d * ft.to.m
+d$K_ft.per.d <- NULL
+d$SatArea <- (pi * d$TribWidth * d$BdrkDepth) / 4  # area of lower-half of ellipse
+d$DarcyFlow <- d$K * d$SatArea * d$LandGrad
+@
+
+\noindent A drainage basin area for a tributary canyon is defined as the area of land where groundwater from rain or melting snow converges at the boundary.
+Smaller basins were identified by plotting basin areas for each tributary canyon on a logarithmic scale (appendix E, fig. E3).
+A natural break was found at about 26 square-kilometers (10 square-miles) and tributary basins less than this break were designated as ``small'',
+and all others were designated as ``big''.
+
+<<>>=
+d$BasinArea <- d$BasinArea_mi2 * mi2.to.m2
+d$BasinArea_mi2 <- NULL
+natural.basin.area.break <- 2.59e+7  # 10 square-miles
+is.small <- d$BasinArea < natural.basin.area.break
+d$BasinAreaType <- as.factor(c("big", "small")[is.small + 1L])
+@
+
+\noindent Multiplying a basin's average rate of precipitation by its drainage area gives a secondary estimate of the mean volumetric flow rate at the boundary.
+
+<<>>=
+d$PrecipRate <- d$PrecipRate_in.per.yr * in.per.y.to.m.per.d
+d$PrecipRate_in.per.yr <- NULL
+d$PrecipFlow <- d$BasinArea * d$PrecipRate
+@
+
+\noindent The ratio of Darcy to precipitation volumetric flow rate estimates is then calculated.
+
+<<>>=
+d$FlowRatio <- d$DarcyFlow / d$PrecipFlow
+@
+
+\noindent Finally, the mean volumetric flow rate of a small tributary canyon is calculated by multiplying its precipitation flow rate estimate by the average flow rate ratio for the larger tributary canyons.
+
+<<>>=
+d$Flow <- d$DarcyFlow
+d$Flow[is.small] <- d$PrecipFlow[is.small] * mean(d$FlowRatio[!is.small])
+@
+
+\noindent Save the dataset to disk:
+
+<<>>=
+p@data <- dplyr::left_join(p@data, d, by = "Name")
+tributaries <- p
+save(tributaries, file = file.path(dir.dat, "tributaries.rda"), compress = "xz")
+@
+
+<<echo=FALSE>>=
+CheckStatus("tributaries")
+@
+
+\newpage
+
+% =========================================================================
+
+\subsubsection{Precipitation zones (precip.zones)}
+
+Precipitation zones of the WRV and surrounding areas.
+Northing coordinate of zone separators is based on the northing midpoint between weather stations.
+
+<<>>=
+ids <- c("Ketchum", "Hailey", "Picabo")
+y <- coordinates(weather.stations)[match(rev(ids), weather.stations@data$id), "y"]
+s <- c(mean(y[1:2]), mean(y[2:3]))  # northing zone separators
+e <- extend(ext, 5000)  # spatial extent of zones
+p1 <- rbind(c(e[1], s[2]), c(e[2], s[2]), c(e[2], e[4]), c(e[1], e[4]))
+p2 <- rbind(c(e[1], s[1]), c(e[2], s[1]), c(e[2], s[2]), c(e[1], s[2]))
+p3 <- rbind(c(e[1], e[3]), c(e[2], e[3]), c(e[2], s[1]), c(e[1], s[1]))
+p1 <- Polygons(list(Polygon(rbind(p1, p1[1, ]))), ID = 1)
+p2 <- Polygons(list(Polygon(rbind(p2, p2[1, ]))), ID = 2)
+p3 <- Polygons(list(Polygon(rbind(p3, p3[1, ]))), ID = 3)
+p <- SpatialPolygons(list(p1, p2, p3), proj4string = crs)
+p <- SpatialPolygonsDataFrame(p, data.frame(ID = 1:3, PrecipZone = ids))
+precip.zones <- p
+save(precip.zones, file = file.path(dir.dat, "precip.zones.rda"), compress = "xz")
+@
+
+<<echo=FALSE>>=
+CheckStatus("precip.zones")
+@
+
+% =========================================================================
+
+\subsubsection{Irrigation entities (irr.entities)}
+
+Irrigation entities of the WRV and surrounding areas.
+
+<<>>=
+files <- wrv::DownloadFile(paste0(url.git, "irr/irr.entities.zip"))
+layer <- sub(".shp$", "", basename(files[grep("*.shp$", files)]))
+irr.entities <- readOGR(dsn = tempdir(), layer = layer, verbose = FALSE)
+irr.entities <- spTransform(irr.entities, crs)
+irr.entities <- rgeos::gBuffer(irr.entities, width = 0, byid = TRUE)
+d <- irr.entities@data
+d$EntitySrce <- as.factor(paste(d$EntityName, d$Source))
+d$PrecipZone <- over(rgeos::gCentroid(irr.entities, byid = TRUE), precip.zones)$PrecipZone
+irr.entities@data <- d[, c("EntityName", "Source", "EntitySrce", "PrecipZone")]
+save(irr.entities, file = file.path(dir.dat, "irr.entities.rda"), compress = "xz")
+@
+
+<<echo=FALSE>>=
+CheckStatus("irr.entities")
+@
+
+% =========================================================================
+
+\subsubsection{Irrigation lands (irr.lands)}
+
+Irrigated and semi-irrigated lands of the WRV.
+
+<<>>=
+yr <- c(1996, 2000, 2002, 2006, 2008, 2009, 2010)
+urls <- paste0(url.git, "irr/irr.lands.", yr, ".zip")
+irr.lands <- list()
+for (i in seq_along(urls)) {
+  files <- wrv::DownloadFile(urls[i])
+  layer <- sub(".shp$", "", basename(files[grep("*.shp$", files)]))
+  p <- readOGR(dsn = tempdir(), layer = layer, verbose = FALSE)
+  p <- spTransform(p, crs)
+  p@data <- p@data[, paste0("STATUS_", substr(yr[i], 1, 3)), drop = FALSE]
+  names(p@data) <- "Status"
+  p <- p[p@data[, "Status"] != "non-irrigated", ]
+  p <- rgeos::gBuffer(p, width = 0, byid = TRUE)
+  p@data <- droplevels(p@data)
+  irr.lands[[i]] <- p
+}
+names(irr.lands) <- as.character(yr)
+save(irr.lands, file = file.path(dir.dat, "irr.lands.rda"), compress = "xz")
+@
+
+<<echo=FALSE>>=
+CheckStatus("irr.lands")
+@
+
+% =========================================================================
+
+\subsubsection{Lakes and reservoirs (lakes)}
+
+Lakes and reservoirs of the WRV and surrounding areas.
+
+<<>>=
+files <- wrv::DownloadFile(paste0(url.git, "decorative/lakes.zip"))
+layer <- sub(".shp$", "", basename(files[grep("*.shp$", files)]))
+lakes <- readOGR(dsn = tempdir(), layer = layer, verbose = FALSE)
+lakes <- spTransform(lakes, crs)
+save(lakes, file = file.path(dir.dat, "lakes.rda"), compress = "xz")
+@
+
+<<echo=FALSE>>=
+CheckStatus("lakes")
+@
+
+% =========================================================================
+
+\subsubsection{Public land parcels (public.parcels)}
+
+Non-irrigated public land parcels for areas north of Bellevue.
+
+<<>>=
+files <- wrv::DownloadFile(paste0(url.git, "public.parcels.zip"))
+layer <- sub(".shp$", "", basename(files[grep("*.shp$", files)]))
+public.parcels <- readOGR(dsn = tempdir(), layer = layer, verbose = FALSE)
+public.parcels <- spTransform(public.parcels, crs)
+public.parcels <- as(public.parcels, "SpatialPolygons")
+save(public.parcels, file = file.path(dir.dat, "public.parcels.rda"), compress = "xz")
+@
+
+<<echo=FALSE>>=
+CheckStatus("public.parcels")
+@
+
+% =========================================================================
+
+\subsubsection{Soil Units (soils)}
+
+Soil units of the WRV and surrounding areas.
+
+<<>>=
+files <- wrv::DownloadFile(paste0(url.git, "soils.zip"))
+layer <- sub(".shp$", "", basename(files[grep("*.shp$", files)]))
+soils <- readOGR(dsn = tempdir(), layer = layer, verbose = FALSE)
+soils <- spTransform(soils, crs)
+soils@data <- soils@data[, c("GroupSym", "SoilLayer")]
+names(soils@data)[1] <- "GroupSymbol"
+file <- wrv::DownloadFile(paste0(url.git, "soils.csv"))
+d <- read.csv(file, strip.white = TRUE)
+d$MinRate         <- d$MinRate_ft.per.mo * ft.to.m
+d$MaxRate         <- d$MaxRate_ft.per.mo * ft.to.m
+d$PercolationRate <- d$Rate_ft.per.mo    * ft.to.m
+d <- d[, c("GroupSymbol", "SoilClass", "MinRate", "MaxRate", "PercolationRate")]
+d <- suppressWarnings(dplyr::left_join(soils@data, d, by = "GroupSymbol"))
+d$GroupSymbol <- as.factor(d$GroupSymbol)
+d$PercolationRate[is.na(d$PercolationRate)] <- 0
+soils@data <- d
+save(soils, file = file.path(dir.dat, "soils.rda"), compress = "xz")
+@
+
+<<echo=FALSE>>=
+CheckStatus("soils")
+@
+
+% =========================================================================
+
+\subsubsection{Wetlands (wetlands)}
+
+Wetlands of the WRV and surrounding areas.
+
+<<>>=
+files <- wrv::DownloadFile(paste0(url.git, "wetlands.zip"))
+layer <- sub(".shp$", "", basename(files[grep("*.shp$", files)]))
+wetlands <- readOGR(dsn = tempdir(), layer = layer, verbose = FALSE)
+wetlands <- spTransform(wetlands, crs)
+wetlands <- as(wetlands, "SpatialPolygons")
+save(wetlands, file = file.path(dir.dat, "wetlands.rda"), compress = "xz")
+@
+
+<<echo=FALSE>>=
+CheckStatus("wetlands")
+@
+
+\newpage
+
+% =========================================================================
+
+\subsubsection{Bellevue WWTP ponds (bellevue.wwtp.ponds)}
+
+Bellevue Waste Water Treatment Plant ponds.
+
+<<>>=
+files <- wrv::DownloadFile(paste0(url.git, "bellevue.wwtp.ponds.zip"))
+layer <- sub(".shp$", "", basename(files[grep("*.shp$", files)]))
+bellevue.wwtp.ponds <- readOGR(dsn = tempdir(), layer = layer, verbose = FALSE)
+bellevue.wwtp.ponds <- spTransform(bellevue.wwtp.ponds, crs)
+bellevue.wwtp.ponds <- as(bellevue.wwtp.ponds, "SpatialPolygons")
+save(bellevue.wwtp.ponds, file = file.path(dir.dat, "bellevue.wwtp.ponds.rda"),
+     compress = "xz")
+@
+
+<<echo=FALSE>>=
+CheckStatus("bellevue.wwtp.ponds")
+@
+
+% =========================================================================
+
+\subsubsection{Kriging zones (kriging.zones)}
+
+Kriging zones used in parameter estimation.
+
+<<>>=
+files <- wrv::DownloadFile(paste0(url.git, "opt/kriging.zones.zip"))
+layer <- sub(".shp$", "", basename(files[grep("*.shp$", files)]))
+kriging.zones <- readOGR(dsn = tempdir(), layer = layer, verbose = FALSE)
+kriging.zones <- spTransform(kriging.zones, crs)
+save(kriging.zones, file = file.path(dir.dat, "kriging.zones.rda"), compress = "xz")
+@
+
+<<echo=FALSE>>=
+CheckStatus("kriging.zones")
+@
+
+% =========================================================================
+
+\subsubsection{U.S. State of Idaho (idaho)}
+
+Boundary of the U.S. state of Idaho.
+
+<<>>=
+files <- wrv::DownloadFile(paste0(url.git, "decorative/idaho.zip"))
+layer <- sub(".shp$", "", basename(files[grep("*.shp$", files)]))
+idaho <- readOGR(dsn = tempdir(), layer = layer, verbose = FALSE)
+idaho <- as(idaho, "SpatialPolygons")
+idaho <- spTransform(idaho, crs)
+save(idaho, file = file.path(dir.dat, "idaho.rda"), compress = "xz")
+@
+
+<<echo=FALSE>>=
+CheckStatus("idaho")
+@
+
+% =========================================================================
+
+\subsection{Grids}
+
+Raster data are available at a higher resolution (smaller cells) than the resolution of the model grid.
+Projecting the raster data into the model grid first requires the projection of raster data into a high resolution spatial grid of comparable cell size.
+The high resolution spatial grid is defined using a constant cell size of 20 meters by 20 meters.
+<<>>=
+high.res.spatial.grid <- disaggregate(spatial.grid, fact = 5L)
+@
+
+% =========================================================================
+
+\subsubsection{Thickness of the quaternary sediment (alluvium.thickness)}
+
+The estimated thickness of the Quaternary sediment in the WRV aquifer system.
+
+<<eval=TRUE>>=
+file <- wrv::DownloadFile(paste0(url.git, "alluvium.thickness.tif"))
+alluvium.thickness <- readGDAL(file, band = 1, silent = TRUE)
+alluvium.thickness <- projectRaster(raster(alluvium.thickness), high.res.spatial.grid)
+alluvium.thickness <- aggregate(alluvium.thickness, fact = 5L, fun = median)
+names(alluvium.thickness) <- "alluvium.thickness"
+save(alluvium.thickness, file = file.path(dir.dat, "alluvium.thickness.rda"),
+     compress = "xz")
+@
+
+<<echo=FALSE>>=
+CheckStatus("alluvium.thickness")
+@
+
+\newpage
+
+% =========================================================================
+
+\subsubsection{Topography of land surface (land.surface)}
+
+The topography of the land surface in the WRV and vicinity.
+
+<<eval=TRUE>>=
+wrv::DownloadFile(ftp.ned)
+file <- file.path(tempdir(), "grdn44w115_13")
+r <- raster(readGDAL(file, band = 1, silent = TRUE))
+land.surface <- projectRaster(r, high.res.spatial.grid)
+land.surface <- aggregate(land.surface, fact = 5L, fun = median)
+land.surface[is.na(alluvium.thickness)] <- NA
+names(land.surface) <- "land.surface"
+save(land.surface, file = file.path(dir.dat, "land.surface.rda"), compress = "xz")
+@
+
+<<echo=FALSE>>=
+CheckStatus("land.surface")
+@
+
+\noindent Hillshading based on the slope and aspect of land-surface elevations.
+
+<<eval=TRUE>>=
+ext <- extent(spatial.grid)
+ext <- extent(c(extendrange(c(ext@xmin, ext@xmax), f = 0.05),
+                extendrange(c(ext@ymin, ext@ymax), f = 0.05)))
+nrows <- (ext@ymax - ext@ymin) / 20
+ncols <- (ext@xmax - ext@xmin) / 20
+r <- projectRaster(r, raster(ext, nrows = nrows, ncols = ncols, crs = crs))
+r[] <- r[] * 2
+r <- hillShade(slope = terrain(r, opt = "slope"), aspect = terrain(r, opt = "aspect"))
+r.range <- range(r[], na.rm = TRUE)
+r[] <- findInterval(r[], seq(r.range[1], r.range[2], length.out = 255)) / 255
+r[] <- round(r[], digits = 6)
+hill.shading <- r
+save(hill.shading, file = file.path(dir.dat, "hill.shading.rda"), compress = "xz")
+@
+
+<<echo=FALSE>>=
+CheckStatus("hill.shading")
+rm(hill.shading)
+@
+
+% =========================================================================
+
+\subsubsection{Evapotranspiration (et)}
+
+Average monthly evapotranspiration in the WRV and surrounding areas.
+
+<<>>=
+urls <- paste0(url.git, "et/et.", yr.mo, ".tif")
+FUN <- function(i) {
+  file <- wrv::DownloadFile(urls[i])
+  r <- readGDAL(file, band = 1, silent = TRUE)
+  r[[1]] <- r[[1]] * mm.to.m
+  return(r)
+}
+et.raw <- lapply(seq_along(urls), FUN)
+names(et.raw) <- as.character(yr.mo)
+@
+
+\noindent Project the raster data into the model grid, and place an upper and lower limit on evapotranspiration that is 3 standard deviations from the mean value.
+
+<<>>=
+is.missing <- is.na(alluvium.thickness)
+FUN <- function(i) {
+  r <- aggregate(projectRaster(raster(i), high.res.spatial.grid), fact = 5L)
+  r[is.missing] <- NA
+  upper.limit <- mean(r[], na.rm = TRUE) + sd(r[], na.rm = TRUE) * 3
+  r[r > upper.limit] <- upper.limit
+  return(round(r, digits = 6))
+}
+et <- stack(lapply(et.raw, FUN), quick = TRUE)
+names(et) <- as.character(yr.mo)
+save(et, file = file.path(dir.dat, "et.rda"), compress = "xz")
+@
+
+<<echo=FALSE>>=
+CheckStatus("et")
+@
+
+\clearpage
+
+% =========================================================================
+
+\section{Level 2 Data}
+
+Datasets processed at level~2 result from analysis of level~1 data.
+
+% =========================================================================
+
+\subsection{Polygons}
+
+% =========================================================================
+
+\subsubsection{Monthly irrigation entity components (entity.components)}
+
+Irrigation entities and their components in the WRV and surrounding areas.
+An irrigation entity is defined as an area served by a group of surface-water and/or groundwater diversion(s).
+Start with the spatial polygon representing the irrigated lands and remove those areas that are designated as wetlands or public parcels.
+Intersect the resulting polygon with the irrigation entities and calculate the area for each entity.
+
+<<>>=
+p <- irr.lands
+p <- lapply(p, function(i) wrv::SetPolygons(i, wetlands, "gDifference", 0.001))
+p <- lapply(p, function(i) wrv::SetPolygons(i, public.parcels, "gDifference", 0.001))
+p <- lapply(p, function(i) wrv::SetPolygons(irr.entities, i, "gIntersection", 0.001))
+for (i in seq_along(p)) p[[i]]@data$area <- rgeos::gArea(p[[i]], byid = TRUE)
+irr.by.entity <- p
+@
+
+<<echo=FALSE>>=
+rm(list=c("irr.lands", "wetlands", "public.parcels"))
+@
+
+\noindent Irrigation entities are subdivided by water source; that is, ``surface-water only'', ``groundwater only'', or ``mixed source''.
+Aggregate irrigation entities by water source and calculate their area.
+
+<<>>=
+FUN <- function(i) {
+  d <- aggregate(i@data$area, by = list(i@data$EntitySrce), sum, na.rm = TRUE)
+  names(d) <- c("EntitySrce", "area")
+  FUN <- function(j) as.character(i@data$PrecipZone[i@data$EntitySrce == j][1])
+  d$PrecipZone <- as.factor(vapply(d$EntitySrce, FUN, ""))
+  return(d)
+}
+area.by.entity <- lapply(irr.by.entity, FUN)
+@
+
+\newpage
+
+\noindent Calculate the volumetric components of evapotranspiration, precipitation, and crop irrigation requirement for each irrigation entity and water source.
+
+<<>>=
+FUN <- function(i) {
+  yr <- irr.lands.year$IL_Year[irr.lands.year$Year %in% substr(i, 1, 4)]
+  p <- irr.by.entity[[yr]]
+  unique.sources <- sort(unique(as.character(p@data$EntitySrce)))
+  FUN <- function (j) {
+    x <- rgeos::gUnaryUnion(p[p@data$EntitySrce == j, ])@polygons[[1]]
+    slot(x, "ID") <- j
+    return(x)
+  }
+  sp <- SpatialPolygons(lapply(unique.sources, FUN), proj4string = crs(et.raw[[i]]))
+  p <- over(sp, et.raw[[i]], fn = mean, na.rm = TRUE)
+  d <- as.data.frame(list(EntitySrce = rownames(p), mean.et = p[, 1]))
+  d <- suppressWarnings(dplyr::left_join(d, area.by.entity[[yr]], by = "EntitySrce"))
+  d$et.vol <- d$mean.et * d$area
+  d$precip.vol <- NA
+  for (j in levels(d$PrecipZone)) {
+    is.in.zone <- d$PrecipZone == j
+    idx <- which(precipitation$YearMonth == i & precipitation$PrecipZone == j)
+    d$precip.vol[is.in.zone] <- d$area[is.in.zone] * precipitation$Precip[idx]
+  }
+  d$cir.vol <- d$et.vol - d$precip.vol
+  idxs <- match(d$EntitySrce, irr.entities@data$EntitySrce)
+  d[, c("EntityName", "Source")] <- irr.entities@data[idxs, c("EntityName", "Source")]
+  rownames(d) <- d$EntitySrce
+  return(SpatialPolygonsDataFrame(sp, d))
+}
+entity.components <- lapply(yr.mo, FUN)
+names(entity.components) <- yr.mo
+save(entity.components, file = file.path(dir.dat, "entity.components.rda"),
+     compress = "xz")
+@
+
+<<echo=FALSE>>=
+CheckStatus("entity.components")
+rm(et.raw)
+@
+
+% =========================================================================
+
+\subsection{Grids}
+
+% =========================================================================
+
+\subsubsection{Rasterized canals (r.canals)}
+
+Rasterize canals on model grid.
+
+<<>>=
+r <- rasterize(canals, land.surface, "EntityName", silent = TRUE)
+r <- ratify(r, count = TRUE)
+d <- levels(r)[[1]]
+d$EntityName <- levels(canals@data$EntityName)[d$ID]
+levels(r) <- d
+r.canals <- r
+save(r.canals, file = file.path(dir.dat, "r.canals.rda"), compress = "xz")
+@
+
+<<echo=FALSE>>=
+CheckStatus("r.canals")
+@
+
+\newpage
+
+% =========================================================================
+
+\subsubsection{Rasterized monthly irrigation entities (rs.entities)}
+
+Rasterize monthly irrigation entities on model grid.
+
+<<>>=
+FUN <- function(i) {
+  r <- rasterize(entity.components[[i]], land.surface, "EntityName", silent = TRUE)
+  r <- ratify(r, count = TRUE)
+  d <- levels(r)[[1]]
+  d$EntityName <- levels(entity.components[[i]]@data$EntityName)[d$ID]
+  levels(r) <- d
+  return(r)
+}
+rs.entities <- stack(lapply(yr.mo, FUN), quick = TRUE)
+names(rs.entities) <- yr.mo
+save(rs.entities, file = file.path(dir.dat, "rs.entities.rda"), compress = "xz")
+@
+
+<<echo=FALSE>>=
+CheckStatus("rs.entities")
+@
+
+% =========================================================================
+
+\subsubsection{Rasterized monthly recharge on non-irrigated lands (rs.rech.non.irr)}
+
+Calculate rasterized monthly volumetric flow rates of areal recharge beneath non-irrigated lands.
+
+<<>>=
+r.zones <- ratify(rasterize(precip.zones, land.surface, "ID", silent = TRUE))
+levels(r.zones) <- cbind(levels(r.zones)[[1]], att = precip.zones@data$PrecipZone)
+r.soils <- rasterize(soils, land.surface, "PercolationRate", silent = TRUE)
+cell.area <- xres(land.surface) * yres(land.surface)
+FUN <- function(i) {
+  p <- precipitation[precipitation$YearMonth == i, c("PrecipZone", "Precip")]
+  p <- p[match(p$PrecipZone, levels(r.zones)[[1]]$att), "Precip"]
+  names(p) <- levels(r.zones)[[1]]$att
+  r <- r.zones
+  levels(r) <- cbind(levels(r)[[1]], Precip = p)
+  r <- deratify(r, "Precip") - et[[i]]
+  is.pos <- r > r.soils
+  r[is.pos] <- r.soils[is.pos]
+  if (i %in% yr.mo.irr) r[!is.na(rs.entities[[i]])] <- NA
+  r <- r * cell.area
+  r[] <- round(r[], digits = 6)
+  return(r)
+}
+rs.rech.non.irr <- stack(lapply(yr.mo, FUN), quick = TRUE)
+names(rs.rech.non.irr) <- yr.mo
+save(rs.rech.non.irr, file = file.path(dir.dat, "rs.rech.non.irr.rda"), compress = "xz")
+@
+
+<<echo=FALSE>>=
+CheckStatus("rs.rech.non.irr")
+@
+
+% =========================================================================
+
+% \vfill\centerline{Created on \Sexpr{format(Sys.time(), "%B %e, %Y")}; total processing time was \Sexpr{format(difftime(Sys.time(), t0), digits=3)}.}
+
+\end{document}

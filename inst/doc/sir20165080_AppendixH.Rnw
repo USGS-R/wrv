@@ -1,0 +1,1814 @@
+% \VignetteIndexEntry{Appendix H. Model Calibration}
+% \VignetteEngine{knitr::knitr}
+% \VignetteDepends{wrv}
+
+\documentclass[twoside]{article}
+
+\input{\Sexpr{shQuote(system.file("misc", "preamble.tex", package="wrv"))}}
+\addbibresource{\Sexpr{system.file("misc", "references.bib", package="wrv")}}
+
+\renewcommand{\thefigure}{H\arabic{figure}}
+\renewcommand{\thetable}{H\arabic{table}}
+\renewcommand{\thepage}{H\arabic{page}}
+
+\setcounter{page}{1}
+
+% =========================================================================
+
+\begin{document}
+
+<<setup, include=FALSE>>=
+t0 <- Sys.time()
+try(knitr::opts_chunk$set(tidy=FALSE, comment="#", fig.align="center"), silent=TRUE)
+grDevices::pdf.options(useDingbats=FALSE)
+options(preferRaster=TRUE, scipen=0, digits=2)
+library(wrv)
+loadNamespace("xtable")
+
+# Device dimension in inches (width, height)
+fin.graph         <- c(7.16, 7.16)
+fin.graph.short   <- c(7.16, 3.50)
+fin.map           <- c(7.01, 9.32)
+fin.map.0         <- c(7.01, 8.65)
+fin.map.s         <- c(7.16, 5.31)
+fin.map.s.0       <- c(7.16, 4.64)
+fin.map.n         <- c(7.16, 7.00)
+fin.map.n.small   <- c(3.50, 3.83)
+fin.map.n.small.0 <- c(3.50, 3.16)
+fin.cs            <- c(7.16, 5.39)
+fin.cs.0          <- c(7.16, 4.73)
+
+# Extreme coordinates of plotting region (x1, x2, y1, y2)
+usr.map     <- c(2451504, 2497815, 1342484, 1402354)
+usr.map.s   <- c(2472304, 2497015, 1343284, 1358838)
+usr.map.n.1 <- c(2463000, 2475356, 1386500, 1398856)
+usr.map.n.2 <- c(2467500, 2479856, 1376500, 1388856)
+usr.map.n.3 <- c(2466696, 2479052, 1366501, 1378857)
+usr.map.n.4 <- c(2471500, 2483856, 1356482, 1368838)
+
+# Unit conversions
+cfs.to.m3.per.d <- 2446.57555
+
+# Map credit
+credit <- paste("Base derived from U.S. Geological Survey National Elevation Dataset 10-meter digital elevation model.",
+                "Idaho Transverse Mercator projection; North American Datum of 1983.", sep="\n")
+@
+
+\title{Appendix H.\enspace Calibration of the Wood River Valley Groundwater-Flow Model\vspace{2ex}}
+\author{}
+\date{}
+\pretitle{\begin{flushleft}\LARGE\bfseries\sffamily}
+\posttitle{\end{flushleft}}
+\maketitle
+
+\tableofcontents
+
+\newpage
+
+\renewcommand*\listfigurename{Figures}
+\listoffigures
+
+\renewcommand*\listtablename{Tables}
+\listoftables
+
+\clearpage
+
+\RaggedRight
+
+% =========================================================================
+
+\section{Introduction}
+
+Model calibration refers to the process of assuring that the Wood River Valley (WRV) groundwater-flow model reproduces real-world flow conditions reasonably well.
+An estimator attempts to adjust model parameters so that the differences between simulated and measured values are minimized.
+Multiple model parameters were estimated using a nonlinear regression method.
+
+% =========================================================================
+
+\section{Model Calibration}
+
+Model calibration is the task of adjusting model parameter estimates (such as hydraulic conductivity) until model results are consistent with measured data (such as groundwater levels in wells).
+The effectiveness of model calibration cannot be solely assessed by the agreement between field measurements and corresponding model results (misfit).
+Unreasonable parameter values may be estimated that adopt roles for which they were not designed in order for the model to provide an acceptable fit with field measurements (this is referred to as overfitting) \citep[p.~180]{Doherty2005}.
+The problem with an overfit model is that it will typically have poor predictive performance, as it can exaggerate minor fluctuations in the data.
+Therefore, model calibration may necessitate a larger misfit in order to determine a parameter set that reflects a geologically and physically realistic conceptualization of the aquifer system \citep[p.~842]{Fienen2009}.
+Regularization is the process of supplementing field measurements with prior information that pertain directly to model parameters (also known as ``regularization observations'') in order to prevent overfitting.
+For example, regularization may take the form of a penalty for increased spatial heterogeneity of horizontal hydraulic conductivity.
+
+The parameter estimation program \href{http://www.pesthomepage.org/}{PEST} version 13 \citep{Doherty2005} is used in regularization mode to calibrate the WRV groundwater-flow model.
+PEST implements a nonlinear regression method to estimate model parameters by keeping model-to-measurement misfit below a certain user-defined threshold (PHIMLIM),
+while minimizing the deviation of parameter estimates from their preferred conditions.
+Parameter estimation is formulated as a constrained minimization problem and mathematically expressed as:
+
+\begin{equation} \label{eq:min}
+\begin{aligned}
+& \underset{\boldsymbol{b} \, \epsilon \, \mathbb{R}}{\text{minimize}}
+& & \sum_{i} \left( w_{i} \left[ X_{i} - \widehat{X}_{i} \right] \right)^{2} \\
+& \text{subject to}
+& & \sum_{j} \left( w_{j} \left[ Y_{j} - \widehat{Y}_{j} \right] \right)^{2} \leq \text{PHIMLIM} \\
+&&& b_{min, \, k} \leq b_{k} \leq b_{max, \, k}
+\end{aligned}
+\end{equation}
+where
+\begin{description}
+\item[\boldsymbol{b}] is a vector of adjustable model parameters;
+\item[\mathbb{R}] is the set of all real values;
+\item[w_{i}] is the weight placed on regularization observation $i$;
+\item[X_{i}] is the preferred model parameter of regularization observation $i$;
+\item[\widehat{X}_{i}] is the estimated model parameter of regularization observation $i$;
+\item[w_{j}] is the weight placed on observation $j$;
+\item[Y_{j}] is the field measurement quantity of observation $j$;
+\item[\widehat{Y}_{j}] is the model-simulated result of observation $j$;
+\item[\text{PHIMLIM}] is a control variable for regularization that is used to avoid overfitting;
+\item[b_{min, \, k}] is the lower bound for adjustable model parameter $k$; and
+\item[b_{max, \, k}] is the upper bound for adjustable model parameter $k$.
+\end{description}
+
+\noindent The algorithm PEST uses to solve equation~(\ref{eq:min}) is a modified Gauss-Newton method, assisted by a Levenberg-Marquardt formulation \citep[chapter 2]{Doherty2005}.
+
+Model-simulation results are output from \href{http://water.usgs.gov/ogw/mfusg/}{MODFLOW-USG}, a numerical model that simulates three-dimensional,
+steady-state and transient groundwater flow using a control volume finite-difference formulation \citep{Panday2013}.
+Because PEST runs the model many times during the parameter estimation process it was necessary to keep model run times reasonably short.
+Substantial time savings in model runs were achieved by simulating transient flow in the WRV aquifer system using a specified saturated thickness.
+In reality, the saturated thickness changes as model-simulated hydraulic heads change.
+Accounting for such changes during the simulation is possible with MODFLOW-USG; however, run times for these simulations can be very long---on the order of hours for simulating flow in WRV aquifer system.
+In comparison, run times are on the order of tens-of-minutes when the saturated thickness is held constant.
+
+% =========================================================================
+
+\section{Field Measurements}
+
+Field measurements used in the parameter estimation process include groundwater levels in wells, stream-aquifer flow exchange in river reaches, and groundwater flow at outlet boundaries.
+A 3-year `warm-up' period is included in the model simulation to recover from inaccuracies in the initial groundwater head distribution and account for potential transient responses to stresses occurring prior to January 1995.
+Therefore, field measurements during the first 3 years of the simulation (1995--1997) were not used when evaluating model-to-measurement misfit during model calibration.
+
+\subsection{Groundwater Levels in Wells}
+
+<<echo=FALSE>>=
+is.obs <- as.Date(obs.wells.head$DateTime) >= as.Date("1998-01-01") &
+          as.Date(obs.wells.head$DateTime) <  as.Date("2011-01-01")
+wells <- obs.wells
+
+FUN <- function(x) {
+  x <- range(x)
+  moyr <- format(x, "%b %Y")
+  mo   <- format(x, "%b")
+  yr   <- format(x, "%Y")
+  if (moyr[1] == moyr[2]) {
+    return(moyr[1])
+  } else {
+    if (yr[1] == yr[2])
+      return(paste0(mo[1],"--",  moyr[2]))
+    else
+      return(paste(moyr, collapse=" -- "))
+  }
+}
+x <- aggregate(obs.wells.head$DateTime, by=list(obs.wells.head$PESTNAME), FUN)
+names(x) <- c("PESTNAME", "por")
+d <- dplyr::left_join(obs.wells@data, x, by="PESTNAME")
+d$nrec <- vapply(d$PESTNAME, function(i) sum(obs.wells.head$PESTNAME == i), 0L)
+x <- aggregate(obs.wells.head$Head, by=list(obs.wells.head$PESTNAME), sd)
+names(x) <- c("PESTNAME", "sd")
+d <- dplyr::left_join(d, x, by="PESTNAME")
+wells@data <- d
+
+PrintTable <- function(idxs, is.last.hline, label) {
+  d <- wells@data[idxs[idxs <= nrow(wells@data)], ]
+  d$desc <- as.character(d$desc)
+
+  d$desc[d$desc == "Observation well"] <- "USGS well"
+  d$desc[d$desc == "Geo-located driller well"] <- "Geo-located driller well"
+  d$desc[d$desc == "Driller-located driller well"] <- "PLSS-located driller well"
+  d$desc[d$desc == "Sun Valley Water and Sewer well"] <- "SVWSD well"
+  d$desc[d$desc == "Nature Conservancy well"] <- "TNC well"
+
+  d[duplicated(d[, "desc"]), "desc"] <- ""
+  d$SiteNo[is.na(d$SiteNo)] <- "--"
+  d <- d[, c("desc", "id", "SiteNo", "WELLNUMBER", "nrec", "por", "sd")]
+  columns <- c("Well type",
+               "Well \\\\ No.",
+               "Site \\\\ identifier",
+               "Name",
+               "No. of \\\\ records",
+               "Period of \\\\ record",
+               "SD \\\\ (m)")
+  colnames(d) <- sprintf("\\textbf{\\shortstack{%s}}", columns)
+  cap1 <- "Observation wells in the Wood River Valley aquifer system."
+  cap2 <- c("\\textbf{Well type}:",
+            "``USGS well'' is monitored by the U.S. Geological Survey and (or) the Idaho Department of Water Resources;",
+            "``Geolocated driller well'' is a driller recorded groundwater level in a geolocated well;",
+            "``PLSS-located driller well'' is a driller recorded groundwater level in a well located using the Public Land Survey System (PLSS);",
+            "``SVWSD well'' is a production well in the Sun Valley Water and Sewer District (SVWSD); and",
+            "``TNC well'' is monitored by The Nature Conservancy and installed with a pressure transducer.",
+            "\\textbf{Well No.}: identifier used to locate wells in figures \\ref{fig:map_wells_usgs}, \\ref{fig:map_wells_driller}, and \\ref{fig:map_wells_svws_nat}.",
+            "\\textbf{Site identifier}: unique numerical identifiers used to access well data (\\url{http://waterdata.usgs.gov/nwis}).",
+            "\\textbf{Name}: local well name used in this study.",
+            "\\textbf{SD}: standard deviation of groundwater levels.",
+            "\\textbf{Abbreviations}: m, meters; --, not available; NA, not applicable")
+  tbl <- xtable::xtable(d, label=label)
+  if (idxs[1] == 1L)
+    xtable::caption(tbl) <- c(sprintf("%s [%s]", cap1, paste(cap2, collapse=" ")), cap1)
+  else
+    xtable::caption(tbl) <- sprintf("%s---Continued", cap1)
+  xtable::digits(tbl) <- c(0, 0, 0, 0, 0, 0, 0, 2)
+  suppressWarnings(xtable::align(tbl) <- "llccL{1.0in}rcr")
+  hline.after <- if (is.last.hline) c(-1, 0, nrow(tbl)) else c(-1, 0)
+  print(tbl, include.rownames=FALSE, caption.placement="top", booktabs=TRUE,
+        sanitize.colnames.function=function(x){x}, size="\\small", NA.string="NA",
+        sanitize.text.function=identity, hline.after=hline.after)
+}
+@
+
+The groundwater-flow model was calibrated using \Sexpr{formatC(sum(is.obs), big.mark=",")} hydraulic-head observations (groundwater levels) from
+\Sexpr{length(unique(obs.wells.head$PESTNAME[is.obs]))} well locations.
+During the 16-year model simulation period (1995--2010), both the period-of-record and frequency of monitoring varied by well (\hyperref[table_wells_usgs]{table~\ref{table_wells_usgs}}).
+The historic variability of groundwater levels in a well over the period-of-record is described with the standard deviation (\hyperref[table_wells_usgs]{table~\ref{table_wells_usgs}}).
+All relevant sources of groundwater-level data were considered during model calibration and described below.
+
+The U.S. Geological Survey (USGS) groundwater-monitoring network described by \citet{Skinner2007} and \citet{Bartolino2014} consists of
+\Sexpr{sum(is <- obs.wells@data$desc == "Observation well")} wells, with \Sexpr{sum(obs.wells.head$PESTNAME %in% obs.wells@data$PESTNAME[is])}
+groundwater-level observations recorded in these wells during the 1995 through 2010 time period
+(\hyperref[table_wells_usgs]{table~\ref{table_wells_usgs}}, \hyperref[fig:map_wells_usgs]{fig.~\ref{fig:map_wells_usgs}});
+of these observations, \Sexpr{sum(obs.wells.head$PESTNAME[is.obs] %in% obs.wells@data$PESTNAME[is])} were recorded during the model-calibration period (1998--2010).
+Groundwater-level elevations were obtained by subtracting the depth to water from the elevation of a land-surface measurement point.
+The depth to water was measured by USGS and Idaho Department of Water Resources (IDWR) employees using an electric measuring tape accurate to about plus-or-minus ($\pm$) 0.01 meters (m) ($\pm$0.02 feet [ft]).
+Well locations were surveyed using real-time kinematic (RTK) and fast-static differential Global Positioning System (GPS) surveying techniques
+with a horizontal accuracy of about $\pm$0.08~m ($\pm$0.26~ft) and a vertical accuracy of about $\pm$0.16~m ($\pm$0.52~ft).
+Wells in this monitoring network are hereafter referred to as ``USGS wells''.
+
+All available well driller reports (well logs) were examined for groundwater-level data recorded during the 1995 through 2010 time period.
+There were \Sexpr{n <- sum(is <- obs.wells@data$desc %in% c("Geo-located driller well", "Driller-located driller well")); n}
+groundwater-level observations (one observation per well log collected at the time of well construction) recorded by drillers onto well logs;
+of these observations, \Sexpr{sum(x <- obs.wells.head$PESTNAME[is.obs] %in% obs.wells@data$PESTNAME[is])} were recorded during the model-calibration period.
+The location of driller wells in the model area is shown in \hyperref[fig:map_wells_driller]{figure~\ref{fig:map_wells_driller}}.
+Methods used to determine the geographic coordinate (longitude and latitude) of a driller well varied.
+For \Sexpr{x <- round(sum(obs.wells@data$desc == "Driller-located driller well") / n * 100); x} percent of the driller wells,
+either a hand-held GPS measurement or street address was recorded by the driller onto the well log and used to determine (either directly or indirectly) its geographic coordinate.
+Geolocation software was used to convert street addresses to geographic coordinates;
+their locations typically adjusted to coincide with the center of the land-owner's property (these land parcels are typically less than 0.004 square-kilometers [km\textsuperscript{2}] or 1 acre,
+although, some are as large as 0.04 km\textsuperscript{2} [10 acres]).
+Driller wells of this type are hereafter referred to as ``Geolocated driller wells''.
+The remaining \Sexpr{100L - x} percent of the driller wells were located using the Public Land Survey System (PLSS) township, range, section, quarter-section, quarter-quarter section division of the state (TRSQQ) recorded by the driller onto the well log.
+The PLSS records were converted to geographic coordinates using assumed site locations at the center of their quarter-quarter section (0.16 km\textsuperscript{2} or 40 acres).
+Driller wells of this type are hereafter referred to as ``PLSS-located driller wells''.
+
+For all driller wells, the elevation of the land-surface measurement point was determined from
+a digital elevation model at a horizontal grid resolution of about 10~m (33~ft) and vertical accuracy of about $\pm$1.5 m ($\pm$5 ft) (10-m DEM).
+The method used for the driller-reported depth-to-water measurement was never reported.
+The accuracy of driller-reported groundwater-level measurements could not be quantified,
+although groundwater levels for the geolocated driller wells are assumed less accurate (at least horizontally) for the PLSS-located driller wells because a TRSQQ is 0.16 km\textsuperscript{2} and most land parcels are less than 0.004 km\textsuperscript{2} in area.
+
+Groundater-levels in two of the Sun Valley Water and Sewer District (SVWSD) production wells were recorded during the 1995 through 2010 time period under non-pumping conditions.
+\hyperref[fig:map_wells_svws_nat]{Figure~\ref{fig:map_wells_svws_nat}} shows the location of the SVWSD production wells in the model area.
+There were \Sexpr{is <- obs.wells@data$desc %in% "Sun Valley Water and Sewer well"; sum(obs.wells.head$PESTNAME %in% obs.wells@data$PESTNAME[is])}
+groundwater-level observations recorded in these wells during the 16-year simulation;
+of these observations, \Sexpr{sum(obs.wells.head$PESTNAME[is.obs] %in% obs.wells@data$PESTNAME[is])} were recorded during the model-calibration period.
+Depth-to-water measurements were made by a SVWSD employee using a submerged air line method.
+Of the two SVWSD production wells,
+one (well No. \Sexpr{with(obs.wells@data, id[PESTNAME == 6001])}) was located using a hand-held GPS unit (horizontal accuracy of about $\pm$3 m [$\pm$10 ft]) and 10-m DEM,
+and the other (433936114210701, well No. \Sexpr{with(obs.wells@data, id[PESTNAME == 6002])}) was surveyed as part of the USGS groundwater-monitoring network.
+Wells of this type are hereafter referred to as ``SVWSD wells''.
+
+The Nature Conservancy (TNC) groundwater-monitoring network consists of \Sexpr{sum(is <- obs.wells@data$desc == "Nature Conservancy well")} wells,
+with \Sexpr{format(sum(obs.wells.head$PESTNAME %in% obs.wells@data$PESTNAME[is]), big.mark=",")}
+groundwater-level observations (average daily values) recorded for these wells during the 16-year simulation (\hyperref[fig:map_wells_svws_nat]{fig.~\ref{fig:map_wells_svws_nat}}),
+and all within the model-calibration period.
+The period-of-record for groundwater-level observations is relatively short in duration, spanning the last 9 months of the model-calibration period.
+In each of the wells, a submerged pressure transducer installed at a fixed depth in the well, collected nearly continuous measurements of the height of the water column above the transducer.
+Groundwater-level elevations were obtained by adding the height of water column to the elevation of the submerged pressure transducer,
+where transducer elevation is determined by subtracting the depth to the pressure transducer from the elevation of a land-surface measurement point.
+Groundwater-level data provided by these transducers is not adequately supported by quality-assurance procedures and documentation;
+therefore, the vertical accuracy of groundwater-level observations in these wells could not be quantified.
+The location of wells in this network were either surveyed as part of the USGS groundwater-monitoring network or located with a hand-held GPS unit and 10-m DEM.
+Wells in this monitoring network hereafter referred to as ``TNC wells''.
+
+<<table_wells_usgs, echo=FALSE, results="asis">>=
+PrintTable(idxs <- 1:(n <- 48L), FALSE, label <- "table_wells_usgs")
+@
+\captionsetup[table]{list=no}
+<<echo=FALSE, results="asis">>=
+s <- unique(c(seq(n, nrow(wells@data), 56L), nrow(wells@data)))
+for (i in head(seq_along(s), -1)) {
+  cat("\\addtocounter{table}{-1}\n")
+  PrintTable((s[i] + 1L):s[i + 1], s[i + 1L] == tail(s, 1), paste0(label, "_", i))
+}
+@
+\captionsetup[table]{list=yes}
+\clearpage
+
+<<include=FALSE>>=
+v <- "Location of wells in the U.S. Geological Survey (USGS) groundwater monitoring network, Wood River Valley, Idaho."
+v <- c(paste("Map showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(v)))), v)
+@
+
+<<map_wells_usgs, echo=FALSE, fig.width=fin.map.0[1], fig.height=fin.map.0[2], fig.scap=sprintf("{%s}", v[1]), fig.cap=sprintf("{%s}", v[2])>>=
+PlotMap(crs(hill.shading), xlim=usr.map[1:2], ylim=usr.map[3:4],
+        bg.image=hill.shading, dms.tick=TRUE, bg.image.alpha=0.6,
+        rivers=list(x=streams.rivers), lakes=list(x=lakes), credit=credit)
+plot(alluvium.extent, border="#FFFFFFCC", col=NA, add=TRUE)
+p <- obs.wells[obs.wells@data$desc == "Observation well", ]
+col <- "#FF4B12"
+bg  <- "#FF4B12"
+points(p, pch=21, cex=0.7, col=col, bg=bg, lwd=0.25)
+pos <- c(2, 4, 1, 1, 1, 3, 4, 1, 1, 1,
+         3, 3, 4, 1, 1, 2, 3, 3, 3, 4,
+         1, 1, 2, 4, 1, 3, 1, 1, 1, 3,
+         1, 1, 1, 1, 1, 4, 2, 2, 1, 3,
+         3, 4, 2, 4, 2, 2, 2, 3, 2, 4,
+         1, 3, 4, 3, 3, 4, 2, 3, 4, 2,
+         4, 2, 1, 4, 4, 4, 2, 2, 3, 4,
+         2, 4, 2, 4, 1, 2, 4, 1, 1, 4,
+         2, 4, 2, 4, 2, 2, 1, 3, 2, 4,
+         3, 4, 3, 2)
+text(p, labels=p@data$id, col="#333333", cex=0.6, pos=pos, offset=0.3)
+leg <- "USGS well"
+legend("topright", leg, pch=21, col=col, pt.bg=bg, pt.lwd=0.25, pt.cex=0.8,
+       inset=0.02, cex=0.7, box.lty=1, box.lwd=0.5, bg="#FFFFFFE7")
+AddInsetMap(idaho, width=1, main.label=list("IDAHO", adj=c(-0.4, -4.9)),
+            sub.label=list("Map area", adj=c(0.5, 2.5)), loc="topleft")
+invisible(dev.off())
+@
+
+<<include=FALSE>>=
+v <- "Location of geolocated driller wells and Public Land Survey System (PLSS)-located driller wells in the Wood River Valley, Idaho."
+v <- c(paste("Map showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(v)))), v)
+@
+
+<<map_wells_driller, echo=FALSE, fig.width=fin.map.0[1], fig.height=fin.map.0[2], fig.scap=sprintf("{%s}", v[1]), fig.cap=sprintf("{%s}", v[2])>>=
+PlotMap(crs(hill.shading), xlim=usr.map[1:2], ylim=usr.map[3:4],
+        bg.image=hill.shading, dms.tick=TRUE, bg.image.alpha=0.6,
+        rivers=list(x=streams.rivers), lakes=list(x=lakes), credit=credit)
+plot(alluvium.extent, border="#FFFFFFCC", col=NA, add=TRUE)
+p.1 <- obs.wells[obs.wells@data$desc == "Geo-located driller well", ]
+p.2 <- obs.wells[obs.wells@data$desc == "Driller-located driller well", ]
+col <- c("#9061C2DD", "#FFC800DD")
+bg  <- c("#9061C280", "#FFC80080")
+pch <- c(21, 22)
+cex <- c(0.7, 0.6)
+points(p.1, pch=pch[1], cex=cex[1], col=col[1], bg=bg[1], lwd=0.25)
+points(p.2, pch=pch[2], cex=cex[2], col=col[2], bg=bg[2], lwd=0.25)
+no.1 <- paste0("(", paste(range(p.1@data$id), collapse="-"), ")")
+no.2 <- paste0("(", paste(range(p.2@data$id), collapse="-"), ")")
+leg <- c(paste("Geolocated driller well", no.1),
+         paste("PLSS-located driller well", no.2))
+legend("topright", leg, pch=pch, col=col, pt.bg=bg, pt.cex=cex,
+       pt.lwd=0.25, inset=0.02, cex=0.7, box.lty=1, box.lwd=0.5,
+       bg="#FFFFFFE7")
+invisible(dev.off())
+@
+
+<<include=FALSE>>=
+v <- "Location of two Sun Valley Water and Sewer District (SVWSD) production wells, and wells in The Nature Conservancy (TNC) groundwater monitoring network, Wood River Valley, Idaho."
+v <- c(paste("Map showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(v)))), v)
+@
+
+<<map_wells_svws_nat, echo=FALSE, fig.width=fin.map.0[1], fig.height=fin.map.0[2], fig.scap=sprintf("{%s}", v[1]), fig.cap=sprintf("{%s}", v[2])>>=
+PlotMap(crs(hill.shading), xlim=usr.map[1:2], ylim=usr.map[3:4],
+        bg.image=hill.shading, dms.tick=TRUE, bg.image.alpha=0.6,
+        rivers=list(x=streams.rivers), lakes=list(x=lakes), credit=credit)
+plot(alluvium.extent, border="#FFFFFFCC", col=NA, add=TRUE)
+p.1 <- obs.wells[obs.wells@data$desc == "Sun Valley Water and Sewer well", ]
+p.2 <- obs.wells[obs.wells@data$desc == "Nature Conservancy well", ]
+col <- c("#A40802", "#1F78B4")
+pch <- c(21, 22)
+cex <- c(0.7, 0.7)
+points(p.1, pch=pch[1], cex=cex[1], col=col[1], bg=col[1], lwd=0.25)
+points(p.2, pch=pch[2], cex=cex[2], col=col[2], bg=col[2], lwd=0.25)
+pos <- c(4, 4)
+text(p.1, labels=p.1@data$id, col="#333333", cex=0.6, pos=pos, offset=0.3)
+pos <- c(1, 1, 1, 4, 1, 1, 1, 1, 4, 1)
+text(p.2, labels=p.2@data$id, col="#333333", cex=0.6, pos=pos, offset=0.3)
+leg <- c("SVWSD well", "TNC well")
+legend("topright", leg, pch=pch, col=col, pt.bg=col, pt.cex=cex,
+       pt.lwd=0.25, inset=0.02, cex=0.7, box.lty=1, box.lwd=0.5, bg="#FFFFFFE7")
+invisible(dev.off())
+@
+
+\clearpage
+
+% =========================================================================
+
+\subsection{Stream-Aquifer Flow Exchange in River Reaches}
+
+Stream-aquifer flow exchange is simulated along the Big Wood River, Willow Creek, Silver Creek,
+and spring-fed tributary streams (\hyperref[fig:map_sites]{fig.~\ref{fig:map_sites}}).
+Whether a river or stream loses or gains water as it flows downstream is dependent on the head difference between the stream and the aquifer,
+and the hydraulic conductance of the riverbed.
+The model-simulated flow-exchange between the stream and aquifer was assessed using field measurements.
+
+<<include=FALSE>>=
+v <- "River network and streamflow measurement sites in the Wood River Valley, Idaho."
+v <- c(paste("Map showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(v)))), v)
+@
+
+<<map_sites, echo=FALSE, fig.width=fin.map.0[1], fig.height=fin.map.0[2], fig.scap=sprintf("{%s}", v[1]), fig.cap=sprintf("{%s}", v[2])>>=
+sites <- seepage.study
+sites <- sites[!sites@data$Type %in% c("Return", "Diversion", "Exchange well inflow"), ]
+sites <- sites[!duplicated(sites@data$Name), ]
+sites@data$site.no <- seq_len(nrow(sites@data))
+
+PlotMap(crs(hill.shading), xlim=usr.map[1:2], ylim=usr.map[3:4],
+        bg.image=hill.shading, dms.tick=TRUE, bg.image.alpha=0.6, credit=credit)
+plot(alluvium.extent, border="#FFFFFFCC", col="#FFFFFF9A", add=TRUE)
+plot(river.reaches, col="#3399CC", lwd=0.5, add=TRUE)
+plot(tributary.streams, col="#3399CC", lwd=0.5, add=TRUE)
+is.continuous <- sites@data$SiteNo %in% streamgages@data$SiteNo
+cols <- rep("#FDFDFD", length(is.continuous))
+cols[is.continuous] <- "#A40802"
+points(sites, pch=24, cex=0.8, col="#A40802", bg=cols)
+pos <- c(2, 4, 3, 3, 1, 1, 3, 1, 1, 4,
+         3, 3, 1, 3, 3, 3, 4, 2, 2, 3,
+         1, 1, 3, 1, 3, 1, 3, 1, 3, 1,
+         3, 3)
+text(sites, labels=sites@data$site.no, col="#333333", cex=0.6, pos=pos, offset=0.3)
+
+lab <- paste0(max(sites@data$site.no), "\n")
+text(par("usr")[2], par("usr")[3], labels=lab, col="#333333", cex=0.6, pos=2,
+     offset=0.1)
+text(2478800, 1355000, labels="Big Wood River", cex=0.6, col="#3399CC", font=3, srt=75)
+text(2493200, 1346300, labels="Silver\nCreek", cex=0.6, col="#3399CC", font=3, srt=0)
+text(2478500, 1347700, labels="Willow Creek", cex=0.6, col="#3399CC", font=3, srt=15)
+text(2483000, 1351600, labels="spring-fed\ntributaries", cex=0.6, col="#3399CC", font=3)
+leg <- c("Rivers and streams", "Streamgage with continuous record",
+         "Measurement station without a gage")
+legend("topright", leg, pch=c(NA, 24, 24), lwd=c(1, NA, NA),
+       col=c("#3399CC", "#A40802", "#A40802"), pt.bg=c(NA, "#A40802", "#FDFDFD"),
+       pt.cex=0.8, inset=0.02, cex=0.7, box.lty=1, box.lwd=0.5, bg="#FFFFFFE7")
+
+invisible(dev.off())
+@
+
+% =========================================================================
+
+\subsubsection{Streamflows}
+
+<<echo=FALSE>>=
+GetSiteNo <- function(i) {
+  sprintf("site No.~%s", sites@data$site.no[sites@data$SiteNo %in% i])
+}
+@
+
+Continuous streamflow measurements are available from nine streamgages (8 gages operated by the USGS and one by the Idaho Power Company) in the Wood River Valley, Idaho
+(\hyperref[table_sites]{table~\ref{table_sites}}, \hyperref[fig:map_sites]{fig.~\ref{fig:map_sites}}).
+The Big Wood River near Ketchum (13135500, \Sexpr{GetSiteNo(13135500)}) and the North Fork Big Wood River near Sawtooth NRA Headquarters near Ketchum (13135520, \Sexpr{GetSiteNo(13135520)}) streamgage measure surface-water inflow at the northern boundary of the model.
+The Big Wood River at Hailey (13139510, \Sexpr{GetSiteNo(13139510)}) streamgage lies at about the midpoint of the river within the model domain, and the Big Wood River at Stanton Crossing near Bellevue (13140800, \Sexpr{GetSiteNo(13140800)}) is at the southern boundary where the river exits the model domain.
+Three tributaries to the Big Wood River have streamgages; these are, Warm Springs Creek near Ketchum (13137000, \Sexpr{GetSiteNo(13137000)}), Trail Creek at Ketchum (13137500, \Sexpr{GetSiteNo(13137500)}), and East Fork Big Wood River at Gimlet (13138000, \Sexpr{GetSiteNo(13138000)}).
+The Willow Creek near Bellevue (13140900, \Sexpr{GetSiteNo(13140900)}) streamgage is operated by Idaho Power Company and measures spring-fed stream tributaries that enter the Big Wood River downstream of the model boundary near the southwest boundary of the model.
+The Silver Creek at Sportsman Access (13150430, \Sexpr{GetSiteNo(13150430)}) streamgage measures spring-fed stream tributaries that enter Silver Creek about 11 river kilometers (7 miles) upstream of the southeast model boundary.
+
+The period of record for streamgages with continuous records are given in \hyperref[table_sites]{table~\ref{table_sites}}.
+Streamgages not in operation during the model simulation period (1995--2010) include:
+the Big Wood River near Ketchum (\Sexpr{GetSiteNo(13135500)}),
+the North Fork Big Wood River near Sawtooth NRA Headquarters near Ketchum (\Sexpr{GetSiteNo(13135520)}),
+Warm Springs Creek near Ketchum (\Sexpr{GetSiteNo(13137000)}),
+Trail Creek at Ketchum (\Sexpr{GetSiteNo(13137500)}), and
+East Fork Big Wood River at Gimlet (\Sexpr{GetSiteNo(13138000)}).
+All of these streamgages are located upstream of the Big Wood River at Hailey streamgage (\Sexpr{GetSiteNo(13139510)}), and are either on the Big Wood River or on one of its tributary streams.
+Furthermore, the periods of record for these streamgages all coincide with the period of record for the Hailey streamgage (1915--present).
+Using the coinciding streamflow data, linear regression models were developed for predicting the missing streamflow records (\hyperref[table_lm]{table~\ref{table_lm}}).
+
+The USGS made three seepage runs: August 2012, October 2012, and March 2013 (\hyperref[table_sites]{table~\ref{table_sites}}, \hyperref[fig:map_sites]{fig.~\ref{fig:map_sites}}) \citep{Bartolino2014}.
+Based on these measurements, the August streamflow from ungaged tributaries to the Big Wood River upstream of the Big Wood River at Hailey streamgage (\Sexpr{GetSiteNo(13139510)})
+was estimated to be 9,542 cubic meters per day (m\textsuperscript{3}/d) (3.9 cubic feet per second [cfs]).
+Contributions from ungaged tributaries to the Big Wood River downstream of the Big Wood River at Hailey (\Sexpr{GetSiteNo(13139510)}) streamgage were estimated to be zero during the October and March seepage runs.
+
+<<table_sites, echo=FALSE, results="asis">>=
+d <- sites@data
+d$POR <- "Aug, Oct 2012; Mar 2013"
+d$POR[d$SiteNo == 432352114161500] <- "March 2013"
+d$POR[d$SiteNo == 432248114163400] <- "March 2013"
+d$POR[d$SiteNo == 434404114215200] <- "Aug, Oct 2012"
+d$POR[d$SiteNo == 432805114113800] <- "Aug, Oct 2012"
+d$POR[d$SiteNo == 13135510]        <- "Aug, Oct 2012"
+d$POR[d$SiteNo == 13137900]        <- "Aug, Oct 2012"
+d$POR[d$SiteNo == 13135500]        <- "1948--1972, 2011--present"
+d$POR[d$SiteNo == 13135520]        <- "2011--present"
+d$POR[d$SiteNo == 13137000]        <- "1920--1921, 2011--present"
+d$POR[d$SiteNo == 13137500]        <- "1920--1921, 2011--present"
+d$POR[d$SiteNo == 13138000]        <- "1920--1921, 2011--present"
+d$POR[d$SiteNo == 13139510]        <- "1915--present"
+d$POR[d$SiteNo == 13140800]        <- "1996--present"
+d$POR[d$SiteNo == 13140900]        <- "1999--present"
+d$POR[d$SiteNo == 13150430]        <- "1974--present"
+d <- d[, c("site.no", "SiteNo", "Name", "POR")]
+columns <- c("Site \\\\ No.", "Site \\\\ identifier", "Name", "Period of record")
+colnames(d) <- sprintf("\\textbf{\\shortstack{%s}}", columns)
+cap1 <- "Streamflow measurement sites located on the Big Wood River, Willow Creek, Silver Creek, and spring-fed tributaries."
+cap2 <- c("\\textbf{Site No.}: identifier used to locate measurement sites on maps located in figures and as a cross reference with data in other tables.",
+          "\\textbf{Site identifier}: unique numerical identifiers used to access streamflow data (\\url{http://waterdata.usgs.gov/nwis}).",
+          "\\textbf{Name}: local measurement site name used in this study.")
+tbl <- xtable::xtable(d, label="table_sites")
+xtable::caption(tbl) <- c(sprintf("%s [%s]", cap1, paste(cap2, collapse=" ")), cap1)
+xtable::digits(tbl) <- 0
+xtable::align(tbl) <- c("l", "c", "c", "p{3.7in}", "l")
+print(tbl, include.rownames=FALSE, caption.placement="top", booktabs=TRUE,
+      sanitize.colnames.function=function(x){x}, size="\\small", NA.string="NA")
+@
+
+<<table_lm, echo=FALSE, results="asis">>=
+ids <- c(13135500, 13135520, 13137000, 13137500, 13138000)
+d <- sites@data[match(ids, sites@data$SiteNo), c("Name", "site.no")]
+d$Period <- c("Jun 1948 -- Sep 1971, May 2011 -- Sep 2013",
+              "May 2011 -- Sep 2013", "Feb 2011 -- Mar 2014",
+              "Dec 2010 -- Mar 2014", "Nov 2011 -- Sep 2013")
+d$Slope     <- c(0.34, 0.16, 0.17, 0.12, 0.12)
+d$Intercept <- c(0.05, -5.74, 6.59, -11.90, -7.21) * cfs.to.m3.per.d
+d$R.squared <- c(0.975, 0.863, 0.885, 0.865, 0.877)
+columns <- c("Station name", "Site \\\\ No.", "Coinciding \\\\ time period",
+             "Slope \\\\ (1)", "Intercept \\\\ (m\\textsuperscript{3}/d)",
+             "R\\textsuperscript{2} \\\\ (1)")
+colnames(d) <- sprintf("\\textbf{\\shortstack{%s}}", columns)
+cap1 <- paste("Characteristics of the linear regression models used to estimate streamflow at various streamgages during periods of missing data.",
+              "The independent variable of the linear regression models is streamflow measured at the Big Wood River, Hailey streamgage (13139510), in cubic meters per day.")
+cap2 <- c("\\textbf{Station name}: local streamgage name used in this study.",
+          "\\textbf{Site No.}: identifier used to locate streamflow measurement sites in \\hyperref[fig:map_sites]{figure~\\ref{fig:map_sites}} and \\hyperref[table_sites]{table~\\ref{table_sites}}.",
+          "\\textbf{Coinciding time period}: when streamflow data were available at both streamgages.",
+          "\\textbf{Slope} and \\textbf{Intercept}: of the linear regression model.",
+          "\\textbf{R\\textsuperscript{2}}: the coefficient of determination.",
+          "\\textbf{Abbreviations}: m\\textsuperscript{3}/d, cubic meters per day")
+
+tbl <- xtable::xtable(d, label="table_lm")
+xtable::caption(tbl) <- c(sprintf("%s [%s]", cap1, paste(cap2, collapse=" ")), cap1)
+xtable::digits(tbl)[5:7] <- c(2, 0, 3)
+xtable::align(tbl) <- c("l", "p{2.8in}", "c", "p{1.2in}", "r", "r", "r")
+print(tbl, include.rownames=FALSE, caption.placement="top", booktabs=TRUE,
+      sanitize.colnames.function=function(x){x}, size="\\small", NA.string="--",
+      sanitize.text.function=identity, format.args=list(big.mark=","))
+@
+
+% ===
+
+\subsubsection{Returns}
+
+<<echo=FALSE>>=
+
+# Apply hack for records in seepage.study that are missing from div.ret.exch
+is.missing <- with(seepage.study@data, Type %in% c("Diversion", "Return", "Exchange well inflow") & !Name %in% div.ret.exch$Name)
+missing.rec <- seepage.study[is.missing, c("Name", "Type"), drop=FALSE]
+missing.rec@data$LocSource <- NA
+missing.rec@data$BigReach  <- NA
+div.ret.exch <- rbind(div.ret.exch, missing.rec)
+
+p.ret <- div.ret.exch[div.ret.exch@data$Type %in% c("Return", "Exchange well inflow"), ]
+p.ret@data$ret.no <- seq_along(p.ret)
+
+GetRetNo <- function(i) {
+  return(sprintf("return No.~%s", paste(p.ret@data$ret.no[p.ret$Name %in% i], collapse=",~")))
+}
+@
+
+There are three water-source types for streamflow returns to the Big Wood River, Silver Creek, and spring-fed tributary streams.
+These water-source types are: (1) effluent from wastewater treatment plants (WWTP), (2) surface water from canals, and (3) pumped groundwater from exchange wells.
+Effluent flows into the Big Wood River from three municipal WWTP's (\hyperref[table_ret]{table~\ref{table_ret}}, \hyperref[fig:map_ret]{fig.~\ref{fig:map_ret}}).
+The Ketchum Sun Valley (which includes the City of Ketchum and the Sun Valley Water and Sewer District) WWTP (\Sexpr{GetRetNo("Ketchum Sun Valley WWTP")}) and
+The Meadows WWTP (\Sexpr{GetRetNo("The Meadows WWTP")}) outfalls are into the river between the Near Ketchum (13135500) and Hailey (13139510) streamgages.
+The City of Hailey WWTP outfall (\Sexpr{GetRetNo("Hailey WWTP")}) is into the river between the Hailey (13139510) and the Stanton Crossing near Bellevue (13140800) streamgages.
+Records of wastewater treatment plant return flows are available for various years (1995--2012 for the Ketchum Sun Valley WWTP, 1996--2012 for the City of Hailey WWTP, and 2000--2012 for The Meadows WWTP).
+Effluent return flows during periods of missing data (1995 for the City of Hailey WWTP and 1995--1999 for The Meadows WWTP) were assumed to be similar to the first year for which data were available.
+
+There are few measured returns from canals to rivers or streams in the study area (\hyperref[table_ret]{table~\ref{table_ret}}, \hyperref[fig:map_ret]{fig.~\ref{fig:map_ret}}).
+Water District 37 has recorded streamflow returns from the District 45 canal system to the Loving Creek area (\Sexpr{GetRetNo("District 45 Legacy Project")}).
+In recent years, Water District 37 began recording returns to the Big Wood River from canals that primarily deliver water for aesthetic, non-consumptive uses;
+such as the Gimlet and Rinker irrigation systems (\Sexpr{GetRetNo(c("Comstock 10 Outflow", "Comstock 10A Outflow"))}).
+Unmeasured returns from irrigation canals to streams are thought to be negligible in the study area
+(Kevin Lakey, Watermaster Water District 37, written commun., August 27, 2013).
+
+Exchange wells pump water into a river or stream so that an equivalent amount of water can be diverted at a downstream location.
+There are 9 exchange wells in the study area and diversion amounts are recorded by Water District 37.
+Eight of these wells discharge into Silver Creek or its tributaries above the Silver Creek at Sportsman Access streamgage (13150430, \Sexpr{GetSiteNo(13150430)}).
+The other well (\Sexpr{GetRetNo("Mill In 16P")}) discharges into Silver Creek downstream of the Silver Creek at Sportsman Access streamgage (13150430).
+
+<<include=FALSE>>=
+v <- "Streamflow returns from irrigation canals or ponds, and exchange wells located on the Big Wood River, Silver Creek, and spring-fed tributaries."
+v <- c(paste("Map showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(v)))), v)
+@
+
+<<map_ret, echo=FALSE, fig.width=fin.map.0[1], fig.height=fin.map.0[2], fig.scap=sprintf("{%s}", v[1]), fig.cap=sprintf("{%s}", v[2])>>=
+PlotMap(crs(hill.shading), xlim=usr.map[1:2], ylim=usr.map[3:4],
+        bg.image=hill.shading, dms.tick=TRUE, bg.image.alpha=0.6, credit=credit)
+plot(alluvium.extent, border="#FFFFFFCC", col="#FFFFFF9A", add=TRUE)
+plot(river.reaches, col="#3399CC", lwd=0.5, add=TRUE)
+plot(tributary.streams, col="#3399CC", lwd=0.5, add=TRUE)
+p <- p.ret[p.ret@data$Type == "Return", ]
+cols <- c("#F3077D", "#7FAF1B")
+points(p, pch=23, cex=0.7, col=cols[1], bg=cols[1])
+pos <- c(2, 4, 1, 2, 4, 3, 4)
+text(p, labels=p@data$ret.no, col="#333333", cex=0.6, pos=pos, offset=0.3)
+p <- p.ret[p.ret@data$Type == "Exchange well inflow", ]
+points(p, pch=21, cex=0.7, col=cols[2], bg=cols[2])
+pos <- c(2, 3, 4, 1, 2, 3, 3, 1, 3, 1,
+         1, 2, 3, 2)
+text(p, labels=p@data$ret.no, col="#333333", cex=0.6, pos=pos, offset=0.3)
+leg <- c("Irrigation canal or pond return", "Exchange-well return")
+legend("topright", leg, pch=c(23, 21), lwd=NA, col=cols, pt.bg=cols,
+       pt.cex=0.7, inset=0.02, cex=0.7, box.lty=1, box.lwd=0.5, bg="#FFFFFFE7")
+invisible(dev.off())
+@
+
+<<table_ret, echo=FALSE, results="asis">>=
+d <- p.ret@data
+d$Type <- as.character(d$Type)
+d$Type[d$Type == "Return"] <- "Irrigation canal or pond"
+d$Type[d$Type == "Exchange well inflow"] <- "Exchange well"
+d <- d[, c("ret.no", "Name", "Type")]
+columns <- c("Return \\\\ No.", "Name", "Water-source")
+colnames(d) <- sprintf("\\textbf{\\shortstack{%s}}", columns)
+cap1 <- "Streamflow returns located on the Big Wood River, Silver Creek, and spring-fed tributaries."
+cap2 <- c("\\textbf{Return No.}: identifier used to locate returns in \\hyperref[fig:map_ret]{figure~\\ref{fig:map_ret}}.",
+          "\\textbf{Name}: local name used to identify the return-flow location in this study.",
+          "\\textbf{Water-source}: the water type for return flows.")
+tbl <- xtable::xtable(d, label="table_ret")
+xtable::caption(tbl) <- c(sprintf("%s [%s]", cap1, paste(cap2, collapse=" ")), cap1)
+xtable::digits(tbl) <- 0
+xtable::align(tbl) <- c("l", "c", "p{2.0in}", "l")
+print(tbl, include.rownames=FALSE, caption.placement="top", booktabs=TRUE,
+      sanitize.colnames.function=function(x){x}, size="\\small", NA.string="--")
+@
+
+\subsubsection{Diversions}
+
+Surface-water irrigation diversions from the Big Wood River, Willow Creek, Silver Creek, and spring-fed tributary streams have been recorded by Water District 37 and Water District 37M since 1920
+(\hyperref[table_div]{table~\ref{table_div}}, \hyperref[fig:map_div]{fig.~\ref{fig:map_div}}).
+IDWR employees compiled monthly diversion data for the simulation period (1995--2010) that are available from April through September each year.
+The irrigation season extends through October 31, and the Water Districts do not record diversions that occur between September 30 and April 1 of the following year.
+Diversions recorded during the month of October were estimated to be 25 percent of September diversions.
+
+<<include=FALSE>>=
+v <- "Streamflow diversions along on the Big Wood River, Willow Creek, Silver Creek, and spring-fed tributary streams."
+v <- c(paste("Map showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(v)))), v)
+@
+
+<<map_div, echo=FALSE, fig.width=fin.map.0[1], fig.height=fin.map.0[2], fig.scap=sprintf("{%s}", v[1]), fig.cap=sprintf("{%s}", v[2])>>=
+p.div <- div.ret.exch[div.ret.exch@data$Type == "Diversion", ]
+p.div@data$div.no <- seq_along(p.div)
+PlotMap(crs(hill.shading), xlim=usr.map[1:2], ylim=usr.map[3:4],
+        bg.image=hill.shading, dms.tick=TRUE, bg.image.alpha=0.6, credit=credit)
+plot(alluvium.extent, border="#FFFFFFCC", col="#FFFFFF9A", add=TRUE)
+plot(river.reaches, col="#3399CC", lwd=0.5, add=TRUE)
+plot(tributary.streams, col="#3399CC", lwd=0.5, add=TRUE)
+points(p.div, pch=22, cex=0.7, col="#F98C64", bg="#F98C64")
+lab <- formatC(p.div@data$div.no)
+lab[31] <- "31-54"
+lab[32:54] <- ""
+pos <- c(3, 4, 1, 2, 4, 1, 2, 2, 1, 4,
+         4, 3, 4, 3, 1, 4, 1, 2, 1, 4,
+         4, 2, 2, 4, 4, 1, 2, 3, 1, 1,
+         2, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+         1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+         1, 1, 1, 1, 1, 1, 4, 1, 3, 2,
+         2, 4, 1, 2, 4, 2, 2, 4, 2, 4,
+         2, 4, 3, 4, 4, 3, 1, 1, 1, 3,
+         2, 4, 1, 1, 3, 1, 2, 4, 3, 4,
+         2, 4, 1, 2, 3, 1, 3, 4, 1, 1,
+         3, 4, 2, 2)
+text(p.div, labels=lab, col="#333333", cex=0.6, pos=pos, offset=0.3)
+leg <- "Stream diversion"
+legend("topright", leg, pch=22, lwd=NA, col="#F98C64", pt.bg="#F98C64",
+       pt.cex=0.7, inset=0.02, cex=0.7, box.lty=1, box.lwd=0.5, bg="#FFFFFFE7")
+invisible(dev.off())
+@
+
+<<table_div, echo=FALSE, results="asis">>=
+d <- p.div@data
+d$SiteNo <- seepage.study@data$SiteNo[match(d$Name, seepage.study@data$Name)]
+d <- d[, c("div.no", "SiteNo", "Name")]
+columns <- c("Div. \\\\ No.", "Site \\\\ identifier", "Name")
+colnames(d) <- sprintf("\\textbf{\\shortstack{%s}}", columns)
+cap1 <- "Streamflow diversions located on the Big Wood River, Willow Creek, Silver Creek, and spring-fed tributaries."
+cap2 <- c("\\textbf{Div. No.}: identifier used to locate diversions in \\hyperref[fig:map_div]{figure~\\ref{fig:map_div}}.",
+          "\\textbf{Site identifier}: unique numerical identifiers used to access streamflow measurement data (\\url{http://waterdata.usgs.gov/nwis}).",
+          "\\textbf{Name}: local diversion name used in this study.",
+          "\\textbf{Abbreviations}: --, not available")
+idxs <- 1:52
+tbl <- xtable::xtable(d[idxs, ], label="table_div")
+xtable::caption(tbl) <- c(sprintf("%s [%s]", cap1, paste(cap2, collapse=" ")), cap1)
+xtable::digits(tbl) <- 0
+xtable::align(tbl) <- "lccl"
+print(tbl, include.rownames=FALSE, caption.placement="top", booktabs=TRUE,
+      sanitize.colnames.function=function(x){x}, size="\\small", NA.string="--")
+@
+
+\captionsetup[table]{list=no}
+\addtocounter{table}{-1}
+<<echo=FALSE, results="asis">>=
+tbl <- xtable::xtable(d[seq_len(nrow(d))[-idxs], ], label="table_div_1")
+ xtable::caption(tbl) <- sprintf("%s---Continued", cap1)
+xtable::digits(tbl) <- 0
+xtable::align(tbl) <- "lccl"
+print(tbl, include.rownames=FALSE, caption.placement="top", booktabs=TRUE,
+      sanitize.colnames.function=function(x){x}, size="\\small", NA.string="--")
+@
+\captionsetup[table]{list=yes}
+
+% =========================================================================
+
+\subsubsection{River reaches}
+
+<<echo=FALSE>>=
+rr <- river.reaches[river.reaches@data$BigReach != "None", ]
+rr <- rr[order(rr@data$ReachNo), ]
+reach.names <- unique(rr@data$BigReach)
+reach.numbers <- match(rr@data$BigReach, reach.names)
+
+GetReachNo <- function(i) {
+  d <- data.frame(ReachNo=seq_along(reach.names), Name=as.character(reach.names))
+  return(sprintf("reach No.~%s", d[d$Name == i, "ReachNo"]))
+}
+@
+
+To simplify the structural complexity of the WRV river system, five river reaches were delineated based on the locations of streamgages with continuous streamflow records
+(\hyperref[fig:map_reach]{fig.~\ref{fig:map_reach}}, \hyperref[table_reach]{table~\ref{table_reach}}).
+A river reach is defined as a continuous run of surface water with similar hydrologic characteristics.
+The upstream and downstream boundaries of a river reach typically coincide with the location of a streamgage with continuous records (\hyperref[table_reach]{table~\ref{table_reach}}).
+The exception is Willow Creek (\Sexpr{GetReachNo("Willow Creek")}) and Silver Creek above Sportsman Access (\Sexpr{GetReachNo("Spring creeks abv Sportsman")}) which begin as spring-fed streams and there are no upstream streamgages for these reaches.
+
+A flow-difference method was used to estimate the stream-aquifer flow exchange along a river reach (\hyperref[table_reach]{table~\ref{table_reach}}).
+This method assumes that the changes in flow along a reach are solely attributed to groundwater inflows and outflows,
+all other surface-water inflows (such as returns) and outflows (such as diversions) are either negligible or have been quantified.
+Streamflow gain (or loss) for a reach was determined by subtracting inflow measurements from outflow measurements, and expressed as,
+
+\begin{equation} \label{eq:reach_gain}
+\Delta S = \mathit{RIV}_{\mathit{out}} - \sum \mathit{RIV}_{\mathit{in}} - \sum \mathit{TRIB} - \sum \mathit{RET} + \sum \mathit{DIV}
+\end{equation}
+where
+\begin{description}
+\item[\Delta S] is the difference in surface-water flow within a river reach for a given time, a positive value is a stream gain (gaining reach) and a negative value is a stream loss (losing reach), in cubic meters per day;
+\item[\mathit{RIV}_{\mathit{out}}] is the volumetric outflow at the downstream end of the river reach, in cubic meters per day;
+\item[\mathit{RIV}_{\mathit{in}}] is the volumetric inflow at the upstream end of the river reach, in cubic meters per day;
+\item[\mathit{TRIB}] is the volumetric inflow from a tributary of the river reach, in cubic meters per day;
+\item[\mathit{RET}] is the volumetric return flow from an irrigation canal, pond, wastewater-treatment plant, and (or) exchange-well return flow to the river reach, in cubic meters per day; and
+\item[\mathit{DIV}] is the volumetric outflow from a stream diversion on the river reach, in cubic meters per day.
+\end{description}
+
+\noindent To facilitate a comparison with model-simulated results, equation~(\ref{eq:reach_gain}) is expressed in terms of aquifer recharge as,
+
+\begin{equation} \label{eq:reach_rech}
+Q = \sum \mathit{RIV}_{\mathit{in}} - \mathit{RIV}_{\mathit{out}} + \sum \mathit{TRIB} + \sum \mathit{RET} - \sum \mathit{DIV}
+\end{equation}
+where
+\begin{description}
+\item[Q] is the estimated stream-aquifer flow exchange in a river reach, a positive value is flow into the aquifer and a negative value is flow out of the aquifer, in cubic meters per day.
+\end{description}
+
+For each iteration of PEST, a model-simulated stream-aquifer flow exchange is calculated for each river reach and compared to its corresponding field-based estimate.
+The differences between simulated and measured values is minimized during model calibration (equation~\ref{eq:min}) (1998--2010).
+
+<<include=FALSE>>=
+v <- "Assigned river reaches in the Wood River Valley, Idaho."
+v <- c(paste("Map showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(v)))), v)
+@
+
+<<map_reach, echo=FALSE, fig.width=fin.map.0[1], fig.height=fin.map.0[2], fig.scap=sprintf("{%s}", v[1]), fig.cap=sprintf("{%s}", v[2])>>=
+Pal <- function(...) {
+  cols1 <- rainbow(..., s=0.5, v=1)
+  cols2 <- rainbow(..., s=1, v=0.5)
+  is.even <- seq_along(cols1) %% 2 == 0
+  cols1[is.even] <- cols2[is.even]
+  return(cols1)
+}
+PlotMap(crs(hill.shading), xlim=usr.map[1:2], ylim=usr.map[3:4],
+        bg.image=hill.shading, dms.tick=TRUE, bg.image.alpha=0.6, credit=credit)
+plot(alluvium.extent, border="#FFFFFFCC", col="#FFFFFF9A", add=TRUE)
+cols <- Pal(max(reach.numbers))[reach.numbers]
+plot(rr, col=cols, lwd=0.5, add=TRUE)
+text(getSpatialLinesMidPoints(rr), labels=reach.numbers,
+     col="#333333", cex=0.6, pos=4, offset=0.4)
+ids <- c("13135500", "13139510", "13140800", "13140900", "13150430")
+points(sites[sites@data$SiteNo %in% ids, ], pch=24, cex=0.7,
+       col="#333333B1", bg="#333333B1")
+legend("topright", format(unique(reach.numbers)), lwd=1, col=unique(cols),
+       pt.cex=1, inset=0.02, cex=0.7, box.lty=1, box.lwd=0.5,
+       bg="#FFFFFFE7", title=expression(bold("Reach")))
+invisible(dev.off())
+@
+
+<<table_reach, echo=FALSE, results="asis">>=
+d <- data.frame(ReachNo=seq_along(reach.names))
+
+d$Name <- c("Big Wood, Nr Ketchum to Hailey",
+            "Big Wood, Hailey to Stanton Crossing",
+            "Willow Creek",
+            "Silver Creek, above Sportsman Access",
+            "Silver Creek, Sportsman Access to Nr Picabo")
+
+# match(c(13135500, 13139510, 0, 0, 13150430), sites@data$SiteNo)
+d$UpNo <- c("\\textbf{1}", "\\textbf{14}", NA, NA, "\\textbf{31}")
+
+# match(c(13139510, 13140800, 13140900, 13150430, 13150500), sites@data$SiteNo)
+d$DownNo <- c("\\textbf{14}", "\\textbf{20}", "\\textbf{21}", "\\textbf{31}", "32")
+
+# match(c(13135520, 13137000, 13137500, 13138000), sites@data$SiteNo)
+d$TribNo <- c("2, 9, 10, 12", NA, NA, NA, NA)
+
+# lapply(d$Name, function(i) which(p.div@data$BigReach == i))
+d$div.no <- c("1--27", "28--69", "70--79", "80--93", "94--98")
+
+# lapply(d$Name, function(i) which(p.ret@data$BigReach == i))
+d$ret.no <- c("1--4", "5", NA, "6--18", "19")
+
+columns <- c("Reach \\\\ No.",
+             "Name",
+             "Upstream \\\\ Site No.",
+             "Down- \\\\ stream \\\\ Site No.",
+             "Tributary \\\\ Site No.",
+             "Return \\\\ No.",
+             "Diversion \\\\ No.")
+colnames(d) <- sprintf("\\textbf{\\shortstack{%s}}", columns)
+cap1 <- "Assigned river reaches of the Big Wood River, Willow Creek, Silver Creek, and spring-fed tributaries."
+cap2 <- c("\\textbf{Reach No.}: identifier used to locate river reaches in \\hyperref[fig:map_reach]{figure~\\ref{fig:map_reach}}.",
+          "\\textbf{Name}: local reach name used in this study.",
+          "\\textbf{Site No.}: identifier used to locate streamflow  measurement sites in \\hyperref[fig:map_sites]{figure~\\ref{fig:map_sites}} and \\hyperref[table_sites]{table~\\ref{table_sites}}.",
+            "Entry in \\textbf{bold} indicates a streamgage with continuous record.",
+            "No upstream site number indicates that the reach is spring-fed.",
+          "\\textbf{Return No.}: identifier used to locate return flows in \\hyperref[fig:map_ret]{figure~\\ref{fig:map_ret}} and \\hyperref[table_ret]{table~\\ref{table_ret}}.",
+          "\\textbf{Diversion No.}: identifier used to locate stream diversions in \\hyperref[fig:map_div]{figure~\\ref{fig:map_div}} and \\hyperref[table_div]{table~\\ref{table_div}}.",
+          "\\textbf{Abbreviations}: --, not present.")
+tbl <- xtable::xtable(d, label="table_reach")
+xtable::caption(tbl) <- c(sprintf("%s [%s]", cap1, paste(cap2, collapse=" ")), cap1)
+xtable::digits(tbl) <- 0
+xtable::align(tbl) <- c("l", "c", "l", "c", "c", "c", "c", "c")
+print(tbl, include.rownames=FALSE, caption.placement="top", booktabs=TRUE,
+      sanitize.colnames.function=function(x){x}, size="\\small", NA.string="--",
+      sanitize.text.function=identity)
+@
+
+% Big Wood River, near Ketchum to Hailey reach
+
+During the simulation period (1995--2010) the October through April stream-aquifer flow exchange along the
+Big Wood River, near Ketchum to Hailey reach (\Sexpr{GetReachNo("Big Wood, Nr Ketchum to Hailey")}) was estimated using equation~(\ref{eq:reach_rech}).
+Because of probable ungaged tributary stream contributions in this reach, the May through September flow exchange could not be estimated.
+Outflows from the reach are measured streamflow at the Big Wood River at Hailey streamgage (13139510, \Sexpr{GetSiteNo(13139510)}) and recorded irrigation diversions.
+Inflows to the reach are correlated streamflows at the Big Wood River near Ketchum (13135500, \Sexpr{GetSiteNo(13135500)}),
+North Fork Big Wood River near Sawtooth NRA Headquarters near Ketchum (13135520, \Sexpr{GetSiteNo(13135520)}),
+Warm Springs Creek near Ketchum (13137000, \Sexpr{GetSiteNo(13137000)}),
+Trail Creek at Ketchum (13137500, \Sexpr{GetSiteNo(13137500)}), and East Fork Big Wood River at Gimlet (13138000, \Sexpr{GetSiteNo(13138000)}) streamgages;
+streamflow from ungaged tributaries; and recorded wastewater treatment plant return flows (\hyperref[table_reach]{table~\ref{table_reach}}).
+The resultant stream-aquifer flow exchange is shown in \hyperref[fig:graph_nket_hai]{figure~\ref{fig:graph_nket_hai}};
+aquifer discharges are typically smallest in February and largest in April.
+Estimates range from
+\Sexpr{FUN <- function(i) formatC(i, big.mark=",", format="d"); x <- reach.recharge$nKet_Hai; FUN(y <- min(x, na.rm=TRUE))} m\textsuperscript{3}/d (\Sexpr{FUN(y / cfs.to.m3.per.d)} cfs) to
+\Sexpr{FUN(y <- max(x, na.rm=TRUE))} m\textsuperscript{3}/d (\Sexpr{FUN(y / cfs.to.m3.per.d)} cfs);
+with a mean and standard deviation of
+\Sexpr{FUN(y <- mean(x, na.rm=TRUE))} m\textsuperscript{3}/d (\Sexpr{FUN(y / cfs.to.m3.per.d)} cfs) and
+\Sexpr{FUN(y <- sd(x, na.rm=TRUE))} m\textsuperscript{3}/d (\Sexpr{FUN(y / cfs.to.m3.per.d)} cfs), respectively.
+
+<<include=FALSE>>=
+v <- "Stream-aquifer flow exchange in the Big Wood River, near Ketchum to Hailey river reach."
+v <- c(paste("Graph showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(v)))), v)
+@
+
+<<graph_nket_hai, echo=FALSE, fig.width=fin.graph.short[1], fig.height=fin.graph.short[2], fig.scap=sprintf("{%s}", v[1]), fig.cap=sprintf("{%s}", v[2])>>=
+d.rech <- reach.recharge
+ndays <- GetDaysInMonth(tail(d.rech$YearMonth, 1))
+d.rech <- data.frame(Date=as.Date(paste0(d.rech$YearMonth, "01"), "%Y%m%d"),
+                     d.rech[, -1])
+d.rech <- rbind(d.rech, d.rech[nrow(d.rech), , drop=FALSE])
+d.rech$Date[nrow(d.rech)] <- d.rech$Date[nrow(d.rech)] + ndays
+ylab <- paste("Stream-aquifer flow exchange, in", c("cubic meters per day", "cubic feet per second"))
+xlim <- as.Date(c("1995-01-01", "2011-01-01"), tz="MST")
+d <- d.rech[, c("Date", "nKet_Hai")]
+col <- "#C80C0B"
+PlotGraph(d, ylab=ylab, xlim=xlim, col=col, fill=paste0(col, "66"),
+          conversion.factor=1 / cfs.to.m3.per.d,
+          scientific=c(FALSE, TRUE, FALSE), center.date.labels=TRUE)
+invisible(dev.off())
+@
+
+% Big Wood River, Hailey to Stanton Crossing reach
+
+The stream-aquifer flow exchange along the Big Wood River, Hailey to Stanton Crossing reach (\Sexpr{GetReachNo("Big Wood, Hailey to Stanton Crossing")}) was estimated using equation~(\ref{eq:reach_rech}).
+Outflows from the reach are the measured streamflow at the Big Wood River at Stanton Crossing near Bellevue streamgage (13140800, \Sexpr{GetSiteNo(13140800)}) and recorded irrigation diversions.
+Inflow to the reach is the measured streamflow at the Big Wood River at Hailey streamgage (\Sexpr{GetSiteNo(13139510)});
+streamflow contributions from ungaged tributaries along this reach were assumed negligible.
+The resultant stream-aquifer flow exchange is shown in \hyperref[fig:graph_hai_stc]{figure~\ref{fig:graph_hai_stc}}.
+Estimates range from
+\Sexpr{FUN <- function(i) formatC(i, big.mark=",", format="d"); x <- reach.recharge$Hai_StC; FUN(y <- min(x, na.rm=TRUE))} m\textsuperscript{3}/d (\Sexpr{FUN(y / cfs.to.m3.per.d)} cfs) to
+\Sexpr{FUN(y <- max(x, na.rm=TRUE))} m\textsuperscript{3}/d (\Sexpr{FUN(y / cfs.to.m3.per.d)} cfs);
+with a mean and standard deviation of
+\Sexpr{FUN(y <- mean(x, na.rm=TRUE))} m\textsuperscript{3}/d (\Sexpr{FUN(y / cfs.to.m3.per.d)} cfs) and
+\Sexpr{FUN(y <- sd(x, na.rm=TRUE))} m\textsuperscript{3}/d (\Sexpr{FUN(y / cfs.to.m3.per.d)} cfs), respectively.
+Most months have positive values (aquifer recharge) indicating that it is a losing reach during most of the simulation period.
+There was insufficient measurement data to estimate flow exchange prior to October 1996.
+
+<<include=FALSE>>=
+v <- "Stream-aquifer flow exchange in the Big Wood River, Hailey to Stanton Crossing river reach."
+v <- c(paste("Graph showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(v)))), v)
+@
+
+<<graph_hai_stc, echo=FALSE, fig.width=fin.graph.short[1], fig.height=fin.graph.short[2], fig.scap=sprintf("{%s}", v[1]), fig.cap=sprintf("{%s}", v[2])>>=
+d <- d.rech[, c("Date", "Hai_StC")]
+d[, 3] <- d[, 2]
+d[!is.na(d[, 2]) & d[, 2] < 0, 2] <- 0
+d[!is.na(d[, 3]) & d[, 3] > 0, 3] <- 0
+col <- c("#67A9CF", "#C80C0B")
+PlotGraph(d, ylab=ylab, xlim=xlim, col=col, fill=paste0(col, "66"),
+          conversion.factor=1 / cfs.to.m3.per.d,
+          scientific=c(FALSE, TRUE, FALSE), center.date.labels=TRUE)
+legend("bottomright", c("Recharge", "Discharge"), col=col, lty=1,
+       inset=0.02, cex=0.7, box.lty=1, box.lwd=0.5, bg="#FFFFFFE7")
+invisible(dev.off())
+@
+
+% Willow Creek reach
+
+The stream-aquifer flow exchange along the Willow Creek reach (\Sexpr{GetReachNo("Willow Creek")}) was estimated using equation~(\ref{eq:reach_rech}).
+Outflows from the reach are measured streamflow at the Willow Creek near Bellevue streamgage (13140900, \Sexpr{GetSiteNo(13140900)}) and recorded irrigation diversions.
+Because the upstream end of the reach is defined as the spring-fed origins of Willow Creek and its tributaries, total inflows to the reach are assumed to be zero.
+Note that minor and unmeasured inflows from uncontrolled flowing wells may contribute to reach gains.
+The resultant stream-aquifer flow exchange is shown in \hyperref[fig:graph_willowcr]{figure~\ref{fig:graph_willowcr}}.
+Estimates range from
+\Sexpr{FUN <- function(i) formatC(i, big.mark=",", format="d"); x <- reach.recharge$WillowCr; FUN(y <- min(x, na.rm=TRUE))} m\textsuperscript{3}/d (\Sexpr{FUN(y / cfs.to.m3.per.d)} cfs) to
+\Sexpr{FUN(y <- max(x, na.rm=TRUE))} m\textsuperscript{3}/d (\Sexpr{FUN(y / cfs.to.m3.per.d)} cfs);
+with a mean and standard deviation of
+\Sexpr{FUN(y <- mean(x, na.rm=TRUE))} m\textsuperscript{3}/d (\Sexpr{FUN(y / cfs.to.m3.per.d)} cfs) and
+\Sexpr{FUN(y <- sd(x, na.rm=TRUE))} m\textsuperscript{3}/d (\Sexpr{FUN(y / cfs.to.m3.per.d)} cfs), respectively.
+All values are negative (aquifer discharge) which indicates that it is a gaining reach during the period from July 2000 through December 2010.
+Aquifer discharges are typically smallest in January and largest in July.
+There was insufficient measurement data to estimate flow exchange prior to July 2000.
+
+<<include=FALSE>>=
+v <- "Stream-aquifer flow exchange in the Willow Creek river reach."
+v <- c(paste("Graph showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(v)))), v)
+@
+
+<<graph_willowcr, echo=FALSE, fig.width=fin.graph.short[1], fig.height=fin.graph.short[2], fig.scap=sprintf("{%s}", v[1]), fig.cap=sprintf("{%s}", v[2])>>=
+d <- d.rech[, c("Date", "WillowCr")]
+col <- "#C80C0B"
+PlotGraph(d, ylab=ylab, xlim=xlim, col=col, fill=paste0(col, "66"),
+          conversion.factor=1 / cfs.to.m3.per.d,
+          scientific=c(FALSE, TRUE, FALSE), center.date.labels=TRUE)
+invisible(dev.off())
+@
+
+% Silver Creek above Sportsman Access reach
+
+The stream-aquifer flow exchange along Silver Creek, above Sportsman Access river reach (\Sexpr{GetReachNo("Spring creeks abv Sportsman")}) was estimated using equation~(\ref{eq:reach_rech}).
+This reach includes Buhler Drain and Stalker, Patton, Cain, Chaney, Mud, Wilson, Grove, and Loving Creeks.
+Outflows from the reach are measured streamflow at the Silver Creek at Sportsman Access near Picabo streamgage (13150430, \Sexpr{GetSiteNo(13150430)}) and recorded irrigation diversions.
+As with the Willow Creek reach (\Sexpr{GetReachNo("Willow Creek")}), because the upstream end of the reach is defined as the spring-fed origins of Silver Creek and its tributaries,
+total inflows to the reach are assumed to be zero.
+Recorded inflows to the reach are primarily spring and seep discharge but include exchange wells and returns from the District 45 Legacy Project.
+The resultant stream-aquifer flow exchange is shown in \hyperref[fig:graph_silverabv]{figure~\ref{fig:graph_silverabv}};
+all estimated values are negative (aquifer discharge) which indicates that it is a gaining reach through the entire simulation period.
+Estimates range from
+\Sexpr{FUN <- function(i) formatC(i, big.mark=",", format="d"); x <- reach.recharge$SilverAbv; FUN(y <- min(x, na.rm=TRUE))} m\textsuperscript{3}/d (\Sexpr{FUN(y / cfs.to.m3.per.d)} cfs) to
+\Sexpr{FUN(y <- max(x, na.rm=TRUE))} m\textsuperscript{3}/d (\Sexpr{FUN(y / cfs.to.m3.per.d)} cfs);
+with a mean and standard deviation of
+\Sexpr{FUN(y <- mean(x, na.rm=TRUE))} m\textsuperscript{3}/d (\Sexpr{FUN(y / cfs.to.m3.per.d)} cfs) and
+\Sexpr{FUN(y <- sd(x, na.rm=TRUE))} m\textsuperscript{3}/d (\Sexpr{FUN(y / cfs.to.m3.per.d)} cfs), respectively.
+Aquifer discharges are typically smallest in October and largest in March.
+
+<<include=FALSE>>=
+v <- "Stream-aquifer flow exchange in Silver Creek, above Sportsman Access river reach."
+v <- c(paste("Graph showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(v)))), v)
+@
+
+<<graph_silverabv, echo=FALSE, fig.width=fin.graph.short[1], fig.height=fin.graph.short[2], fig.scap=sprintf("{%s}", v[1]), fig.cap=sprintf("{%s}", v[2])>>=
+d <- d.rech[, c("Date", "SilverAbv")]
+col <- "#C80C0B"
+PlotGraph(d, ylab=ylab, xlim=xlim, col=col, fill=paste0(col, "66"),
+          conversion.factor=1 / cfs.to.m3.per.d,
+          scientific=c(FALSE, TRUE, FALSE), center.date.labels=TRUE)
+invisible(dev.off())
+@
+
+% Silver Creek, Sportsman Access to near Picabo
+
+Estimates of stream-aquifer flow exchange along the Silver Creek, Sportsman Access to near Picabo reach (\Sexpr{GetReachNo("Silver Creek, Sportsman Access to Nr Picabo")}) were first made by \citet{Moreland1977} using a flow difference approach.
+He reports a reach loss (aquifer recharge) of 9,786 m\textsuperscript{3}/d (4 cfs) in May 1975,
+and reach gains (aquifer discharge) of 61,164 m\textsuperscript{3}/d (25 cfs) in June 1975 and 22,019 m\textsuperscript{3}/d (9 cfs) in October 1975.
+For comparison, the flow exchange reported by \citet{Bartolino2014} (and adjusted to account for diversions and exchange wells reported by Water District 37M; also using a flow difference approach)
+were reach gains of 13,211 m\textsuperscript{3}/d (5.4 cfs) in August 2012, 29,359 m\textsuperscript{3}/d (12 cfs) in October 2012, and zero in March 2013.
+Because Water District 37M does not record diversion rates during October, it is possible that the estimated reach gain in October 2012 was affected by unmeasured diversions or exchange well inflows.
+The 2012 through 2013 estimates did not account for irrigation returns from the O Drain, which enters Silver Creek downstream of the model boundary.
+It is unclear whether \citet{Moreland1977} accounted for inflow from this drainage ditch.
+
+\citet{Moreland1977} noted that the Silver Creek at Sportsman Access near Picabo streamgage (13150430, \Sexpr{GetSiteNo(13150430)}) was installed in 1974 as part of his investigation.
+The site was selected near the area of assumed maximum flow.
+Moreland indicates that Silver Creek generally gains water (aquifer discharge) upstream of Point of Rocks (about 3.2 river kilometers [2 miles] downstream of Sportsman Access),
+and may seasonally gain or lose water in the 3.2-km (2-mi) reach downstream of Point of Rocks where groundwater levels may be relatively close to land surface during the irrigation season.
+Approximately 6.4 river kilometers (4 mi) downstream of Silver Creek at Sportsman Access near Picabo streamgage (\Sexpr{GetSiteNo(13150430)}),
+the water table in the basalt portion of the WRV aquifer system becomes deeper and slopes steeply toward the Snake River Plain and Silver Creek becomes perched above the aquifer.
+A shallow perched aquifer apparently interacts with the creek in this area and contributes to measured gains and losses \citep{Moreland1977}.
+
+October 2012 groundwater-level measurements and maps \citep{Bartolino2014} indicate that Silver Creek is perched above the aquifer between about Point of Rocks and the model boundary.
+In October 2012, the depth below land surface to the water table was 20 m (65 ft) about 0.4 km (0.25 mi) north of Picabo, and 38 m (126 ft) about 0.25 mi south of where Silver Creek crosses the model boundary.
+
+A discharge of 206,980 m\textsuperscript{3}/d (84.6~cfs) in Silver Creek at the Picabo Road bridge,
+about 0.8 km (0.5 mi) north of Picabo was measured on October 16, 2014 (Allan H. Wylie and Dennis Owsley, Idaho Department of Water Resources, oral commun., 2014).
+On that date, mean daily discharge measured at the Silver Creek at Sportsman Access near Picabo streamgage (\Sexpr{GetSiteNo(13150430)}) was 200,619 m\textsuperscript{3}/d (82 cfs).
+Because Water District 37 does not record diversions during October,
+it is not known if the Mill In 16P exchange well (\Sexpr{GetRetNo("Mill In 16P")}) was injecting water into the creek or if there were diversions from the creek that day.
+It is also not known if perched irrigation returns contributed to the calculated reach gain.
+There also may be diversions and returns along this river reach (\Sexpr{GetReachNo("Silver Creek, Sportsman Access to Nr Picabo")}) that are not represented by the model because they could not be located.
+The calculated reach gain of about 7,340 m\textsuperscript{3}/d (3 cfs) is also within the error of the downstream measurement.
+Based on available information, the gain to (aquifer discharge) or loss from (aquifer recharge) the Silver Creek at Sportsman Access near Picabo streamgage (\Sexpr{GetSiteNo(13150430)})
+and the model boundary does not appear to be significantly different from zero with respect to the WRV aquifer, and a stream-aquifer flow exchange of zero was assumed.
+
+% =========================================================================
+
+\subsubsection{River subreaches}
+
+<<echo=FALSE>>=
+subreaches <- river.reaches
+is <- !subreaches@data$Reach %in% c("Willow Creek",
+                                    "Big Wood, Stanton Crossing to Nr Bellevue",
+                                    "Silver Creek, Sportsman Access to Nr Picabo")
+subreaches <- subreaches[is, ]
+subreaches$BigReachNo <- match(subreaches$BigReach, reach.names)
+@
+
+Greater spatial resolution of stream-aquifer groundwater exchange on the Big Wood River, Silver Creek,
+and spring-fed tributaries was possible using field measurements (streamflows, diversions, and returns) recorded in August 2012, October 2012, and March 2013 \citep{Bartolino2014}.
+Not unlike the larger river reaches, river subreaches were typically defined between upstream and downstream measurement stations;
+many of these stations have non-continuous streamflow records and were ungaged.
+\hyperref[fig:map_subreach]{Figure~\ref{fig:map_subreach}} shows the location of the \Sexpr{nrow(subreaches@data)} subreaches within the WRV.
+A flow difference method (equation~\ref{eq:reach_rech}) was used to estimate groundwater inflows and outflows along a river subreach
+(\hyperref[table_subreach]{tables~\ref{table_subreach}} and \ref{table_seepage}).
+
+Subreach estimates of stream-aquifer flow exchange values aggregated by river reach were compared to reach estimates based on streamflow measurements recorded during August, October, and March of 2000 through 2010.
+The 2000 through 2010 streamflow conditions (relatively dry) were similar to the 2012 through 2013 conditions and thus suitable for comparison.
+The percent difference between these two datasets is provided in \hyperref[table_pdiff]{table~\ref{table_pdiff}}.
+Percent difference is largest (greater than 100 percent) for August estimates in the Big Wood River,
+Hailey to Stanton Crossing river reach (\Sexpr{GetReachNo("Big Wood, Hailey to Stanton Crossing")}),
+and attributed to gage measurement error at the Hailey and Stanton Crossing streamgages and diversion measurement error.
+Moderate values of percent difference (about 50 percent) were measured for August and March in the Big Wood River near Ketchum to Hailey river reach (\Sexpr{GetReachNo("Big Wood, Nr Ketchum to Hailey")}).
+With the exception of August 2012, all 2012 through 2013 stream-aquifer flow-exchange estimates are within the range of estimates made during the simulation period
+$(\Sexpr{x <- formatC(range(reach.recharge[, -1], na.rm=TRUE), big.mark=",", format="d"); x[1]}$ to $\Sexpr{x[2]}$~m\textsuperscript{3}/d)
+(\hyperref[fig:graph_nket_hai]{figs.~\ref{fig:graph_nket_hai}}--\ref{fig:graph_silverabv}).
+The August 2012 estimates of stream-aquifer flow exchange along the Big Wood River, near Ketchum to Hailey river reach were
+well outside the range of flow exchange values estimated for this reach during the transient simulation period (1995--2010); therefore
+these measurements were not used in the calibration process.
+The stream-aquifer flow exchange for August 2012 was 36,698 ~m\textsuperscript{3}/d (15 cfs),
+and the minimum flow exchange value during the transient simulation period was 66,057 ~m\textsuperscript{3}/d (27 cfs).
+
+<<include=FALSE>>=
+v <- "Assigned river subreaches in the Wood River Valley, Idaho."
+v <- c(paste("Map showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(v)))), v)
+@
+
+<<map_subreach, echo=FALSE, fig.width=fin.map.0[1], fig.height=fin.map.0[2], fig.scap=sprintf("{%s}", v[1]), fig.cap=sprintf("{%s}", v[2])>>=
+Pal <- function(...) {
+  cols1 <- rainbow(..., s=0.5, v=1)
+  cols2 <- rainbow(..., s=1, v=0.5)
+  is.even <- seq_along(cols1) %% 2 == 0
+  cols1[is.even] <- cols2[is.even]
+  return(cols1)
+}
+PlotMap(crs(hill.shading), xlim=usr.map[1:2], ylim=usr.map[3:4],
+        bg.image=hill.shading, dms.tick=TRUE, bg.image.alpha=0.6, credit=credit)
+plot(alluvium.extent, border="#FFFFFFCC", col="#FFFFFF9A", add=TRUE)
+cols <- Pal(nlevels(subreaches@data$Reach))
+plot(subreaches, col=cols, lwd=0.5, add=TRUE)
+reach.numbers <- subreaches@data$ReachNo
+pos <- c(4, 2, 4, 4, 4, 4, 4, 2, 2, 2,
+         3, 3, 3, 3, 3, 3, 3, 3, 1)
+text(getSpatialLinesMidPoints(subreaches), labels=reach.numbers,
+     col="#333333", cex=0.6, pos=pos, offset=0.4)
+pts <- sites[!sites@data$Type %in% c("Tributary", "Willow Creek") &
+             !sites@data$Name %in% c("BIG WOOD RIVER NR BELLEVUE, ID",
+                                     "SILVER CREEK NEAR HWY 20 NEAR PICABO, ID"), ]
+points(pts, pch=24, cex=0.7, col="#333333B1", bg="#333333B1")
+text(2478800, 1355000, labels="Big Wood River", cex=0.6, col="#333333", font=3, srt=75)
+text(2485000, 1344500, labels="Silver\nCreek", cex=0.6, col="#333333", font=3, srt=0)
+text(2483000, 1351800, labels="spring-fed\ntributaries", cex=0.6, col="#333333", font=3)
+leg <- format(reach.numbers[order(reach.numbers)])
+legend("topright", leg, lwd=1, col=cols[order(reach.numbers)], ncol=2,
+       pt.cex=1, inset=0.02, cex=0.7, box.lty=1, box.lwd=0.5,
+       bg="#FFFFFFE7", title=expression(bold("Subreach")))
+
+invisible(dev.off())
+@
+
+<<table_subreach, echo=FALSE, results="asis">>=
+d <- subreaches@data[order(subreaches@data$ReachNo), c("ReachNo", "Reach", "BigReachNo")]
+d$BigReachNo[duplicated(d$BigReachNo)] <- ""
+rownames(d) <- NULL
+
+# match(c(13135500, 13135840, 13136000, 13138500, 13139510, 432929114174300, 432805114160400, 13140500, 432352114161500, 13140600,
+#         NA, NA, NA, NA, NA, NA, NA, NA, NA), sites@data$SiteNo)
+
+d$UpNo <- c("\\textbf{1}", 6, 8, 13, 14, 15, 16, 17, 18, NA, NA, NA, NA, NA, NA, NA, NA, NA, "23--30")
+
+# match(c(13135840, 13136000, 13138500, 13139510, 432929114174300, 432805114160400, 13140500, 432352114161500, 13140600, 13140800,
+#         13150010, 431947114133300, 13150140, 13150150, 13150300, 13150350, 13150360, 13150400, 13150430), sites@data$SiteNo)
+
+d$DownNo <- c(6, 8, 13, 14, 15, 16, 17, 18, NA, 20, 23, 24, 25, 26, 27, 28, 29, 30, 31)
+
+# match(c(13135520, 434611114244600, 13135600, 13135700), sites@data$SiteNo)
+# match(434404114215200, sites@data$SiteNo)
+# match(c(13137000, 13137500, 433817114211800, 13138000), sites@data$SiteNo)
+
+d$TribNo <- c("2--5", 7, "9--12", rep(NA, 16))
+
+# with(p.ret@data, ret.no[which(Name %in% c("BYPASS CANAL ABV AND BLW DIVERSION NR BELLEVUE, ID"))])
+
+# with(p.ret@data, ret.no[which(Name %in% c("A well into Buhler Drain"))])
+# with(p.ret@data, ret.no[which(Name %in% c("Bickett Well 00P1"))])
+
+# with(p.ret@data, ret.no[which(Name %in% c("Steve 0P", "Lucke Well 00P4 Flood", "Teeter Canyon 00-P5", "Prinz 0P6", "Meadow Well 18P1", "Rinker Well 18P", "Tick Tock 16P1", "Stalker 0P7"))])
+# with(p.ret@data, ret.no[which(Name %in% c("Mill In 16P"))])
+
+d$ret.no <- c(NA, NA, NA, NA, NA, NA, NA, NA, NA, 20,
+              21, 7, NA, NA, NA, NA, NA, NA, "8--10, 13--17")
+
+# with(p.div@data, div.no[which(Name %in% c("Tom P2", "Don P3"))])
+
+# with(p.div@data, div.no[which(Name %in% c("HIAWATHA CANAL AT POINT OF DIVERSON NR GIMLET, ID", "Aspen 27"))])
+# with(p.div@data, div.no[which(Name %in% c("COVE CANAL AT POINT OF DIVERSON NR HAILEY, ID"))])
+
+# with(p.div@data, div.no[which(Name %in% c("DISTRICT 45 CANAL AT POINT OF DIVERSON BELLVUE, ID", "Bannon 49", "GLENDALE CANAL AT POINT OF DIVERSON NR BELLVUE, ID", "BYPASS CANAL AT POINT OF DIVERSION NR BELLEVUE, ID"))])
+
+# with(p.div@data, div.no[which(Name %in% c("Graff 62", "Uhrig 63", "Flood 64"))])
+# with(p.div@data, div.no[which(Name %in% c("Salisbury 68", "Hice 71", "Martin 72", "Martin 72A", "Cloud 74", "Pugel 75"))])
+
+# with(p.div@data, div.no[which(Name %in% c("Rogers 0P1"))])
+
+# with(p.div@data, div.no[which(Name %in% c("Bill 9", "Loving 12B", "Stanfield 12P", "Stanfield 13", "Stanfield 13A"))])
+# with(p.div@data, div.no[which(Name %in% c("Willis 1", "Gillihan 11", "Heath 10", "Patterson 15", "Albretheson 17", "Kilpatrick 18", "Iden 19", "Iden 19B"))])
+# with(p.div@data, div.no[which(Name %in% c("Mantey 14P", "Iden 19P", "Man 19P1", "Tick Tock 19TT", "Div 21-23 and 27-29"))])
+
+d$div.no <- c(NA, "8, 27", NA, "1, 99", 100, NA, "28, 101--103", NA, NA, "64, 67, 69",
+              "89", NA, NA, NA, NA, NA, NA, "81, 87, 90--92", "80, 82--86, 88, 93")
+
+d <- d[, c("BigReachNo", "ReachNo", "Reach", "UpNo", "DownNo", "TribNo", "ret.no", "div.no")]
+columns <- c("Reach \\\\ No.",
+             "Sub- \\\\ reach \\\\ No.",
+             "Name",
+             "Upstream \\\\ Site No.",
+             "Down- \\\\ stream \\\\ Site No.",
+             "Tributary \\\\ Site No.",
+             "Return \\\\ No.",
+             "Diversion \\\\ No.")
+colnames(d) <- sprintf("\\textbf{\\shortstack{%s}}", columns)
+cap1 <- "Assigned river subreaches of the Big Wood River, Silver Creek, and spring-fed tributaries."
+cap2 <- c("\\textbf{Reach No.}: identifier used to locate river reaches in \\hyperref[fig:map_reach]{figure~\\ref{fig:map_reach}}.",
+          "\\textbf{Subreach No.}: identifier used to locate river subreaches in \\hyperref[fig:map_subreach]{figure~\\ref{fig:map_subreach}}.",
+          "\\textbf{Name}: local subreach name used in this study.",
+          "\\textbf{Site No.}: identifier used to locate streamflow measurement sites in \\hyperref[fig:map_sites]{figure~\\ref{fig:map_sites}} and \\hyperref[table_sites]{table~\\ref{table_sites}}.",
+            "No upstream site number indicates that the reach is spring-fed.",
+          "\\textbf{Return No.}: identifier used to locate return flows in \\hyperref[fig:map_ret]{figure~\\ref{fig:map_ret}} and \\hyperref[table_ret]{table~\\ref{table_ret}}.",
+          "\\textbf{Diversion No.}: identifier used to locate stream diversions in \\hyperref[fig:map_div]{figure~\\ref{fig:map_div}} and \\hyperref[table_div]{table~\\ref{table_div}}.",
+          "\\textbf{Abbreviations}: --, not present")
+tbl <- xtable::xtable(d, label="table_subreach")
+xtable::caption(tbl) <- c(sprintf("%s [%s]", cap1, paste(cap2, collapse=" ")), cap1)
+xtable::digits(tbl) <- 0
+xtable::align(tbl) <- c("l", "c", "c", "p{2.0in}", "c", "c", "c", "c", "c")
+print(tbl, include.rownames=FALSE, caption.placement="top", booktabs=TRUE,
+      sanitize.colnames.function=function(x){x}, size="\\small", NA.string="--",
+      sanitize.text.function=identity)
+@
+
+<<table_seepage, echo=FALSE, results="asis">>=
+d <- subreach.recharge[, c("ReachNo", "Reach", "Aug", "Oct", "Mar")]
+d[, c("Aug_cfs", "Oct_cfs", "Mar_cfs")] <- d[, c("Aug", "Oct", "Mar")] * (1 / cfs.to.m3.per.d)
+columns <- c("Subreach \\\\ No.", "Name",
+             "Aug 2012 \\\\ (m\\textsuperscript{3}/d)",
+             "Oct 2012 \\\\ (m\\textsuperscript{3}/d)",
+             "Mar 2013 \\\\ (m\\textsuperscript{3}/d)",
+             "Aug 2012 \\\\ (cfs)",
+             "Oct 2012 \\\\ (cfs)",
+             "Mar 2013 \\\\ (cfs)")
+colnames(d) <- sprintf("\\textbf{\\shortstack{%s}}", columns)
+cap1 <- "Estimated stream-aquifer flow exchange in river subreaches for August 2012, October 2012, and March 2013; modified from \\citet{Bartolino2014}."
+cap2 <- c("\\textbf{Subreach No.}: identifier used to locate river subreaches in \\hyperref[fig:map_subreach]{figure~\\ref{fig:map_subreach}}.",
+          "\\textbf{Name}: local subreach name used in this study.",
+          "\\textbf{Abbreviations}: m\\textsuperscript{3}/d, cubic meters per day; cfs, cubic-feet per second;  --, not available because of missing tributary inflows to the Big Wood River above Hailey")
+tbl <- xtable::xtable(d, label="table_seepage")
+xtable::caption(tbl) <- c(sprintf("%s [%s]", cap1, paste(cap2, collapse=" ")), cap1)
+xtable::digits(tbl) <- 0
+xtable::align(tbl) <- c("l", "c", "p{2.2in}", "r", "r", "r", "r", "r", "r")
+print(tbl, include.rownames=FALSE, caption.placement="top", booktabs=TRUE, NA.string="--",
+      sanitize.colnames.function=function(x){x}, size="\\small", format.args=list(big.mark=","))
+@
+
+<<table_pdiff, echo=FALSE, results="asis">>=
+mo <- substr(reach.recharge$YearMonth, 5, 6)
+yr <- unique(substr(reach.recharge$YearMonth, 1, 4))
+reach.no <- sort(unique(subreach.recharge$BigReachNo))
+
+x <- data.frame(BigReachNo=rep(reach.no, each=length(yr)))
+x$Aug <- with(reach.recharge[mo == "08", ], c(nKet_Hai, Hai_StC, SilverAbv))
+x$Oct <- with(reach.recharge[mo == "10", ], c(nKet_Hai, Hai_StC, SilverAbv))
+x$Mar <- with(reach.recharge[mo == "03", ], c(nKet_Hai, Hai_StC, SilverAbv))
+y <- aggregate(subreach.recharge[, c("Aug", "Oct", "Mar")], by=list(BigReachNo=subreach.recharge$BigReachNo), sum)
+y <- y[match(x$BigReachNo, y$BigReachNo), ]
+
+d <- (abs(x - y) / (abs(x) + abs(y) / 2) * 100)[, -1]
+d$BigReachNo <- x$BigReachNo
+d$BigReach <- as.character(subreach.recharge$BigReach[match(d$BigReachNo, subreach.recharge$BigReachNo)])
+d$Year <- rep(yr, length(reach.no))
+d <- d[, c("BigReachNo", "BigReach", "Year", "Aug", "Oct", "Mar")]
+
+d <- d[as.integer(d$Year) >= 2000L, ]
+
+is.dup <- duplicated(d$BigReachNo)
+d$BigReachNo[is.dup] <- ""
+d$BigReach[is.dup]   <- ""
+
+columns <- c("Reach \\\\ No.", "Name", "Year",
+             "August \\\\ (1)",
+             "October \\\\ (1)",
+             "March \\\\ (1)")
+colnames(d) <- sprintf("\\textbf{\\shortstack{%s}}", columns)
+cap1 <- "Percent difference between stream-aquifer flow exchange values estimated in river reaches during August, October, and March of 2000 through 2010; and in river subreaches aggregated by reach during August 2012, October 2012, and March 2013."
+cap2 <- c("\\textbf{Subreach No.}: identifier used to locate river subreaches in \\hyperref[fig:map_subreach]{figure~\\ref{fig:map_subreach}}.",
+          "\\textbf{Name}: local reach name used in this study.",
+          "\\textbf{Year}: the measurement year.",
+          "\\textbf{Abbreviations}: --, not available")
+tbl <- xtable::xtable(d, label="table_pdiff")
+xtable::caption(tbl) <- c(sprintf("%s [%s]", cap1, paste(cap2, collapse=" ")), cap1)
+xtable::digits(tbl) <- 0
+xtable::align(tbl) <- c("l", "c", "l", "c", "r", "r", "r")
+print(tbl, include.rownames=FALSE, caption.placement="top", booktabs=TRUE, NA.string="--",
+      sanitize.colnames.function=function(x){x}, size="\\small", format.args=list(big.mark=","))
+@
+
+The objective of the subreach analysis is to refine the spatial resolution of seepage rates within a river reach.
+Using the 2012 through 2013 subreach data, the stream-aquifer flow-exchange ratio between river subreaches
+and their corresponding river reach were estimated and are given in \hyperref[table_ratio]{table~\ref{table_ratio}}.
+Ratio estimates for a single measurement period (such as, August 2012) are mathematically expressed as:
+
+\begin{equation} \label{eq:ratio}
+r_{i} =  \frac{Q_{i}}{Q_{j}}
+\end{equation}
+where
+\begin{description}
+\item[r_{i}] is the stream-aquifer flow-exchange ratio between river subreach $i$ and its corresponding river reach, a dimensionless quantity;
+\item[Q_{i}] is the average stream-aquifer flow exchange of river subreach $i$, in cubic meters per day; and
+\item[Q_{j}]is the average stream-aquifer flow exchange of river reach $j$ determined from continuous streamflow records, in cubic meters per day.
+\end{description}
+
+\noindent Note that river subreach $i$ is a component of river reach $j$.
+For each iteration of PEST, the model-simulated ratio is calculated every August, October, and March of the 2000 through 2010 time period and compared to its corresponding 2012 through 2013 monthly estimate.
+The differences between simulated and measured ratios are minimized during model calibration (equation~\ref{eq:min}).
+
+<<table_ratio, echo=FALSE, results="asis">>=
+d <- aggregate(subreach.recharge[, c("Aug", "Oct", "Mar")], by=list(BigReachNo=subreach.recharge$BigReachNo), sum)
+d <- d[match(subreach.recharge$BigReachNo, d$BigReachNo), -1]
+ratio <- subreach.recharge[, c("Aug", "Oct", "Mar")] / d
+d <- data.frame(subreach.recharge[, c("ReachNo", "Reach")], ratio)
+columns <- c("Subreach \\\\ No.", "Name",
+             "Aug 2012 \\\\ (1)",
+             "Oct 2012 \\\\ (1)",
+             "Mar 2013 \\\\ (1)")
+colnames(d) <- sprintf("\\textbf{\\shortstack{%s}}", columns)
+cap1 <- "Stream-aquifer flow-exchange ratio between river subreaches and their corresponding reach, for August 2012, October 2012, and March 2013."
+cap2 <- c("\\textbf{Subreach No.}: identifier used to locate river subreaches in \\hyperref[fig:map_subreach]{figure~\\ref{fig:map_subreach}}.",
+          "\\textbf{Name}: local subreach name used in this study.",
+          "\\textbf{Abbreviations}: --, not available")
+tbl <- xtable::xtable(d, label="table_ratio")
+xtable::caption(tbl) <- c(sprintf("%s [%s]", cap1, paste(cap2, collapse=" ")), cap1)
+xtable::digits(tbl) <- c(0, 0, 0, 2, 2, 2)
+xtable::align(tbl) <- c("l", "c", "l", "r", "r", "r")
+print(tbl, include.rownames=FALSE, caption.placement="top", booktabs=TRUE, NA.string="--",
+      sanitize.colnames.function=function(x){x}, size="\\small", format.args=list(big.mark=","))
+@
+
+\clearpage
+
+% =========================================================================
+
+\subsection{Groundwater Flow Across the Outlet Boundaries}
+
+The average rate of groundwater discharge across the Stanton Crossing and Silver Creek outlet boundaries (\hyperref[fig:map_drains]{fig.~\ref{fig:map_drains}}) has been reported by various studies.
+The previous estimates of groundwater discharge from the WRV aquifer system beneath Stanton Crossing towards Magic Reservoir range from 0 to 1,000 m\textsuperscript{3}/d  (300 acre-feet per year [acre-ft/yr]).
+\citet{Smith1959} estimated that groundwater discharge beneath Stanton Crossing was ``relatively small'' while
+\citet{Brockway1978},
+\citet{Brockway1994}, and
+\citet{Wetzstein2000} considered it ``negligible''.
+\citet{Bartolino2009} and
+\citet{Loinaz2012} assumed that there was no outflow beneath Stanton Crossing.
+\citet{Bartolino2012} estimated an underflow rate of 1,000 m\textsuperscript{3}/d (300 acre-ft/yr).
+
+Previous estimates of the average groundwater discharge beneath Silver Creek towards the eastern Snake River Plain aquifer range from 13,500 to 178,000 m\textsuperscript{3}/d  (4,000 to 53,000 acre-ft/yr).
+\citet{Smith1959} estimated 128,000 m\textsuperscript{3}/d (38,000 acre-ft/yr),
+\citet{Garabedian1992} 179,000 m\textsuperscript{3}/d (53,000 acre-ft/yr),
+\citet{Brockway1994} 40,000 m\textsuperscript{3}/d (11,800 acre-ft/yr),
+\citet{Cosgrove2006} 159,000 m\textsuperscript{3}/d (47,000 acre-ft/yr),
+\citet{Bartolino2009} 68,000 m\textsuperscript{3}/d (20,000 acre-ft/yr),
+\citet{Loinaz2012} 131,000 m\textsuperscript{3}/d (38,900 acre-ft/yr), and
+\citet{Bartolino2012} 13,500 m\textsuperscript{3}/d (4,000 acre-ft/yr).
+
+The method used to estimate average flow rates across the outlet boundaries was different for each study.
+For example, \citet{Garabedian1992} relied on basin yield estimates, \citet{Brockway1994} model residuals, and \citet{Bartolino2012} Darcian estimates.
+Furthermore, the accuracy of outflow estimates was never reported.
+Given the uncertainties associated with these estimates, the choice of which groundwater discharge estimate to use in the calibration process was based on the
+perceived robustness of the estimation method and the ease-of-reproducibility of estimated values.
+Considering this, the WRV groundwater-flow model was calibrated using the \citet{Bartolino2012} average outflow estimates of 1,000 m\textsuperscript{3}/d for Stanton Crossing and 13,500 m\textsuperscript{3}/d for Silver Creek.
+A measurement weighting scheme was applied that allowed the complete range of published outflow estimates to be considered during model calibration.
+
+The model-simulated observation of groundwater flow across an outlet boundary was calculated by summing the simulated flow rates in drain cells composing an outlet boundary and averaged over time.
+
+<<include=FALSE>>=
+v <- "Location of the Silver Creek and Stanton Crossing groundwater outlet boundaries."
+v <- c(paste("Map showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(v)))), v)
+@
+
+<<map_drains, echo=FALSE, fig.width=fin.map.s.0[1], fig.height=fin.map.s.0[2], fig.scap=sprintf("{%s}", v[1]), fig.cap=sprintf("{%s}", v[2])>>=
+l <- rgeos::gIntersection(drains, as(alluvium.extent, "SpatialLinesDataFrame"), TRUE)
+l <- SpatialLinesDataFrame(l, data=drains@data, match.ID=FALSE)
+cols <- c("#F02311", "#FBB829")
+PlotMap(crs(hill.shading), xlim=usr.map.s[1:2], ylim=usr.map.s[3:4], bg.image=hill.shading,
+        bg.image.alpha=0.6, dms.tick=TRUE, rivers=list(x=streams.rivers), lakes=list(x=lakes), credit=credit)
+plot(alluvium.extent, border="#FFFFFFCC", col=NA, add=TRUE)
+leg <- c("Stanton Crossing", "Silver Creek")
+plot(l[match(l@data$Name, leg), ], col=cols, lwd=2, add=TRUE)
+plot(cities, pch=15, cex=0.8, col="#333333", add=TRUE)
+text(cities, labels=cities@data$FEATURE_NA, col="#333333", cex=0.5, pos=3, offset=0.4)
+legend("topleft", leg, lwd=2, col=cols, border=NA, inset=0.02, cex=0.7,
+       box.lty=1, box.lwd=0.5, xpd=NA, bg="#FFFFFFE7", title=expression(bold("Outlet Boundaries")))
+AddInsetMap(alluvium.extent, width=1, main.label=list("AQUIFER", adj=c(0, -9)),
+            sub.label=list("Map area", adj=c(1.9, 0.5)), loc="topright")
+invisible(dev.off())
+@
+
+% =========================================================================
+
+\section{Adjustable Model Parameters}
+
+Adjustable model parameters calibrated during parameter estimation ($\boldsymbol{b}$ in equation~\ref{eq:min}) include:
+(1) the spatial distributions of hydraulic conductivity and storage coefficient in the model domain;
+(2) riverbed conductance along reaches and subreaches of the Big Wood River, Willow Creek, Silver Creek, and spring-fed tributaries;
+(3) drain conductance for the Stanton Crossing and Silver Creek groundwater outlet boundaries;
+(4) control parameters describing groundwater flow into the model domain that originates as precipitation in a tributary basin; and
+(5) irrigation efficiency on irrigated lands.
+Lower and upper bounds on the adjustable model parameters ($b_{min}$ and $b_{max}$ in equation~\ref{eq:min}) define the maximum and minimum values which a parameter is allowed to assume during parameter estimation \citep[pgs.~2-19--20]{Doherty2005}.
+Initial estimates (or starting values) for the adjustable model parameters were either assigned from the groundwater literature and based on assumed average values,
+or derived from field measurements.
+
+% ===
+
+\subsection{Hydraulic Conductivity and Storage Coefficient}
+
+A pilot-points parameterization method is used by PEST to estimate the spatial distribution of horizontal hydraulic conductivity and storage coefficient in the model domain.
+The parameter values are estimated for \Sexpr{n <- length(pilot.points); n} points (also known as ``pilot points'') lying within the model domain
+(\hyperref[fig:map_pilot]{fig.~\ref{fig:map_pilot}}) and spatially interpolated to the midpoint of each cell in the model grid.
+The distribution and density of pilot points was chosen to provide adequate spatial coverage of the model domain.
+Note that an increase in the number of pilot points is accompanied by an increase in the computational time required by PEST.
+The model domain is subdivided into numerous zones (\hyperref[table_zones]{table~\ref{table_zones}}, \hyperref[fig:map_pilot]{fig.~\ref{fig:map_pilot}})
+and a kriging interpolation method used to predict parameter values within a zone from parameter estimates of pilot points lying within the current zone
+(\hyperref[table_zones]{table~\ref{table_zones}}).
+
+Allocation of zones primarily is based on the spatial distribution of hydrogeologic units in the model domain (\hyperref[table_hk_sc]{table~\ref{table_hk_sc}}),
+in which zones A through M, and P represent parts of the unconfined aquifer that are composed of coarse-grained sand and gravel;
+zones N and Q represent the part of the unconfined aquifer that is composed of basalt;
+zone O represents the confining unit, an aquitard composed of fine-grained silt and clay; and
+zone R represents the part of the confined aquifer that is composed of coarse-grained sand and gravel.
+Zones B through L are located in the major tributary canyons of the WRV, whereas all other zones are located beneath the main part of the valley.
+
+With the exception of zone O, the lower and upper bounds on horizontal hydraulic conductivity were specified at
+\Sexpr{ToScientific(1e-10)} and \Sexpr{ToScientific(1e+10)} m/d, respectively;
+thus allowing for a very wide range of geological materials to be considered during model calibration.
+Recall that zone O represents the low-permeability aquitard and as such necessitates a much smaller upper bound of 1 m/d; its lower bound was \Sexpr{ToScientific(1e-10)} m/d.
+
+The WRV aquifer system is assumed anisotropic with respect to hydraulic conductivity.
+Vertical hydraulic conductivity is determined by dividing the horizontal hydraulic conductivity by the vertical anisotropy, the ratio of horizontal to vertical hydraulic conductivity.
+A single adjustable value of vertical anisotropy is assigned to all cells in the model grid.
+Lower and upper bounds on the vertical anisotropy were specified at \Sexpr{ToScientific(1e-10)} and \Sexpr{ToScientific(1e+10)}.
+
+Lower and upper bounds on the storage coefficient were specified at 0.095 and 0.35 in the partially-saturated conditions of model layer 1 (zones A--L),
+and \Sexpr{ToScientific(1e-10)} and 0.001 in the primarily saturated conditions of model layers 2 and 3 (zones M--R)--with the exception of
+pilot-points 77 (in zone N) and 99 (in zone Q) which were specified with a lower and upper bound of \Sexpr{ToScientific(1e-10)} and 0.35
+because they are located in an area of the aquifer where the water table is known to reside in either model layers 2 or 3.
+The storage coefficient for partially-saturated conditions is virtually equal to the specific yield (also known as the drainable porosity) and indicates that larger storage coefficient values would be expected.
+For all cell values not coinciding with pilot-point locations, storage coefficient values are interpolated with lower and upper bounds specified at \Sexpr{ToScientific(1e-6)} to 0.35, respectively.
+These interpolation limits are used to eliminate unreasonable estimates of storage coefficient.
+
+Starting values of horizontal hydraulic conductivity, vertical anisotropy, and storage coefficient are given in \hyperref[table_hk_sc]{table~\ref{table_hk_sc}} and based on previous estimates by \citet[table~2, p.~25-26]{Bartolino2012}.
+
+<<table_zones, echo=FALSE, results="asis">>=
+d <- kriging.zones@data
+
+FUN <- function(i) which(as.character(pilot.points@data$Zone) == i)
+pnts.in.zone <- lapply(as.character(kriging.zones@data$Zone), FUN)
+names(pnts.in.zone) <- kriging.zones@data$Zone
+d$NumPoints <- sapply(pnts.in.zone, length)
+
+# print(pnts.in.zone)
+d$Points <- c("1, 3, 4, 6--8, 11, 14--17, 19, 23, 24, 26, 32, 35--38, 41--59",
+              "30, 31", "33, 34", "39, 40", 2, 5, "12, 13", "9, 10", "20--22",
+              18, 25, "27--29", "60--72, 74--76, 83, 84", "77--80", "73, 81, 82",
+              "85--95, 97, 98, 105, 106", "99--102", "96, 103, 104")
+d <- d[, c("Layer", "Zone", "Name", "NumPoints", "Points")]
+d$Layer[duplicated(d$Layer)] <- ""
+columns <- c("Model \\\\ layer", "Zone", "Name", "No. of \\\\ points", "Point No.")
+colnames(d) <- sprintf("\\textbf{\\shortstack{%s}}", columns)
+cap1 <- "Zones and pilot-points within the model domain."
+cap2 <- c("\\textbf{Zone}: identifier used to locate a zone in \\hyperref[fig:map_pilot]{figure~\\ref{fig:map_pilot}}.",
+          "\\textbf{Name}: local zone name used in this study.",
+          "\\textbf{No. of points}: contained within a zone.",
+          "\\textbf{Point No.}: identifier used to locate pilot points in \\hyperref[fig:map_pilot]{figure~\\ref{fig:map_pilot}}.")
+tbl <- xtable::xtable(d, label="table_zones")
+xtable::caption(tbl) <- c(sprintf("%s [%s]", cap1, paste(cap2, collapse=" ")), cap1)
+xtable::digits(tbl) <- 0
+xtable::align(tbl) <-  c("l", "c", "c", "l", "r", "p{1.5in}")
+print(tbl, include.rownames=FALSE, caption.placement="top", booktabs=TRUE,
+      sanitize.colnames.function=function(x){x}, size="\\small", NA.string="NA")
+@
+
+<<echo=FALSE>>=
+FUN <- function(layer) {
+  kz <- kriging.zones[kriging.zones@data$Layer == layer, ]
+  zones <- kz@data$Zone
+  r <- rasterize(kz, land.surface, "Zone")
+  dc <- (layer - 1L) * 0.1
+  Pal <- function(...) rainbow(..., s=1, v=0.5, start=0.1 + dc, end=1.0 - dc, alpha=0.6)
+  PlotMap(r, xlim=usr.map[1:2], ylim=usr.map[3:4], pal=Pal,
+          bg.image=hill.shading, dms.tick=TRUE, bg.image.alpha=0.6,
+          rivers=list(x=streams.rivers), lakes=list(x=lakes), draw.key=FALSE, credit=credit)
+  is.layer <- pilot.points@data$Layer == layer
+  pp <- pilot.points[is.layer, ]
+  points(pp, pch=21, cex=0.6, col="#333333", bg="#333333")
+  text(pp, labels=seq_along(pilot.points)[is.layer], col="#333333",
+       cex=0.6, pos=1, offset=0.3)
+
+  text(kz, labels=zones, col="black", cex=0.7, pos=1, offset=0.5, font=2)
+  labs <- as.character(sort(zones))
+  cols <- Pal(length(labs))[as.integer(order(zones))]
+  legend("topright", labs, pch=22, col=cols, pt.bg=cols,
+         pt.cex=1, inset=0.02, cex=0.7, box.lty=1, box.lwd=0.5, bg="#FFFFFFE7",
+         text.font=2, title=expression(bold("Zone")))
+  legend("topright", "Pilot point", pch=21, col="#333333", pt.bg="#333333",
+         pt.cex=0.6, inset=c(0.1, 0.02), cex=0.7, box.lty=1, box.lwd=0.5, bg="#FFFFFFE7")
+}
+@
+
+\begin{figure}
+  \begin{subfigure}{\textwidth}
+    \caption{Model layer 1 \label{fig:map_pilot_a}}
+    <<map_pilot_a, echo=FALSE, results="asis", fig.width=fin.map.0[1], fig.height=fin.map.0[2]>>=
+    FUN(1L)
+    @
+  \end{subfigure}
+  <<include=FALSE>>=
+  v <- "Spatial distribution of the pilot points and zones in (\\textit{\\textbf{A}}) model layer~1, (\\textit{\\textbf{B}}) model layer~2, and (\\textit{\\textbf{C}}) model layer~3. \\label{fig:map_pilot}"
+  v <- c(paste("Maps showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(v)))), v)
+  @
+  \caption[{\Sexpr{v[1]}}]{{\Sexpr{v[2]}}}
+\end{figure}
+
+\captionsetup[figure]{list=no}
+\begin{figure}
+  \ContinuedFloat
+  \begin{subfigure}{\textwidth}
+    \caption{Model layer 2 \label{fig:map_pilot_b}}
+    <<map_pilot_b, echo=FALSE, results="asis", fig.width=fin.map.0[1], fig.height=fin.map.0[2]>>=
+    FUN(2L)
+    @
+  \end{subfigure}
+  \caption{---Continued}
+\end{figure}
+
+\begin{figure}
+  \ContinuedFloat
+  \begin{subfigure}{\textwidth}
+    \caption{Model layer 3 \label{fig:map_pilot_c}}
+    <<map_pilot_c, echo=FALSE, results="asis", fig.width=fin.map.0[1], fig.height=fin.map.0[2]>>=
+    FUN(3L)
+    invisible(dev.off())
+    @
+  \end{subfigure}
+  \caption{---Continued}
+\end{figure}
+\captionsetup[figure]{list=yes}
+
+<<table_hk_sc, echo=FALSE, results="asis">>=
+d <- zone.properties
+d$zone <- c("A--M, P", "N, Q", "O", "R")
+d$unit <- c("Alluvium (unconfined)", "Basalt", "Clay", "Alluvium (confined)")
+d$hk <- ToScientific(d$hk, digits=1)
+d$sc <- ToScientific(d$sc, digits=1)
+d <- d[, c("zone", "unit", "hk", "vani", "sc")]
+columns <- c("Zone",
+             "Hydrogeologic unit",
+             "Hydraulic \\\\ conductivity \\\\ (m/d)",
+             "Vertical \\\\ anisotropy \\\\ (1)",
+             "Storage \\\\ coefficient \\\\ (1)")
+colnames(d) <- sprintf("\\textbf{\\shortstack{%s}}", columns)
+cap1 <- "Starting values of horizontal hydraulic conductivity, vertical anisotropy, and storage coefficient; values assigned to each zone in the model domain."
+cap2 <- c("\\textbf{Hydraulic conductivity}: is the horizontal hydraulic conductivity.",
+          "\\textbf{Vertical anisotropy}: is the ratio of horizontal to vertical hydraulic conductivity.",
+          "\\textbf{Storage coefficient}: for saturated conditions it is the product of specific storage and the saturated thickness of the aquifer; for partially-saturated conditions it is virtually equal to the specific yield.",
+          "\\textbf{Abbreviations}: m/d, meters per day")
+tbl <- xtable::xtable(d, label="table_hk_sc")
+xtable::caption(tbl) <- c(sprintf("%s [%s]", cap1, paste(cap2, collapse=" ")), cap1)
+xtable::digits(tbl) <- c(0, 0, 0, 1, 0, 1)
+print(tbl, include.rownames=FALSE, caption.placement="top", booktabs=TRUE,
+      format.args=list(big.mark=","), sanitize.colnames.function=function(x){x},
+      sanitize.text.function=identity, size="\\small")
+@
+
+% ===
+
+\subsection{Riverbed Conductance}
+
+The hydraulic conductance of the riverbed sediment was adjusted along the Willow Creek (\Sexpr{GetReachNo("Willow Creek")}) and
+Silver Creek (\Sexpr{GetReachNo("Silver Creek, Sportsman Access to Nr Picabo")}) river reaches (\hyperref[fig:map_reach]{fig.~\ref{fig:map_reach}}),
+along each of the \Sexpr{length(subreaches)} subreaches of the Big Wood River, Silver Creek, and spring-fed tributaries (\hyperref[fig:map_subreach]{fig.~\ref{fig:map_subreach}}).
+The lower and upper bounds on riverbed conductance were specified at \Sexpr{ToScientific(1e-10)} and \Sexpr{ToScientific(1e+10)} square meters per day (m\textsuperscript{2}/d), respectively;
+thus allowing for a very wide range of riverbed materials to be considered during model calibration.
+The starting value for riverbed conductance was the same for all subreaches on the Big Wood River at 5,669 m\textsuperscript{2}/d,
+and 1,890 m\textsuperscript{2}/d on all other reaches and subreaches in the WRV.
+
+% ===
+
+\subsection{Drain Conductance}
+
+Drain conductances of the Stanton Crossing and Silver Creek outlet boundaries (\hyperref[fig:map_drains]{fig.~\ref{fig:map_drains}}) were adjusted during model calibration.
+A drain conductance was assigned to each model layer of the outlet boundary (model layer 1 at Stanton Crossing and layers 1 through 3 at Silver Creek).
+The lower and upper bounds on drain conductance were specified at \Sexpr{ToScientific(1e-10)} and \Sexpr{ToScientific(1e+10)} m\textsuperscript{2}/d, respectively;
+thus allowing for a very wide range of outflow conditions to be considered during model calibration.
+The starting values for drain conductance were \Sexpr{with(drains@data, cond[Name == "Stanton Crossing"])} m\textsuperscript{2}/d at the Stanton Crossing outlet boundary and
+\Sexpr{with(drains@data, cond[Name == "Silver Creek"])} m\textsuperscript{2}/d (identical in all 3 model layers) at the Silver Creek boundary.
+
+% ===
+
+\subsection{Tributary Basin Underflow Control Parameters}
+
+Control parameters for describing the volumetric flow rate of groundwater entering the model domain that originates as precipitation in a tributary basin were adjusted during the parameter estimation process;
+this flow rate is referred to as tributary basin underflow.
+\hyperref[fig:map_tribs]{Figure~\ref{fig:map_tribs}} shows the location of underflow boundaries in the major tributary canyons and the upper part of the WRV.
+A detailed description of these model boundary conditions is provided in appendix E.
+For each underflow boundary, the temporal distribution of groundwater flow (hydrograph) during the simulation period (1995--2010) was adjusted using the following three control parameters:
+(1) a long-term mean tributary basin underflow, (2) the duration of the moving average, and (3) an amplitude reduction factor.
+The long-term mean tributary basin underflow controls the overall magnitude of tributary basin underflows,
+with the duration of the moving average and amplitude reduction factor controlling the timing and duration of underflows (that is, the shape of the hydrograph).
+A unique long-term mean tributary basin underflow was assigned to each of the tributary boundaries (\Sexpr{length(tributaries)} parameters),
+whereas the duration of the moving average and amplitude reduction factor were the same for all underflow boundaries (2 parameters).
+Assigning the same shape to all hydrographs is a simplification of reality---timing and duration of tributary basin underflow can substantially vary among tributaries
+as a result of large variations in land-surface topography, climatic differences over small distances, and heterogeneities in rock permeability.
+Parameter simplification was deemed necessary for the purpose of attaining inverse problem uniqueness where the calibration dataset is information-poor.
+
+Simulated long-term mean tributary basin underflow was not directly adjusted during parameter estimation;
+rather, a scalar component of the empirically derived estimate of long-term mean underflow was calibrated.
+The functional dependency between the simulated tributary basin underflow and the scalar quantity is expressed as:
+
+\begin{equation} \label{eq:trib_scalar}
+\overline{Q}_{\mathit{sim}, \, i} = \overline{Q_{i}} \, s_{i}
+\end{equation}
+where
+\begin{description}
+\item[\overline{Q}_{\mathit{sim}, \, i}] is the simulated long-term mean tributary basin underflow entering the model domain from tributary $i$, in cubic meters per day;
+\item[\overline{Q}_{i}] is the estimated long-term mean underflow entering the model domain from tributary $i$ (\hyperref[table_tribs]{table~\ref{table_tribs}}), in cubic meters per day; and
+\item[s_{i}] is the scalar component of the mean underflow entering the model domain from tributary $i$, a dimensionless quantity.
+\end{description}
+
+Scalars were originally intended to facilitate regularization.
+However, inclusion of these parameters in the regularization process resulted in problems with the PEST regularization scheme,
+because of this, scalars were omitted from the regularized inversion process.
+Therefore, the use of scalars was not done for parameter estimation but the use was preserved for future implementations of regularization schemes.
+
+The lower bound on the scalar was specified at 0.01; that is, one-hundredth of the estimated long-term mean tributary basin underflow.
+And its upper bound specified at 20 percent of the precipitation estimate of mean underflow
+(the product of a tributary basin's mean precipitation rate and area), that is:
+
+\begin{equation} \label{eq:trib_scalar_upper}
+s_{\mathit{up}, \, i} = 0.2 \, \left( \frac{\overline{Q}_{p, \, i}}{\overline{Q_{i}}} \right)
+\end{equation}
+where
+\begin{description}
+\item[s_{\mathit{up}, \, i}] is the upper bound on the scalar component of the estimated long-term mean tributary basin underflow entering the model domain from tributary $i$, a dimensionless quantity; and
+\item[\overline{Q}_{p, \, i}] is the precipitation estimate of mean underflow entering from tributary $i$,
+in cubic meters per day (\hyperref[table_tribs]{table~\ref{table_tribs}}).
+\end{description}
+
+Scalar starting values were specified at 1 for all tributary basins;
+thus corresponding to their estimated long-term mean tributary basin underflow ($\overline{Q}$ in equation~\ref{eq:trib_scalar}).
+
+Lower and upper and lower bounds on the duration of the moving average were specified at 1 day and 730.5 days (2 years), respectively;
+and the lower and upper bounds on the amplitude reduction factor specified at 0.001 and 10, respectively.
+These bounds allow for a wide variety of hydrograph shapes to be considered during model calibration.
+Starting values for the duration of the moving average and the amplitude reduction factor were 275 days (9 months) and 2, respectively.
+
+<<table_tribs, echo=FALSE, results="asis">>=
+d <- tributaries@data
+d <- data.frame(Name=d$Name, ID=seq_len(nrow(d)), d[, -1])
+d <- d[, c("Name", "ID", "Flow", "PrecipFlow")]
+d$s.up <- 0.2 * (d$PrecipFlow / d$Flow)
+columns <- c("Name",
+             "Trib \\\\ No.",
+             "Flow \\\\ rate \\\\ $\\overline{Q}$ \\\\ (m\\textsuperscript{3}/d)",
+             "Precip. \\\\ flow \\\\ $\\overline{Q}_{p}$ \\\\ (m\\textsuperscript{3}/d)",
+             "Upper bound \\\\ on scalar \\\\ $s_{\\mathit{up}}$ \\\\ (1)")
+colnames(d) <- sprintf("\\textbf{\\shortstack{%s}}", columns)
+cap1 <- "Upper bound placed on scalar components of the mean tributary basin underflow."
+cap2 <- c("\\textbf{Trib No.}: is an identifier used to locate the tributary model boundaries on the map in \\hyperref[fig:map_tribs]{figure~\\ref{fig:map_tribs}}.",
+          "\\textbf{Flow rate}: is the empirically derived estimate of the mean tributary basin underflow.",
+          "\\textbf{Precip. flow}: is the precipitation estimate of mean tributary basin underflow.",
+          "\\textbf{Abbreviations}: m\\textsuperscript{3}/d, cubic meters per day")
+tbl <- xtable::xtable(d, label="table_tribs")
+xtable::caption(tbl) <- c(sprintf("%s [%s]", cap1, paste(cap2, collapse=" ")), cap1)
+xtable::digits(tbl) <- c(0, 0, 0, 0, 0, 1)
+print(tbl, include.rownames=FALSE, caption.placement="top", booktabs=TRUE,
+      format.args=list(big.mark=","), sanitize.colnames.function=function(x){x},
+      size="\\small")
+@
+
+<<include=FALSE>>=
+v <- "Location of underflow boundaries in the major tributary canyons and the upper part of the Wood River Valley."
+v <- c(paste("Map showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(v)))), v)
+@
+
+<<map_tribs, echo=FALSE, fig.width=fin.map.0[1], fig.height=fin.map.0[2], fig.scap=sprintf("{%s}", v[1]), fig.cap=sprintf("{%s}", v[2])>>=
+PlotMap(crs(alluvium.thickness), xlim=usr.map[1:2], ylim=usr.map[3:4], bg.image=hill.shading, dms.tick=TRUE,
+        bg.image.alpha=0.6, rivers=list(x=streams.rivers), lakes=list(x=lakes), credit=credit)
+cols <- c("#F02311", "#FFFFFFCC")
+plot(alluvium.extent, border=cols[3], col="#33333366", add=TRUE)
+l <- rgeos::gIntersection(as(tributaries, "SpatialLinesDataFrame"), alluvium.extent, TRUE)
+trib.lines <- SpatialLinesDataFrame(l, data=tributaries@data, match.ID=FALSE)
+plot(trib.lines, lwd=4, col=cols[1], add=TRUE)
+pos <- c(2, 4, 2, 2, 2, 3, 1, 1, 4, 3,
+         4, 1, 1, 1, 2, 4, 2, 1, 1, 3,
+         2, 4, 1)
+text(getSpatialLinesMidPoints(trib.lines), labels=rownames(trib.lines@data),
+     col="#333333", cex=0.6, pos=pos, offset=0.4)
+plot(cities, pch=15, cex=0.8, col="#333333", add=TRUE)
+text(cities, labels=cities@data$FEATURE_NA, col="#333333", cex=0.5, pos=1, offset=0.4)
+leg <- c("Underflow boundaries", "Aquifer extent")
+legend("topright", leg, pch=c(15, 22), lwd=NA, col=cols, pt.bg="#33333366",
+       pt.cex=c(0.7, 1.5), inset=0.02, cex=0.7, box.lty=1, box.lwd=0.5,
+       bg="#FFFFFFE7", seg.len=1.4)
+invisible(dev.off())
+@
+
+% ===
+
+\subsection{Irrigation efficiency}
+
+An irrigation efficiency was assigned to each of the \Sexpr{nlevels(irr.entities@data$EntityName)} irrigation entities in the WRV (\hyperref[fig:map_eff]{fig.~\ref{fig:map_eff}}).
+Irrigation efficiency is defined as the ratio between irrigation water actually utilized by growing plants and the total water diverted from sources in order to supply such irrigation water.
+The lower bound on irrigation efficiency was specified at 0.50 (50 percent) for all irrigation entities;
+the upper bound on irrigation efficiency was 0.95 (95 percent) for irrigation entities located
+in areas where conditions for natural sub-irrigation may exist (\hyperref[fig:map_eff]{fig.~\ref{fig:map_eff}}), and 0.90 (90 percent) otherwise.
+Recall that natural sub-irrigation occurs in areas where the water table is high and the capillary fringe is within the reach of root zone crops;
+therefore, there is potentially less irrigation water delivered to these areas.
+The starting values for irrigation efficiency were 0.75 (75 percent).
+The irrigation efficiencies of the \Sexpr{with(irr.entities@data, length(unique(EntityName[Source != "SW Only"])))} irrigation entities with groundwater irrigation sources were adjusted during model calibration.
+
+<<include=FALSE>>=
+v <- "Irrigation entities in the Wood River Valley, Idaho."
+v <- c(paste("Map showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(v)))), v)
+@
+
+<<map_eff, echo=FALSE, fig.width=fin.map.0[1], fig.height=fin.map.0[2], fig.scap=sprintf("{%s}", v[1]), fig.cap=sprintf("{%s}", v[2])>>=
+p <- irr.entities
+p@data <- dplyr::left_join(p@data[, "EntityName", drop=FALSE], efficiency, by="EntityName")
+PlotMap(crs(hill.shading), xlim=usr.map[1:2], ylim=usr.map[3:4], bg.image=hill.shading,
+        bg.image.alpha=0.6, dms.tick=TRUE, rivers=list(x=streams.rivers), lakes=list(x=lakes), credit=credit)
+cols <- c("#66C2A5B3", "#FC8D62B3")
+plot(p, col=cols[as.integer(p@data$Comment)], border="#FFFFFFCC", lwd=0.5, add=TRUE)
+plot(cities, pch=15, cex=0.8, col="#333333", add=TRUE)
+text(cities, labels=cities@data$FEATURE_NA, col="#333333", cex=0.5, pos=1, offset=0.4)
+leg <- c("Irrigation entity", "Irrigation entity with possible natural sub-irrigation")
+legend("topright", leg, fill=cols, border="#FFFFFFCC", inset=0.02, cex=0.7, box.lty=1,
+       box.lwd=0.5, xpd=NA, bg="#FFFFFFE7")
+invisible(dev.off())
+@
+
+% =========================================================================
+
+\section{Prior Information}
+
+Prior information on estimated model parameters ($X$ in equation~\ref{eq:min}) was used to supplement field measurements.
+These supplementary observations are based on expert knowledge and specified as a preferred value for estimated parameters.
+For the horizontal hydraulic conductivity and storage coefficient,
+homogeneity is assumed to prevail within each zone (\hyperref[fig:map_pilot]{fig.~\ref{fig:map_pilot}} and \hyperref[table_zones]{table~\ref{table_zones}}),
+thus supporting the hydrogeologic conceptualization for the study area.
+PEST implements the homogeneity condition by minimizing the difference in parameter values between adjacent pilot points located in the same zone.
+In parts of the unconfined aquifer that are composed of basalt (zone's N and Q),
+the homogeneity condition for horizontal hydraulic conductivity was expanded to include a preference for near equal parameter values between pilot points in adjacent model layers.
+
+As a general rule, it is unlikely that there exists large differences between subreach estimates of riverbed conductance in the study area.
+This ``observation'' is included as prior information in the parameter estimation process by imposing a homogeneity condition on riverbed conductance within each river reach.
+That is, river subreach estimates of riverbed conductance should be near equal to one another within a river reach.
+
+Expert knowledge of the specific practices in the WRV and the prevailing geologic conditions
+indicate that a 75-percent irrigation efficiency is a reasonable value for all irrigation entities in the WRV (\hyperref[fig:map_eff]{fig.~\ref{fig:map_eff}}).
+This prior information is included in the parameter estimation processes as a preferred value.
+PEST implements the preferred value condition by minimizing the difference between the parameter estimate and its starting value;
+recall that the starting value for irrigation efficiency is 75 percent.
+PEST will only deviate from the starting value in order to calibrate the model.
+While there is considerable uncertainty in the actual value of irrigation efficiency within each irrigation entity,
+the preferred value was included as prior information to discourage PEST from influencing flux between model layers
+by adjusting irrigation efficiency in lieu of adjusting hydraulic properties.
+
+\newpage
+
+% =========================================================================
+
+\section{Observation Weights}
+
+Weights ($w$ in equation~\ref{eq:min}) indicate the importance of an observation on the regression (equation~\ref{eq:min}).
+An observation with a large weight asserts a large influence on the regression and, therefore, the estimated parameter values.
+Conversely, an observation with a small weight asserts less influence on the regression and estimated parameter values.
+Weights should ideally be inversely proportional to the ``error'' associated with the measured quantity of the observation.
+In the case of prior information this ``error'' is the uncertainty of that information \citep[p.~97]{Doherty2015}.
+The difficulties with assigning weights using this approach are as follows:
+\begin{itemize}
+\item Errors associated with field measurements and prior expert knowledge are not easily quantifiable.
+      For example, the accuracy of groundwater-level measurements recorded by drillers onto well logs is unknown and most-likely highly variable between wells.
+      Also unknown are the uncertainties associated with prior expert knowledge; that is, the propensity of riverbed conductance to be equal among river reaches and an irrigation efficiency equal to 75 percent.
+\item The relative importance of each observation type in the overall parameter estimation process is dependent on the weights.
+      For example, both groundwater-level and stream-aquifer flow-exchange measurements are used in model calibration.
+      Groundwater levels are expressed in meters above the North American Vertical Datum of 1988 (NAVD 88) and stream-aquifer flow exchanges are expressed in cubic meters per day (m\textsuperscript{3}/d).
+      For groundwater levels, model-to-measurement discrepancies ($Y - \widehat{Y}$ in equation~\ref{eq:min}) of as much as 1 m are tolerable;
+      whereas, the model-to-measurement discrepancies for stream-aquifer flow exchange are typically much larger with a discrepancy of 100,000 m\textsuperscript{3}/d being tolerable.
+      Using these model-to-measurement discrepancy values, stream-aquifer flow-exchange measurements would need to be decreased by a factor of 100,000
+      so that both measurement sets are equally effective in determining model parameters; that is, neither observation dominates the parameter estimation process.
+\end{itemize}
+
+Unquantifiable observation errors and differing observation types necessitated the use of a subjective weighting scheme for calibrating the WRV groundwater-flow model.
+Weights were assigned to observation groups so that weighted residuals were roughly of the same order of magnitude (\hyperref[table_weights]{table~\ref{table_weights}}).
+Further adjustments were made to weights placed on the groundwater-level observation groups in order to reflect the credibility of measurements in each group.
+For example, groundwater levels measured in the USGS monitoring network wells were assigned the largest weight (with respect to groundwater-level observation groups) at 1 inverse meter (1/m)
+because this was the only one of these groups where measurement accuracy was quantified.
+For the remaining groundwater-level observation groups, weights were assigned based on a qualitative assessment of their measurement accuracy,
+and a quantitative assessment of each group's sample size and temporal distribution.
+The groundwater-level observation groups in order of decreasing measurement accuracy are roughly as follows: USGS wells, SVSWD wells, TNC wells, geolocated driller wells, and PLSS-located driller wells.
+Because some observation groups are composed of many measurements recorded over a short period-of-record (such as TNC wells with
+\Sexpr{is <- obs.wells.head$PESTNAME %in% obs.wells@data$PESTNAME[obs.wells@data$desc == "Nature Conservancy well"]; format(sum(is), big.mark=",")} measurements
+all recorded over the last \Sexpr{format(as.numeric(diff(range(obs.wells.head[is, "DateTime"])), units="days") / 30.437, digits=1)}-months of the model-calibration period)
+it was necessary to decrease the observation weight of these groups to prevent their measurements from dominating the model-calibration process.
+
+Weights on the regularized prior information (that is, the horizontal hydraulic conductivity and storage coefficient),
+vertical anisotropy, and tributary basin underflow parameters were automatically adjusted by PEST during the parameter estimation process.
+
+<<table_weights, echo=FALSE, results="asis">>=
+d <- data.frame(typ=c("Groundwater level", "", "", "", "",
+                      "Stream-aquifer flow exchange", "", "", "", "",
+                      "Stream-aquifer flow-exchange ratio",
+                      "Groundwater discharge", "",
+                      "Horizontal hydraulic conductivity", "",
+                      "Vertical anisotropy",
+                      "Storage coefficient",
+                      "Riverbed conductance",
+                      "Irrigation efficiency",
+                      "Scalar component",
+                      "Moving average duration",
+                      "Amplitude-reduction factor"),
+                grp=c("U.S. Geologic Survey monitoring network wells",
+                      "Geolocated driller wells",
+                      "Public Land Survey System-located driller wells",
+                      "Sun Valley Water and Sewer production well",
+                      "The Nature Conservancy monitoring network well",
+                      "Big Wood River, Near Ketchum to Hailey reach",
+                      "Big Wood River, Hailey to Stanton Crossing reach",
+                      "Willow Creek reach",
+                      "Silver Creek, above Sportsman Access reach",
+                      "Silver Creek, Sportsman Access to near Picabo reach",
+                      "Subreaches of the Big Wood River, Silver Creek, and spring-fed tributaries",
+                      "Stanton Crossing outlet boundary",
+                      "Silver Creek outlet boundary",
+                      "Pilot points in each zone (\\hyperref[fig:map_pilot]{fig.~\\ref{fig:map_pilot}})",
+                      "Pilot points in zones A, M, and P",
+                      "Global value",
+                      "Pilot points in each zone",
+                      "Willow Creek reach and Silver Creek, Sportsman Access to Near Picabo reach; subreaches of the Big Wood River, Silver Creek, and spring-fed tributaries",
+                      "Irrigated lands",
+                      "Tributary boundaries",
+                      "Global value for all tributary boundaries",
+                      "Global value for all tributary boundaries"),
+                wgt=c(1, 0.75, 0.2295, 0.5, 0.211527,
+                      0.000317, 0.0000554, 0.000457, 0.000099, 0.000099,
+                      10.73422, 0.01, 0.0001, NA, NA, NA, NA, 1, 10, NA, NA, NA),
+                unt=c(rep("1/m", 5), rep("d/m\\textsuperscript{3}", 5),
+                      "1", rep("d/m\\textsuperscript{3}", 2),
+                      rep("d/m", 2), "1", "1", "d/m\\textsuperscript{2}", "1", "1", "1/d", "1"))
+d$wgt <- ToScientific(d$wgt, digits=1)
+d$wgt[is.na(d$wgt)] <- "ADJ"
+columns <- c("Observation type", "Observation group", "Weight", "Units")
+colnames(d) <- sprintf("\\textbf{\\shortstack{%s}}", columns)
+cap1 <- "Observation weights assigned to field measurements and prior-information."
+cap2 <- c("\\textbf{Abbreviations}: ADJ, automatically adjusted during the parameter estimation process; 1/m, inverse meters; d/m\\textsuperscript{3}, days per cubic meter; d/m\\textsuperscript{2}, days per square meter; 1/d, inverse days")
+tbl <- xtable::xtable(d, label="table_weights")
+xtable::caption(tbl) <- c(sprintf("%s [%s]", cap1, paste(cap2, collapse=" ")), cap1)
+xtable::digits(tbl) <- 0
+xtable::align(tbl) <- c("l", "l", "p{3.2in}", "l", "l")
+print(tbl, include.rownames=FALSE, caption.placement="top", booktabs=TRUE,
+      sanitize.colnames.function=function(x){x}, size="\\small", NA.string="",
+      sanitize.text.function=identity)
+@
+
+% =========================================================================
+
+\section{PHIMLIM}
+
+The user-specified PEST variable PHIMLIM in equation~\ref{eq:min} is the upper limit on the sum of squared weighted differences between model results and corresponding field measurements \citep[p.~7-6]{Doherty2005}.
+Its purpose is to control the tradeoff between model-to-measurement fit and the level of adherence to preferred parameter value conditions.
+For example, a decrease in the PHIMLIM value can dramatically reduce the model-to-measurement fit, while at the same time, increasing the likelihood of overfitting model results to measurements (that is, estimating an unrealistic parameter set).
+Adhering to the general guidelines provided by \citet[p.~842]{Fienen2009}, a PHIMLIM of 54,150 was selected for the WRV model-calibration process;
+this value is thought to provide a good compromise between model-to-measurement fit and model-parameter believability.
+
+% =========================================================================
+
+\clearpage
+\phantomsection
+\addcontentsline{toc}{section}{References Cited}
+\printbibliography
+
+% =========================================================================
+
+% \vfill\centerline{Created on \Sexpr{format(Sys.time(), "%B %e, %Y")}; total processing time was \Sexpr{format(difftime(Sys.time(), t0), digits=3)}.}
+
+\end{document}
