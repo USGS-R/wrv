@@ -1,0 +1,774 @@
+% \VignetteIndexEntry{Appendix E. Tributary Basin Underflow}
+% \VignetteEngine{knitr::knitr}
+% \VignetteDepends{wrv}
+
+\documentclass[twoside]{article}
+
+\input{\Sexpr{shQuote(system.file("misc", "preamble.tex", package="wrv"))}}
+\addbibresource{\Sexpr{system.file("misc", "references.bib", package="wrv")}}
+
+\renewcommand{\thefigure}{E\arabic{figure}}
+\renewcommand{\thetable}{E\arabic{table}}
+\renewcommand{\thepage}{E\arabic{page}}
+
+\setcounter{page}{1}
+
+% =========================================================================
+
+\begin{document}
+
+<<setup, include=FALSE>>=
+t0 <- Sys.time()
+try(knitr::opts_chunk$set(tidy=FALSE, comment="#", fig.align="center"), silent=TRUE)
+grDevices::pdf.options(useDingbats=FALSE)
+options(preferRaster=TRUE, scipen=0, digits=2)
+library(wrv)
+loadNamespace("xtable")
+
+# Device dimension in inches (width, height)
+fin.graph         <- c(7.16, 7.16)
+fin.graph.short   <- c(7.16, 3.50)
+fin.map           <- c(7.01, 9.32)
+fin.map.0         <- c(7.01, 8.65)
+fin.map.s         <- c(7.16, 5.31)
+fin.map.s.0       <- c(7.16, 4.64)
+fin.map.n         <- c(7.16, 7.00)
+fin.map.n.small   <- c(3.50, 3.83)
+fin.map.n.small.0 <- c(3.50, 3.16)
+fin.cs            <- c(7.16, 5.39)
+fin.cs.0          <- c(7.16, 4.73)
+
+# Extreme coordinates of plotting region (x1, x2, y1, y2)
+usr.map     <- c(2451504, 2497815, 1342484, 1402354)
+usr.map.s   <- c(2472304, 2497015, 1343284, 1358838)
+usr.map.n.1 <- c(2463000, 2475356, 1386500, 1398856)
+usr.map.n.2 <- c(2467500, 2479856, 1376500, 1388856)
+usr.map.n.3 <- c(2466696, 2479052, 1366501, 1378857)
+usr.map.n.4 <- c(2471500, 2483856, 1356482, 1368838)
+
+# Unit conversions
+mi2.to.m2  <- 2589990
+m3.per.d.to.af.per.yr <- 0.296106669
+m2.to.km2 <- 1e-06
+mi2.to.km2 <- 2.58999
+m3.per.d.to.af.per.y <- 0.2961208
+m.to.ft <- 3.28084
+mo.to.d <- 30.4368
+
+# Map credit
+credit <- paste("Base derived from U.S. Geological Survey National Elevation Dataset 10-meter digital elevation model.",
+                "Idaho Transverse Mercator projection; North American Datum of 1983.", sep="\n")
+@
+
+\title{Appendix E.\enspace Tributary Basin Underflow into the Wood River Valley Aquifer System, South-Central Idaho\vspace{2ex}}
+\author{}
+\date{}
+\pretitle{\begin{flushleft}\LARGE\bfseries\sffamily}
+\posttitle{\end{flushleft}}
+\maketitle
+
+\tableofcontents
+
+\newpage
+
+\renewcommand*\listfigurename{Figures}
+\listoffigures
+
+\renewcommand*\listtablename{Tables}
+\listoftables
+
+\clearpage
+
+\RaggedRight
+
+% =========================================================================
+
+\section{Introduction}
+
+One of the most difficult water-budget components to estimate is subsurface inflow or outflow from an aquifer because direct measurement is not possible and the data required for indirect estimates often are lacking.
+The groundwater-flow model of the Wood River Valley (WRV) aquifer system requires estimates of the volumetric flow rate of groundwater through alluvium in tributary canyons into the main aquifer system.
+Following the usage of \citet{Garabedian1992} for the groundwater-flow model of the Eastern Snake River Plain regional aquifer system, this volumetric flow rate is referred to as tributary basin underflow.
+
+\citet{Smith1960} inferred geologic sections at 27 streamgages in the Malad River basin in order to qualitatively estimate basin yield (estimated as ``the sum of surface runoff and ground-water underflow from a basin.'').
+Ten of the streamgages evaluated were in the WRV, four of which are applicable to the estimate of tributary basin underflow:
+Big Wood River near Ketchum, Warm Springs Creek at Guyer Hot Springs near Ketchum, Warm Springs Creek near Ketchum, and Trail Creek at Ketchum.
+Smith's estimates are:
+
+\begin{enumerate}
+  \item Big Wood River near Ketchum: ``The ground-water component probably is more than 10 percent of the water yield.''
+  \item Warm Springs Creek at Guyer Hot Springs near Ketchum: ``Underflow probably is less than 1 percent of the water yield.''
+  \item Warm Springs Creek near Ketchum: ``The \ldots alluvium probably transmits a moderate amount of ground water past the gage site. The amount cannot be estimated.''
+  \item Trail Creek at Ketchum: ``Underflow \ldots is believed to be an appreciable percentage of the water yield of the \ldots drainage area.''
+\end{enumerate}
+
+The volumetric water budget described in \citet{Bartolino2009} identifies recharge from 28 tributary canyons as the largest component of recharge to the WRV aquifer system.
+This estimate was based on the U.S. Geological Survey (USGS) StreamStats tool \citep{Ries2004} which uses regression equations from gaged streams to estimate flow in ungaged streams.
+For 23 of the tributaries \citet{Bartolino2009} assumed that all of this estimated flow was recharged; the remaining five major tributaries were assumed to recharge 50 percent of the measured or estimated flow.
+Previous estimates of tributary recharge, such as \citet{Smith1959} and \citet{Wetzstein2000}, were made with basin-yield calculations or model results: they are roughly comparable to those in \citet{Bartolino2009}.
+
+Because \citet{Bartolino2009} constructed a volumetric water budget for the entire aquifer system no effort was made to differentiate subsurface volumetric flow rates from recharged tributary streamflow.
+Thus, the recharge estimates made by \citet{Bartolino2009} are not directly comparable to estimates of tributary basin underflow calculated for the groundwater-flow model.
+
+\newpage
+
+% =========================================================================
+
+\section{Tributary Basin Underflow}
+
+The process of tributary basin underflow begins with infiltration of precipitation that falls within tributary basins; this water eventually reaches the water table and flows down gradient.
+Groundwater recharge occurs either directly over the extent of the WRV aquifer system \citep{Bartolino2012} or as flow into the aquifer system through the subsurface.
+Because the boundaries of the groundwater-flow model of the WRV aquifer system do not include the entire mapped extent of the aquifer system (\hyperref[fig:map_tribs]{fig.~\ref{fig:map_tribs}}),
+tributary basin underflow is defined as groundwater flow into the model domain that originates as precipitation in the tributary basins.
+
+Tributary basin underflow estimates often are made using Darcy's equation and assumed constant over time; that is, they are long-term averages that do not account for temporal variability in precipitation and snowmelt.
+There is likely a lag time of some months between precipitation infiltration and movement of the tributary basin underflow into the model domain that is dependent on antecedent soil moisture, topographic gradients, and hydraulic conductivity.
+Because of multiple recharge events and the time lag, recharge tends to be distributed or integrated over time rather than having distinct peaks (such as seen in graphs of streamflow or precipitation).
+Thus some way of measuring the seasonal variation is needed to represent the temporal variation in tributary basin underflow.
+One such technique is to apply a `seasonal-scaling index' to convert the long-term average underflow into a monthly or quarterly value.
+In this study, the seasonally adjusted tributary basin underflow is expressed as:
+
+\begin{equation} \label{eq:flux}
+Q_{\mathit{trib}, i} = \overline{Q}_{\mathit{trib}} \, \mathit{SI}_{i} \quad \text{for } i = 1, 2, \dots , 192
+\end{equation}
+where
+\begin{description}
+\item[\mathit{trib}] is a unique identifier for the major tributary canyon;
+\item[i] is the month as a counting number (1--192) where 1 is January 1995 and 192 is December 2010;
+\item[Q_{\mathit{trib}, i}] is the mean volumetric flow rate to the model domain from tributary $\mathit{trib}$ during month $i$, in cubic meters per day;
+\item[\overline{Q}_{\mathit{trib}}] is the estimated mean volumetric flow rate to the model domain from tributary $\mathit{trib}$ during the model simulation period (1995--2010), in cubic meters per day; and
+\item[\mathit{SI}_{i}] is the seasonal scaling index during month $i$, a dimensionless quantity.
+\end{description}
+
+Groundwater enters the model domain through tributary cells located in the major tributary canyons and
+beneath the valley floor at the confluence of the Big Wood River and the North Fork Big Wood River (BWR Upper) (trib~no. 2 in \hyperref[fig:map_tribs]{fig.~\ref{fig:map_tribs}}).
+The BWR Upper is classified as a major tributary canyon in this document.
+Twenty-two major tributary canyons were identified in the WRV (\hyperref[table_tribs]{table~\ref{table_tribs}}).
+A scarcity of field observations in the major tributary canyons indicate large uncertainty in the historic flow contribution from each of the tributary basins.
+Therefore, tributary cells are placed in the upper part of the tributary canyons to help constrain model errors that may propagate into the model from these model boundaries.
+Simulated hydraulic heads in the tributary canyons should be considered less reliable than in the WRV.
+The process of designating the location of tributary cells (appendix D, p.~D9) also included
+(1) maintaining continuous grid coverage in the narrow and steep tributary canyons, and
+(2) leveraging existing data on depth to bedrock either from drillers' logs or geophysical data.
+A consequence of these boundaries is a reduction in the extent of the modeled aquifer system from the full extent of the aquifer system.
+
+<<include=FALSE>>=
+v <- "Location of underflow boundaries in the major tributary canyons and the upper part of the Wood River Valley aquifer system, south-central Idaho."
+v <- c(paste("Map showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(v)))), v)
+@
+
+<<map_tribs, echo=FALSE, fig.width=fin.map.0[1], fig.height=fin.map.0[2], fig.scap=sprintf("{%s}", v[1]), fig.cap=sprintf("{%s}", v[2])>>=
+PlotMap(crs(alluvium.thickness), xlim=usr.map[1:2], ylim=usr.map[3:4], bg.image=hill.shading, dms.tick=TRUE,
+        bg.image.alpha=0.6, rivers=list(x=streams.rivers), lakes=list(x=lakes), credit=credit)
+cols <- c("#F02311", "#333333", "#FFFFFFCC", "#FBB829")
+plot(alluvium.extent, border=cols[3], col="#33333366", add=TRUE)
+l <- rgeos::gIntersection(as(tributaries, "SpatialLinesDataFrame"), alluvium.extent, TRUE)
+trib.lines <- SpatialLinesDataFrame(l, data=tributaries@data, match.ID=FALSE)
+plot(trib.lines, lwd=4, col=cols[1], add=TRUE)
+pos <- c(2, 4, 2, 2, 2, 3, 1, 1, 4, 3,
+         4, 1, 1, 1, 2, 4, 2, 1, 1, 3,
+         2, 4, 1)
+text(getSpatialLinesMidPoints(trib.lines), labels=rownames(trib.lines@data),
+     col="#333333", cex=0.6, pos=pos, offset=0.4)
+plot(cities, pch=15, cex=0.8, col="#333333", add=TRUE)
+text(cities, labels=cities@data$FEATURE_NA, col="#333333", cex=0.5, pos=1, offset=0.4)
+gage.hailey <- streamgages[streamgages@data$SiteNo == "13139510", ]
+points(gage.hailey, pch=17, col=cols[2])
+text(gage.hailey, labels=gage.hailey@data$SiteNo, col="#333333", cex=0.6, pos=2)
+l <- canals[with(canals@data, grep("Hiawatha", EntityName)), ]
+lines(l, col=cols[4])
+leg <- c("Flux boundaries", "Hailey streamgage", "Aquifer extent", "Hiawatha Canal")
+legend("topleft", leg, pch=c(15, 17, 22, NA), lwd=c(NA, NA, NA, 1), col=cols,
+       pt.bg="#33333366", pt.cex=c(0.7, 1, 1.5), inset=0.02, cex=0.7, box.lty=1,
+       box.lwd=0.5, bg="#FFFFFFE7", seg.len=1.4)
+AddInsetMap(idaho, width=1, main.label=list("IDAHO", adj=c(-0.4, -4.9)),
+            sub.label=list("Map area", adj=c(0.5, 2.5)), loc="topright")
+invisible(dev.off())
+@
+
+\begin{landscape}
+<<table_tribs, echo=FALSE, results="asis">>=
+d <- tributaries@data
+d$K <- NULL
+d <- data.frame(Name=d$Name, ID=seq_len(nrow(d)), d[, -1])
+d$Flow_af <- d$Flow * m3.per.d.to.af.per.yr
+d <- d[, c("Name", "ID", "TribWidth", "BdrkDepth", "SatArea", "LandGrad",
+           "DarcyFlow", "PrecipRate", "BasinArea", "BasinAreaType",
+           "PrecipFlow", "FlowRatio", "Flow", "Flow_af")]
+d$PrecipRate <- ToScientific(d$PrecipRate, digits=1)
+d$BasinArea  <- ToScientific(d$BasinArea,  digits=1)
+columns <- c("Name",
+             "Trib \\\\ No.",
+             "Canyon \\\\ width \\\\ $w$ \\\\ (m)",
+             "Saturated \\\\ thickness \\\\ $\\Delta d$ \\\\ (m)",
+             "Saturated \\\\ area \\\\ $A_{sat}$ \\\\ (m\\textsuperscript{2})",
+             "Hydraulic \\\\ gradient \\\\ $\\nabla h$ \\\\ (1)",
+             "Darcy flow \\\\ (initial  \\\\ estimate) \\\\ $\\overline{Q}_{d}$ \\\\ (m\\textsuperscript{3}/d)",
+             "Precip. \\\\ rate \\\\ $P_{b}$ \\\\ (m/d)",
+             "Basin \\\\ area \\\\ $A_{b}$ \\\\ (m\\textsuperscript{2})",
+             "Basin \\\\ size",
+             "Precip. \\\\ flow \\\\ $\\overline{Q}_{p}$ \\\\ (m\\textsuperscript{3}/d)",
+             "Flow \\\\ ratio \\\\ $r$ \\\\ (1)",
+             "Flow rate \\\\ (secondary  \\\\ estimate) \\\\$\\overline{Q}$ \\\\ (m\\textsuperscript{3}/d)",
+             "Flow \\\\ rate \\\\ (acre-ft/yr)")
+colnames(d) <- sprintf("\\textbf{\\shortstack{%s}}", columns)
+cap1 <- "Initial and secondary estimates of mean tributary basin underflow and selected tributary basin information."
+cap2 <- c("\\textbf{Trib~No.}: is an identifier used to locate the tributary model boundaries on the map in \\hyperref[fig:map_tribs]{figure~\\ref{fig:map_tribs}}.",
+          "\\textbf{Canyon width}: is the width of the tributary canyon floor measured perpendicular to the canyon axis (also known as the `transect line')",
+          "\\textbf{Saturated thickness}: is the vertical distance between bedrock and the water table.",
+          "\\textbf{Saturated area}: is the saturated cross-sectional area beneath the transect line represented by the lower-half of an ellipse.",
+          "\\textbf{Hydraulic gradient}: is the average slope of the water table in the near vicinity of the transect line.",
+          "\\textbf{Darcy flow}: is the Darcy estimate of mean tributary basin underflow.",
+          "\\textbf{Precip. rate}: is the average precipitation rate in the tributary basin.",
+          "\\textbf{Basin area}: is the drainage area of the tributary basin.",
+          "\\textbf{Basin size}: is an identifier indicating the size of a tributary basin, where `big' and `small' indicate basin areas greater than and less than 10 square miles, respectively.",
+          "\\textbf{Precip. flow}: is the precipitation estimate of mean tributary basin underflow.",
+          "\\textbf{Flow ratio}: is the ratio of Darcy to precipitation mean tributary basin underflow.",
+          "\\textbf{Flow rate}: is the secondary estimate of mean tributary basin underflow. These flow rates are preliminary and were adjusted during model calibration.",
+          "\\textbf{Abbreviations}: m, meters; m\\textsuperscript{2}, square meters; m\\textsuperscript{3}/d, cubic meters per day; m/d, meters per day; acre-ft/yr, acre-feet per year")
+tbl <- xtable::xtable(d, label="table_tribs")
+xtable::caption(tbl) <- c(sprintf("%s [%s]", cap1, paste(cap2, collapse=" ")), cap1)
+xtable::digits(tbl) <- c(0, 0, 0, 0, 1, 0, 4, 0, 1, 1, 0, 0, 3, 0, 0)
+print(tbl, include.rownames=FALSE, caption.placement="top", booktabs=TRUE,
+      format.args=list(big.mark=","), sanitize.colnames.function=function(x){x},
+      sanitize.text.function=identity, size="\\small")
+@
+\end{landscape}
+
+% =========================================================================
+
+\section{Long-Term Mean Volumetric Flow Rate}
+
+\subsection{Darcy's Equation}
+
+Mean tributary basin underflow is estimated with Darcy's equation \citep{Darcy1856} whereby the water-table gradient is multiplied by the hydraulic conductivity and saturated cross-sectional area of the tributary basin.
+The mean tributary basin underflow ($\overline{Q}$ in equation~\ref{eq:flux}) is expressed as:
+
+\begin{equation} \label{eq:darcy}
+\overline{Q}_{d} = K\, A_{\mathit{sat}}\, \mathit{\nabla h}
+\end{equation}
+where
+\begin{description}
+\item[\overline{Q}_{d}] is the Darcy estimate of mean tributary basin underflow, in cubic meters per day;
+\item[K] is the hydraulic conductivity, in meters per day;
+\item[A_{\mathit{sat}}] is the saturated cross-sectional area, in square meters; and
+\item[\mathit{\nabla h}] is the hydraulic gradient, a dimensionless value.
+\end{description}
+
+\subsubsection{Hydraulic conductivity}
+
+Hydraulic conductivity is a property of soils and rocks that describes the ease with which water can move through pore spaces or fractures.
+Equation~(\ref{eq:darcy}) assumes an identical aquifer material type within the tributary canyons.
+Therefore, a single hydraulic conductivity of \Sexpr{k <- unique(tributaries@data$K); format(k, digits=3)} meters per day (m/d) (\Sexpr{format(k * m.to.ft)} feet per day [ft/d]) is used.
+This hydraulic conductivity value is the average of two geometric means of hydraulic conductivity measurements in the unconfined alluvium aquifer \citep[table~2]{Bartolino2012}.
+
+\subsubsection{Saturated cross-sectional area}
+
+The saturated cross-sectional area ($A_{\mathit{sat}}$ in equation~\ref{eq:darcy}) is defined along a transect line that is roughly perpendicular to the canyon axis and extends downward beneath the canyon floor,
+in which the upper and lower boundaries are defined by the water table and bedrock surface, respectively.
+For example, the transect line and saturated cross-sectional area of the Deer Creek tributary is shown in \hyperref[fig:map_graph_trib]{figure~\ref{fig:map_graph_trib}}.
+A scarcity of well-log information in the major tributary canyons requires the use of a simplified geometry to represent the saturated cross-sectional area.
+The assumed geometry of the saturated cross-sectional area is taken as the lower-half of an ellipse, expressed as:
+
+\begin{equation} \label{eq:ellipse}
+A_{\mathit{sat}} = \frac{\pi \, w \, \Delta d}{4}
+\end{equation}
+where
+\begin{description}
+\item[\pi] is the ratio of a circle's circumference to its diameter, a dimensionless quantity approximated as 3.14159;
+\item[w] is the width of the tributary canyon, in meters; and
+\item[\Delta d] is the saturated thickness, in meters (\hyperref[table_tribs]{table~\ref{table_tribs}}).
+\end{description}
+
+Saturated thickness is taken as the depth below the water table to bedrock.
+It is assumed that the tributary contains a perennial or ephemeral stream, the surface of which is represented by the lowest land-surface elevation along the transect line and that this elevation represents a flat, level water table across the transect line.
+The bedrock elevation is taken as the elevation of bedrock in the nearest well or geophysical measurement.
+
+<<echo=FALSE>>=
+# Adapted from plotrix::draw.ellipse function (v3.5-11)
+DrawEllipse <- function(x, y, a, b, ang=0, seg=c(0, 360), nv=1000) {
+  theta <- ang * pi / 180
+  seg <- seg * pi / 180
+  z <- seq(seg[1], seg[2], length=nv + 1L)
+  xx <- a * cos(z)
+  yy <- b * sin(z)
+  alpha <- atan2(yy, xx)
+  rad <- sqrt(xx^2 + yy^2)
+  xp <- rad * cos(alpha + theta) + x
+  yp <- rad * sin(alpha + theta) + y
+  return(xy.coords(xp, yp))
+}
+
+RotateLine <- function(m, ang=90) {
+  x <- m[, 1]
+  y <- m[, 2]
+  theta <- ang * pi / 180
+  cx <- mean(x)
+  cy <- mean(y)
+  x.new <- ( (x - cx) * cos(theta) + (y - cy) * sin(theta)) + cx
+  y.new <- (-(x - cx) * sin(theta) + (y - cy) * cos(theta)) + cy
+  return(cbind(x=x.new, y=y.new))
+}
+@
+
+\begin{figure}
+  \begin{subfigure}{0.5\textwidth}
+    \caption{Transect line \label{fig:map_graph_trib_a}}
+    <<map_graph_trib_a, echo=FALSE, results="asis", fig.width=fin.map.n.small.0[1], fig.height=fin.map.n.small.0[2]>>=
+    trib.name <- "Deer Creek"
+    transect <- trib.lines[trib.lines@data$Name == trib.name, ]
+    xy <- as.numeric(coordinates(getSpatialLinesMidPoints(transect)))
+    dx <- 2000
+    xy[1] <- xy[1] + 700
+    e <- extent(c(xy[1] - dx, xy[1] + dx, xy[2] - dx, xy[2] + dx))
+    PlotMap(crs(alluvium.thickness), xlim=e[1:2], ylim=e[3:4],
+            bg.image=hill.shading, dms.tick=TRUE, bg.image.alpha=0.8,
+            rivers=list(x=streams.rivers), lakes=list(x=lakes), credit=NULL)
+    cols <- c("#F02311", "#FFC800", "#333333CC")
+    plot(transect, lwd=2, col=cols[1], add=TRUE)
+    pts <- as(transect, "SpatialPoints")
+    text(pts, c("B", "B'"),  cex=0.7, pos=c(3, 1), font=4)
+    lines(RotateLine(coordinates(pts)), lwd=2, col=cols[2])
+    plot(alluvium.extent, border=cols[3], add=TRUE)
+    leg <- c("Transect line", "Axial line", "Aquifer extent")
+    legend("topleft", leg, lwd=c(2, 2, 1), col=cols, pt.bg="#33333366",
+           inset=0.02, cex=0.7, box.lty=1, box.lwd=0.3, bg="#FFFFFFE7",
+           seg.len=1)
+    invisible(dev.off())
+    @
+  \end{subfigure}%
+  \begin{subfigure}{0.5\textwidth}
+    \caption{Saturated cross-sectional area \label{fig:map_graph_trib_b}}
+    <<map_graph_trib_b, echo=FALSE, results="asis", fig.width=fin.map.n.small.0[1], fig.height=fin.map.n.small.0[2]>>=
+    asp <- 10
+    sat.thickness <- transect@data$BdrkDepth
+    depth.to.water <- sat.thickness * 0.1  # estimating at 10 percent of saturated thickness
+    land.elev <- transect@data$MinLSD + depth.to.water
+    xy <- coordinates(transect)[[1]][[1]]
+    xlim <- c(0, as.numeric(dist(xy)))
+    ylim <- c(land.elev - depth.to.water - sat.thickness, land.elev)
+    par(mar=c(3.0, 0.1, 1.1, 0.1))
+    plot.new()
+    plot.window(xlim=range(extendrange(xlim)), ylim=extendrange(ylim),
+                asp=asp, xaxt="n", yaxt="n", xaxs="i", yaxs="i")
+    usr <- par("usr")
+    leg <- c("Unsaturated zone", "Saturated zone", "Bedrock")
+    cols <- c("#BF5507", "#3399CC", "#C0C0C0")
+    polygon(c(usr[1:2], rev(usr[1:2])), c(rep(land.elev, 2), rep(usr[3], 2)),
+            border=NA, col=cols[3])
+    p <- DrawEllipse(mean(xlim), land.elev - depth.to.water,
+                     diff(xlim) / 2, sat.thickness, seg=c(180, 360))
+    polygon(p, border=NA, col=cols[2], lty=1, lwd=1)
+    polygon(c(xlim, rev(xlim)), c(rep(land.elev, 2), rep(land.elev, 2) - depth.to.water),
+            border=NA, col=cols[1])
+    AddScaleBar(asp, unit="meters", loc="bottomright", offset=c(-0.3, 0.1),
+                lab.vert.exag=TRUE)
+    legend("bottom", leg, fill=cols, horiz=TRUE, inset=-0.15,
+           cex=0.7, bty="n", xpd=TRUE, xjust=0.5, yjust=0, border=NA)
+    text(xlim[1], ylim[2], "B",  cex=0.7, pos=3, font=4)
+    text(xlim[2], ylim[2], "B'", cex=0.7, pos=3, font=4)
+    text(xlim[2], ylim[2], "B'", cex=0.7, pos=3, font=4)
+    text(mean(xlim), ylim[2], "LAND SURFACE", cex=0.7, pos=3)
+    invisible(dev.off())
+    @
+  \end{subfigure}
+
+  \caption{{Deer Creek tributary canyon (\textit{\textbf{A}}) transect line and (\textit{\textbf{B}}) estimated saturated cross-sectional area. \label{fig:map_graph_trib}}}
+
+\end{figure}
+
+\subsubsection{Hydraulic gradient}
+
+The hydraulic gradient ($\mathit{\nabla h}$ in equation~\ref{eq:darcy}) is the average slope of the water table in the near vicinity of the transect line.
+A scarcity of observation wells in the major tributary canyons requires an estimation of the hydraulic gradient using land-surface elevations.
+This method of estimation first defines an axial line of equal length and perpendicular to the transect line;
+its midpoint located at the midpoint of the transect line.
+For points located along the axial line (with an equal interval point separation of about 10 m), the land-surface elevation is interpolated from the $\tfrac{1}{3}$-arc-second National Elevation Dataset \citep{USGS2009}.
+The slope of the regressed line through these pointwise elevation values is taken as the estimated hydraulic gradient (\hyperref[table_tribs]{table~\ref{table_tribs}}).
+
+\subsection{Correction for Smaller Tributaries}
+
+An implicit assumption in the volumetric flow rate estimated by the Darcy equation (equation~\ref{eq:darcy}) is that the saturated thickness and hydraulic gradient remain constant, implying an unlimited supply of water.
+While this assumption may be valid for larger tributary canyons with perennial streamflow, it is likely violated when estimating the volumetric flow rate in smaller tributary basins with ephemeral streamflow.
+In either case, the maximum possible yearly volumetric flow rate cannot be more than the yearly precipitation that falls in the drainage basin, and probably much less when evapotranspiration and sublimation are considered.
+The assumption of a constant saturated thickness and hydraulic gradient, in combination with ambiguity because of the lack of well or geophysical data (typical of the smaller tributaries), results in more uncertainty in the volumetric flow rates estimated using Darcy's law in smaller tributary canyons.
+The following describes the method used to account for the overestimation of volumetric flow rates in the smaller tributaries.
+
+A drainage basin area for a tributary canyon is defined as the area of land where groundwater from rain or melting snow converges at the tributary boundary.
+Smaller basins were identified by plotting basin areas for each tributary canyon on a logarithmic scale (\hyperref[fig:graph_basin_areas]{fig.~\ref{fig:graph_basin_areas}}).
+A natural break was found at about 26 square-kilometers (10 square-miles) and tributary basins less than this break were designated as `small', and all others were designated as `big'.
+
+\newpage
+
+Assuming all precipitation infiltrates and recharges the water table in the tributary basin,
+a secondary estimate (or maximum threshold value) of the mean tributary basin underflow ($\overline{Q}$ in equation~\ref{eq:flux}) is calculated by multiplying a basin's average rate of precipitation by its drainage area,
+and expressed as:
+
+\begin{equation} \label{eq:precip}
+\overline{Q}_{p} = P_{b}\, \mathit{A}_{b}
+\end{equation}
+where
+\begin{description}
+\item[\overline{Q}_{p}] is the precipitation estimate of mean tributary basin underflow, in cubic meters per day;
+\item[P_{b}] is the average precipitation rate in the tributary basin, in meters per day; and
+\item[A_{b}] is the drainage area of the tributary basin, in square meters (\hyperref[table_tribs]{table~\ref{table_tribs}}).
+\end{description}
+
+\noindent The ratio of Darcy to precipitation mean tributary basin underflow estimates ($r$) (\hyperref[table_tribs]{table~\ref{table_tribs}}) is then expressed as:
+
+\begin{equation} \label{eq:ratio}
+r = \frac{\overline{Q}_{d}}{\overline{Q}_{p}}.
+\end{equation}
+
+\noindent And the mean tributary basin underflow ratio for the larger tributary canyons ($\overline{r}_{\mathit{big}}$) is \Sexpr{format(mean(with(tributaries@data, FlowRatio[BasinAreaType == "big"])), digits=1)}, and expressed as:
+
+\begin{equation} \label{eq:ratio_big}
+\overline{r}_{\mathit{big}} = \frac{1}{n} \sum_{\mathit{Trib}} r_{\mathit{Trib}}
+\end{equation}
+where
+\begin{description}
+\item[\mathit{Trib}] is a unique identifier for a major tributary canyon that was classified as `big';
+\item[n] is the total number of `big' tributaries ($n = \Sexpr{sum(tributaries@data$BasinAreaType == "big")}$); and
+\item[r_{\mathit{Trib}}] is the tributary basin underflow ratio for tributary $\mathit{Trib}$, a dimensionless quantity.
+\end{description}
+
+The mean tributary basin underflow of a `small' tributary canyon is calculated by multiplying its precipitation tributary basin underflow estimate ($\overline{Q}_{b}$
+in equation~\ref{eq:precip}) by the mean tributary basin underflow ratio for the larger tributary canyons ($\overline{r}_{\mathit{big}}$ in equation~\ref{eq:ratio_big}),
+whereas for `big' tributary basins, the volumetric flow rates are taken as the Darcy estimate defined in equation~(\ref{eq:darcy}).
+The secondary estimate of mean tributary basin underflow
+($\overline{Q}_{\mathit{trib}}$ in equation~\ref{eq:flux}; \hyperref[table_tribs]{table~\ref{table_tribs}}; \hyperref[fig:hist_flux_est]{fig.~\ref{fig:hist_flux_est}}) is then expressed as:
+
+\begin{equation} \label{eq:et-intrpl}
+\overline{Q}_{\mathit{trib}} = \left\{\begin{array}{l l}
+                            \overline{Q}_{p, \mathit{trib}} \, \overline{r}_{\mathit{big}} & \quad \text{if tributary basin is `small',}\\
+                            \overline{Q}_{d, \mathit{trib}} & \quad \text{if tributary basin is `big'.}
+                          \end{array} \right.
+\end{equation}
+
+<<include=FALSE>>=
+v <- "Basin area in ascending order plotted on a logarithmic scale."
+v <- c(paste("Graph showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(v)))), v)
+@
+
+<<graph_basin_areas, echo=FALSE, fig.width=fin.graph.short[1], fig.height=fin.graph.short[2], fig.scap=sprintf("{%s}", v[1]), fig.cap=sprintf("{%s}", v[2])>>=
+natural.basin.area.break <- 10 * mi2.to.km2  # 10 square-miles
+d <- tributaries@data
+d$BasinArea <- d$BasinArea * m2.to.km2
+ylim <- 10^(range(pretty(log10(d$BasinArea))))
+x <- d[order(d$BasinArea), c("Name", "BasinArea")]
+ylab <- paste("Basin area, in square", c("kilometers", "miles"))
+PlotGraph(x, ylab=ylab, ylim=ylim, ylog=TRUE, type="p", pch=21, pt.cex=0.7,
+          col="#2A8FBD", bg="#2A8FBD", conversion.factor=1 / mi2.to.km2,
+          xlab="Rank ordered plotting position")
+col <- "#A80000"
+abline(h=natural.basin.area.break, col=col)
+pos <- rep(4, nrow(x))
+pos[21:23] <- 2
+text(seq_along(x[, 1]), x[, 2], x[, 1], pos=pos, offset=0.3, cex=0.6, srt=90)
+xlim <- par("usr")[1:2]
+text(xlim[2] - diff(xlim) * 0.15, natural.basin.area.break,
+     "Natural break in basin areas", col=col, cex=0.7, pos=1, offset=0.2)
+invisible(dev.off())
+@
+
+<<hist_flux_est, echo=FALSE, fig.width=fin.graph.short[1], fig.height=fin.graph.short[2], fig.cap="{Estimated mean tributary basin underflow in the Wood River Valley aquifer system, south-central Idaho. Values are preliminary and were adjusted during model calibration.}">>=
+d <- tributaries@data[order(tributaries@data$Flow, decreasing=TRUE), ]
+cols <- c("#345381", "#E33258")
+col <- rep(cols[1], nrow(d))
+col[d$BasinAreaType == "small"] <- cols[2]
+par(mar=c(3.1, 7.1, 0.1, 1.1), mgp=c(1.5, 0.1, 0.3))
+xlab <- "Estimated mean volumetric flow rate, in cubic meters per day"
+at <- pretty(d$Flow, n=8)
+barplot(d$Flow, space=0.4, xlim=range(at), names.arg=d$Name, horiz=TRUE, cex.names=0.7,
+        cex.lab=0.7, las=1, xlab=xlab, axes=FALSE, lwd=0.5, border=NA, col=col)
+tcl <- 7.2 / par("cra")[2]
+labs <- formatC(at, big.mark=",", mode="integer")
+axis(1, at=at, labels=labs, cex.axis=0.7, tcl=tcl, lwd=0.5)
+labs <- paste("Basin size is", c("'big'", "'small'"))
+legend("topright", labs, fill=cols, border=cols, inset=0.05, cex=0.7, pt.cex=1,
+       box.lwd=NA, xpd=NA, bg="#FFFFFFE7")
+invisible(dev.off())
+@
+
+% =========================================================================
+
+\section{Seasonal Scaling Index}
+
+The seasonal scaling index is typically the ratio between short and long-term means of a proxy, such as precipitation or streamflow.
+\citet{Hsieh2007} applied a similar `scaling index' to apportion tributary basin underflow for the Spokane Valley-Rathdrum Prairie groundwater-flow model.
+
+The most obvious basis for a seasonal scaling index are groundwater-levels recorded in wells located in the major tributary canyons.
+However, pumping effects and the lack of wells with continuous groundwater-level measurements during the simulation period make this approach impracticable.
+Precipitation data were also considered as a basis for calculating a seasonal index but were rejected for three reasons:
+(1) only two weather stations in the WRV have sufficient data to make such an estimate,
+(2) these stations likely do not represent conditions in the higher elevations of the tributary valleys, and
+(3) snowmelt and infiltration may occur several months after the precipitation falls as snow thus requiring another adjustment.
+Weather data were used to adjust the timing of precipitation and snowmelt for areal recharge (appendix F),
+but surface elevations among weather stations range over only 430 m (1,400 ft) within the model domain.
+Because elevations in tributary canyons may range over 1,950 m (6,400 ft), with large variability between tributaries,
+existing weather data are not likely to adequately represent conditions in the tributaries.
+
+Streamflow measurements account for the various surface-water components, such as overland flow or flow from springs and seeps,
+and integrate flow contributions from all the tributary basins above the current streamgage, and thus captures the timing of both precipitation and snowmelt;
+although detailed spatial and temporal resolution is sacrificed.
+Because streamflow data provide a reasonable representation of the timing and amount of precipitation and snowmelt above the streamgage,
+they can serve as a basis for the calculation of a seasonal scaling index.
+Additionally, streamgages often provide a long-term continuous record that is lacking in meteorological data from weather stations.
+
+The Big Wood River at Hailey streamgage (13139510) (\hyperref[fig:map_tribs]{fig.~\ref{fig:map_tribs}}) was chosen as a basis for temporal variation
+because it has continuously recorded streamflow data for the entire simulation period.
+The record at Hailey goes back to 1915 making it the oldest continuously operated streamgage in the WRV.
+Of the 22 major tributary basins for which tributary basin underflow were calculated, 15 are up-valley from the streamgage including the five largest
+(\Sexpr{paste(with(tributaries@data, tail(Name[order(BasinArea)], 5)), collapse=", ")}).
+The only upstream irrigation diversion large enough to significantly affect the flow is the Hiawatha Canal (\hyperref[fig:map_tribs]{fig.~\ref{fig:map_tribs}}).
+
+Daily mean streamflow at the Hailey streamgage from January 1994 through December 2010 (\hyperref[fig:graph_disch_hailey]{fig.~\ref{fig:graph_disch_hailey}})
+was retrieved from the USGS National Water Information System \citep{USGS2014}.
+Streamflow data for 1994 were retrieved for use in calculation of a moving average, described below.
+The Hailey streamflow record shows extreme variability, sometimes with large month-to-month fluctuations.
+Because the conceptual model of tributary basin underflow described above suggests that the processes of infiltration and groundwater movement both integrate and lag specific recharge events,
+a process is needed to incorporate these effects to compute a realistic seasonal scaling index.
+
+<<include=FALSE>>=
+v <- "Daily streamflow at the Hailey (13139510) streamgage located on the Big Wood River, Idaho."
+v <- c(paste("Graph showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(v)))), v)
+@
+
+<<graph_disch_hailey, echo=FALSE, fig.width=fin.graph.short[1], fig.height=fin.graph.short[2], fig.scap=sprintf("{%s}", v[1]), fig.cap=sprintf("{%s}", v[2])>>=
+d <- gage.disch[, c("Date", "13139510")]
+d <- d[order(d$Date), ]
+xlim <- as.Date(c("1994-01-01", "2011-01-01"))
+ylab <- paste("Streamflow, in", c("cubic meters per day", "acre-foot per year"))
+PlotGraph(d, ylab = ylab, xlim=xlim, col="#3399CC", lty=1,
+          conversion.factor=m3.per.d.to.af.per.y, center.date.labels=TRUE,
+          scientific=c(FALSE, TRUE, TRUE))
+@
+
+\newpage
+
+\subsection{Moving Average}
+
+A simple moving (or running) average of the daily streamflow measurements is used to smooth out short-term fluctuations in flow, and integrate and lag specific recharge events (as described in the previous paragraph).
+A moving average is calculated for each month during the 16-year simulation (1995--2010).
+For a given month, the moving average is equal to the mean streamflow measurement for data recorded in a sampling window.
+The upper calendar-date limit for the sampling window is taken as the 1\textsuperscript{st} of the current month; whereas,
+its lower limit lags behind the upper limit by a fixed time period.
+Monthly moving averages are expressed as:
+
+\begin{equation} \label{eq:ma_i}
+D_{\mathit{ma}, i} = \frac{1}{\Delta t}\, \int_{t_{i}}^{t_{i} - \Delta t} f(t) \quad \text{for } i = 1, 2, \dots , 192
+\end{equation}
+where
+\begin{description}
+\item[D_{\mathit{ma}, i}] is the moving average streamflow at the Hailey streamgage for month $i$, in cubic meters per day;
+\item[\Delta t] is a real value time duration for the sampling window, in days;
+\item[t_{i}] is the start of the first day of month $i$, a real value Julian calendar date-time in days; and
+\item[f(t)] is a continuous piecewise linear function of daily streamflow measurements at the Hailey streamgage (\hyperref[fig:graph_disch_hailey]{fig.~\ref{fig:graph_disch_hailey}}),
+with time as the dependent variable; returns an interpolated streamflow value in cubic meters per day.
+\end{description}
+
+Given the scarcity of hydrogeologic information in the tributaries, it was assumed that the model can at best represent seasonal fluctuations in tributary underflow.
+Therefore, mean seasonal moving average streamflows were calculated, and expressed as:
+
+\begin{equation} \label{eq:ma_j}
+\overline{D}_{\mathit{ma}, j} = \frac{1}{3}\, \sum_{i = 3j - 2}^{3j} D_{\mathit{ma}, i} \quad \text{for } j = 1, 2, \dots , 64
+\end{equation}
+where
+\begin{description}
+\item[j] is the season as a counting number (1--64) where 1 is January through March 1995, and 64 is October through December 2010; and
+\item[\overline{D}_{\mathit{ma}, j}] is the mean seasonal moving average streamflow, in cubic meters per day.
+\end{description}
+
+\noindent And the mean of these seasonal values expressed as:
+
+\begin{equation} \label{eq:ma_ave}
+\overline{\overline{D}}_{\mathit{ma}} = \frac{1}{64}\, \sum_{j = 1}^{64} \overline{D}_{\mathit{ma}, j}
+\end{equation}
+where
+\begin{description}
+\item[\overline{\overline{D}}_{\mathit{ma}}] is the mean of the mean seasonal moving average streamflow during the 1995 through 2010 time period, in cubic meters per day.
+\end{description}
+
+\noindent For the purpose of simplifying the derivation of the seasonal scaling index, the mean seasonal moving average streamflow is referred to as the `moving average' in the remainder of this document.
+
+\newpage
+
+\subsection{Amplitude Reduction}
+
+The strong signals in the Hailey streamflow hydrograph are preserved within the moving averages; therefore,
+a method is needed to reduce these signals to better reflect the relatively weak signal of measured groundwater-level hydrographs in the WRV.
+The method chosen is a signal amplitude reduction algorithm \citep{McCoy2011}.
+This low-pass filter reduces the amplitude of the moving average hydrograph (bringing large and small values closer to the mean) but does not alter the mean value.
+The amount of amplitude reduction (damping) is controlled by a reduction factor which must be greater than or equal to 1.
+Note that a reduction factor of 1 does not change the moving average.
+The signal amplitude reduction algorithm is expressed as:
+
+\begin{equation} \label{eq:ar_j}
+D_{\mathit{ar}, \mathit{ma}, j} = \overline{\overline{D}}_{\mathit{ma}} -
+                                  \frac{\overline{\overline{D}}_{\mathit{ma}}}{\mathit{RF}} +
+                                  \frac{\overline{D}_{\mathit{ma}, j}}{\mathit{RF}}
+                                  \quad \text{for } j = 1, 2, \dots , 64
+\end{equation}
+where
+\begin{description}
+\item[D_{\mathit{ar}, \mathit{ma}, j}] is the amplitude reduced moving average, in cubic meters per day; and
+\item[\mathit{RF}] is the reduction factor, a dimensionless quantity.
+\end{description}
+
+\noindent And the mean of these amplitude reduced seasonal values is expressed as:
+
+\begin{equation} \label{eq:ar_ave}
+\overline{D}_{\mathit{ar}, \mathit{ma}} = \frac{1}{64}\, \sum_{j = 1}^{64} D_{\mathit{ar}, \mathit{ma}, j}
+\end{equation}
+where
+\begin{description}
+\item[\overline{D}_{\mathit{ar}, \mathit{ma}}] is the mean amplitude reduced moving average, in cubic meters per day.
+\end{description}
+
+\subsection{Scaling Index}
+
+The scaling index ($\mathit{SI}$ in equation~\ref{eq:flux}) is used to represent the temporal variation in tributary basin underflow.
+The seasonal scaling index is equal to the amplitude reduced moving average ($D_{\mathit{ar}, \mathit{ma}}$ in equation~\ref{eq:ar_j})
+divided by its mean ($\overline{D}_{\mathit{ar}, \mathit{ma}}$ in equation~\ref{eq:ar_ave}), and expressed as:
+
+\begin{equation} \label{eq:si_j}
+\mathit{SI}_{j} = \frac{D_{\mathit{ar}, \mathit{ma}, j}}{\overline{D}_{\mathit{ar}, \mathit{ma}}} \quad \text{for } j = 1, 2, \dots , 64
+\end{equation}
+where
+\begin{description}
+\item[\mathit{SI}_{j}] is the scaling index for season $j$, a dimensionless quantity.
+\end{description}
+
+\noindent And the monthly seasonal scaling index is then expressed as:
+
+\begin{equation} \label{eq:si_i}
+\mathit{SI}_{i} = \mathit{SI}_{j} \quad \text{where } j = \left\lceil \frac{i}{3} \right\rceil \quad \text{for } i = 1, 2, \dots , 192.
+\end{equation}
+where
+\begin{description}
+\item[\mathit{SI}_{i}] is the scaling index for month $i$, a dimensionless quantity.
+\end{description}
+
+\newpage
+
+\section{Sensitivity Analysis}
+
+The seasonally adjusted tributary basin underflow ($Q$ in equation~\ref{eq:flux}) in the Deer Creek tributary canyon
+was calculated during the model simulation period (1995--2010) using sampling windows ($\Delta t$ in equation~\ref{eq:ma_i}) of 1 and 9 months;
+results are shown in \hyperref[fig:graph_flow_dt]{figure~\ref{fig:graph_flow_dt}}.
+As expected, longer sampling windows resulted in extended lag-times with increased integration of specific recharge events.
+A preliminary sensitivity analysis of tributary underflows to changes in the sampling window size indicated that a 9-month window provides
+the best compromise between timing (accounts for spring snowmelt) and magnitude (smearing) of monthly mean streamflow.
+A 9-month sampling window was used as an initial estimate for all tributaries during the 16-year simulation.
+
+\hyperref[fig:graph_flow_rf]{Figure~\ref{fig:graph_flow_rf}} shows the results of varying the reduction factor ($\mathit{RF}$ in equation~\ref{eq:ar_j}) in the Deer Creek tributary canyon from 1 (no amplitude reduction) to 2.
+As expected, the larger reduction factor resulted in an increase in smaller values of volumetric flow and a decrease in larger values, with the mean remaining the same.
+A reduction factor of 2 was used as an initial estimate for all tributaries during the 16-year simulation,
+although there is very little evidence to indicate whether this is the most appropriate initial estimate.
+
+Given the large uncertainties associated with the estimate of long-term mean tributary basin underflow ($\overline{Q}_{\mathit{trib}}$ in equation~\ref{eq:flux}), its magnitude is allowed to vary during model calibration.
+For example, \hyperref[fig:graph_flow_av]{figure~\ref{fig:graph_flow_av}} shows the seasonally adjusted tributary basin underflow in the Deer Creek tributary canyon varying
+the original estimate of long-term mean tributary basin underflow (\hyperref[table_tribs]{table~\ref{table_tribs}}) by 120, 100, and 80 percent.
+As expected, the underflow hydrograph shifts up or down in proportion to the change in the original estimate of long-term mean tributary basin underflow.
+
+A similar distribution pattern was expected for all tributary underflow hydrographs in the WRV because of similar precipitation patterns in the WRV and surrounding areas.
+Therefore, a single sampling window and reduction factor were specified for all tributaries and allowed to vary during model calibration.
+Because of the variability of basin characteristics, all estimates of long-term mean tributary basin underflow in the 22 tributaries were allowed to vary independently of each other during model calibration.
+
+<<echo=FALSE>>=
+ave.flow <- tributaries$Flow[tributaries$Name == "Deer Creek"]
+tr.interval <- as.Date(c("1995-01-01", "2011-01-01"), tz="MST")
+tr.stress.periods <- seq(tr.interval[1], tr.interval[2], "1 month")
+disch <- gage.disch[, c("Date", "13139510")]
+
+mo <- c(1, 9)
+dt <- mo * mo.to.d
+l <- lapply(dt, function(i) GetSeasonalMult(disch, 1, i, tr.stress.periods))
+d <- do.call("cbind", l)
+d <- d[, -which(colnames(d) == "Date")[-1]]
+d[, -1] <- d[, -1] * ave.flow
+colnames(d) <- c("Date", paste0("mo.", mo))
+d.dt <- d
+
+rf <- c(1, 2)
+l <- lapply(rf, function(i) GetSeasonalMult(disch, i, dt[2], tr.stress.periods))
+d <- do.call("cbind", l)
+d <- d[, -which(colnames(d) == "Date")[-1]]
+d[, -1] <- d[, -1] * ave.flow
+colnames(d) <- c("Date", paste0("rf.", rf))
+d.rf <- d
+
+av <- c(1.2, 1.0, 0.8)
+d <- GetSeasonalMult(disch, rf[2], dt[2], tr.stress.periods)
+mult <- d[, 2]
+d[, 2] <- mult * ave.flow * av[1]
+d[, 3] <- mult * ave.flow * av[2]
+d[, 4] <- mult * ave.flow * av[3]
+colnames(d) <- c("Date", paste0("av.", av))
+d.av <- d
+@
+
+<<include=FALSE>>=
+v <- "Seasonally adjusted tributary basin underflow in the Deer Creek tributary canyon calculated using a 1- and 9-month sampling window, while holding constant the reduction factor at 1 and estimated long-term average underflow at 4,937 cubic meters per day."
+v <- c(paste("Graph showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(v)))), v)
+@
+
+<<graph_flow_dt, echo=FALSE, fig.width=fin.graph.short[1], fig.height=fin.graph.short[2], fig.scap=sprintf("{%s}", v[1]), fig.cap=sprintf("{%s}", v[2])>>=
+ylab <- paste("Tributary basin underflow, in", c("cubic meters per day", "acre-feet per year"))
+labs <- paste0(mo, "-month sampling window")
+cols <- c("#00C176", "#1F1F1F")
+fill <- paste0(cols, c("98", "4E"))
+d <- rbind(d.dt, d.dt[nrow(d.dt), , drop=FALSE])
+d[nrow(d), "Date"] <- d[nrow(d), "Date"] + diff(d$Date)[1]
+PlotGraph(d, ylab=ylab, col=cols, fill=fill, conversion.factor=m3.per.d.to.af.per.yr,
+          center.date.labels=TRUE, scientific=c(FALSE, FALSE, FALSE))
+legend("topright", labs, col=cols, lty=1, inset=0.02, cex=0.7,
+       box.lwd=0.5, xpd=NA, bg="#FFFFFFE7")
+@
+
+<<include=FALSE>>=
+v <- "Seasonally adjusted tributary basin underflow in the Deer Creek tributary canyon calculated using a reduction factor of 1 and 2, while holding constant the sampling window at 9 months and estimated long-term average underflow at 4,937 cubic meters per day."
+v <- c(paste("Graph showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(v)))), v)
+@
+
+<<graph_flow_rf, echo=FALSE, fig.width=fin.graph.short[1], fig.height=fin.graph.short[2], fig.scap=sprintf("{%s}", v[1]), fig.cap=sprintf("{%s}", v[2])>>=
+labs <- paste("Reduction factor of", rf)
+cols <- c("#F02311", "#1F1F1F")
+fill <- paste0(cols, c("98", "4E"))
+d <- rbind(d.rf, d.rf[nrow(d.rf), , drop=FALSE])
+d[nrow(d), "Date"] <- d[nrow(d), "Date"] + diff(d$Date)[1]
+PlotGraph(d, ylab=ylab, col=cols, fill=fill, conversion.factor=m3.per.d.to.af.per.yr,
+          center.date.labels=TRUE, scientific=c(FALSE, FALSE, FALSE))
+legend("topright", labs, col=cols, lty=1, inset=0.02, cex=0.7,
+       box.lwd=0.5, xpd=NA, bg="#FFFFFFE7")
+@
+
+<<include=FALSE>>=
+v <- "Seasonally adjusted tributary basin underflow in the Deer Creek tributary canyon calculated using 120, 100, and 80 percent of the estimated long-term average underflow (4,937 cubic meters per day). The sampling window and reduction factor were held constant at 9 months and 2, respectively."
+v <- c(paste("Graph showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(v)))), v)
+@
+
+<<graph_flow_av, echo=FALSE, fig.width=fin.graph.short[1], fig.height=fin.graph.short[2], fig.scap=sprintf("{%s}", v[1]), fig.cap=sprintf("{%s}", v[2])>>=
+labs <- paste(av * 100, "percent")
+cols <- c("#02779E", "#1F1F1F", "#FFCC00")
+fill <- paste0(cols, "4E")
+d <- rbind(d.av, d.av[nrow(d.av), , drop=FALSE])
+d[nrow(d), "Date"] <- d[nrow(d), "Date"] + diff(d$Date)[1]
+PlotGraph(d, ylab=ylab, col=cols, fill=fill, conversion.factor=m3.per.d.to.af.per.yr,
+          center.date.labels=TRUE, scientific=c(FALSE, FALSE, FALSE))
+legend("topright", labs, col=cols, lty=1, inset=0.02, cex=0.7,
+       box.lwd=0.5, xpd=NA, bg="#FFFFFFE7")
+invisible(dev.off())
+@
+
+% =========================================================================
+
+\clearpage
+\phantomsection
+\addcontentsline{toc}{section}{References Cited}
+\printbibliography
+
+% =========================================================================
+
+% \vfill\centerline{Created on \Sexpr{format(Sys.time(), "%B %e, %Y")}; total processing time was \Sexpr{format(difftime(Sys.time(), t0), digits=3)}.}
+
+\end{document}
