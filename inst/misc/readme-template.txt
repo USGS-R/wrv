@@ -135,7 +135,7 @@
         |       +-- $(id).lst (MODFLOW run listing)
         +-- source (source code used in this study)
         |   +-- wrv_@{packageDescription('wrv', fields = 'Version')}.tar.gz (R-package wrv source code)
-        +-- modelgeoref (model geo-reference information)
+        +-- modelgeoref.txt (model geo-reference information)
         +-- readme.txt
 
         File Formats
