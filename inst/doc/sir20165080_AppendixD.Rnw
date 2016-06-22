@@ -2949,7 +2949,7 @@ ll <- paste(ll, collapse="\n")
 replacement <- list(ll=ll, crs.ll=crs.ll@projargs)
 file <- system.file("misc", "modelgeoref-template.txt", package="wrv")
 text <- readLines(file, warn=FALSE)
-file <- file.path(path, "modelgeoref")
+file <- file.path(path, "modelgeoref.txt")
 cat(ReplaceInTemplate(text, replacement), file=file, sep="\n")
 
 # write readme file
