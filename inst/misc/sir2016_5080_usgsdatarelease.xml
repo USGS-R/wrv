@@ -244,7 +244,7 @@
 					<formname>modelgeoref.txt</formname>
 					<formvern>1.0</formvern>
 					<formspec>ASCII</formspec>
-					<formcont>This text file contains geo-reference information, including latitude and longitude in decmial degrees for the the four corners of the rectangle representing the maximum extent in the model.</formcont>
+					<formcont>This text file contains geo-reference information, including latitude and longitude in decimal degrees for the the four corners of the rectangle representing the maximum extent in the model.</formcont>
 					<transize>0.002</transize>
 				</digtinfo>
 				<digtopt>
