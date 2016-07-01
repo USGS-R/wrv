@@ -32,13 +32,13 @@ SummariseBudget <- function(budget,
     d <- bind_rows(lapply(desc,
                           function(i) bind_rows(lapply(b[desc == i], FUN))))
     d$desc <- as.factor(d$desc)
-    d <- summarise(group_by(d, desc, kper, kstp, id),
-                   delt=delt[1], pertim=pertim[1], totim=totim[1],
-                   count=length(flow),
-                   flow.sum=sum(flow),
-                   flow.mean=mean(flow),
-                   flow.median=median(flow),
-                   flow.sd=sd(flow))
+    d <- summarise_(group_by_(d, "desc", "kper", "kstp", "id"),
+                    delt="delt[1]", pertim="pertim[1]", totim="totim[1]",
+                    count="length(flow)",
+                    flow.sum="sum(flow)",
+                    flow.mean="mean(flow)",
+                    flow.median="median(flow)",
+                    flow.sd="sd(flow)")
     return(d)
   }
 

@@ -8,9 +8,7 @@ ToScientific <- function(x, digits=format.info(as.numeric(x))[2],
   m <- rep(NA, length(x))
   n <- m
   n[idxs] <- floor(log(abs(x[idxs]), 10))
-  FUN <- function(i, digits) sprintf("%0.*f", digits, i)
-  m[idxs] <- FUN(x[idxs] / 10^n[idxs], digits)
-
+  m[idxs] <- sprintf("%0.*f", digits, x[idxs] / 10^n[idxs])
   if (lab.type == "latex") {
     s <- rep(NA, length(x))
     s[idxs] <- sprintf("$%s \\times 10^{%d}$", m[idxs], n[idxs])
