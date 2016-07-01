@@ -15,8 +15,8 @@ importFrom("rgeos", "append.poly", "gArea", "gBuffer", "gCentroid",
            "gDifference", "gDistance", "gIntersection", "gIntersects",
            "gIsValid", "gUnaryUnion", "gUnion")
 importFrom("igraph", "clusters")
-importFrom("dplyr", "arrange", "bind_rows", "filter", "group_by", "left_join",
-           "mutate", "summarise")
+importFrom("dplyr", "arrange", "bind_rows", "filter", "group_by_", "left_join",
+           "mutate", "summarise_")
 
 export("AddBubbles",
        "AddColorKey",
