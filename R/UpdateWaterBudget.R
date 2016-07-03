@@ -16,6 +16,7 @@ UpdateWaterBudget <- function(dir.run, id,
 
   # Load datasets created in the model vignette
 
+  rs <- misc <- trib <- tr.stress.periods <- ss.stress.periods <- NULL
   f <- file.path(dir.run, "model.rda")
   load(f)
 
@@ -28,21 +29,21 @@ UpdateWaterBudget <- function(dir.run, id,
 
   f <- file.path(dir.run, "seep.csv")
   if (!file.exists(f))
-    write.csv(canal.seep, file=f, quote=FALSE, row.names=FALSE)
+    write.csv(wrv::canal.seep, file=f, quote=FALSE, row.names=FALSE)
   seep <- read.csv(f)
 
   # Read irrigation efficiency from calibration file
 
   f <- file.path(dir.run, "eff.csv")
   if (!file.exists(f))
-    write.csv(efficiency, file=f, quote=FALSE, row.names=FALSE)
+    write.csv(wrv::efficiency, file=f, quote=FALSE, row.names=FALSE)
   eff <- read.csv(f)
 
   # Read tributary underflow from calibration file
 
   f <- file.path(dir.run, "trib.csv")
   if (!file.exists(f)) {
-    d <- data.frame(Name=tributaries$Name, Value=1)
+    d <- data.frame(Name=wrv::tributaries$Name, Value=1)
     d <- rbind(d, data.frame(Name=c("reduction", "d.in.mv.ave"),
                              Value=c(reduction, d.in.mv.ave)))
     write.csv(d, file=f, quote=FALSE, row.names=FALSE)
@@ -55,13 +56,13 @@ UpdateWaterBudget <- function(dir.run, id,
 
   # Process specified flows in tributary canyons
 
-  mult <- GetSeasonalMult(gage.disch[, c("Date", "13139510")], reduction,
+  mult <- GetSeasonalMult(wrv::gage.disch[, c("Date", "13139510")], reduction,
                           d.in.mv.ave, tr.stress.periods)
   mult <- data.frame(Date=head(tr.stress.periods, -1),
                      multiplier=rep(mult$multiplier, each=3))
 
-  ave.flows <- tributaries$Flow
-  names(ave.flows) <- tributaries$Name
+  ave.flows <- wrv::tributaries$Flow
+  names(ave.flows) <- wrv::tributaries$Name
   scale.factors <- scale.factors[match(names(scale.factors), names(ave.flows))]
   ave.flows <- ave.flows * scale.factors
 
@@ -87,11 +88,13 @@ UpdateWaterBudget <- function(dir.run, id,
   # Process areal recharge and pumping demand
 
   l <- RunWaterBalance(tr.stress.periods, rs[["lay1.bot"]], eff, seep,
-                       ss.stress.periods=ss.stress.periods, verbose=qa.write)
+                       ss.stress.periods=ss.stress.periods,
+                       verbose=qa.write)
   cells <- which(!is.na(l[["areal.rech"]][[1]][]))
   rc <- rowColFromCell(l[["areal.rech"]], cells)
   rech <- cbind(lay = 1, row = rc[, 1], col = rc[, 2], l[["areal.rech"]][cells])
-  wells <- pod.wells[match(l[["pod.rech"]]$WMISNumber, pod.wells@data$WMISNumber), ]
+  wells <- wrv::pod.wells[match(l[["pod.rech"]]$WMISNumber,
+                                wrv::pod.wells@data$WMISNumber), ]
   wells@data <- dplyr::left_join(wells@data, l[["pod.rech"]], by="WMISNumber")
   well <- GetWellConfig(rs, wells, "WMISNumber", names(l[["pod.rech"]][-1]))
   well.config <- well[, 1:7]

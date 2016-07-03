@@ -37,7 +37,7 @@ SummariseBudget <- function(budget,
                     count="length(flow)",
                     flow.sum="sum(flow)",
                     flow.mean="mean(flow)",
-                    flow.median="median(flow)",
+                    flow.median="stats::median(flow)",
                     flow.sd="sd(flow)")
     return(d)
   }
