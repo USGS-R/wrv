@@ -13,7 +13,7 @@ RunWaterBalance <- function(tr.stress.periods, r.grid, eff, seep,
   ## 3a. surface-water diversion
 
   FUN <- function(i) {
-    d <- div.sw[div.sw$YearMonth == i, , drop=FALSE]
+    d <- wrv::div.sw[wrv::div.sw$YearMonth == i, , drop=FALSE]
     d <- summarise_(group_by_(d, "EntityName"), SWDiv="sum(SWDiv, na.rm=TRUE)")
     return(d)
   }
@@ -22,10 +22,10 @@ RunWaterBalance <- function(tr.stress.periods, r.grid, eff, seep,
 
   ## 3b. gw diversions; water measurement information system (wmis)
 
-  wmis.no <- sort(unique(pod.gw$WMISNumber))
+  wmis.no <- sort(unique(wrv::pod.gw$WMISNumber))
   wmis.no.by.entity <- as.data.frame(list(WMISNumber=wmis.no))
-  idxs <- match(wmis.no, pod.gw$WMISNumber)
-  wmis.no.by.entity$EntityName <- pod.gw$EntityName[idxs]
+  idxs <- match(wmis.no, wrv::pod.gw$WMISNumber)
+  wmis.no.by.entity$EntityName <- wrv::pod.gw$EntityName[idxs]
 
   div.gw$id <- paste0(div.gw$WMISNumber, div.gw$YearMonth)
   div.gw.agg <- summarise_(group_by_(div.gw, "id"),
@@ -51,7 +51,7 @@ RunWaterBalance <- function(tr.stress.periods, r.grid, eff, seep,
   ## 3c. wastewater treament plant discharge
 
   FUN <- function(i) {
-    d <- div.ww[div.ww$YearMonth == i, ]
+    d <- wrv::div.ww[wrv::div.ww$YearMonth == i, ]
     d <- summarise_(group_by_(d, "EntityName"), WWDiv="sum(WWDiv, na.rm=TRUE)")
     return(d)
   }
@@ -61,7 +61,7 @@ RunWaterBalance <- function(tr.stress.periods, r.grid, eff, seep,
   ## 3d. calculate estimates for recharge and groundwater
 
   FUN <- function(i) {
-    irr <- irr.entities@data
+    irr <- wrv::irr.entities@data
 
     d <- data.frame(EntityName=levels(irr$EntityName))
     d <- suppressWarnings(left_join(d, sw.div.by.entity[[i]], by="EntityName"))
@@ -78,20 +78,20 @@ RunWaterBalance <- function(tr.stress.periods, r.grid, eff, seep,
 
     cols <- c("EntityName", "area", "et.vol", "precip.vol", "cir.vol")
 
-    comp <- entity.components[[i]]@data
+    comp <- wrv::entity.components[[i]]@data
     comp <- comp[comp$Source == "SW Only", cols]
     names(comp) <- c("EntityName", "area.sw", "et.sw", "precip.sw", "cir.sw")
     d <- suppressWarnings(left_join(d, comp, by="EntityName"))
     d$cir.sw[is.na(d$cir.sw)] <- 0
 
-    comp <- entity.components[[i]]@data
+    comp <- wrv::entity.components[[i]]@data
     comp <- comp[comp$Source == "Mixed", cols]
     names(comp) <- c("EntityName", "area.mix", "et.mix", "precip.mix",
                      "cir.mix")
     d <- suppressWarnings(left_join(d, comp, by="EntityName"))
     d$cir.mix[is.na(d$cir.mix)] <- 0
 
-    comp <- entity.components[[i]]@data
+    comp <- wrv::entity.components[[i]]@data
     comp <- comp[comp$Source == "GW Only", cols]
     names(comp) <- c("EntityName", "area.gw", "et.gw", "precip.gw", "cir.gw")
     d <- suppressWarnings(left_join(d, comp, by="EntityName"))
@@ -173,7 +173,7 @@ RunWaterBalance <- function(tr.stress.periods, r.grid, eff, seep,
 
   cols <- names(div.by.entity[[1]])
   FUN <- function(i) {
-    d <- data.frame(EntityName=levels(irr.entities@data$EntityName))
+    d <- data.frame(EntityName=levels(wrv::irr.entities@data$EntityName))
 
     d <- suppressWarnings(left_join(d, sw.div.by.entity[[i]], by="EntityName"))
     d$SWDiv[is.na(d$SWDiv)] <- 0
@@ -196,7 +196,7 @@ RunWaterBalance <- function(tr.stress.periods, r.grid, eff, seep,
   ##
 
   if (verbose) {
-    cell.area <- xres(land.surface) * yres(land.surface)
+    cell.area <- xres(wrv::land.surface) * yres(wrv::land.surface)
 
     cols <- names(div.by.entity[[1]])
     d <- bind_rows(lapply(div.by.entity, function(i) i[, cols]))
@@ -207,7 +207,7 @@ RunWaterBalance <- function(tr.stress.periods, r.grid, eff, seep,
     d <- d[order(d$EntityName), c(2, 1, 3:ncol(d))]
     cell.count <- rep(NA, nrow(d))
     for (i in yr.mo) {
-      r <- mask(crop(rs.entities[[i]], r.grid), r.grid)
+      r <- mask(crop(wrv::rs.entities[[i]], r.grid), r.grid)
       rat <- levels(r)[[1]]
       rat$COUNT <- freq(r, useNA="no")[, "count"]
       is <- d$YearMonth == i
@@ -219,8 +219,8 @@ RunWaterBalance <- function(tr.stress.periods, r.grid, eff, seep,
     d <- data.frame(YearMonth=yr.mo, Area=NA, ET=NA, Rech=NA)
     row.names(d) <- yr.mo
     for (i in yr.mo) {
-      r.rech <- crop(rs.rech.non.irr[[i]], r.grid)
-      r.et <- crop(et[[i]], r.grid) * cell.area  # convert from length to vol.
+      r.rech <- crop(wrv::rs.rech.non.irr[[i]], r.grid)
+      r.et <- crop(wrv::et[[i]], r.grid) * cell.area  # convert from length to vol.
       cells <- which(!is.na(r.grid[]) & !is.na(r.rech[]))
       d[i, "Area"] <- length(cells) * cell.area
       d[i, "ET"]   <- sum(r.et[cells])
@@ -238,7 +238,7 @@ RunWaterBalance <- function(tr.stress.periods, r.grid, eff, seep,
   FUN <- function(i) {
     d <- div.by.entity[[i]][, c("EntityName", "CanalSeep")]
     d <- d[d$CanalSeep != 0, ]
-    r <- r.canals
+    r <- wrv::r.canals
     rat <- left_join(levels(r)[[1]], d, by="EntityName")
     rat$CanalSeep <- rat$CanalSeep / rat$COUNT
     levels(r) <- rat[, c("ID", "CanalSeep")]
@@ -249,7 +249,7 @@ RunWaterBalance <- function(tr.stress.periods, r.grid, eff, seep,
   names(rs.rech.canals) <- yr.mo
 
   FUN <- function(i) {
-    r <- rs.entities[[i]]
+    r <- wrv::rs.entities[[i]]
     cols <- c("rech.mix", "rech.sw", "rech.muni", "rech.gw")
     d <- left_join(levels(r)[[1]], div.by.entity[[i]][, c("EntityName", cols)],
                    by="EntityName")
@@ -264,7 +264,7 @@ RunWaterBalance <- function(tr.stress.periods, r.grid, eff, seep,
   ##
 
   FUN <- function(i) {
-    r <- sum(rs.rech.canals[[i]], rs.rech.irr[[i]], rs.rech.non.irr[[i]],
+    r <- sum(rs.rech.canals[[i]], rs.rech.irr[[i]], wrv::rs.rech.non.irr[[i]],
              na.rm=TRUE) * (1 / GetDaysInMonth(i))  # m^3/month to m^3/day
     return(r)
   }
@@ -276,22 +276,24 @@ RunWaterBalance <- function(tr.stress.periods, r.grid, eff, seep,
 
   sc.sources <- c("BUHLER DRAIN", "UNNAMED DRAIN", "UNNAMED STREAM",
                   "CAIN CREEK", "LOVING CREEK", "SILVER CREEK")
-  is.sc.src <- comb.sw.irr$Source %in% sc.sources
+  is.sc.src <- wrv::comb.sw.irr$Source %in% sc.sources
 
   FUN <- function(i) {
-    d <- comb.sw.irr
+    d <- wrv::comb.sw.irr
     d$sw.rate <- 0
-    priority.cut <- priority.cuts[priority.cuts$YearMonth == i, "Pdate_BWR"]
+    priority.cut <- wrv::priority.cuts[wrv::priority.cuts$YearMonth == i, 
+                                       "Pdate_BWR"]
     is.lt <- !is.sc.src & (!is.na(priority.cut) & d$Pdate < priority.cut)
     d$sw.rate[is.lt] <- d$MaxDivRate[is.lt]
-    priority.cut <- priority.cuts[priority.cuts$YearMonth == i, "Pdate_SC"]
+    priority.cut <- wrv::priority.cuts[wrv::priority.cuts$YearMonth == i, 
+                                       "Pdate_SC"]
     is.lt <- is.sc.src & (!is.na(priority.cut) & d$Pdate < priority.cut)
     d$sw.rate[is.lt] <- d$MaxDivRate[is.lt]
     d <- summarise_(group_by_(d, "WaterRight"),
                     MaxDivRate="sum(MaxDivRate, na.rm=TRUE)",
                     sw.rate="sum(sw.rate, na.rm=TRUE)")
     d$sw.curt <- 1 - d$sw.rate / d$MaxDivRate
-    d <- suppressWarnings(left_join(pod.gw, d, by="WaterRight"))
+    d <- suppressWarnings(left_join(wrv::pod.gw, d, by="WaterRight"))
     d$gw.rate <- d$IrrRate
     is.na.sw.curt <- is.na(d$sw.curt)
     d$gw.rate[!is.na.sw.curt] <- d$IrrRate[!is.na.sw.curt] *
