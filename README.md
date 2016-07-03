@@ -2,13 +2,13 @@
 
 An [R](http://www.r-project.org/ "The R Project for Statistical Computing") package for processing the groundwater-flow model of the Wood River Valley (WRV) aquifer system, south-central Idaho.
 The groundwater-flow model is described in the associated [model report](http://dx.doi.org/10.3133/sir20165080 "USGS Scientific Investigations Report") and [model archive](http://dx.doi.org/10.5066/F7C827DT "USGS Data Release").
-The set of standards used for coding **wrv** is documented in [Google's R Style Guide](https://google.github.io/styleguide/Rguide.xml "Google's R Style Guide").
 Included in the package is [MODFLOW-USG](http://water.usgs.gov/ogw/mfusg/ "MODFLOW-USG") version 1.2, a U.S. Geological Survey (USGS) computer code that solves the groundwater-flow equation.
+The set of standards used for coding **wrv** is documented in [Google's R Style Guide](https://google.github.io/styleguide/Rguide.xml "Google's R Style Guide").
 
 ## Install
 
 If R is not already installed on your computer, download and install the latest binary distribution from the Comprehensive R Archive Network ([CRAN](http://cran.r-project.org/ "The Comprehensive R Archive Network")).
-Open an R session and install user-contributed R packages using the following commands:
+Next, open an R session and install user-contributed R packages using the following commands:
 
 ```r
 repos <- c("http://owi.usgs.gov/R", getOption("repos"))
