@@ -4,12 +4,14 @@ An [R](http://www.r-project.org/ "The R Project for Statistical Computing") pack
 The groundwater-flow model is described in the associated [model report](http://dx.doi.org/10.3133/sir20165080 "USGS Scientific Investigations Report") and
 [model archive](https://www.sciencebase.gov/catalog/item/577507c1e4b07dd077c70746 "USGS Data Release").
 Included in the package is [MODFLOW-USG](http://water.usgs.gov/ogw/mfusg/ "MODFLOW-USG") version 1.2, a U.S. Geological Survey (USGS) computer code that solves the groundwater-flow equation.
-The set of standards used for coding **wrv** is documented in [Google's R Style Guide](https://google.github.io/styleguide/Rguide.xml "Google's R Style Guide").
+The set of standards used for coding the **wrv** package is documented in [Google's R Style Guide](https://google.github.io/styleguide/Rguide.xml "Google's R Style Guide").
 
 ## Install
 
-If R is not already installed on your computer, download and install the latest binary distribution from the Comprehensive R Archive Network ([CRAN](http://cran.r-project.org/ "The Comprehensive R Archive Network")).
-Next, open an R session and install user-contributed R packages using the following commands:
+If R is not already installed on your computer, download and install the latest binary distribution from the Comprehensive R Archive Network
+([CRAN](http://cran.r-project.org/ "The Comprehensive R Archive Network")).
+Next, open an R session and install user-contributed R packages from CRAN and the Geological Survey R Archive Network
+([GRAN](http://owi.usgs.gov/R/gran.html "The Geological Survey R Archive Network")) using the following commands:
 
 ```r
 repos <- c("http://owi.usgs.gov/R", getOption("repos"))
@@ -19,7 +21,7 @@ install.packages("wrv", repos = repos, dependencies = TRUE, type = "both")
 
 ## Run
 
-Load **wrv** in the current R session:
+Load the **wrv** package in the current R session:
 
 ```r
 library(wrv)
