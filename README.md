@@ -1,7 +1,8 @@
 # wrv
 
 An [R](http://www.r-project.org/ "The R Project for Statistical Computing") package for processing the groundwater-flow model of the Wood River Valley (WRV) aquifer system, south-central Idaho.
-The groundwater-flow model is described in the associated [model report](http://dx.doi.org/10.3133/sir20165080 "USGS Scientific Investigations Report") and [model archive](http://dx.doi.org/10.5066/F7C827DT "USGS Data Release").
+The groundwater-flow model is described in the associated [model report](http://dx.doi.org/10.3133/sir20165080 "USGS Scientific Investigations Report") and
+[model archive](https://www.sciencebase.gov/catalog/item/577507c1e4b07dd077c70746 "USGS Data Release").
 Included in the package is [MODFLOW-USG](http://water.usgs.gov/ogw/mfusg/ "MODFLOW-USG") version 1.2, a U.S. Geological Survey (USGS) computer code that solves the groundwater-flow equation.
 The set of standards used for coding **wrv** is documented in [Google's R Style Guide](https://google.github.io/styleguide/Rguide.xml "Google's R Style Guide").
 
