@@ -3,7 +3,7 @@
     ver <- read.dcf(file.path(lib, pkg, "DESCRIPTION"), "Version")
     packageStartupMessage(pkg, ": version: ", ver)
 
-    s <- paste("  Type 'citation(\"", pkg, "\")' for citing this R package in publications.", sep="")
+    s <- paste(" Type 'citation(\"", pkg, "\")' for citing this R package in publications.", sep="")
     packageStartupMessage(s)
 
     if (ver < 1) {
@@ -16,7 +16,7 @@
                  "is made by the USGS or the U.S. Government as to the accuracy and functioning of the program and",
                  "related program material nor shall the fact of distribution constitute any such warranty,",
                  "and no responsibility is assumed by the USGS in connection therewith.")
-      packageStartupMessage(paste(strwrap(s, indent=2), collapse="\n  "))
+      packageStartupMessage(paste(strwrap(s, indent=1), collapse="\n "))
     }
   }
 
