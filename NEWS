@@ -2,6 +2,8 @@ Changes in Version 1.0.3
 
   o  ...
 
+  o  Change file name from sir2016_5080_usgsdatarelease.xml to sir2016-5080_usgsdatarelease.xml, a Water Node request.
+
 Changes in Version 1.0.2
 
   o  Fix NOTES associated with running R CMD check.
