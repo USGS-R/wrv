@@ -13,7 +13,7 @@ Files accessed during vignette and model-archive construction.
 +-- README.md
 +-- readme-template.txt (template for readme file in the model archive)
 +-- references.bib (database of all references)
-+-- sir2016_5080_usgsdatarelease.xml (formal metadata for the model archive)
++-- sir2016-5080_usgsdatarelease.xml (formal metadata for the model archive)
 +-- usgs.model.ref-template.txt (template for registering the model in space and time)
 ```
 

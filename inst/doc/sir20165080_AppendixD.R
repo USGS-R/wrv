@@ -1956,7 +1956,7 @@ dir.create(path=path, showWarnings=FALSE, recursive=TRUE)
 path <- file.path(getwd(), "webrelease")
 dir.create(path, showWarnings=FALSE, recursive=TRUE)
 
-file <- system.file("misc", "sir2016_5080_usgsdatarelease.xml", package="wrv")
+file <- system.file("misc", "sir2016-5080_usgsdatarelease.xml", package="wrv")
 invisible(file.copy(file, path))
 
 file <- file.path(path, "sir2016-5080Thumbnail.png")

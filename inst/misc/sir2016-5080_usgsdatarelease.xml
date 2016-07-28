@@ -384,7 +384,7 @@
 					<postal>20192</postal>
 				</cntaddr>
 				<cntvoice>1-888-275-8747 (1-888-ASK-USGS)</cntvoice>
-				<cntemail>http://answers.usgs.gov/cgi-bin/gsanswers?pemail=h2oteam&amp;subject=GIS+Dataset+sir2016_5080_usgsdatarelease</cntemail>
+				<cntemail>http://answers.usgs.gov/cgi-bin/gsanswers?pemail=h2oteam&amp;subject=GIS+Dataset+sir2016-5080_usgsdatarelease</cntemail>
 			</cntinfo>
 		</metc>
 		<metstdn>FGDC Content Standards for Digital Geospatial Metadata</metstdn>
