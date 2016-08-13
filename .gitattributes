@@ -21,6 +21,13 @@
 *.tex text
 *.txt text
 *.xml text
+.gitattributes text
+.gitignore text
+.Rbuildignore text
+DESCRIPTION text
+LICENSE.note text
+NAMESPACE text
+NEWS text
 
 # This setting tells git that the files specified are not text at all, and it
 # should not try to change them.
