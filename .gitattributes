@@ -7,7 +7,6 @@
 # committed they are stored with LF, on checkout they are converted to the OS's
 # native line endings.
 *.bib text
-*.bst text
 *.csv text
 *.f text
 *.inc text
@@ -19,7 +18,9 @@
 *.Rmd text
 *.Rnw text
 *.Rprofile text
+*.tex text
 *.txt text
+*.xml text
 
 # This setting tells git that the files specified are not text at all, and it
 # should not try to change them.

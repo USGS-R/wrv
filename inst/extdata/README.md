@@ -5,6 +5,8 @@ processing occurs in stages, and the "processed data" from one stage may be cons
 Many of these datasets are composed entirely of data collected from the study site;
 however, a few of the datasets are the result of a preliminary stage of data processing.
 For example, evapotranspiration and precipitation datasets are the result of processing that is not explicitly shown in the **wrv** package.
+The only unprocessed dataset used during model construction and not included under this folder (.) is located on the
+[The National Map](http://nationalmap.gov/) and represents the land surface elevation within the study area.
 
 ## File and Folder Structure
 
