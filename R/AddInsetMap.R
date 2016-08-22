@@ -24,9 +24,9 @@ AddInsetMap <- function(p, col=c("#D8D8D8", "#BFA76F"),
   ext <- extent(gUnion(p, b))
 
   if (is.null(width)) {
-    dx <- width * (diff(usr[1:2]) / par("pin")[1])
-  } else {
     dx  <- 0.2 * diff(usr[1:2])
+  } else {
+    dx <- width * (diff(usr[1:2]) / par("pin")[1])
   }
   dy <- dx * (diff(ext[3:4]) / diff(ext[1:2]))
 

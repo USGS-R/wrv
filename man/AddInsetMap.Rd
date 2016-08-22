@@ -42,7 +42,7 @@ Used for the side-effect of a inset map drawn on the current graphics device.
 
 \examples{
 PlotMap(alluvium.thickness@crs, bg.image = hill.shading, reg.axs = FALSE)
-AddInsetMap(idaho, width = 1, main.label = list("IDAHO", adj = c(-0.4, -4.9)),
+AddInsetMap(idaho, main.label = list("IDAHO", adj = c(-0.4, -4.9)),
             sub.label = list("Map area", adj = c(0.5, 2.5)), loc = "topright")
 
 graphics.off()
