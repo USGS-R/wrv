@@ -19,7 +19,7 @@ Next, open an R session and install user-contributed R packages from CRAN and th
 
 ```r
 repos <- c("http://owi.usgs.gov/R", getOption("repos"))
-install.packages("wrv", repos = repos, dependencies = TRUE, type = "both")
+install.packages("wrv", repos = repos, dependencies = TRUE)
 ```
 
 ## Run

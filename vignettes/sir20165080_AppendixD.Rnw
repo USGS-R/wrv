@@ -2811,10 +2811,10 @@ invisible(dev.off())
 
 <<echo=FALSE, message=FALSE>>=
 # save R objects that will be used to update the water budget
-layers <-  c("lay1.top", sprintf("lay%s.bot", 1:3), sprintf("lay%s.zones", 1:3))
+layers <-  c("lay1.top", sprintf("lay%s.bot", 1:3))
 rs <- subset(rs.model, layers)
 save(rs, misc, trib, tr.stress.periods, ss.stress.periods, reduction, d.in.mv.ave,
-     file=file.path(dir.run, "model.rda"), compress=FALSE)
+     file=file.path(dir.run, "model.rda"))
 
 # read raster data from from reference file and store in stack
 FUN <- function(f, mv.flag=1e+09) {

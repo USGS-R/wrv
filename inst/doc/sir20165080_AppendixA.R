@@ -5,7 +5,7 @@ try(knitr::opts_chunk$set(tidy=FALSE, comment="#", fig.align="center"), silent=T
 ## ----eval=FALSE----------------------------------------------------------
 #  repos <- c("http://owi.usgs.gov/R", getOption("repos"))
 #  update.packages(ask = FALSE, repos = repos)
-#  install.packages("wrv", repos = repos, dependencies = TRUE, type = "both")
+#  install.packages("wrv", repos = repos, dependencies = TRUE)
 
 ## ----warning=FALSE, message=FALSE, results="hide"------------------------
 library("wrv")

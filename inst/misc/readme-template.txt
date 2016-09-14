@@ -222,7 +222,7 @@
 
             repo <- "https://mran.revolutionanalytics.com/snapshot/@{packageDescription('wrv', fields = 'Date')}/"
             pkgs <- c($(pkgs))
-            install.packages(pkgs, repos = repo, type = "both")
+            install.packages(pkgs, repos = repo)
 
         Install the R-package wrv from a distribution file contained within
         the data release. Specify the absolute path to the model archive folder
