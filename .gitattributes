@@ -1,34 +1,37 @@
-# https://help.github.com/articles/dealing-with-line-endings
+# See https://help.github.com/articles/dealing-with-line-endings
 
-# This setting will tell git to handle the files specified automatically.
+# Auto detect text files and perform LF normalization
 * text=auto
 
-# This setting tells git to always normalize the files specified. When
-# committed they are stored with LF, on checkout they are converted to the OS's
-# native line endings.
-*.bib text
-*.bst text
-*.csv text
-*.f text
-*.inc text
-*.kml text
-*.md text
-*.note text
-*.R text
-*.Rd text
-*.Rmd text
-*.Rnw text
-*.Rprofile text
-*.txt text
+# Committed text files that are stored with LF and converted to native line endings on checkout.
+*.bib          text
+*.csv          text
+*.f            text
+*.inc          text
+*.kml          text
+*.md           text
+*.R            text
+*.Rd           text
+*.Rmd          text
+*.Rnw          text
+*.tex          text
+*.txt          text
+*.xml          text
+.gitattributes text
+.gitignore     text
+.Rbuildignore  text
+inst/CITATION  text
+DESCRIPTION    text
+LICENSE.note   text
+NAMESPACE      text
+NEWS           text
 
-# This setting tells git that the files specified are not text at all, and it
-# should not try to change them.
+# Text files that should always have LF line endings on checkout.
+src/Makevars text eol=lf
+
+# Files that are binary and should not be modified.
 *.exe binary
 *.pdf binary
 *.rda binary
 *.tif binary
 *.zip binary
-
-# This setting tells git that the files specified should always have LF line
-# endings on checkout.
-Makevars text eol=lf
