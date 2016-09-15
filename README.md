@@ -7,7 +7,7 @@ The groundwater-flow model is described in the associated
 [model archive](http://dx.doi.org/10.5066/F7C827DT "USGS Data Release").
 Included in the package is [MODFLOW-USG](http://water.usgs.gov/ogw/mfusg/ "MODFLOW-USG") version 1.2,
 a U.S. Geological Survey (USGS) computer code that solves the groundwater-flow equation.
-The set of standards used for coding the **wrv** package is documented in
+The set of standards used for coding this package is documented in
 [Google's R Style Guide](https://google.github.io/styleguide/Rguide.xml "Google's R Style Guide").
 
 ## Install
