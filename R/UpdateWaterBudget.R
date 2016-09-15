@@ -39,7 +39,7 @@ UpdateWaterBudget <- function(dir.run, id,
     write.csv(wrv::efficiency, file=f, quote=FALSE, row.names=FALSE)
   eff <- read.csv(f)
 
-  # Read tributary underflow from calibration file
+  # Read tributary underflow control parameters from calibration file
 
   f <- file.path(dir.run, "trib.csv")
   if (!file.exists(f)) {
@@ -59,7 +59,7 @@ UpdateWaterBudget <- function(dir.run, id,
   mult <- GetSeasonalMult(wrv::gage.disch[, c("Date", "13139510")], reduction,
                           d.in.mv.ave, tr.stress.periods)
   mult <- data.frame(Date=head(tr.stress.periods, -1),
-                     multiplier=rep(mult$multiplier, each=3))
+                     multiplier=rep(mult$multiplier, each=3))  # seasonal to monthly
 
   ave.flows <- wrv::tributaries$Flow
   names(ave.flows) <- wrv::tributaries$Name

@@ -75,7 +75,7 @@ That is, start an \R{} session and type the following commands in your \R{}-cons
 <<eval=FALSE>>=
 repos <- c("http://owi.usgs.gov/R", getOption("repos"))
 update.packages(ask = FALSE, repos = repos)
-install.packages("wrv", repos = repos, dependencies = TRUE, type = "both")
+install.packages("wrv", repos = repos, dependencies = TRUE)
 @
 
 \noindent Once the packages are installed, load the \textbf{wrv} package in the current \R{} session:

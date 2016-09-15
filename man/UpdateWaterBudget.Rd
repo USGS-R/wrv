@@ -43,8 +43,6 @@ And a binary data file \file{model.rda} containing the following serialized \R o
 \dQuote{lay1.top}, \dQuote{lay1.bot}, \dQuote{lay2.bot}, and \dQuote{lay3.bot}.
 These raster layers describe the geometry of the model grid; that is,
 the upper and lower elevation of model layer 1, and the bottom elevations of model layers 2 and 3.
-In addition to these layers, \code{rs} includes ancillary raster layers \dQuote{lay1.zones}, \dQuote{lay2.zones}, and \dQuote{lay3.zones}
-describing the distribution of hydrogeologic zones in the model grid.
 Missing cell values (equal to \code{NA}) indicate inactive model cells lying outside of the model domain.
 
 \code{misc} is a \code{data.frame} object with miscellaneous seepage,
