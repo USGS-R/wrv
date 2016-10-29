@@ -92,7 +92,7 @@ v <- c(paste("Diagram showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nc
 
 ## ----eval=FALSE----------------------------------------------------------
 #  help("UpdateWaterBudget")  # open help documentation for function call
-#  UpdateWaterBudget(file.path(getwd(), "model/model1"), "wrv_mfusg", qa.tables = "english")
+#  UpdateWaterBudget("model/model1", "wrv_mfusg", qa.tables = "english")
 
 ## ----include=FALSE-------------------------------------------------------
 v <- "Procedures used in a single PEST run."

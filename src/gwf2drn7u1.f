@@ -21,7 +21,8 @@ C     ******************************************************************
 C
 C     SPECIFICATIONS:
 C     ------------------------------------------------------------------
-      USE GLOBAL,       ONLY:IOUT,NCOL,NROW,NLAY,IFREFM,NODES,IUNSTR
+      USE GLOBAL,       ONLY:IOUT,NCOL,NROW,NLAY,IFREFM,NODES,IUNSTR,
+     1                       NEQS
       USE GWFDRNMODULE, ONLY:NDRAIN,MXDRN,NDRNVL,IDRNCB,IPRDRN,NPDRN,
      1                       IDRNPB,NNPDRN,DRNAUX,DRAI
       CHARACTER*200 LINE
@@ -103,7 +104,7 @@ C5A-----READ PARAMETER WITHOUT INSTANCES
             ELSE
              CALL ULSTRDU(NLST,DRAI,LSTBEG,NDRNVL,MXDRN,1,IN,IOUT,
      1       'DRAIN NO.      NODE         DRAIN EL.  CONDUCTANCE',
-     2       DRNAUX,5,NAUX,IFREFM,NODES,5,5,IPRDRN)
+     2       DRNAUX,5,NAUX,IFREFM,NEQS,5,5,IPRDRN)
             ENDIF
           ELSE
 C5B-----READ INSTANCES
@@ -114,13 +115,12 @@ C5B-----READ INSTANCES
               CALL ULSTRD(NINLST,DRAI,LSTBEG,NDRNVL,MXDRN,1,IN,IOUT,
      &      'DRAIN NO.  LAYER   ROW   COL     DRAIN EL.  STRESS FACTOR',
      &        DRNAUX,20,NAUX,IFREFM,NCOL,NROW,NLAY,5,5,IPRDRN)
-              LSTBEG=LSTBEG+NINLST
             ELSE
               CALL ULSTRDU(NINLST,DRAI,LSTBEG,NDRNVL,MXDRN,1,IN,IOUT,
      1        'DRAIN NO.      NODE         DRAIN EL.  CONDUCTANCE',
-     2        DRNAUX,20,NAUX,IFREFM,NODES,5,5,IPRDRN)
+     2        DRNAUX,20,NAUX,IFREFM,NEQS,5,5,IPRDRN)
             ENDIF
-
+            LSTBEG=LSTBEG+NINLST
   110       CONTINUE
           END IF
   120   CONTINUE
@@ -136,7 +136,8 @@ C     ******************************************************************
 C
 C     SPECIFICATIONS:
 C     ------------------------------------------------------------------
-      USE GLOBAL,       ONLY:IOUT,NCOL,NROW,NLAY,IFREFM,IUNSTR,NODES
+      USE GLOBAL,       ONLY:IOUT,NCOL,NROW,NLAY,IFREFM,IUNSTR,NODES,
+     1                       NEQS
       USE GWFDRNMODULE, ONLY:NDRAIN,MXDRN,NDRNVL,IPRDRN,NPDRN,
      1                       IDRNPB,NNPDRN,DRNAUX,DRAI
 C     ------------------------------------------------------------------
@@ -193,7 +194,7 @@ C3------IF THERE ARE NEW NON-PARAMETER DRAINS, READ THEM.
          ELSE
            CALL ULSTRDU(NNPDRN,DRAI,1,NDRNVL,MXDRN,1,IN,IOUT,
      1     'DRAIN NO.      NODE         DRAIN EL.  CONDUCTANCE',
-     2     DRNAUX,20,NAUX,IFREFM,NODES,5,5,IPRDRN)
+     2     DRNAUX,20,NAUX,IFREFM,NEQS,5,5,IPRDRN)
          ENDIF
       END IF
       NDRAIN=NNPDRN

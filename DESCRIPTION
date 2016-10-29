@@ -1,26 +1,44 @@
 Package: wrv
-Type: Package
-Version: 1.0.3
-Date: 2016-8-12
 Title: Wood River Valley Groundwater-Flow Model
-Author: Jason C. Fisher
-Maintainer: Jason C. Fisher <jfisher@usgs.gov>
-Depends: R (>= 3.2.0), sp, rgdal, raster
-Imports: methods, rgeos, igraph, dplyr
-Suggests: RCurl, knitr, xtable, sfsmisc, animation, viridis, colorspace
-SystemRequirements: PEST (>= 13.0, optional)
+Version: 1.1.0
+Authors@R: person("Jason", "Fisher", email="jfisher@usgs.gov", role=c("aut", "cre"))
 Description: A processing program for the groundwater-flow model of the Wood
-  River Valley aquifer system, south-central Idaho. Included in the package is
-  MODFLOW-USG version 1.2, a U.S. Geological Survey groundwater-flow model.
+    River Valley aquifer system, south-central Idaho. Included in the package is
+    MODFLOW-USG version 1.3, a U.S. Geological Survey groundwater-flow model.
+Depends:
+    R (>= 3.2.0)
+Imports:
+    dplyr,
+    grDevices,
+    graphics,
+    inlmisc,
+    methods,
+    sp,
+    stats,
+    raster,
+    rgdal,
+    rgeos
+Suggests:
+    animation,
+    dataRetrieval,
+    git2r,
+    knitr,
+    leaflet,
+    sfsmisc,
+    viridis,
+    xtable
+SystemRequirements: PEST (>= 13.0, optional)
 License: CC0
 Copyright: This software is in the public domain because it contains materials
-  that originally came from the United States Geological Survey (USGS), an
-  agency of the United States Department of Interior. For more information, see
-  the official USGS copyright policy at
-  http://www.usgs.gov/visual-id/credit_usgs.html#copyright
+    that originally came from the United States Geological Survey (USGS), an
+    agency of the United States Department of Interior. For more information,
+    see the official USGS copyright policy at
+    https://www2.usgs.gov/visual-id/credit_usgs.html
 URL: https://github.com/USGS-R/wrv
 BugReports: https://github.com/USGS-R/wrv/issues
-ByteCompile: yes
-LazyData: yes
+Encoding: UTF-8
+ByteCompile: true
+LazyData: true
 LazyDataCompression: xz
 VignetteBuilder: knitr
+RoxygenNote: 5.0.1

@@ -2,9 +2,10 @@
 t0 <- Sys.time()
 try(knitr::opts_chunk$set(tidy=FALSE, comment="#", fig.align="center"), silent=TRUE)
 grDevices::pdf.options(useDingbats=FALSE)
-options(preferRaster=TRUE, scipen=0, digits=2)
 library(wrv)
-loadNamespace("xtable")
+library(inlmisc)
+library(raster)
+options(preferRaster=TRUE, scipen=0, digits=2)
 
 # Device dimension in inches (width, height)
 fin.graph         <- c(7.16, 7.16)
@@ -94,7 +95,6 @@ legend("topright", leg, fill=cols, border=NA, inset=0.02, cex=0.7, box.lty=1,
 leg <- "Weather stations"
 legend("topleft", leg, pch=23, pt.bg="#333333", pt.cex=0.8, inset=0.02,
        cex=0.7, box.lty=1, box.lwd=0.5, xpd=NA, bg="#FFFFFFE7")
-invisible(dev.off())
 
 ## ----include=FALSE-------------------------------------------------------
 v <- "Daily average snow water equivalent recorded at weather stations in the Wood River Valley and surrounding areas, Idaho."
@@ -119,7 +119,6 @@ axis.Date(1, at=at, tcl=0, cex.axis=0.6, lwd=-1, labels=xlabs, padj=1.5)
 leg <- c("Chocolate Gulch SNOTEL", "Hailey HADS", "Picabo AgriMet")
 legend("topright", leg, col=col, lty=1, inset=0.02, cex=0.7, box.lty=1,
        box.lwd=0.5, bg="#FFFFFFE7")
-invisible(dev.off())
 
 ## ----echo=FALSE----------------------------------------------------------
 elev <- weather.stations@data[, "elevation"]
@@ -158,7 +157,6 @@ FUN("Hailey", "#D95F02")
 
 ## ----graph_precip_c, echo=FALSE, results="asis", fig.width=fin.graph.short[1], fig.height=fin.graph.short[2]----
 FUN("Picabo", "#7570B3")
-invisible(dev.off())
 
 ## ----include=FALSE-------------------------------------------------------
 v <- "Methods used to estimate evapotranspiration."
@@ -184,7 +182,6 @@ legend(mean(par("usr")[1:2]), 1, levels(y)[idxs], fill=cols[idxs], horiz=TRUE,
        cex=0.7, bty="n", xpd=TRUE, xjust=0.5, yjust=0,
        border=c("#333333", cols[idxs][-1]))
 box(lwd=0.5)
-invisible(dev.off())
 
 ## ----table_et_picabo-ar, echo=FALSE, results="asis"----------------------
 covers <- c("100 percent impervious", "Grass turf (lawns) - irrigated", "Alfalfa - less frequent cuttings",
@@ -339,7 +336,6 @@ v <- c(paste("Maps showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar
 
 ## ----map_et_b, echo=FALSE, results="asis", fig.width=fin.map[1], fig.height=fin.map[2]----
 FUN(et[["200808"]])
-invisible(dev.off())
 
 ## ----echo=FALSE----------------------------------------------------------
 x <- as.Date(paste0(names(et), "15"), format="%Y%m%d")
@@ -371,7 +367,6 @@ FUN(c("2003-01-01", "2007-01-01"))
 
 ## ----graph_et_d, echo=FALSE, results="asis", fig.width=fin.graph.short[1], fig.height=fin.graph.short[2]----
 FUN(c("2007-01-01", "2011-01-01"))
-invisible(dev.off())
 
 ## ----include=FALSE-------------------------------------------------------
 v <- "Spatial distribution of surficial soil types in the Wood River Valley, Idaho."
@@ -396,7 +391,6 @@ text(cities, labels=cities@data$FEATURE_NA, col="#333333", cex=0.5, pos=1, offse
 leg <- as.character(levels(polys@data$GroupSymbol))
 legend("topright", leg, fill=cols, border=NA, inset=0.02, cex=0.7, box.lty=1,
        box.lwd=0.5, xpd=NA, bg="#FFFFFFE7", title=expression(bold("Soil Types")))
-invisible(dev.off())
 
 ## ----table_soils, echo=FALSE, results="asis"-----------------------------
 d <- soils@data[!is.na(soils@data$SoilClass), ]
@@ -441,7 +435,6 @@ PlotMap(r, breaks=breaks, xlim=usr.map[1:2], ylim=usr.map[3:4],
         labels=list(at=at, labels=labels), credit=credit)
 plot(cities, pch=15, cex=0.8, col="#333333", add=TRUE)
 text(cities, labels=cities@data$FEATURE_NA, col="#333333", cex=0.5, pos=1, offset=0.4)
-invisible(dev.off())
 
 ## ----echo=FALSE----------------------------------------------------------
 rs <- rs.rech.non.irr
@@ -476,7 +469,6 @@ v <- c(paste("Maps showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar
 
 ## ----map_rate_b, echo=FALSE, results="asis", fig.width=fin.map[1], fig.height=fin.map[2]----
 FUN(rs[["200808"]])
-invisible(dev.off())
 
 ## ----echo=FALSE----------------------------------------------------------
 x <- as.Date(paste0(names(rs), "15"), format="%Y%m%d")
@@ -508,5 +500,4 @@ FUN(c("2003-01-01", "2007-01-01"))
 
 ## ----graph_rate_d, echo=FALSE, results="asis", fig.width=fin.graph.short[1], fig.height=fin.graph.short[2]----
 FUN(c("2007-01-01", "2011-01-01"))
-invisible(dev.off())
 

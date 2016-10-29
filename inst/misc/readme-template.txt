@@ -11,7 +11,7 @@
         The underlying directories contain all of the input and output files for
         the simulation described in the report, processing scripts and datasets
         are bundled together in an R-package wrv, included in the package is the
-        MODFLOW-USG (v 1.2.00) source code.
+        MODFLOW-USG (v 1.3.00) source code.
 
         Descriptions of the data in each subdirectory are given to facilitate
         understanding of this data release. File descriptions are provided for
@@ -182,7 +182,7 @@
 
         System requirements
         -------------------
-        MODFLOW-USG 1.2.00 (2014-03-21)
+        MODFLOW-USG 1.3 (2015-12-01)
         PEST 13.0 (2013-05-01)
 
         @{paste(capture.output(sessionInfo()), collapse="\n        ")}
@@ -215,12 +215,13 @@
         are consistent with package versions documented in this README file. To
         recreate the R environment as it existed when this model archive was
         built, first download and install @{R.version.string} from a
-        snapshot of the Comprehensive R Archive Network (CRAN).
+        snapshot of the Comprehensive R Archive Network (CRAN),
+        https://mran.revolutionanalytics.com/snapshot/@{Sys.Date()}/.
 
         Open an R session and install user-contributed R packages from the CRAN
         snapshot by typing the following commands:
 
-            repo <- "https://mran.revolutionanalytics.com/snapshot/@{packageDescription('wrv', fields = 'Date')}/"
+            repo <- "https://mran.revolutionanalytics.com/snapshot/@{Sys.Date()}/"
             pkgs <- c($(pkgs))
             install.packages(pkgs, repos = repo)
 

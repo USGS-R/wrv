@@ -591,7 +591,7 @@ C     ******************************************************************
 C
 C        SPECIFICATIONS:
 C     ------------------------------------------------------------------
-      USE GLOBAL,      ONLY:IOUT,NCOL,NROW,NLAY,IBOUND,BUFF,IUNSTR,NJA
+      USE GLOBAL,      ONLY:IOUT,NCOL,NROW,NLAY,IBOUND,BUFF,IUNSTR,NODES
       USE GWFBASMODULE,ONLY:MSUM,VBVL,VBNM,ICBCFL,DELT,PERTIM,TOTIM
       USE GWFFHBMODULE,ONLY:NBDTIM,NFLW,NHED,IFHBCB,NFHBX1,NFHBX2,
      1                      IFHBSS,IFLLOC,IHDLOC,BDTIM,FLWRAT,SBHED,
@@ -699,7 +699,7 @@ C7------CALL UBUDSV TO SAVE THEM
           CALL UBUDSV(KSTP,KPER,TEXT,IFHBCB,BUFF,NCOL,NROW,
      1                          NLAY,IOUT)
         ELSE
-          CALL UBUDSVU(KSTP,KPER,TEXT,IFHBCB,BUFF,NJA,
+          CALL UBUDSVU(KSTP,KPER,TEXT,IFHBCB,BUFF,NODES,
      1                          IOUT,PERTIM,TOTIM)
         ENDIF
       ENDIF

@@ -2,9 +2,10 @@
 t0 <- Sys.time()
 try(knitr::opts_chunk$set(tidy=FALSE, comment="#", fig.align="center"), silent=TRUE)
 grDevices::pdf.options(useDingbats=FALSE)
-options(preferRaster=TRUE, scipen=0, digits=2)
 library(wrv)
-loadNamespace("xtable")
+library(inlmisc)
+library(raster)
+options(preferRaster=TRUE, scipen=0, digits=2)
 
 # Device dimension in inches (width, height)
 fin.graph         <- c(7.16, 7.16)
@@ -70,7 +71,6 @@ legend("topleft", leg, pch=c(15, 17, 22, NA), lwd=c(NA, NA, NA, 1), col=cols,
        box.lwd=0.5, bg="#FFFFFFE7", seg.len=1.4)
 AddInsetMap(idaho, width=1, main.label=list("IDAHO", adj=c(-0.4, -4.9)),
             sub.label=list("Map area", adj=c(0.5, 2.5)), loc="topright")
-invisible(dev.off())
 
 ## ----table_tribs, echo=FALSE, results="asis"-----------------------------
 d <- tributaries@data
@@ -164,7 +164,6 @@ leg <- c("Transect line", "Axial line", "Aquifer extent")
 legend("topleft", leg, lwd=c(2, 2, 1), col=cols, pt.bg="#33333366",
        inset=0.02, cex=0.7, box.lty=1, box.lwd=0.3, bg="#FFFFFFE7",
        seg.len=1)
-invisible(dev.off())
 
 ## ----map_graph_trib_b, echo=FALSE, results="asis", fig.width=fin.map.n.small.0[1], fig.height=fin.map.n.small.0[2]----
 asp <- 10
@@ -196,7 +195,6 @@ text(xlim[1], ylim[2], "B",  cex=0.7, pos=3, font=4)
 text(xlim[2], ylim[2], "B'", cex=0.7, pos=3, font=4)
 text(xlim[2], ylim[2], "B'", cex=0.7, pos=3, font=4)
 text(mean(xlim), ylim[2], "LAND SURFACE", cex=0.7, pos=3)
-invisible(dev.off())
 
 ## ----include=FALSE-------------------------------------------------------
 v <- "Basin area in ascending order plotted on a logarithmic scale."
@@ -220,7 +218,6 @@ text(seq_along(x[, 1]), x[, 2], x[, 1], pos=pos, offset=0.3, cex=0.6, srt=90)
 xlim <- par("usr")[1:2]
 text(xlim[2] - diff(xlim) * 0.15, natural.basin.area.break,
      "Natural break in basin areas", col=col, cex=0.7, pos=1, offset=0.2)
-invisible(dev.off())
 
 ## ----hist_flux_est, echo=FALSE, fig.width=fin.graph.short[1], fig.height=fin.graph.short[2], fig.cap="{Estimated mean tributary basin underflow in the Wood River Valley aquifer system, south-central Idaho. Values are preliminary and were adjusted during model calibration.}"----
 d <- tributaries@data[order(tributaries@data$Flow, decreasing=TRUE), ]
@@ -238,7 +235,6 @@ axis(1, at=at, labels=labs, cex.axis=0.7, tcl=tcl, lwd=0.5)
 labs <- paste("Basin size is", c("'big'", "'small'"))
 legend("topright", labs, fill=cols, border=cols, inset=0.05, cex=0.7, pt.cex=1,
        box.lwd=NA, xpd=NA, bg="#FFFFFFE7")
-invisible(dev.off())
 
 ## ----include=FALSE-------------------------------------------------------
 v <- "Daily streamflow at the Hailey (13139510) streamgage located on the Big Wood River, Idaho."
@@ -330,5 +326,4 @@ PlotGraph(d, ylab=ylab, col=cols, fill=fill, conversion.factor=m3.per.d.to.af.pe
           center.date.labels=TRUE, scientific=c(FALSE, FALSE, FALSE))
 legend("topright", labs, col=cols, lty=1, inset=0.02, cex=0.7,
        box.lwd=0.5, xpd=NA, bg="#FFFFFFE7")
-invisible(dev.off())
 

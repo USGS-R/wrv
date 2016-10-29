@@ -1,7 +1,10 @@
-.gitattributes
-.gitignore
-.RData
-.Rhistory
+^\.gitattributes$
+^\.gitignore$
+^\.RData$
+^\.Rhistory$
+^Makefile$
+^\.travis\.yml$
+
 extdata/.*[.]csv$
 extdata/.*[.]kml$
 extdata/.*[.]md$

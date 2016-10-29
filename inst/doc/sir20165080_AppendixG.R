@@ -2,9 +2,10 @@
 t0 <- Sys.time()
 try(knitr::opts_chunk$set(tidy=FALSE, comment="#", fig.align="center"), silent=TRUE)
 grDevices::pdf.options(useDingbats=FALSE)
-options(preferRaster=TRUE, scipen=0, digits=2)
 library(wrv)
-loadNamespace("xtable")
+library(inlmisc)
+library(raster)
+options(preferRaster=TRUE, scipen=0, digits=2)
 
 # Device dimension in inches (width, height)
 fin.graph         <- c(7.16, 7.16)
@@ -90,7 +91,6 @@ legend("topleft", leg, pch=c(22, NA, 22), lwd=c(NA, 1, NA), col=cols,
        box.lwd=0.5, bg="#FFFFFFE7")
 AddInsetMap(idaho, width=1, main.label=list("IDAHO", adj=c(-0.4, -4.9)),
             sub.label=list("Map area", adj=c(0.5, 2.5)), loc="topright")
-invisible(dev.off())
 
 ## ----echo=FALSE----------------------------------------------------------
 Pal <- function(...) {
@@ -133,7 +133,6 @@ FUN(usr.map.n.3, max.dev.dim=c(21, 56))
 
 ## ----map_canals_d, echo=FALSE, results="asis", fig.width=fin.map.n.small.0[1], fig.height=fin.map.n.small.0[2]----
 FUN(usr.map.n.4, pos=3, max.dev.dim=c(21, 56))
-invisible(dev.off())
 
 ## ----include=FALSE-------------------------------------------------------
 v <- "Canal systems mapped to the model grid (\\textit{\\textbf{A}}) north of Ketchum, (\\textit{\\textbf{B}}) south of Ketchum and north of Gimlet, (\\textit{\\textbf{C}}) south of Gimlet and north of Hailey, (\\textit{\\textbf{D}}) south of Hailey and north of Bellevue, and (\\textit{\\textbf{E}}) south of Bellevue. \\label{fig:map_canals}"
@@ -141,7 +140,6 @@ v <- c(paste("Maps showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar
 
 ## ----map_canals_e, echo=FALSE, results="asis", fig.width=fin.map.s.0[1], fig.height=fin.map.s.0[2]----
 FUN(usr.map.s, credit)
-invisible(dev.off())
 
 ## ----include=FALSE-------------------------------------------------------
 v <- "The Bypass Canal and City of Bellevue wastewater treatment plant ponds mapped to the model grid."
@@ -173,7 +171,6 @@ text(suppressWarnings(getSpatialPolygonsLabelPoints(bellevue.wwtp.ponds)),
      labels="Bellevue WWTP Ponds", cex=0.5, col="#333333", font=1, pos=2)
 legend("topright", as.character(levels(r)[[1]]$RechSite), fill=cols,
        border=NA, inset=0.02, cex=0.7, box.lty=1, box.lwd=0.5, xpd=NA, bg="#FFFFFFE7")
-invisible(dev.off())
 
 ## ----table_irr_lands_year, echo=FALSE, results="asis"--------------------
 d <- irr.lands.year
@@ -231,7 +228,6 @@ FUN("2009")
 
 ## ----map_land_use_g, echo=FALSE, results="asis", fig.width=fin.map.0[1], fig.height=fin.map.0[2]----
 FUN("2010")
-invisible(dev.off())
 
 ## ----include=FALSE-------------------------------------------------------
 v <- "Wetlands and non-irrigated public land parcels in the Wood River Valley and surrounding areas, Idaho."
@@ -247,7 +243,6 @@ legend("topright", c("Wetlands", "Public parcels"), fill=c("#59A80F", "#CDBB99C0
        border=c(NA, "#755C3BC0"), inset=0.02, cex=0.7, box.lty=1, box.lwd=0.5,
        xpd=NA, bg="#FFFFFFE7")
 box(lwd=0.5)
-invisible(dev.off())
 
 ## ----echo=FALSE----------------------------------------------------------
 x <- irr.entities@data
@@ -321,11 +316,9 @@ FUN(usr.map.n.3)
 
 ## ----map_entities_d, echo=FALSE, results="asis", fig.width=fin.map.n[1], fig.height=fin.map.n[2]----
 FUN(usr.map.n.4)
-invisible(dev.off())
 
 ## ----map_entities_e, echo=FALSE, results="asis", fig.width=fin.map.s.0[1], fig.height=fin.map.s.0[2]----
 FUN(usr.map.s)
-invisible(dev.off())
 
 ## ----include=FALSE-------------------------------------------------------
 v <- "Irrigation entities mapped to irrigated lands in the southern part of the model grid during the 2008 growing season (April--October)."
@@ -349,7 +342,6 @@ ids <- unique(crop(r, extent(usr.map.s)))
 legend("topright", as.character(ids), fill=cols[ids], ncol=2,
        border=NA, inset=0.02, cex=0.7, box.lty=1, box.lwd=0.5, xpd=NA,
        bg="#FFFFFFE7", title=expression(bold("Irrigation Entity")))
-invisible(dev.off())
 
 ## ----include=FALSE-------------------------------------------------------
 v <- "Irrigation entity water sources in the Wood River Valley, Idaho."
@@ -367,7 +359,6 @@ text(cities, labels=cities@data$FEATURE_NA, col="#333333", cex=0.5, pos=1, offse
 legend("topright", levels(polys@data$Source), fill=cols,
        border=NA, inset=0.02, cex=0.7, box.lty=1, box.lwd=0.5, xpd=NA, bg="#FFFFFFE7",
        title=expression(bold("Source")))
-invisible(dev.off())
 
 ## ----include=FALSE-------------------------------------------------------
 v <- "Water supply and fate of water in municipal areas."
@@ -398,5 +389,4 @@ points(pod.wells[ is.obs, ], pch=pchs[2], cex=pt.cexs[2], lwd=0.5, col=NA, bg=co
 leg <- paste(c("Unmeasured", "Measured"), "groundwater diversion")
 legend("topright", leg, col=NA, pt.bg=cols, pch=pchs, pt.cex=pt.cexs, pt.lwd=0.5,
        inset=0.02, cex=0.7, box.lty=1, box.lwd=0.5, bg="#FFFFFFE7")
-invisible(dev.off())
 
