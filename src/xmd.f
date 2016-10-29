@@ -61,6 +61,7 @@ cmi
       MODULE XMDMODULE
       IMPLICIT NONE
       LOGICAL, SAVE, POINTER ::  REDSYS
+      LOGICAL, SAVE, POINTER :: ILUREUSE
       DOUBLE PRECISION, SAVE, POINTER ::  EPSRN,RRCTOL
       DOUBLE PRECISION, SAVE, DIMENSION(:),ALLOCATABLE::DGSCAL
       INTEGER, SAVE, DIMENSION(:), ALLOCATABLE ::  LORDER
@@ -118,6 +119,7 @@ cmi
       ALLOCATE (IACL,NORDER,LEVEL,NORTH,IDROPTOL,IERR,IDSCALE)
       ALLOCATE (EPSRN,RRCTOL)
       ALLOCATE (REDSYS)
+      ALLOCATE (ILUREUSE)
 cmi
 
 
@@ -231,6 +233,12 @@ cmi  [              nblack, liwrk, ierr)
 cmi
 
       call xmdcheck(ia, ja, neqs, nja, ierr)
+
+c  ---------------------------------------------------
+c     SET ILUREUSE SO THAT DROP TOLERANCE IS USED WHEN
+c     INITIALLY FORMULATING THE ILU PRECONDITIONER 
+c  ---------------------------------------------------
+      ILUREUSE = .FALSE.
 
 
 c  ---------------------------------------------------

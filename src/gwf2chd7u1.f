@@ -13,7 +13,7 @@ C     ******************************************************************
 C
 C     SPECIFICATIONS:
 C     ------------------------------------------------------------------
-      USE GLOBAL,      ONLY:IOUT,NCOL,NROW,NLAY,IFREFM,NODES,IUNSTR
+      USE GLOBAL,      ONLY:IOUT,NCOL,NROW,NLAY,IFREFM,NODES,IUNSTR,NEQS
       USE GWFCHDMODULE,ONLY:NCHDS,MXCHD,NCHDVL,IPRCHD,NPCHD,ICHDPB,
      1                      NNPCHD,CHDAUX,CHDS
       CHARACTER*200 LINE
@@ -102,7 +102,7 @@ C         READ LIST(S) OF CELLS, PRECEDED BY INSTANCE NAME IF NUMINST>0
             ELSE
               CALL ULSTRDU(NLST,CHDS,LB,NCHDVL,MXCHD,0,IN,IOUT,
      &     'CHD NO.        NODE           START FACTOR      END FACTOR',
-     &        CHDAUX,5,NAUX,IFREFM,NODES,4,5,IPRCHD)
+     &        CHDAUX,5,NAUX,IFREFM,NEQS,4,5,IPRCHD)
             ENDIF
             LB=LB+NLST
   110     CONTINUE
@@ -119,7 +119,8 @@ C     ******************************************************************
 C
 C     SPECIFICATIONS:
 C     ------------------------------------------------------------------
-      USE GLOBAL,   ONLY:IOUT,NCOL,NROW,NLAY,IFREFM,IBOUND,IUNSTR,NODES
+      USE GLOBAL,   ONLY:IOUT,NCOL,NROW,NLAY,IFREFM,IBOUND,IUNSTR,NODES,
+     1                   NEQS
       USE GWFCHDMODULE,ONLY:NCHDS,MXCHD,NCHDVL,IPRCHD,NPCHD,ICHDPB,
      1                      NNPCHD,CHDAUX,CHDS
 C     ------------------------------------------------------------------
@@ -176,7 +177,7 @@ C3------IF THERE ARE NEW NON-PARAMETER CHDS, READ THEM
          ELSE
               CALL ULSTRDU(NNPCHD,CHDS,1,NCHDVL,MXCHD,0,IN,IOUT,
      &       'CHD NO.        NODE           START HEAD        END HEAD',
-     &        CHDAUX,5,NAUX,IFREFM,NODES,4,5,IPRCHD)
+     &        CHDAUX,5,NAUX,IFREFM,NEQS,4,5,IPRCHD)
          ENDIF
       END IF
       NCHDS=NNPCHD

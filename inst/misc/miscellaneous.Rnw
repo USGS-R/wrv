@@ -4,7 +4,7 @@
 
 \documentclass[twoside]{article}
 
-\input{\Sexpr{shQuote(system.file("misc", "preamble.tex", package="wrv"))}}
+\input{\Sexpr{shQuote(system.file("misc", "preamble.tex", package="inlmisc"))}}
 
 \renewcommand{\thefigure}{X\arabic{figure}}
 \renewcommand{\thetable}{X\arabic{table}}
@@ -84,7 +84,7 @@ credit <- paste("Base derived from U.S. Geological Survey National Elevation Dat
 
 Set the path to the calibrated model run directory:
 
-<<>>=
+<<set_path>>=
 path <- "C:/Users/jfisher/Desktop/Model Run"
 @
 
@@ -99,7 +99,7 @@ getwd()
 load(file.path(path, "model.rda"))
 
 transect <- SpatialLines(list(Lines(list(Line(transect.coords)), ID="Transect")),
-                         proj4string=CRS("+proj=longlat +datum=WGS84"))
+                         proj4string=CRS("+init=epsg:4326"))
 transect <- spTransform(transect, crs(rs))
 verticies <- as(transect, "SpatialPoints")
 transect.ends <- verticies[c(1, length(verticies)), ]
@@ -166,7 +166,6 @@ bg  <- c("#C0C0C0FF", "#88263BFF")
 legend(x, y, leg, pch=c(22, 24), col=col, pt.bg=bg, pt.cex=c(1, 1),
        inset=0.02, cex=0.7, box.lty=1, box.lwd=0.5, bg="#FFFFFFCD",
        title=expression(bold("EXPLANATION")))
-invisible(dev.off())
 @
 
 % =========================================================================
@@ -289,7 +288,6 @@ FUN <- function(i) {
     \caption{Model layer 3 \label{fig:map_config_c}}
     <<map_config_c, echo=FALSE, results="asis", fig.width=fin.map.0[1], fig.height=fin.map.0[2]>>=
     FUN(3L)
-    invisible(dev.off())
     @
   \end{subfigure}
   \caption{---Continued}
@@ -313,7 +311,6 @@ PlotGraph(d, ylab=ylab, col=col, fill=paste0(col, "66"),
           center.date.labels=TRUE)
 legend("topright", c("Recharge", "Discharge"), col=col, lty=1,
        inset=0.02, cex=0.7, box.lty=1, box.lwd=0.5, bg="#FFFFFFE7")
-invisible(dev.off())
 @
 
 Descriptive statistics for areal recharge rates, in cubic meters per day:
@@ -335,7 +332,6 @@ col <- "#C80C0B"
 PlotGraph(d, ylab=ylab, col=col, fill=paste0(col, "66"),
           conversion.factor=m3.per.d.to.af.per.yr, scientific=TRUE,
           center.date.labels=TRUE)
-invisible(dev.off())
 @
 
 Descriptive statistics for pumping rates, in cubic meters per day:
@@ -420,7 +416,6 @@ FUN <- function(r) {
     \caption{Model layer 3 \label{fig:map_hk_c}}
     <<map_hk_c, echo=FALSE, results="asis", fig.width=fin.map[1], fig.height=fin.map[2]>>=
     FUN(rs[["lay3.hk"]])
-    invisible(dev.off())
     @
   \end{subfigure}
   \caption{---Continued}
@@ -439,7 +434,6 @@ PlotCrossSection(transect, rs.log, geo.lays, val.lays, asp=80, breaks=breaks, pa
                  unit="METERS", features=cities[, "FEATURE_NA"], max.feature.dist=4000, is.categorical=FALSE,
                  explanation="Horizontal hydraulic conductivity in meters per day, plotted on a logarithmic scale.",
                  draw.sep=FALSE, labels=list(at=at, labels=labels))
-invisible(dev.off())
 @
 
 <<echo=FALSE>>=
@@ -591,7 +585,6 @@ FUN <- function(r) {
     \caption{Model layer 3 \label{fig:map_sc_c}}
     <<map_sc_c, echo=FALSE, results="asis", fig.width=fin.map[1], fig.height=fin.map[2]>>=
     FUN(rs[["lay3.sc"]])
-    invisible(dev.off())
     @
   \end{subfigure}
   \caption{---Continued}
@@ -610,7 +603,6 @@ PlotCrossSection(transect, rs.log, geo.lays, val.lays, asp=80, breaks=breaks, pa
                  unit="METERS", features=cities[, "FEATURE_NA"], max.feature.dist=4000, is.categorical=FALSE,
                  explanation="Storage coefficient, a dimensionless quantity, plotted on a logarithmic scale.",
                  draw.sep=FALSE, labels=list(at=breaks, labels=labels))
-invisible(dev.off())
 @
 
 <<echo=FALSE>>=
@@ -746,7 +738,6 @@ plot(cities, pch=15, cex=0.8, col="#333333", add=TRUE)
 text(cities, labels=cities@data$FEATURE_NA, col="#333333", cex=0.5, pos=1, offset=0.4)
 legend("topright", "Irrigation entity with no groundwater source", fill="#948979", border=NA,
        inset=0.02, cex=0.7, box.lty=1, box.lwd=0.5, xpd=NA, bg="#FFFFFFCD")
-invisible(dev.off())
 @
 
 Descriptive statistics for the calibrated values of irrigation efficiency, a dimensionless quantity specified per irrigation entity:
@@ -831,7 +822,6 @@ points(bwr.gages, pch=17, col="#333333")
 text(bwr.gages, labels=bwr.gages@data$SiteNo, col="#333333", cex=0.6, pos=2)
 plot(cities, pch=15, cex=0.8, col="#333333", add=TRUE)
 text(cities, labels=cities@data$FEATURE_NA, col="#333333", cex=0.5, pos=1, offset=0.4)
-invisible(dev.off())
 @
 
 % =========================================================================
@@ -949,7 +939,6 @@ AddBubbles(xy, z=z, inches=c(0.03, 0.3), fg="#FFFFFF65", format="d",
 plot(cities, pch=15, cex=0.8, col="#333333", add=TRUE)
 text(cities, labels=cities@data$FEATURE_NA, col="#333333", cex=0.5, pos=1, offset=0.4)
 text(xy, labels=rownames(trib.lines@data), col="#333333", cex=0.6, adj=c(0.5, 0.5), offset=0)
-invisible(dev.off())
 @
 
 <<graph_tribs, echo=FALSE, fig.width=fin.graph[1], fig.height=fin.graph[2], fig.cap="{Recharge from major tributary canyons and the upper part of the Wood River Valley, Idaho.}">>=
@@ -966,7 +955,6 @@ leg <- format(match(colnames(d)[-1], make.names(tributaries@data$Name)))
 legend("topright", leg, lwd=1, col=cols, ncol=2,
        pt.cex=1, inset=0.02, cex=0.7, box.lty=1, box.lwd=0.5,
        bg="#FFFFFFE7", title=expression(bold("Tributary")))
-invisible(dev.off())
 @
 
 \clearpage
@@ -1176,7 +1164,6 @@ FUN <- function(d, xlim, ylim, xlab=NULL, col="#666666") {
     xlab <- "Tributary-valley identifier (tributary No.)"
     col <- "#A8C0A8"
     FUN(d[order(d$ID), ], xlim, ylim, xlab, col=col)
-    invisible(dev.off())
     @
   \end{subfigure}
   \caption{---Continued}
@@ -1187,8 +1174,7 @@ FUN <- function(d, xlim, ylim, xlab=NULL, col="#666666") {
 % =========================================================================
 
 <<echo=FALSE, message=FALSE>>=
-path <- file.path(getwd(), "ancillary/calibrated/model")
-ExportRasterStack(rs, path)
+ExportRasterStack(rs, "ancillary/calibrated/model")
 @
 
 % =========================================================================

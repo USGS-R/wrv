@@ -61,7 +61,7 @@ This vignette is a reference manual for functions and datasets in the \textbf{wr
 A short description and \R{} usage information (such as examples of how to use a function) are given for all functions and datasets.
 Dataset documentation include sections describing the format of a dataset (such as a vector or matrix) and details on the original or secondary data source.
 Functions and datasets are named according to the following conventions.
-The form for function names is no separator between words and initial capital letters (such as \code{AddScaleBar});
+The form for function names is no separator between words and initial capital letters (such as \code{GetSeasonalMult});
 dataset names have words separated with dots and all lower case letters (such as \code{alluvium.extent}).
 
 \vspace{10 mm}
@@ -71,9 +71,6 @@ dataset names have words separated with dots and all lower case letters (such as
 \clearpage
 
 % =========================================================================
-
-% Create Rd2.tex from the command line:
-%   R CMD Rd2pdf --no-clean --force "./wrv"
 
 <<echo=FALSE>>=
 f <- "Rd2.tex"

@@ -1,7 +1,60 @@
+#' Get Well Completion and Pumping Rate in Model Space
+#'
+#' This function determines well completions and pumping rates in model space.
+#' The pumping rate is specified for each model cell intersecting a well's open interval(s)
+#' and calculated by multiplying the estimated pumping demand by the cell's transmissivity fraction.
+#' The transmissivity fraction is calculated by dividing the cell's aquifer transmissivity by
+#' the sum of all transmissivity values for cells belonging to the same well.
+#' The transmissivity fraction calculation assumes saturated conditions in the model cell.
+#'
+#' @param rs.model RasterStack.
+#'   Composed of raster layers describing the model grid and hydraulic conductivity distribution:
+#'     \code{lay1.top}, \code{lay1.bot}, \code{lay2.bot}, \code{lay3.bot},
+#'     \code{lay1.hk}, \code{lay2.hk}, and \code{lay3.hk}.
+#' @param wells SpatialPointsDataFrame.
+#'   Average pumping rate for each well during various times.
+#' @param well.col character.
+#'   Column name of the well identifier field.
+#' @param rate.col character.
+#'   Vector of column names for the pumping rate fields.
+#' @param lay2.hk.tol numeric.
+#'   Hydraulic conductivity tolerance for model cells in layer 2.
+#'   Used to prevent pumping in the aquitard layer of the aquifer system.
+#'   Pumping is prohibited in model layer 2 cells with hydraulic conductivity values less than
+#'   \code{lay2.hk.tol} and a well opening isolated to layer 2;
+#'   for these cases, pumping is allocated to the adjacent layer 1 cell.
+#'
+#' @return Returns an object of class data.frame with the following components:
+#'   \describe{
+#'     \item{\dots}{unique identifier assigned to a well, its name is specified by \code{well.col}.}
+#'     \item{lay,row,col}{layer, row, and column number of a model cell, respectively.}
+#'     \item{hk}{hydraulic conductivity of the model cell, in meters per day.}
+#'     \item{thk}{vertical length of the well opening (open borehole or screen) in the model cell, in meters.
+#'        A value of zero indicates that the well opening is unknown or below the modeled bedrock surface.}
+#'     \item{frac}{transmissivity fraction for a model cell,
+#'       where transmissivity is defined as \code{hk} multiplied by \code{thk}.}
+#'     \item{\dots}{pumping rate allocated to the model cell for each time period
+#'       specified by \code{rate.col}, in cubic meters per day.
+#'       The pumping rate is calculated by multiplying the pumping demand for a well
+#'       (specified in \code{wells}) by \code{frac}.}
+#'   }
+#'
+#' @author J.C. Fisher, U.S. Geological Survey, Idaho Water Science Center
+#'
+#'   A.H. Wylie, Idaho Department of Water Resources
+#'
+#' @keywords manip
+#'
+#' @export
+#'
+#' @examples
+#' \dontrun{# see Appendix D. Uncalibrated Groundwater-Flow Model}
+#'
+
 GetWellConfig <- function(rs.model, wells, well.col, rate.col=NULL,
                           lay2.hk.tol=1e-02) {
 
-  wells@data$cell <- over(wells, as(rs.model, "SpatialGrid"))
+  wells@data$cell <- sp::over(wells, methods::as(rs.model, "SpatialGrid"))
   is.in.model <- as.logical(!is.na(rs.model[["lay1.top"]])[wells@data$cell])
   wells <- wells[is.in.model, , drop=FALSE]
 
@@ -63,7 +116,7 @@ GetWellConfig <- function(rs.model, wells, well.col, rate.col=NULL,
   names(dd) <- well.col
 
   dd$lay <- unlist(apply(d[, c("is.lay1", "is.lay2", "is.lay3")], 1L, which))
-  dd <- left_join(dd, d[, c(well.col, "cell", "row", "col")], by=well.col)
+  dd <- dplyr::left_join(dd, d[, c(well.col, "cell", "row", "col")], by=well.col)
   for (i in 1:3) {
     is <- dd$lay == i
     dd$hk[is] <- rs.model[[paste0("lay", i, ".hk")]][dd$cell[is]]
@@ -84,7 +137,7 @@ GetWellConfig <- function(rs.model, wells, well.col, rate.col=NULL,
   }
 
   if (!is.null(rate.col)) {
-    dd <- left_join(dd, d[, c(well.col, rate.col), drop=FALSE], by=well.col)
+    dd <- dplyr::left_join(dd, d[, c(well.col, rate.col), drop=FALSE], by=well.col)
     dd[, rate.col] <- dd[, rate.col] * dd$frac
   }
 

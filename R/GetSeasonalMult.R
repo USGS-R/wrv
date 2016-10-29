@@ -1,4 +1,52 @@
-GetSeasonalMult <- function(x, reduction, d.in.mv.ave, tr.stress.periods) {
+#' Get Seasonal Multiplier
+#'
+#' This function determines the seasonal fraction of the long-term mean value.
+#'
+#' @param x data.frame.
+#'   Time series data (observations) with components of class Date and numeric.
+#' @param reduction numeric.
+#'   Signal amplitude reduction, a dimensionless quantity.
+#'   Its magnitude should be greater than or equal to 1;
+#'   where a value of 1 indicates no reduction in the signal amplitude.
+#' @param d.in.mv.ave numeric.
+#'   Number of days in the moving average subset.
+#' @param fixed.dates Date.
+#'   Vector of equally spaced dates, these are the fixed locations where the moving average is calculated.
+#'   The final date is neglected.
+#'
+#' @details A simple moving average is first calculated at dates specified in \code{fixed.dates}
+#'   using past observational data in \code{x}
+#'  (such as the previous 9-months of stage data recorded at a streamgage).
+#'   The seasonal average of the moving average is then passed through a signal amplitude reduction algorithm.
+#'   The reduced values are then divided by the mean of the seasonal reduced data to give
+#'   the seasonal fraction of the mean (also known as the seasonal scaling index).
+#'
+#' @return Returns an object of class data.frame with the following variables:
+#'   \describe{
+#'     \item{\code{names(x)[1]}}{start date for each season in \code{fixed.dates}.}
+#'     \item{multiplier}{seasonal scaling index}
+#'   }
+#'
+#' @author J.C. Fisher, U.S. Geological Survey, Idaho Water Science Center
+#'
+#'   A.H. Wylie and J. Sukow, Idaho Department of Water Resources
+#'
+#' @keywords manip
+#'
+#' @export
+#'
+#' @examples
+#' obs <- dataRetrieval::readNWISdata(sites = "13139510", parameterCd = "00060",
+#'                                    startDate = "1992-01-01", endDate = "2011-01-01")
+#' obs <- obs[, c("dateTime", "X_00060_00003")]
+#' obs[, 1] <- as.Date(obs[, 1])
+#'
+#' fixed.dates <- seq(as.Date("1995-01-01"), as.Date("2011-01-01"), "1 month")
+#' d <- GetSeasonalMult(obs, 2, 273.932, fixed.dates)
+#' str(d)
+#'
+
+GetSeasonalMult <- function(x, reduction, d.in.mv.ave, fixed.dates) {
 
   if (!is.data.frame(x) || !inherits(x[, 1], "Date") || !is.numeric(x[, 2]))
     stop("Problem with 'x' argument")
@@ -6,19 +54,19 @@ GetSeasonalMult <- function(x, reduction, d.in.mv.ave, tr.stress.periods) {
     stop("Problem with 'reduction' argument")
   if (!is.numeric(d.in.mv.ave) || d.in.mv.ave <= 0)
     stop("Problem with 'd.in.mv.ave' argument")
-  if (!inherits(tr.stress.periods, "Date"))
-    stop("Problem with 'tr.stress.periods' argument")
+  if (!inherits(fixed.dates, "Date"))
+    stop("Problem with 'fixed.dates' argument")
 
-  f <- approxfun(x[, 1], x[, 2])
-  d <- data.frame(YearMonth=head(tr.stress.periods, -1))
+  f <- stats::approxfun(x[, 1], x[, 2])
+  d <- data.frame(utils::head(fixed.dates, -1))
   FUN <- function(i) {
-    vol <- integrate(f, i - d.in.mv.ave, i, subdivisions=1000L, rel.tol=0.001)
+    vol <- stats::integrate(f, i - d.in.mv.ave, i, subdivisions=1000L, rel.tol=0.001)
     return(vol$value / d.in.mv.ave)
   }
-  d[, 2] <- vapply(d[, 1], FUN, 0)  # moving average
+  d[, 2] <- vapply(d[, 1], FUN, 0)  # moving average at fixed dates
   d <- .GetQtrlyMean(d)  # seasonal mean
   d[, 2] <- .ReduceAmp(d[, 2], reduction)  # amplitude reduction
-  d$multiplier <- d[, 2] / mean(d[, 2])  # seasonal multiplier
+  d$multiplier <- d[, 2] / mean(d[, 2])  # seasonal-scaling index
   d <- d[, c(1, 3)]
   colnames(d) <- c(colnames(x)[1], "multiplier")
   rownames(d) <- NULL
@@ -31,7 +79,7 @@ GetSeasonalMult <- function(x, reduction, d.in.mv.ave, tr.stress.periods) {
   if (!is.data.frame(x) || !inherits(x[, 1], "Date") || !is.numeric(x[, 2]))
     stop("Problem with 'x' argument")
   d <- data.frame(yr=strftime(x[, 1], "%Y"), qu=quarters(x[, 1]), val=x[, 2])
-  d <- aggregate(val ~ yr + qu, d, FUN=mean, na.rm=TRUE)
+  d <- stats::aggregate(val ~ yr + qu, d, FUN=mean, na.rm=TRUE)
   d$qu <- as.character(d$qu)
   d$qu[d$qu == "Q1"] <- "01-01"
   d$qu[d$qu == "Q2"] <- "04-01"

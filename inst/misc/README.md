@@ -8,7 +8,6 @@ Files accessed during vignette and model-archive construction.
 .
 +-- miscellaneous.Rnw (part of the analysis for main body of report)
 +-- modelgeoref-template.txt (template for modelgeoref.txt file in the model archive)
-+-- preamble.tex (preamble of the LaTeX input files for package vignettes)
 +-- Rd2.tex (documentation for package)
 +-- README.md
 +-- readme-template.txt (template for readme file in the model archive)
