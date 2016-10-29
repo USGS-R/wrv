@@ -3,8 +3,6 @@ t0 <- Sys.time()
 try(knitr::opts_chunk$set(tidy=FALSE, comment="#", fig.align="center"), silent=TRUE)
 grDevices::pdf.options(useDingbats=FALSE)
 options(preferRaster=TRUE, scipen=0, digits=2)
-loadNamespace("xtable")
-loadNamespace("sfsmisc")
 
 # Device dimension in inches (width, height)
 fin.graph         <- c(7.16, 7.16)
@@ -79,7 +77,9 @@ FmtFlow <- function(x, u=c("m\\textsuperscript{3}/d", "acre-ft/yr"), conv=m3.per
 }
 
 ## ----warning=FALSE, message=FALSE, results="hide"------------------------
-library("wrv")
+library("wrv")      # processor for groundwater-flow model
+library("raster")   # gridded spatial data toolkit
+library("inlmisc")  # miscellaneous functions for the USGS INL project office
 
 ## ----results="hide"------------------------------------------------------
 getwd()
@@ -102,7 +102,6 @@ plot(cities, pch=15, cex=0.8, col="#333333", add=TRUE)
 text(cities, labels=cities@data$FEATURE_NA, col="#333333", cex=0.5, pos=1, offset=0.4)
 AddInsetMap(idaho, width=1, main.label=list("IDAHO", adj=c(-0.4, -4.9)),
             sub.label=list("Map area", adj=c(0.5, 2.5)), loc="topright")
-invisible(dev.off())
 
 ## ------------------------------------------------------------------------
 r <- rs.data[["land.surface"]] - rs.data[["alluvium.thickness"]]
@@ -143,9 +142,8 @@ text(misc.locations, labels=misc.locations@data$label, pos=c(3, 2, 2),
      cex=0.5, offset=0.3)
 legend("topright", "Basalt unit", fill=col, border=NA, inset=c(0.02, 0.55),
        cex=0.7, box.lty=1, box.lwd=0.5, xpd=NA, bg="#FFFFFFCD")
-AddInsetMap(alluvium.extent, width=1, main.label=list("AQUIFER", adj=c(0, -9)),
-            sub.label=list("Map area", adj=c(1.9, 0.5)), loc="topright")
-invisible(dev.off())
+AddInsetMap(alluvium.extent, width=1, main.label=list("AQUIFER", adj=c(0.25, -9)),
+            sub.label=list("Map area", adj=c(1.65, 0.5)), loc="topright")
 
 ## ------------------------------------------------------------------------
 depth.to.basalt.bottom <- 52  # in meters
@@ -168,7 +166,6 @@ PlotMap(r, breaks=pretty(range(r[], na.rm=TRUE), n=12), xlim=usr.map.s[1:2], yli
         rivers=list(x=streams.rivers), lakes=list(x=lakes), credit=credit)
 plot(cities, pch=15, cex=0.8, col="#333333", add=TRUE)
 text(cities, labels=cities@data$FEATURE_NA, col="#333333", cex=0.5, pos=1, offset=0.4)
-invisible(dev.off())
 
 ## ------------------------------------------------------------------------
 r <- raster(rs.data)
@@ -190,7 +187,6 @@ plot(cities, pch=15, cex=0.8, col="#333333", add=TRUE)
 text(cities, labels=cities@data$FEATURE_NA, col="#333333", cex=0.5, pos=1, offset=0.4)
 legend("topright", "Clay confining unit", fill=col, border=NA, inset=0.02, cex=0.7, box.lty=1,
        box.lwd=0.5, xpd=NA, bg="#FFFFFFCD")
-invisible(dev.off())
 
 ## ------------------------------------------------------------------------
 aquitard.thickness <- 5  # in meters
@@ -223,7 +219,6 @@ PlotMap(r, xlim=usr.map[1:2], ylim=usr.map[3:4], zlim=range(pretty(r[])),
         rivers=list(x=streams.rivers), lakes=list(x=lakes), credit=credit)
 plot(cities, pch=15, cex=0.8, col="#333333", add=TRUE)
 text(cities, labels=cities@data$FEATURE_NA, col="#333333", cex=0.5, pos=1, offset=0.4)
-invisible(dev.off())
 
 ## ------------------------------------------------------------------------
 l <- rgeos::gIntersection(as(tributaries, "SpatialLinesDataFrame"), alluvium.extent, TRUE)
@@ -259,7 +254,6 @@ text(getSpatialLinesMidPoints(trib.lines), labels=rownames(trib.lines@data),
 leg <- as.character(levels(r)[[1]]$att)
 legend("topright", leg, fill=cols, border=NA, inset=0.02, cex=0.7, box.lty=1,
        box.lwd=0.5, xpd=NA, bg="#FFFFFFCD")
-invisible(dev.off())
 
 ## ----include=FALSE-------------------------------------------------------
 v <- "Schematic cross-section representation of (\\textit{\\textbf{A}}) hydrogeologic units and (\\textit{\\textbf{B}}) the layered model grid. \\label{fig:cs_schematic}"
@@ -313,7 +307,7 @@ dz2 <- as.numeric(na.omit(rs.model[["lay1.bot"]][] - rs.model[["lay2.bot"]][]))
 dz3 <- as.numeric(na.omit(rs.model[["lay2.bot"]][] - rs.model[["lay3.bot"]][]))
 cell.area <- xres(rs.model) * yres(rs.model)
 
-## ------------------------------------------------------------------------
+## ----model_grid----------------------------------------------------------
 rs.model <- stack(crop(rs.model, extent(trim(rs.model[["lay1.top"]]))))
 
 ## ----table_model_structure, echo=FALSE, results="asis"-------------------
@@ -375,7 +369,7 @@ rs.model[["lay3.zones"]] <- r
 
 ## ----echo=FALSE----------------------------------------------------------
 transect <- SpatialLines(list(Lines(list(Line(transect.coords)), ID="Transect")),
-                         proj4string=CRS("+proj=longlat +datum=WGS84"))
+                         proj4string=CRS("+init=epsg:4326"))
 transect <- spTransform(transect, crs(hill.shading))
 verticies <- as(transect, "SpatialPoints")
 transect.ends <- verticies[c(1, length(verticies)), ]
@@ -408,7 +402,6 @@ FUN("lay2.zones")
 
 ## ----map_zones_c, echo=FALSE, results="asis", fig.width=fin.map.0[1], fig.height=fin.map.0[2]----
 FUN("lay3.zones")
-invisible(dev.off())
 
 ## ----cs_zones, echo=FALSE, fig.width=fin.cs.0[1], fig.height=fin.cs.0[2], fig.cap="{Vertical cross-section of hydrogeologic zones along transect line A--A' shown in \\hyperref[fig:map_zones]{figure~\\ref{fig:map_zones}}.}"----
 geo.lays <- c("lay1.top", paste0("lay", 1:3, ".bot"))
@@ -420,7 +413,6 @@ PlotCrossSection(transect, rs.model, geo.lays, val.lays, asp=80, col=cols,
                  is.categorical=TRUE, draw.key=FALSE)
 legend("topright", paste("Zone", 1:4), fill=cols, ncol=1, border=NA,
        inset=c(0.02, 0), cex=0.7, box.lty=1, box.lwd=0.5, xpd=NA, bg="#FFFFFFCD")
-invisible(dev.off())
 
 ## ----table_zones, echo=FALSE, results="asis"-----------------------------
 d <- zone.properties[, c("name", "hk", "vani", "ss", "sy", "sc")]
@@ -479,7 +471,6 @@ leg <- format(match(colnames(d)[-1], make.names(tributaries@data$Name)))
 legend("topright", leg, lwd=1, col=cols, ncol=2,
        pt.cex=1, inset=0.02, cex=0.7, box.lty=1, box.lwd=0.5,
        bg="#FFFFFFCD", title=expression(bold("Tributary")))
-invisible(dev.off())
 
 ## ------------------------------------------------------------------------
 flow <- cbind(flow, ss = apply(flow[, ss.yr.mo], 1, mean))
@@ -563,7 +554,6 @@ text(cities, labels=cities@data$FEATURE_NA, col="#333333", cex=0.5, pos=3, offse
 leg <- as.character(levels(r)[[1]]$Name)
 legend("topright", leg, fill=cols, border=NA, inset=0.02, cex=0.7, box.lty=1,
        box.lwd=0.5, xpd=NA, bg="#FFFFFFCD")
-invisible(dev.off())
 
 ## ------------------------------------------------------------------------
 cells <- sort(which(!is.na(r[])))
@@ -653,7 +643,6 @@ text(misc.locations, labels=misc.locations@data$label, pos=c(3, 2, 2),
      cex=0.5, offset=0.3)
 legend("topright", "Streamgage", pch=17, col="#333333", pt.cex=1,
        inset=0.02, cex=0.7, box.lty=1, box.lwd=0.5, bg="#FFFFFFCD")
-invisible(dev.off())
 
 ## ------------------------------------------------------------------------
 rs.model[["riv.stage"]] <- mask(rs.model[["lay1.top"]], rs.model[["riv.reach"]])
@@ -695,7 +684,7 @@ rs.model[["lay3.bot"]][cells] <- rs.model[["lay3.bot"]][cells] - d$diff
 
 ## ------------------------------------------------------------------------
 d <- gage.height
-d <- d[d$Date >= tr.interval[1] & d$Date < tr.interval[2], ]
+d <- d[d$Date >= tr.stress.periods[1] & d$Date < tail(tr.stress.periods, 1), ]
 d <- data.frame(Date = format(d$Date, "%Y%m"), d[, -1], check.names = FALSE)
 d <- aggregate(d[, -1], by = list(YearMonth = d$Date), mean, na.rm = TRUE)
 d[, -1] <- apply(d[, -1], 2, function(x) x - median(x, na.rm = TRUE))
@@ -739,7 +728,6 @@ cols <- c("#1B9E77", "#D95F02", "#7570B3")
 PlotGraph(x, y, ylab=ylab, col=cols, conversion.factor=m.to.ft, center.date.labels=TRUE)
 legend("topright", colnames(y), lwd=c(1, 1, 1), col=cols, inset=0.02, cex=0.7,
        box.lty=1, box.lwd=0.5, bg="#FFFFFFCD", title=expression(bold("Streamgages")))
-invisible(dev.off())
 
 ## ------------------------------------------------------------------------
 is.bwr <- river$Reach %in% grep("^Big Wood", levels(river$Reach), value = TRUE)
@@ -780,9 +768,16 @@ river <- river[order(river$id, river$lay), ]
 ## ------------------------------------------------------------------------
 river <- cbind(river, ss = apply(river[, ss.yr.mo], 1, mean))
 
-## ------------------------------------------------------------------------
-l <- RunWaterBalance(tr.stress.periods, rs.model[["lay1.bot"]], efficiency,
-                     canal.seep, ss.stress.periods)
+## ----run_water_balance---------------------------------------------------
+l <- RunWaterBalance(rs.model[["lay1.bot"]], tr.stress.periods,
+                     ss.stress.periods, canal.seep = canal.seep,
+                     comb.sw.irr = comb.sw.irr, div.gw = div.gw,
+                     div.sw = div.sw, div.ww = div.ww, efficiency =  efficiency,
+                     entity.components = entity.components, et = et,
+                     irr.entities = irr.entities, land.surface = land.surface,
+                     pod.gw = pod.gw, priority.cuts = priority.cuts,
+                     r.canals = r.canals, rs.entities = rs.entities,
+                     rs.rech.non.irr = rs.rech.non.irr)
 cells <- which(!is.na(l[["areal.rech"]][[1]][]))
 rc <- rowColFromCell(l[["areal.rech"]], cells)
 rech <- cbind(lay = 1, row = rc[, 1], col = rc[, 2], l[["areal.rech"]][cells])
@@ -810,7 +805,6 @@ plot(cities, pch=15, cex=0.8, col="#333333", add=TRUE)
 text(cities, labels=cities@data$FEATURE_NA, col="#333333", cex=0.5, pos=1, offset=0.4)
 legend("topright", "Pumping well", pch=21, col=NA, pt.bg=col, pt.cex=0.5,
        inset=0.02, cex=0.7, box.lty=1, box.lwd=0.5, bg="#FFFFFFCD")
-invisible(dev.off())
 
 ## ----include=FALSE-------------------------------------------------------
 v <- "Total areal recharge. Values are preliminary and were modified by adjustments to irrigation efficiency during the model-calibration process."
@@ -829,7 +823,6 @@ PlotGraph(d, ylab=ylab, col=col, fill=paste0(col, "66"),
           conversion.factor=m3.per.d.to.af.per.yr, scientific=TRUE, center.date.labels=TRUE)
 legend("topright", c("Recharge", "Discharge"), col=col, lty=1,
        inset=0.02, cex=0.7, box.lty=1, box.lwd=0.5, bg="#FFFFFFCD")
-invisible(dev.off())
 
 ## ----include=FALSE-------------------------------------------------------
 v <- "Total groundwater withdrawals from production wells in the model domain. Values are preliminary and were modified by adjustments to irrigation efficiency during the model-calibration process."
@@ -843,7 +836,6 @@ ylab <- paste("Total withdrawals from wells, in", c("cubic meters per day", "acr
 col <- "#C80C0B"
 PlotGraph(x, y, ylab=ylab, col=col, fill=paste0(col, "66"),
           conversion.factor=m3.per.d.to.af.per.yr, scientific=TRUE, center.date.labels=TRUE)
-invisible(dev.off())
 
 ## ----include=FALSE-------------------------------------------------------
 v <- "Steady-state areal recharge. Values are preliminary and were modified by adjustments to irrigation efficiency during the model-calibration process."
@@ -870,7 +862,6 @@ PlotMap(r, xlim=usr.map[1:2], ylim=usr.map[3:4], zlim=zlim, bg.image=hill.shadin
         rivers=list(x=streams.rivers), lakes=list(x=lakes), credit=credit)
 plot(cities, pch=15, cex=0.8, col="#333333", add=TRUE)
 text(cities, labels=cities@data$FEATURE_NA, col="#333333", cex=0.5, pos=1, offset=0.4)
-invisible(dev.off())
 
 ## ------------------------------------------------------------------------
 r <- raster(rs.model)
@@ -906,7 +897,6 @@ ylab <- paste("Seepage rate, in", c("cubic meters per day", "acre-feet per year"
 col <- "#67A9CF"
 PlotGraph(x, y, ylab=ylab, col=col, fill=paste0(col, "66"),
           conversion.factor=m3.per.d.to.af.per.yr, scientific=c(FALSE, TRUE, FALSE), center.date.labels=TRUE)
-invisible(dev.off())
 
 ## ----include=FALSE-------------------------------------------------------
 v <- "Seepage beneath the Bellevue Waste Water Treatment Plant Ponds."
@@ -921,7 +911,6 @@ ylab <- paste("Seepage rate, in", c("cubic meters per day", "acre-feet per year"
 col <- "#67A9CF"
 PlotGraph(x, y, ylab=ylab, col=col, fill=paste0(col, "66"),
           conversion.factor=m3.per.d.to.af.per.yr, scientific=FALSE, center.date.labels=TRUE)
-invisible(dev.off())
 
 ## ------------------------------------------------------------------------
 misc <- cbind(misc, ss = apply(misc[, ss.yr.mo], 1, mean))
@@ -937,9 +926,9 @@ r <- rs.model[["lay1.strt"]]
 r[is.na(rs.model[["lay3.bot"]])] <- NA
 rs.model[["lay3.strt"]] <- r
 
-## ------------------------------------------------------------------------
+## ----write_modflow_input-------------------------------------------------
 id <- "wrv_mfusg"  # model run identifier
-dir.run <- file.path(getwd(), "model/model1")
+dir.run <- "model/model1"
 WriteModflowInput(rs.model, rech, well, trib, misc, river, drain, id, dir.run,
                   is.convertible = FALSE, tr.stress.periods = tr.stress.periods,
                   ntime.steps = ntime.steps, verbose = FALSE)
@@ -951,7 +940,7 @@ file.exe <- file.path(system.file("bin", arch, package = "wrv"), file)
 invisible(file.copy(file.exe, dir.run, copy.date = TRUE))
 
 ## ------------------------------------------------------------------------
-file.bat <- file.path(dir.run, "RunModflow.bat")
+file.bat <- file.path(getwd(), dir.run, "RunModflow.bat")
 cmd <- paste(sub("\\.exe$", "", basename(file.exe)), shQuote(paste0(id, ".nam")))
 cat(cmd, file = file.bat)
 Sys.chmod(file.bat, mode = "755")
@@ -959,13 +948,13 @@ wd <- setwd(dir.run)
 system2(file.bat, stdout = FALSE, stderr = FALSE)
 setwd(wd)
 
-## ------------------------------------------------------------------------
+## ----read_budget_1-------------------------------------------------------
 file.bud <- file.path(dir.run, paste0(id, ".bud"))
 budget <- ReadModflowBinary(file.bud, "flow", rm.totim.0 = TRUE)
 budget <- SummariseBudget(budget)
-budget <- dplyr::mutate(budget, totim.date = as.Date(totim, origin = tr.interval[1]))
+budget <- dplyr::mutate(budget, totim.date = as.Date(totim, origin = tr.stress.periods[1]))
 
-## ----echo=FALSE----------------------------------------------------------
+## ----read_budget_2, echo=FALSE-------------------------------------------
 b <- budget[, c("desc", "id", "flow.dir", "totim.date")]
 b$flow <- budget$flow.sum
 
@@ -979,7 +968,7 @@ d.river <- d
 
 d <- b[b$desc == "drains" & b$flow.dir == "out", ]
 d$id <- as.factor(d$id)
-levels(d$id) <- levels(rs.model[["drains"]])[[1]]$Name
+levels(d$id) <- drains@data$Name
 d.drain.1 <- d[d$id == "Stanton Crossing", c("totim.date", "flow")]
 d.drain.2 <- d[d$id == "Silver Creek",     c("totim.date", "flow")]
 
@@ -1003,7 +992,7 @@ v <- "Volumetric water budget components by year, including annual change in sto
 v <- c(paste("Graph showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(v)))), v)
 
 ## ----graph_budget, echo=FALSE, fig.width=fin.graph[1], fig.height=fin.graph[2], fig.scap=sprintf("{%s}", v[1]), fig.cap=sprintf("{%s}", v[2])----
-cols <- format(seq(tr.interval[1], tr.interval[2] - 1, "year"), "%Y")
+cols <- format(seq(tr.stress.periods[1], tail(tr.stress.periods, 1) - 1, "year"), "%Y")
 rows <- c("Areal recharge", "Streamflow losses", "Tributary bain underflow",
           "Areal discharge", "Streamflow gains", "Well pumping", "Outlet boundaries")
 m <- matrix(NA, nrow=length(rows), ncol=length(cols), dimnames=list(rows, cols))
@@ -1051,20 +1040,17 @@ idxs <- c(rev(pos.idxs), neg.idxs)
 legend("topright", rows[idxs], fill=cols[idxs], inset=0.02, cex=cex, box.lty=1,
        box.lwd=0.5, xpd=NA, bg="#FFFFFFE7", title=expression(bold("Component")))
 box(lwd=0.5)
-invisible(dev.off())
 
 ## ----table_budget, echo=FALSE, results="asis"----------------------------
-sdate <- as.Date("1995-01-01", tz="MST")
-is.date <- colnames(m) >= format(sdate, "%Y")
-flow <- c("Water-table recharge"             = as.integer(mean(d.rech$flow.in[is.date])),
-          "Streamflow losses"                = as.integer(mean(d.river$flow.in[is.date])),
-          "Tributary basin underflow"        = as.integer(mean(d.trib$flow[is.date])),
+flow <- c("Water-table recharge"             = as.integer(mean(d.rech$flow.in)),
+          "Streamflow losses"                = as.integer(mean(d.river$flow.in)),
+          "Tributary basin underflow"        = as.integer(mean(d.trib$flow)),
           " "                                = NA,
-          "Water-table discharge"            = as.integer(abs(mean(d.rech$flow.out[is.date]))),
-          "Streamflow gains"                 = as.integer(abs(mean(d.river$flow.out[is.date]))),
-          "Production well pumping"          = as.integer(abs(mean(d.well$flow[is.date]))),
-          "Stanton Crossing outlet boundary" = as.integer(abs(mean(d.drain.1$flow[is.date]))),
-          "Silver Creek outlet boundary"     = as.integer(abs(mean(d.drain.2$flow[is.date]))),
+          "Water-table discharge"            = as.integer(abs(mean(d.rech$flow.out))),
+          "Streamflow gains"                 = as.integer(abs(mean(d.river$flow.out))),
+          "Production well pumping"          = as.integer(abs(mean(d.well$flow))),
+          "Stanton Crossing outlet boundary" = as.integer(abs(mean(d.drain.1$flow))),
+          "Silver Creek outlet boundary"     = as.integer(abs(mean(d.drain.2$flow))),
           " "                                = NA,
           "Change in aquifer storage"        = NA)
 flow[11] <- sum(flow[1:3]) - sum(flow[5:9])
@@ -1099,9 +1085,9 @@ print(tbl, include.rownames=FALSE, caption.placement="top", booktabs=TRUE,
       format.args=list(big.mark=","), sanitize.colnames.function=function(x){x},
       sanitize.text.function=identity, size="\\small")
 
-## ------------------------------------------------------------------------
+## ----read_head-----------------------------------------------------------
 heads <- ReadModflowBinary(file.path(dir.run, paste0(id, ".hds")))
-dates <- as.Date(vapply(heads, function(i) i$totim, 0), origin = tr.interval[1])
+dates <- as.Date(vapply(heads, function(i) i$totim, 0), origin = tr.stress.periods[1])
 layer <- vapply(heads, function(i) i$ilay, 0L)
 FUN <- function(i) {return(setValues(raster(rs.model), i$d))}
 rs.heads.lay1 <- mask(stack(lapply(heads[layer == 1L], FUN)), rs.model[["lay1.bot"]])
@@ -1112,7 +1098,7 @@ names(rs.heads.lay1) <- raster.names
 names(rs.heads.lay2) <- raster.names
 names(rs.heads.lay3) <- raster.names
 
-## ------------------------------------------------------------------------
+## ----water_table---------------------------------------------------------
 land <- mask(crop(rs.data[["land.surface"]], raster(rs.model)), rs.heads.lay1[[1]])
 FUN <- function(i) {
   r <- rs.heads.lay1[[i]]
@@ -1149,7 +1135,6 @@ PlotMap(r, xlim=usr.map[1:2], ylim=usr.map[3:4], zlim=zlim, bg.image=hill.shadin
         rivers=list(x=streams.rivers), lakes=list(x=lakes), credit=credit)
 plot(cities, pch=15, cex=0.8, col="#333333", add=TRUE)
 text(cities, labels=cities@data$FEATURE_NA, col="#333333", cex=0.5, pos=1, offset=0.4)
-invisible(dev.off())
 
 ## ----include=FALSE-------------------------------------------------------
 v <- "Simulated water table in the Wood River Valley aquifer system, south-central Idaho, during December 2010---based on uncalibrated model results."
@@ -1178,7 +1163,6 @@ leg <- c("Inset areas, fig. D23", "Line of cross section, fig. D24")
 legend("topright", leg, lwd=c(NA, 1), pch=c(22, NA), col=c("#000000", "#1F1F1F"),
        pt.bg=c(NA, NA), pt.cex=c(1.5, NA), inset=0.02, cex=0.7, box.lty=1,
        box.lwd=0.5, bg="#FFFFFFCD")
-invisible(dev.off())
 
 ## ----echo=FALSE----------------------------------------------------------
 FUN <- function(usr, credit=NULL, max.dev.dim=c(21, 56), add.legend=FALSE) {
@@ -1210,7 +1194,6 @@ FUN(usr.map.n.3)
 
 ## ----map_wt_d, echo=FALSE, results="asis", fig.width=fin.map.n.small[1], fig.height=fin.map.n.small[2]----
 FUN(usr.map.n.4)
-invisible(dev.off())
 
 ## ----include=FALSE-------------------------------------------------------
 v <- "Simulated water table in model layer 1 (\\textit{\\textbf{A}}) north of Ketchum, (\\textit{\\textbf{B}}) south of Ketchum and north of Gimlet, (\\textit{\\textbf{C}}) south of Gimlet and north of Hailey, (\\textit{\\textbf{D}}) south of Hailey and north of Bellevue, and (\\textit{\\textbf{E}}) south of Bellevue, December 2010---based on uncalibrated model results. \\label{fig:map_wt}"
@@ -1218,7 +1201,6 @@ v <- c(paste("Maps showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar
 
 ## ----map_wt_e, echo=FALSE, results="asis", fig.width=fin.map.s[1], fig.height=fin.map.s[2]----
 FUN(usr.map.s, credit, max.dev.dim=c(43, 56), add.legend=TRUE)
-invisible(dev.off())
 
 ## ----cs_heads, echo=FALSE, fig.width=fin.cs[1], fig.height=fin.cs[2], fig.cap="{Vertical cross-section of simulated hydraulic heads along transect line A--A', December 2010---based on uncalibrated model results.}"----
 geo.lays <- c("lay1.top", paste0("lay", 1:3, ".bot"))
@@ -1236,7 +1218,6 @@ PlotCrossSection(transect, rs, geo.lays, val.lays, wt.lay, asp=80,
 leg <- c("Head contour", "Water table")
 legend("bottomleft", leg, col=c("#1F1F1F", "#3B80F4"), lty=c(1, 1), lwd=c(0.5, 1),
        inset=0.02, cex=0.7, box.lty=1, box.lwd=0.5, bg="#FFFFFFCD")
-invisible(dev.off())
 
 ## ----include=FALSE-------------------------------------------------------
 v <- "Comparison of measured and simulated (uncalibrated model) water-table contours, contour interval about 6 meters (20 feet), October 2006, southern part of the Wood River Valley aquifer system, south-central Idaho. Contour elevations specified in meters above the North American Vertical Datum of 1988."
@@ -1274,7 +1255,6 @@ text(locs, labels=labs, cex=0.5, pos=1, offset=0.1, col=cols[2])
 leg <- c("Simulated contour", "Measured contour (interpolated)", "Measured contour (extrapolated)")
 legend("topright", leg, col=c(cols, cols[2]), lwd=1, lty=c(1, 1, 2), inset=0.02, cex=0.7, box.lty=1,
        box.lwd=0.5, bg="#FFFFFFCD")
-invisible(dev.off())
 
 ## ----echo=FALSE----------------------------------------------------------
 p <- obs.wells
@@ -1351,7 +1331,6 @@ FUN("Driller-located driller well")
 
 ## ----graph_res_sim_d, echo=FALSE, results="asis", fig.width=fig.graph.small[1], fig.height=fig.graph.small[2]----
 FUN(c("Sun Valley Water and Sewer well", "Nature Conservancy well"))
-invisible(dev.off())
 
 ## ----include=FALSE-------------------------------------------------------
 v <- "Hydraulic head residuals in (\\textit{\\textbf{A}}) U.S. Geological Survey (USGS) groundwater-monitoring network wells, (\\textit{\\textbf{B}}) geolocated driller wells, (\\textit{\\textbf{C}}) Public Land Survey System (PLSS)-located driller wells, and (\\textit{\\textbf{D}}) two of the Sun Valley Water and Sewer District (SVWSD) production wells and The Nature Conservancy (TNC) groundwater-monitoring network wells---based on uncalibrated model results. \\label{fig:graph_res_sim}"
@@ -1426,7 +1405,6 @@ points(pp[3:6, ], pch=18)
 text(pp[3:6, ], labels=well.labs[3:6], col="#333333", cex=0.6, pos=c(4, 4, 2, 2), offset=0.4)
 legend("topleft", "Wells in figs. D32 and D33", pch=18, inset=0.02,
        cex=0.7, box.lty=1, box.lwd=0.5, xpd=NA, bg="#FFFFFFCD")
-invisible(dev.off())
 
 ## ----echo=FALSE----------------------------------------------------------
 FUN <- function(idx, add.legend=FALSE) {
@@ -1477,7 +1455,6 @@ FUN(5, TRUE)
 
 ## ----graph_wells_tnc_b, echo=FALSE, fig.width=fin.graph.short[1], fig.height=fin.graph.short[2]----
 FUN(6)
-invisible(dev.off())
 
 ## ----include=FALSE-------------------------------------------------------
 v <- "Measured and simulated (uncalibrated model) groundwater-level hydrographs for The Nature Conservancy wells (\\textit{\\textbf{A}}) 02N 18E 09BCD1 and (\\textit{\\textbf{B}}) 02N 18E 35ACC1, Wood River Valley, Idaho. \\label{fig:graph_wells_tnc}"
@@ -1497,7 +1474,6 @@ PlotGraph(d, ylab=ylab, col=col, fill=paste0(col, "66"),
           conversion.factor=m3.per.d.to.af.per.yr, scientific=TRUE, center.date.labels=TRUE)
 legend("bottomright", c("Recharge", "Discharge"), col=col, lty=1,
        inset=0.02, cex=0.7, box.lty=1, box.lwd=0.5, bg="#FFFFFFCD")
-invisible(dev.off())
 
 ## ----echo=FALSE----------------------------------------------------------
 FUN <- function(reach.name, reach.ids) {
@@ -1582,7 +1558,6 @@ FUN(d4, TRUE)
 
 ## ----graph_reaches_sc_b, echo=FALSE, fig.width=fin.graph.short[1], fig.height=fin.graph.short[2]----
 FUN(d5)
-invisible(dev.off())
 
 ## ----include=FALSE-------------------------------------------------------
 v <- "Measured and simulated (uncalibrated model) stream-aquifer flow exchange along (\\textit{\\textbf{A}}) Silver Creek, above Sportsman Access river reach, and (\\textit{\\textbf{B}}) Silver Creek, Sportsman Access to near Picabo river reach. \\label{fig:graph_reaches_sc}"
@@ -1635,7 +1610,6 @@ cols <- c("#2A8FBDCB", "#FAFAD2")
 legend("center", leg, pch=c(20, 15), col=cols, pt.cex=c(1, 1.5),
        pt.lwd=0.5, inset=0.02, cex=0.7, bty="n", xpd=NA, bg="#FFFFFFCD",
        title=expression(bold("EXPLANATION")))
-invisible(dev.off())
 
 ## ----include=FALSE-------------------------------------------------------
 v <- "Mean stream-aquifer flow-exchange residuals along river reaches (\\textit{\\textbf{A}}) Big Wood River, near Ketchum to Hailey and (\\textit{\\textbf{B}}) Hailey to Stanton Crossing; (\\textit{\\textbf{C}}) Willow Creek; (\\textit{\\textbf{D}}) Silver Creek, above Sportsman Access; and  (\\textit{\\textbf{E}}) Silver Creek, Sportsman Access to near Picabo---based on uncalibrated model results. \\label{fig:graph_exch}"
@@ -1646,7 +1620,6 @@ FUN(d4)
 
 ## ----graph_exch_e, echo=FALSE, results="asis", fig.width=fig.graph.small[1], fig.height=fig.graph.small[2]----
 FUN(d5)
-invisible(dev.off())
 
 ## ----echo=FALSE----------------------------------------------------------
 d <- reach.recharge
@@ -1731,7 +1704,6 @@ cols <- c("#7FC97F", "#BEAED4", "#FAFAD2")
 legend("center", leg, pch=c(20, 18, 15), col=cols, pt.cex=c(1, 1, 1.5),
        pt.lwd=0.5, inset=0.02, cex=0.7, bty="n", xpd=NA, bg="#FFFFFFCD",
        title=expression(bold("EXPLANATION")))
-invisible(dev.off())
 
 ## ----include=FALSE-------------------------------------------------------
 v <- "Mean stream-aquifer flow-exchange ratio residuals for river subreaches during (\\textit{\\textbf{A}}) March, (\\textit{\\textbf{B}}) August, and (\\textit{\\textbf{C}}) October---based on uncalibrated model results. \\label{fig:graph_ratio}"
@@ -1746,7 +1718,6 @@ ylab <- paste("Groundwater discharge, in", c("cubic meters per day", "acre-feet 
 col <- "#C80C0B"
 PlotGraph(d.drain.1, ylab=ylab, col=col, fill=paste0(col, "66"),
           conversion.factor=m3.per.d.to.af.per.yr, scientific=FALSE, center.date.labels=TRUE)
-invisible(dev.off())
 
 ## ----include=FALSE-------------------------------------------------------
 v <- "Groundwater discharge across the Silver Creek outlet boundary---based on uncalibrated model results."
@@ -1757,14 +1728,13 @@ ylab <- paste("Groundwater discharge, in", c("cubic meters per day", "acre-feet 
 col <- "#C80C0B"
 PlotGraph(d.drain.2, ylab=ylab, col=col, fill=paste0(col, "66"),
           conversion.factor=m3.per.d.to.af.per.yr, scientific=TRUE, center.date.labels=TRUE)
-invisible(dev.off())
 
-## ----echo=FALSE, message=FALSE------------------------------------------------
+## ----echo=FALSE, message=FALSE-------------------------------------------
 # save R objects that will be used to update the water budget
-layers <-  c("lay1.top", sprintf("lay%s.bot", 1:3), sprintf("lay%s.zones", 1:3))
+layers <-  c("lay1.top", sprintf("lay%s.bot", 1:3))
 rs <- subset(rs.model, layers)
 save(rs, misc, trib, tr.stress.periods, ss.stress.periods, reduction, d.in.mv.ave,
-     file=file.path(dir.run, "model.rda"), compress=FALSE)
+     file=file.path(dir.run, "model.rda"))
 
 # read raster data from from reference file and store in stack
 FUN <- function(f, mv.flag=1e+09) {
@@ -1791,7 +1761,7 @@ if (file.exists(file.path(dir.run, "sy1.ref"))) {
 }
 
 # write raster stacks
-path <- file.path(getwd(), "ancillary", "uncalibrated")
+path <- "ancillary/uncalibrated"
 ExportRasterStack(rs.data,  file.path(path, "data"))
 ExportRasterStack(rs.model, file.path(path, "model"))
 
@@ -1847,7 +1817,7 @@ animation::saveHTML({
 setwd(wd)
 
 # write model domain shapefile
-path <- file.path(getwd(), "georef")
+path <- "georef"
 dir.create(path, showWarnings=FALSE, recursive=TRUE)
 p1 <- as(extent(rs.model), "SpatialPolygons")
 r <- is.na(rs.model[["lay1.bot"]])
@@ -1863,11 +1833,11 @@ p <- SpatialPolygons(list(p1=p1@polygons[[1]], p2=p2@polygons[[1]], p3=p3@polygo
 d <- data.frame(Area=c("maximum model extent", "active model domain", "inactive model domain"),
                 row.names=sapply(slot(p, "polygons"), function(x) slot(x, "ID")))
 p <- SpatialPolygonsDataFrame(p, d)
-writeOGR(p, dsn=path, layer="sir2016_5080", driver="ESRI Shapefile",
-         overwrite_layer=TRUE, encoding="UTF-8")
+rgdal::writeOGR(p, dsn=path, layer="sir2016_5080", driver="ESRI Shapefile",
+                overwrite_layer=TRUE, encoding="UTF-8")
 
 # write model grid shapefile
-path <- file.path(getwd(), "ancillary/modelgrid")
+path <- "ancillary/modelgrid"
 dir.create(path, showWarnings=FALSE, recursive=TRUE)
 r <- raster(rs.model)
 r[] <- seq_len(ncell(r))
@@ -1878,18 +1848,17 @@ p@data <- cbind(p@data, rowColFromCell(r, p@data$cell),
                 lay1.bot=rs.model[["lay1.bot"]][p@data$cell],
                 lay2.bot=rs.model[["lay2.bot"]][p@data$cell],
                 lay3.bot=rs.model[["lay3.bot"]][p@data$cell])
-writeOGR(p, dsn=path, layer="grid", driver="ESRI Shapefile",
-         overwrite_layer=TRUE, encoding="UTF-8")
+rgdal::writeOGR(p, dsn=path, layer="grid", driver="ESRI Shapefile",
+                overwrite_layer=TRUE, encoding="UTF-8")
 
 # write modelgeoref file
-path <- getwd()
 r <- raster(rs.model)
 e <- rs.model@extent
 pts <- rbind(nw=c(e@xmin, e@ymax), ne=c(e@xmax, e@ymax),
              se=c(e@xmax, e@ymin), sw=c(e@xmin, e@ymin))
 corners <- c("upper_left", "upper_right", "lower_right", "lower_left")
 pts.xy <- SpatialPoints(pts, proj4string=crs(r))
-crs.ll <- CRS("+proj=longlat +datum=WGS84")
+crs.ll <- CRS("+init=epsg:4326")
 pts.ll <- spTransform(pts.xy, crs.ll)
 lng <- coordinates(pts.ll)[, 1]
 lat <- coordinates(pts.ll)[, 2]
@@ -1899,11 +1868,9 @@ ll <- paste(ll, collapse="\n")
 replacement <- list(ll=ll, crs.ll=crs.ll@projargs)
 file <- system.file("misc", "modelgeoref-template.txt", package="wrv")
 text <- readLines(file, warn=FALSE)
-file <- file.path(path, "modelgeoref.txt")
-cat(ReplaceInTemplate(text, replacement), file=file, sep="\n")
+cat(ReplaceInTemplate(text, replacement), file="modelgeoref.txt", sep="\n")
 
 # write readme file
-path <- getwd()
 desc <- packageDescription("wrv")
 fields <- c("Depends", "Imports", "Suggests")
 FUN <- function(i) strsplit(gsub("\n", " ", desc[[i]]), ", ")[[1]]
@@ -1913,47 +1880,43 @@ pkgs <- paste(pkgs, collapse="\n                    ")
 replacement <- list(pkgs=pkgs, id=id)
 file <- system.file("misc", "readme-template.txt", package="wrv")
 text <- readLines(file, warn=FALSE)
-file <- file.path(path, "readme.txt")
 options(width=70)
-cat(ReplaceInTemplate(text, replacement), file=file, sep="\n")
+cat(ReplaceInTemplate(text, replacement), file="readme.txt", sep="\n")
 options(width=80)
 
 # write usgs.model.reference file
-path <- file.path(getwd(), "model/model1")
 replacement <- list(xul=coordinates(pts)["ne", 1], yul=coordinates(pts)["ne", 2],
-                    start_date=format(sdate, "%m/%d/%Y"),
+                    start_date=format(tr.stress.periods[1], "%m/%d/%Y"),
                     model="modflow-usg",
                     proj4=proj4string(rs.model))
 file <- system.file("misc", "usgs.model.ref-template.txt", package="wrv")
 text <- readLines(file, warn=FALSE)
-file <- file.path(path, "usgs.model.reference")
+file <- "model/model1/usgs.model.reference"
 cat(ReplaceInTemplate(text, replacement), file=file, sep="\n")
 
 # remove temporary files
-path <- file.path(getwd(), "model/model1")
-file <- file.path(path, "fort.6")
+file <- "model/model1/fort.6"
 if (file.exists(file)) invisible(file.remove(file))
 
 # move modflow output files
-path <- file.path(getwd(), "output/output.model1")
+path <- "output/output.model1"
 dir.create(path, showWarnings=FALSE, recursive=TRUE)
 file.names <- paste(id, c("bud", "hds", "lst"), sep=".")
-invisible(file.rename(file.path(getwd(), "model/model1", file.names),
+invisible(file.rename(file.path("model/model1", file.names),
                       file.path(path, file.names)))
 
 # move modflow executable file
-path <- file.path(getwd(), "bin")
+path <- "bin"
 dir.create(path=path, showWarnings=FALSE, recursive=TRUE)
-invisible(file.rename(file.path(getwd(), "model/model1/mfusg.exe"),
+invisible(file.rename(file.path("model/model1/mfusg.exe"),
                       file.path(path, "mfusg.exe")))
 
 # create source directory
-path <- file.path(getwd(), "source")
-dir.create(path=path, showWarnings=FALSE, recursive=TRUE)
+dir.create(path="source", showWarnings=FALSE, recursive=TRUE)
 
 # write xml metadata and thumbnail image
 
-path <- file.path(getwd(), "webrelease")
+path <- "webrelease"
 dir.create(path, showWarnings=FALSE, recursive=TRUE)
 
 file <- system.file("misc", "sir2016-5080_usgsdatarelease.xml", package="wrv")
@@ -2000,5 +1963,4 @@ axis(1, at=xat, tcl=tcl, lwd=-1, lwd.ticks=0.3, labels=FALSE, mgp=mgp)
 axis(4, at=yat, tcl=tcl, lwd=-1, lwd.ticks=0.3, labels=FALSE, mgp=mgp)
 mtext("Columns", side=3, line=1, cex=cex, font=2)
 mtext("Rows",    side=2, line=1, cex=cex, font=2)
-invisible(dev.off())
 

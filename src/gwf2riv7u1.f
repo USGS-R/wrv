@@ -13,7 +13,8 @@ C     ******************************************************************
 C
 C     SPECIFICATIONS:
 C     ------------------------------------------------------------------
-      USE GLOBAL,       ONLY:IOUT,NCOL,NROW,NLAY,IFREFM,NODES,IUNSTR
+      USE GLOBAL,       ONLY:IOUT,NCOL,NROW,NLAY,IFREFM,NODES,IUNSTR,
+     1                       NEQS
       USE GWFRIVMODULE, ONLY:NRIVER,MXRIVR,NRIVVL,IRIVCB,IPRRIV,NPRIV,
      1                       IRIVPB,NNPRIV,RIVAUX,RIVR
 C
@@ -100,7 +101,7 @@ C6A-----READ PARAMETER WITHOUT INSTANCES
               CALL ULSTRDU(NLST,RIVR,LSTBEG,NRIVVL,MXRIVR,1,IN,
      &            IOUT,'REACH NO.       NODE   '//
      &            '     STAGE    STRESS FACTOR     BOTTOM EL.',
-     &            RIVAUX,5,NAUX,IFREFM,NODES,5,5,IPRRIV)
+     &            RIVAUX,5,NAUX,IFREFM,NEQS,5,5,IPRRIV)
             ENDIF
           ELSE
 C6B-----READ INSTANCES
@@ -116,7 +117,7 @@ C6B-----READ INSTANCES
            CALL ULSTRDU(NINLST,RIVR,LSTBEG,NRIVVL,MXRIVR,1,IN,IOUT,
      1          'REACH NO.     NODE     '//
      2          '  STAGE         CONDUCTANCE     BOTTOM EL.',
-     3          RIVAUX,20,NAUX,IFREFM,NODES,5,5,IPRRIV)
+     3          RIVAUX,20,NAUX,IFREFM,NEQS,5,5,IPRRIV)
          ENDIF
             LSTBEG=LSTBEG+NINLST
   110       CONTINUE
@@ -133,7 +134,8 @@ C     ******************************************************************
 C
 C     SPECIFICATIONS:
 C     ------------------------------------------------------------------
-      USE GLOBAL,       ONLY:IOUT,NCOL,NROW,NLAY,IFREFM,IUNSTR,NODES
+      USE GLOBAL,       ONLY:IOUT,NCOL,NROW,NLAY,IFREFM,IUNSTR,NODES,
+     1                       NEQS
       USE GWFRIVMODULE, ONLY:NRIVER,MXRIVR,NRIVVL,IPRRIV,NPRIV,
      1                       IRIVPB,NNPRIV,RIVAUX,RIVR
 C     ------------------------------------------------------------------
@@ -192,7 +194,7 @@ C3------IF THERE ARE NEW NON-PARAMETER REACHES, READ THEM.
            CALL ULSTRDU(NNPRIV,RIVR,1,NRIVVL,MXRIVR,1,IN,IOUT,
      1          'REACH NO.     NODE     '//
      2          '  STAGE         CONDUCTANCE     BOTTOM EL.',
-     3          RIVAUX,20,NAUX,IFREFM,NODES,5,5,IPRRIV)
+     3          RIVAUX,20,NAUX,IFREFM,NEQS,5,5,IPRRIV)
          ENDIF
       END IF
       NRIVER=NNPRIV

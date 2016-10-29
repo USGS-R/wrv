@@ -21,7 +21,8 @@ C     ******************************************************************
 C
 C     SPECIFICATIONS:
 C     ------------------------------------------------------------------
-      USE GLOBAL,       ONLY:IOUT,NCOL,NROW,NLAY,IFREFM,NODES,IUNSTR
+      USE GLOBAL,       ONLY:IOUT,NCOL,NROW,NLAY,IFREFM,NODES,IUNSTR,
+     1                       NEQS
       USE GWFGHBMODULE, ONLY:NBOUND,MXBND,NGHBVL,IGHBCB,IPRGHB,NPGHB,
      1                       IGHBPB,NNPGHB,GHBAUX,BNDS
 C
@@ -106,7 +107,7 @@ C5A-----READ LIST OF CELLS WITHOUT INSTANCES.
          ELSE
            CALL ULSTRDU(NLST,BNDS,LSTBEG,NGHBVL,MXBND,1,IN,IOUT,
      1          'BOUND NO.     NODE         STAGE         CONDUCTANCE',
-     2      GHBAUX,20,NAUX,IFREFM,NODES,5,5,IPRGHB)
+     2      GHBAUX,20,NAUX,IFREFM,NEQS,5,5,IPRGHB)
          ENDIF
           ELSE
 C5B-----READ INSTANCES
@@ -120,7 +121,7 @@ C5B-----READ INSTANCES
          ELSE
            CALL ULSTRDU(NINLST,BNDS,LSTBEG,NGHBVL,MXBND,1,IN,IOUT,
      1          'BOUND NO.     NODE         STAGE         CONDUCTANCE',
-     2      GHBAUX,20,NAUX,IFREFM,NODES,5,5,IPRGHB)
+     2      GHBAUX,20,NAUX,IFREFM,NEQS,5,5,IPRGHB)
          ENDIF
             LSTBEG=LSTBEG+NINLST
   110       CONTINUE
@@ -138,7 +139,8 @@ C     ******************************************************************
 C
 C     SPECIFICATIONS:
 C     ------------------------------------------------------------------
-      USE GLOBAL,       ONLY:IOUT,NCOL,NROW,NLAY,IFREFM,IUNSTR,NODES
+      USE GLOBAL,       ONLY:IOUT,NCOL,NROW,NLAY,IFREFM,IUNSTR,NODES,
+     1                       NEQS
       USE GWFGHBMODULE, ONLY:NBOUND,MXBND,NGHBVL,IPRGHB,NPGHB,
      1                       IGHBPB,NNPGHB,GHBAUX,BNDS
 C     ------------------------------------------------------------------
@@ -195,7 +197,7 @@ C3------IF THERE ARE NEW NON-PARAMETER GHB'S, READ THEM.
          ELSE
            CALL ULSTRDU(NNPGHB,BNDS,1,NGHBVL,MXBND,1,IN,IOUT,
      1          'BOUND NO.     NODE         STAGE         CONDUCTANCE',
-     2      GHBAUX,20,NAUX,IFREFM,NODES,5,5,IPRGHB)
+     2      GHBAUX,20,NAUX,IFREFM,NEQS,5,5,IPRGHB)
          ENDIF
       END IF
       NBOUND=NNPGHB

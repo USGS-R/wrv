@@ -1,6 +1,9 @@
-/20*/
 /.RData
 /.Rhistory
 /*.tar.gz
 /*.zip
+
+/src-i386
+/src-x64
+
 Thumbs.db

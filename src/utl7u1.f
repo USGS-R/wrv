@@ -209,12 +209,12 @@ C     ******************************************************************
       CHARACTER*200 LINE,FNAME
       DATA NUNOPN/99/
 C
-C jfisher 2015-02-23: remove dependency on 'openspec.inc'
-C     INCLUDE 'openspec.inc'
+C jfisher 2016-10-20: remove dependency on 'openspec.inc', contents included here.
       CHARACTER*20 ACCESS,FORM,ACTION(2)
       DATA ACCESS/'STREAM'/
       DATA FORM/'UNFORMATTED'/
       DATA (ACTION(I),I=1,2)/'READ','READWRITE'/
+C     INCLUDE 'openspec.inc'
 C
 C     ------------------------------------------------------------------
 C
@@ -351,12 +351,12 @@ C     ******************************************************************
       CHARACTER*200 LINE,FNAME
       DATA NUNOPN/99/
 C
-C jfisher 2015-02-23: remove dependency on 'openspec.inc'
-C     INCLUDE 'openspec.inc'
+C jfisher 2016-10-20: remove dependency on 'openspec.inc', contents included here.
       CHARACTER*20 ACCESS,FORM,ACTION(2)
       DATA ACCESS/'STREAM'/
       DATA FORM/'UNFORMATTED'/
       DATA (ACTION(I),I=1,2)/'READ','READWRITE'/
+C     INCLUDE 'openspec.inc'
 C
 C     ------------------------------------------------------------------
 C
@@ -514,13 +514,14 @@ C     ROUTINE TO INPUT 1-D REAL DATA MATRICES
 C       A IS ARRAY TO INPUT
 C       ANAME IS 24 CHARACTER DESCRIPTION OF A
 C       JJ IS NO. OF ELEMENTS
+C       K IS LAYER NO. (USED WITH NAME TO TITLE PRINTOUT --)
+C              IF K=0, NO LAYER IS PRINTED
 C       IN IS INPUT UNIT
 C       IOUT IS OUTPUT UNIT
 C     ******************************************************************
 C
 C        SPECIFICATIONS:
 C     ------------------------------------------------------------------
-      CHARACTER*16 TEXT
       CHARACTER*24 ANAME
       DIMENSION A(JJ)
       CHARACTER*20 FMTIN
@@ -528,12 +529,12 @@ C     ------------------------------------------------------------------
       CHARACTER*200 FNAME
       DATA NUNOPN/99/
 C
-C jfisher 2015-02-23: remove dependency on 'openspec.inc'
-C     INCLUDE 'openspec.inc'
+C jfisher 2016-10-20: remove dependency on 'openspec.inc', contents included here.
       CHARACTER*20 ACCESS,FORM,ACTION(2)
       DATA ACCESS/'STREAM'/
       DATA FORM/'UNFORMATTED'/
       DATA (ACTION(I),I=1,2)/'READ','READWRITE'/
+C     INCLUDE 'openspec.inc'
 C
 C     ------------------------------------------------------------------
 C
@@ -558,7 +559,6 @@ C2------FORMAT.  SET A FLAG SPECIFYING IF FREE FORMAT OR FIXED FORMAT.
          LOCAT=NUNOPN
          WRITE(IOUT,15) LOCAT,FNAME
    15    FORMAT(1X,/1X,'OPENING FILE ON UNIT ',I4,':',/1X,A)
-         OPEN(UNIT=LOCAT,FILE=FNAME,ACTION=ACTION(1))
          ICLOSE=1
       ELSE
 C
@@ -572,16 +572,52 @@ C
 C3------FOR FREE FORMAT CONTROL RECORD, READ REMAINING FIELDS.
       IF(IFREE.NE.0) THEN
          CALL URWORD(CNTRL,ICOL,ISTART,ISTOP,3,N,CNSTNT,IOUT,IN)
-         IF(LOCAT.GT.0) THEN
+         IF(LOCAT.NE.0) THEN
             CALL URWORD(CNTRL,ICOL,ISTART,ISTOP,1,N,R,IOUT,IN)
             FMTIN=CNTRL(ISTART:ISTOP)
+            IF(ICLOSE.NE.0) THEN
+               IF(FMTIN.EQ.'(BINARY)') THEN
+                  OPEN(UNIT=LOCAT,FILE=FNAME,FORM=FORM,ACCESS=ACCESS,
+     &                 ACTION=ACTION(1))
+               ELSE
+                  OPEN(UNIT=LOCAT,FILE=FNAME,ACTION=ACTION(1))
+               END IF
+            END IF
+            IF(LOCAT.GT.0 .AND. FMTIN.EQ.'(BINARY)') LOCAT=-LOCAT
             CALL URWORD(CNTRL,ICOL,ISTART,ISTOP,2,IPRN,R,IOUT,IN)
          END IF
       END IF
 C
 C4------TEST LOCAT TO SEE HOW TO DEFINE ARRAY VALUES.
-      IF(LOCAT.GE.0) GO TO 71
-C-------LOCAT <0 READ BINARY FILE
+      IF(LOCAT.EQ.0) THEN
+C
+C4A-----LOCAT=0; SET ALL ARRAY VALUES EQUAL TO CNSTNT. RETURN.
+        DO 80 J=1,JJ
+   80   A(J)=CNSTNT
+        IF(K.GT.0) WRITE(IOUT,2) ANAME,CNSTNT,K
+    2   FORMAT(1X,/1X,A,' =',1P,G14.6,' FOR LAYER',I4)
+        IF(K.LE.0) WRITE(IOUT,3) ANAME,CNSTNT
+    3   FORMAT(1X,/1X,A,' =',1P,G14.6)
+        RETURN
+      ELSE IF(LOCAT.GT.0) THEN
+C
+C4B-----LOCAT>0; READ FORMATTED RECORDS USING FORMAT FMTIN.
+        IF(K.GT.0) THEN
+           WRITE(IOUT,94) ANAME,K,LOCAT,FMTIN
+   94      FORMAT(1X,///11X,A,' FOR LAYER',I4,/
+     1      1X,'READING ON UNIT ',I4,' WITH FORMAT: ',A)
+        ELSE IF(K.EQ.0) THEN
+           WRITE(IOUT,95) ANAME,LOCAT,FMTIN
+   95      FORMAT(1X,///11X,A,/
+     1      1X,'READING ON UNIT ',I4,' WITH FORMAT: ',A)
+        END IF
+        IF(FMTIN.EQ.'(FREE)') THEN
+           READ(LOCAT,*) (A(J),J=1,JJ)
+        ELSE
+           READ(LOCAT,FMTIN) (A(J),J=1,JJ)
+        END IF
+      ELSE
+C
 C4C-----LOCAT<0; READ UNFORMATTED ARRAY VALUES.
         LOCAT=-LOCAT
         IF(K.GT.0) THEN
@@ -592,49 +628,21 @@ C4C-----LOCAT<0; READ UNFORMATTED ARRAY VALUES.
            WRITE(IOUT,202) ANAME,LOCAT
   202      FORMAT(1X,///1X,A,/
      1      1X,'READING BINARY ON UNIT ',I4)
-        ELSE
-           WRITE(IOUT,203) ANAME,LOCAT
-  203      FORMAT(1X,///1X,A,' FOR CROSS SECTION',/
-     1      1X,'READING BINARY ON UNIT ',I4)
         END IF
-        READ(LOCAT) KSTP,KPER,PERTIM,TOTIM,TEXT,NSTRT,NNDLAY,ILAY
-        READ(LOCAT) (A(J),J=1,JJ)
-        RETURN
-
-71    IF(LOCAT.GT.0) GO TO 90
-C
-C4A-----LOCAT =0; SET ALL ARRAY VALUES EQUAL TO CNSTNT. RETURN.
-      DO 80 J=1,JJ
-   80 A(J)=CNSTNT
-      IF(K.GT.0.OR.K.LT.0) WRITE(IOUT,2) ANAME,CNSTNT,K
-    2 FORMAT(1X,/1X,A,' =',1P,G14.6,' FOR LAYER',I4)
-      IF(K.EQ.0) WRITE(IOUT,3) ANAME,CNSTNT
-    3 FORMAT(1X,/1X,A,' =',1P,G14.6)
-      RETURN
-C
-C4B-----LOCAT>0; READ FORMATTED RECORDS USING FORMAT FMTIN.
-   90 CONTINUE
-      IF(K.GT.0) WRITE(IOUT,4) ANAME,K,LOCAT,FMTIN
-   4  FORMAT(1X,///11X,A,' FOR LAYER',I4,/
-     1      1X,'READING ON UNIT ',I4,' WITH FORMAT: ',A20)
-      IF(K.EQ.0) WRITE(IOUT,5) ANAME,LOCAT,FMTIN
-    5 FORMAT(1X,///11X,A,/
-     1       1X,'READING ON UNIT ',I4,' WITH FORMAT: ',A20)
-      IF(FMTIN.EQ.'(FREE)') THEN
-      READ(LOCAT,*) (A(J),J=1,JJ)
-      ELSE
-         READ(LOCAT,FMTIN) (A(J),J=1,JJ)
+        READ(LOCAT) KSTP,KPER,PERTIM,TOTIM,TEXT,NCOL,NROW,ILAY
+        READ(LOCAT) A
       END IF
-      IF(ICLOSE.NE.0) CLOSE(UNIT=LOCAT)
 C
 C5------IF CNSTNT NOT ZERO THEN MULTIPLY ARRAY VALUES BY CNSTNT.
+      IF(ICLOSE.NE.0) CLOSE(UNIT=LOCAT)
       ZERO=0.
-      IF(CNSTNT.EQ.ZERO) GO TO 120
-      DO 100 J=1,JJ
-  100 A(J)=A(J)*CNSTNT
+      IF(CNSTNT.EQ.ZERO) GO TO 320
+      DO 310 J=1,JJ
+      A(J)=A(J)*CNSTNT
+  310 CONTINUE
 C
 C6------IF PRINT CODE (IPRN) =0 OR >0 THEN PRINT ARRAY VALUES.
-120   CONTINUE
+320   CONTINUE
       IF(IPRN.EQ.0) THEN
          WRITE(IOUT,1001) (A(J),J=1,JJ)
 1001     FORMAT((1X,1PG12.5,9(1X,G12.5)))
@@ -647,151 +655,14 @@ C7------RETURN
       RETURN
 C
 C8------CONTROL RECORD ERROR.
-500   WRITE(IOUT,502) ANAME
-502   FORMAT(1X,/1X,'ERROR READING ARRAY CONTROL RECORD FOR ',A,':')
-      WRITE(IOUT,'(1X,A)') CNTRL
-      CALL USTOP(' ')
-      END
-      SUBROUTINE U1DREL8(A,ANAME,JJ,K,IN,IOUT)
-C     ******************************************************************
-C     ROUTINE TO INPUT 1-D REAL DATA MATRICES
-C       A IS ARRAY TO INPUT
-C       ANAME IS 24 CHARACTER DESCRIPTION OF A
-C       JJ IS NO. OF ELEMENTS
-C       IN IS INPUT UNIT
-C       IOUT IS OUTPUT UNIT
-C     ******************************************************************
-C
-C        SPECIFICATIONS:
-C     ------------------------------------------------------------------
-      CHARACTER*16 TEXT
-      CHARACTER*24 ANAME
-      DOUBLE PRECISION A(JJ)
-      CHARACTER*20 FMTIN
-      CHARACTER*200 CNTRL
-      CHARACTER*200 FNAME
-      DATA NUNOPN/99/
-C
-C jfisher 2015-02-23: remove dependency on 'openspec.inc'
-C     INCLUDE 'openspec.inc'
-      CHARACTER*20 ACCESS,FORM,ACTION(2)
-      DATA ACCESS/'STREAM'/
-      DATA FORM/'UNFORMATTED'/
-      DATA (ACTION(I),I=1,2)/'READ','READWRITE'/
-C
-C     ------------------------------------------------------------------
-C
-C1------READ ARRAY CONTROL RECORD AS CHARACTER DATA.
-      READ(IN,'(A)') CNTRL
-C
-C2------LOOK FOR ALPHABETIC WORD THAT INDICATES THAT THE RECORD IS FREE
-C2------FORMAT.  SET A FLAG SPECIFYING IF FREE FORMAT OR FIXED FORMAT.
-      ICLOSE=0
-      IFREE=1
-      ICOL=1
-      CALL URWORD(CNTRL,ICOL,ISTART,ISTOP,1,N,R,IOUT,IN)
-      IF (CNTRL(ISTART:ISTOP).EQ.'CONSTANT') THEN
-         LOCAT=0
-      ELSE IF(CNTRL(ISTART:ISTOP).EQ.'INTERNAL') THEN
-         LOCAT=IN
-      ELSE IF(CNTRL(ISTART:ISTOP).EQ.'EXTERNAL') THEN
-         CALL URWORD(CNTRL,ICOL,ISTART,ISTOP,2,LOCAT,R,IOUT,IN)
-      ELSE IF(CNTRL(ISTART:ISTOP).EQ.'OPEN/CLOSE') THEN
-         CALL URWORD(CNTRL,ICOL,ISTART,ISTOP,0,N,R,IOUT,IN)
-         FNAME=CNTRL(ISTART:ISTOP)
-         LOCAT=NUNOPN
-         WRITE(IOUT,15) LOCAT,FNAME
-   15    FORMAT(1X,/1X,'OPENING FILE ON UNIT ',I4,':',/1X,A)
-         OPEN(UNIT=LOCAT,FILE=FNAME,ACTION=ACTION(1))
-         ICLOSE=1
+  500 IF(K.GT.0) THEN
+         WRITE(IOUT,501) ANAME,K
+  501    FORMAT(1X,/1X,'ERROR READING ARRAY CONTROL RECORD FOR ',A,
+     1     ' FOR LAYER',I4,':')
       ELSE
-C
-C2A-----DID NOT FIND A RECOGNIZED WORD, SO NOT USING FREE FORMAT.
-C2A-----READ THE CONTROL RECORD THE ORIGINAL WAY.
-         IFREE=0
-         READ(CNTRL,1,ERR=500) LOCAT,CNSTNT,FMTIN,IPRN
-    1    FORMAT(I10,F10.0,A20,I10)
+         WRITE(IOUT,502) ANAME
+  502    FORMAT(1X,/1X,'ERROR READING ARRAY CONTROL RECORD FOR ',A,':')
       END IF
-C
-C3------FOR FREE FORMAT CONTROL RECORD, READ REMAINING FIELDS.
-      IF(IFREE.NE.0) THEN
-         CALL URWORD(CNTRL,ICOL,ISTART,ISTOP,3,N,CNSTNT,IOUT,IN)
-         IF(LOCAT.GT.0) THEN
-            CALL URWORD(CNTRL,ICOL,ISTART,ISTOP,1,N,R,IOUT,IN)
-            FMTIN=CNTRL(ISTART:ISTOP)
-            CALL URWORD(CNTRL,ICOL,ISTART,ISTOP,2,IPRN,R,IOUT,IN)
-         END IF
-      END IF
-C
-C4------TEST LOCAT TO SEE HOW TO DEFINE ARRAY VALUES.
-      IF(LOCAT.GE.0) GO TO 71
-C-------LOCAT <0 READ BINARY FILE
-C4C-----LOCAT<0; READ UNFORMATTED ARRAY VALUES.
-        LOCAT=-LOCAT
-        IF(K.GT.0) THEN
-           WRITE(IOUT,201) ANAME,K,LOCAT
-  201      FORMAT(1X,///11X,A,' FOR LAYER',I4,/
-     1      1X,'READING BINARY ON UNIT ',I4)
-        ELSE IF(K.EQ.0) THEN
-           WRITE(IOUT,202) ANAME,LOCAT
-  202      FORMAT(1X,///1X,A,/
-     1      1X,'READING BINARY ON UNIT ',I4)
-        ELSE
-           WRITE(IOUT,203) ANAME,LOCAT
-  203      FORMAT(1X,///1X,A,' FOR CROSS SECTION',/
-     1      1X,'READING BINARY ON UNIT ',I4)
-        END IF
-        READ(LOCAT) KSTP,KPER,PERTIM,TOTIM,TEXT,NSTRT,NNDLAY,ILAY
-        READ(LOCAT) (A(J),J=1,JJ)
-        RETURN
- 71     IF(LOCAT.GT.0) GO TO 90
-C
-C4A-----LOCAT <0 OR =0; SET ALL ARRAY VALUES EQUAL TO CNSTNT. RETURN.
-      DO 80 J=1,JJ
-   80 A(J)=CNSTNT
-      IF(K.GT.0) WRITE(IOUT,2) ANAME,CNSTNT,K
-    2 FORMAT(1X,/1X,A,' =',1P,G14.6,' FOR LAYER',I4)
-      IF(K.LE.0) WRITE(IOUT,3) ANAME,CNSTNT
-    3 FORMAT(1X,/1X,A,' =',1P,G14.6)
-      RETURN
-C
-C4B-----LOCAT>0; READ FORMATTED RECORDS USING FORMAT FMTIN.
-   90 CONTINUE
-      IF(K.GT.0) WRITE(IOUT,4) ANAME,K,LOCAT,FMTIN
-   4  FORMAT(1X,///11X,A,' FOR LAYER',I4,/
-     1      1X,'READING ON UNIT ',I4,' WITH FORMAT: ',A20)
-      IF(K.EQ.0) WRITE(IOUT,5) ANAME,LOCAT,FMTIN
-    5 FORMAT(1X,///11X,A,/
-     1       1X,'READING ON UNIT ',I4,' WITH FORMAT: ',A20)
-      IF(FMTIN.EQ.'(FREE)') THEN
-      READ(LOCAT,*) (A(J),J=1,JJ)
-      ELSE
-         READ(LOCAT,FMTIN) (A(J),J=1,JJ)
-      END IF
-      IF(ICLOSE.NE.0) CLOSE(UNIT=LOCAT)
-C
-C5------IF CNSTNT NOT ZERO THEN MULTIPLY ARRAY VALUES BY CNSTNT.
-      ZERO=0.
-      IF(CNSTNT.EQ.ZERO) GO TO 120
-      DO 100 J=1,JJ
-  100 A(J)=A(J)*CNSTNT
-C
-C6------IF PRINT CODE (IPRN) =0 OR >0 THEN PRINT ARRAY VALUES.
-120   CONTINUE
-      IF(IPRN.EQ.0) THEN
-         WRITE(IOUT,1001) (A(J),J=1,JJ)
-1001     FORMAT((1X,1PG12.5,9(1X,G12.5)))
-      ELSE IF(IPRN.GT.0) THEN
-         WRITE(IOUT,1002) (A(J),J=1,JJ)
-1002     FORMAT((1X,1PG12.5,4(1X,G12.5)))
-      END IF
-C
-C7------RETURN
-      RETURN
-C
-C8------CONTROL RECORD ERROR.
-500   WRITE(IOUT,502) ANAME
-502   FORMAT(1X,/1X,'ERROR READING ARRAY CONTROL RECORD FOR ',A,':')
       WRITE(IOUT,'(1X,A)') CNTRL
       CALL USTOP(' ')
       END
@@ -814,12 +685,12 @@ C     ------------------------------------------------------------------
       CHARACTER*200 FNAME
       DATA NUNOPN/99/
 C
-C jfisher 2015-02-23: remove dependency on 'openspec.inc'
-C     INCLUDE 'openspec.inc'
+C jfisher 2016-10-20: remove dependency on 'openspec.inc', contents included here.
       CHARACTER*20 ACCESS,FORM,ACTION(2)
       DATA ACCESS/'STREAM'/
       DATA FORM/'UNFORMATTED'/
       DATA (ACTION(I),I=1,2)/'READ','READWRITE'/
+C     INCLUDE 'openspec.inc'
 C
 C     ------------------------------------------------------------------
 C
@@ -943,12 +814,12 @@ C     ------------------------------------------------------------------
       CHARACTER*200 FNAME
       DATA NUNOPN/99/
 C
-C jfisher 2015-02-23: remove dependency on 'openspec.inc'
-C     INCLUDE 'openspec.inc'
+C jfisher 2016-10-20: remove dependency on 'openspec.inc', contents included here.
       CHARACTER*20 ACCESS,FORM,ACTION(2)
       DATA ACCESS/'STREAM'/
       DATA FORM/'UNFORMATTED'/
       DATA (ACTION(I),I=1,2)/'READ','READWRITE'/
+C     INCLUDE 'openspec.inc'
 C
 C     ------------------------------------------------------------------
 C
@@ -1180,12 +1051,12 @@ C     ------------------------------------------------------------------
       REAL PERTIMRD,TOTIMRD
       DATA NUNOPN/99/
 C
-C jfisher 2015-02-23: remove dependency on 'openspec.inc'
-C     INCLUDE 'openspec.inc'
+C jfisher 2016-10-20: remove dependency on 'openspec.inc', contents included here.
       CHARACTER*20 ACCESS,FORM,ACTION(2)
       DATA ACCESS/'STREAM'/
       DATA FORM/'UNFORMATTED'/
       DATA (ACTION(I),I=1,2)/'READ','READWRITE'/
+C     INCLUDE 'openspec.inc'
 C
 C     ------------------------------------------------------------------
 C
@@ -1347,12 +1218,12 @@ C     ------------------------------------------------------------------
       CHARACTER*200 FNAME
       DATA NUNOPN/99/
 C
-C jfisher 2015-02-23: remove dependency on 'openspec.inc'
-C     INCLUDE 'openspec.inc'
+C jfisher 2016-10-20: remove dependency on 'openspec.inc', contents included here.
       CHARACTER*20 ACCESS,FORM,ACTION(2)
       DATA ACCESS/'STREAM'/
       DATA FORM/'UNFORMATTED'/
       DATA (ACTION(I),I=1,2)/'READ','READWRITE'/
+C     INCLUDE 'openspec.inc'
 C
 C     ------------------------------------------------------------------
 C

@@ -8,8 +8,8 @@ C        SPECIFICATIONS:
 C     ------------------------------------------------------------------
       USE GLOBAL, ONLY:NCOL,NROW,NLAY,NPER,ITMUNI,NJA,NJAS,NJAG,
      1          IVSD,LENUNI,IXSEC,ITRSS,INBAS,IFREFM,NODES,IOUT,
-     2          IUNIT,NIUNIT,HNEW,LAYHDT,LAYHDS,NODLAY,NBOTM,
-     3          PERLEN,NSTP,TSMULT,ISSFLG,IUNSTR,MXNODLAY,NCNFBD,
+     2          IUNIT,NIUNIT,HNEW,LAYHDT,LAYHDS,NODLAY,NBOTM,IDPF,IDPT,
+     3          PERLEN,NSTP,TSMULT,ISSFLG,IUNSTR,MXNODLAY,NCNFBD,DDREF,
      4          HOLD,IBOUND,RHS,AMAT,BUFF,STRT,IPRCONN,IDSYMRD,ILAYCON4,
      5          IDEALLOC_LPF,IDEALLOC_HY,INCLN,INGNC,INGNC2,INGNCn,
      6          ITRNSP,Sn,So,NEQS,ISYMFLG,WADIEPS,IWADI,IWADICLN,iunsat
@@ -20,8 +20,8 @@ C     ------------------------------------------------------------------
       USE GWFBASMODULE,ONLY:MSUM,IHEDFM,IHEDUN,IDDNFM,IDDNUN,IBOUUN,
      1                 LBHDSV,LBDDSV,LBBOSV,IBUDFL,ICBCFL,IHDDFL,ISPCFL,
      2                 IAUXSV,IBDOPT,IPRTIM,IPEROC,ITSOC,ICHFLG,IFRCNVG,
-     3                 DELT,PERTIM,TOTIM,HNOFLO,CHEDFM,CDDNFM,
-     4                 CBOUFM,VBVL,VBNM,ISPCFM,ISPCUN,CSPCFM
+     3                 DELT,PERTIM,TOTIM,HNOFLO,CHEDFM,CDDNFM,CBOUFM,
+     4                 VBVL,VBNM,ISPCFM,ISPCUN,CSPCFM,IDDREF,IDDREFNEW
 C
       CHARACTER*4 CUNIT(NIUNIT)
       CHARACTER*(*) VERSION
@@ -40,10 +40,10 @@ C1------Allocate scalar variables.
       allocate(iunsat)
       iunsat = 0 ! unsat formulation
       ALLOCATE(NCOL,NROW,NLAY,NPER,NBOTM,NCNFBD,ITMUNI,LENUNI,ITRSS)
-      ALLOCATE(NJA,NJAS,NJAG,ILAYCON4,WADIEPS,IWADI,IWADICLN)
+      ALLOCATE(NJA,NJAS,NJAG,ILAYCON4,WADIEPS,IWADI,IWADICLN,IDPF,IDPT)
       ALLOCATE(IXSEC,INBAS,IFREFM,NODES,IOUT,MXNODLAY,IUNSTR,IVSD)
       ALLOCATE(IDEALLOC_LPF,IDEALLOC_HY,ITRNSP,NEQS,IDSYMRD,IPRCONN)
-      ALLOCATE(INCLN,INGNC,INGNC2,INGNCn,ISYMFLG)
+      ALLOCATE(INCLN,INGNC,INGNC2,INGNCn,ISYMFLG,IDDREF,IDDREFNEW)
       INCLN = 0
       INGNC = 0
       INGNC2 = 0
@@ -52,6 +52,10 @@ C1------Allocate scalar variables.
       IDEALLOC_LPF = 0
       IWADI = 0
       IWADICLN = 0
+      IDPF = 0
+      IDPT = 0
+      IDDREF=0
+      IDDREFNEW=0
       ALLOCATE(IUNIT(NIUNIT))
 C
       ALLOCATE(ICLSUM,IPSUM,INAMLOC,NMLTAR,NZONAR,NPVAL)
@@ -167,6 +171,7 @@ C7-----Allocate space for remaining global arrays.
       ALLOCATE (RHS(NEQS))
       ALLOCATE (BUFF(NEQS))
       ALLOCATE (STRT(NEQS))
+      DDREF=>STRT
       ALLOCATE (LAYHDT(NLAY))
       ALLOCATE (LAYHDS(NLAY))
       WRITE(IOUT,'(//)')
@@ -192,7 +197,8 @@ C10B-------FOR UNSTRUCTURED GRIDS
 C
 C-----------------------------------------------------------------------
 C11-----SET UP OUTPUT CONTROL.
-      CALL SGWF2BAS7I(NLAY,IUNIT(IUOC),IOUT,IFREFM,NIUNIT,IUNIT(15))
+      CALL SGWF2BAS7I(NLAY,IUNIT(IUOC),IOUT,IFREFM,NIUNIT,IUNIT(15),
+     1  IUNIT(IUCLN))
 C
 C12-----INITIALIZE VOLUMETRIC BUDGET ACCUMULATORS TO ZERO.
   590 ZERO=0.
@@ -219,12 +225,12 @@ C
 C        SPECIFICATIONS:
 C     ------------------------------------------------------------------
 C
-C jfisher 2015-02-23: remove dependency on 'openspec.inc'
-C     INCLUDE 'openspec.inc'
+C jfisher 2016-10-20: remove dependency on 'openspec.inc', contents included here.
       CHARACTER*20 ACCESS,FORM,ACTION(2)
       DATA ACCESS/'STREAM'/
       DATA FORM/'UNFORMATTED'/
       DATA (ACTION(I),I=1,2)/'READ','READWRITE'/
+C     INCLUDE 'openspec.inc'
 C
       DIMENSION IUNIT(NIUNIT)
       CHARACTER*4 CUNIT(NIUNIT)
@@ -544,8 +550,13 @@ C7G-------PRINT NEW IA AND JA INFORMATION IF PRINTFV OPTION IS SET
       ELSE
         JAFL => JA
       ENDIF
+C--------------------------------------------------------------------------
+C7H------PREPARE IDXGLO ARRAY FOR CLN DOMAIN
+      IF(INCLN.NE.0)THEN
+        CALL FILLIDXGLO_CLN
+      ENDIF
 C
-C7H-----SET GNC CONNECTION ARRAYS FROM JA STRUCTURE
+C7I-----SET GNC CONNECTION ARRAYS FROM JA STRUCTURE
       IF(INGNCn.NE.0) THEN
         CALL SGNCn2DISU1MC
       ENDIF
@@ -745,7 +756,7 @@ C4-------RETURN.
       RETURN
       END
 C----------------------------------------------------------------------
-      SUBROUTINE SGWF2BAS7I(NLAY,INOC,IOUT,IFREFM,NIUNIT,ITRUNIT)
+      SUBROUTINE SGWF2BAS7I(NLAY,INOC,IOUT,IFREFM,NIUNIT,ITRUNIT,ICUNIT)
 C     ******************************************************************
 C     SET UP OUTPUT CONTROL.
 C     ******************************************************************
@@ -754,9 +765,10 @@ C        SPECIFICATIONS:
 C     ------------------------------------------------------------------
       USE GLOBAL, ONLY: ITRNSP
       USE GWFBASMODULE, ONLY: IHEDFM,IDDNFM,IHEDUN,IDDNUN,IPEROC,ITSOC,
-     1                        CHEDFM,CDDNFM,IBDOPT,LBHDSV,LBDDSV,
-     2                        IBOUUN,LBBOSV,CBOUFM,IAUXSV,IOFLG,
-     3                        VBVL,VBNM,ISPCFM,ISPCUN,CSPCFM
+     1                  CHEDFM,CDDNFM,IBDOPT,LBHDSV,LBDDSV,
+     2                  IBOUUN,LBBOSV,CBOUFM,IAUXSV,IOFLG,
+     3                  VBVL,VBNM,ISPCFM,ISPCUN,CSPCFM,IDDREF,IDDREFNEW
+      USE CLN1MODULE, ONLY: ICLNHD, ICLNDD, ICLNIB
       CHARACTER*200 LINE
 C     ------------------------------------------------------------------
 C
@@ -764,6 +776,8 @@ C1-----ALLOCATE SPACE FOR IOFLG, VBVL, AND VBNM ARRAYS.
       ALLOCATE (IOFLG(NLAY,7))
       ALLOCATE (VBVL(4,NIUNIT))
       ALLOCATE (VBNM(NIUNIT))
+      IDDREF=0
+      IDDREFNEW=0
 C
 C1A------ASSIGN DEFAULT VALUES.
       CHEDFM=' '
@@ -859,7 +873,7 @@ C4A-----NUMERIC OUTPUT CONTROL.  DECODE THE INITIAL RECORD ACCORDINGLY.
   113     FORMAT(1X,'HEAD PRINT FORMAT CODE IS',I4,
      1       '    DRAWDOWN PRINT FORMAT CODE IS',I4,
      1       '        CONC PRINT FORMAT CODE IS',I4)
-           WRITE(IOUT,114) IHEDUN,IDDNUN
+           WRITE(IOUT,114) IHEDUN,IDDNUN,ISPCUN
   114      FORMAT(1X,'HEADS WILL BE SAVED ON UNIT ',I4,
      1       '    DRAWDOWNS WILL BE SAVED ON UNIT ',I4,
      1       '         CONC WILL BE SAVED ON UNIT ',I4)
@@ -870,6 +884,11 @@ C4A-----NUMERIC OUTPUT CONTROL.  DECODE THE INITIAL RECORD ACCORDINGLY.
 C4B-----ALPHABETIC OUTPUT CONTROL.  CALL MODULE TO READ INITIAL RECORDS.
          CALL SGWF2BAS7J(INOC,IOUT,LINE,LLOC,ISTART,ISTOP)
       END IF
+      IF(ICUNIT.GT.0) THEN
+      IF(ICLNHD.LT.0) ICLNHD = IHEDUN
+      IF(ICLNDD.LT.0) ICLNDD = IDDNUN
+      IF(ICLNIB.LT.0) ICLNIB = IBOUUN
+      ENDIF
 C
 C5------RETURN.
  1000 RETURN
@@ -883,7 +902,7 @@ C        SPECIFICATIONS:
 C     ------------------------------------------------------------------
       USE GLOBAL, ONLY: ITRNSP
       USE GWFBASMODULE, ONLY: IHEDFM,IDDNFM,IHEDUN,IDDNUN,IPEROC,ITSOC,
-     1                  CHEDFM,CDDNFM,IBDOPT,LBHDSV,LBDDSV,
+     1                  CHEDFM,CDDNFM,IBDOPT,LBHDSV,LBDDSV,IDDREFNEW,
      2                  IBOUUN,LBBOSV,CBOUFM,IAUXSV,ISPCFM,ISPCUN,CSPCFM
 C
       CHARACTER*200 LINE
@@ -923,6 +942,13 @@ C2A-----STEP NUMBER FOR LATER USE.
      1          '    DRAWDOWNS WILL BE SAVED ON UNIT ',I4,
      2          '        CONCS WILL BE SAVED ON UNIT ',I4)
          ENDIF
+C2Aii------READ DDREFERENCE FLAG
+         IF(LINE(ISTART:ISTOP).EQ.'DDREFERENCE') THEN
+           IDDREFNEW=1
+         ELSE
+           IDDREFNEW=0
+         END IF
+C
          GO TO 1000
 C
 C2B-----LOOK FOR "HEAD PRINT ..." AND "HEAD SAVE ...".  IF
@@ -1737,9 +1763,9 @@ C     ******************************************************************
 C
 C        SPECIFICATIONS:
 C     ------------------------------------------------------------------
-      USE GLOBAL,      ONLY:ITMUNI,IOUT,IUNSTR,INCLN
+      USE GLOBAL,     ONLY:ITMUNI,IOUT,IUNSTR,INCLN,DDREF,STRT,NEQS,HNEW
       USE GWFBASMODULE,ONLY:DELT,PERTIM,TOTIM,IHDDFL,IBUDFL,
-     1                      MSUM,VBVL,VBNM
+     1                      MSUM,VBVL,VBNM,IDDREF
 C     ------------------------------------------------------------------
 C
 C
@@ -1791,10 +1817,22 @@ C4------PRINT TOTAL BUDGET IF REQUESTED
       IF(IBUDFL.EQ.0) GO TO 120
       CALL SGWF2BAS7V(MSUM,VBNM,VBVL,KSTP,KPER,IOUT)
       IPFLG=1
+  120 CONTINUE
+C5------RESET DRADWOWN REFERENCE ARRAY OF FLAG IS ON
+      IF(IDDREF.NE.0) THEN
+         IF(ASSOCIATED(DDREF,STRT)) THEN
+            ALLOCATE(DDREF(NEQS))
+         END IF
+         DDREF=HNEW
+         WRITE(IOUT,99)
+   99    FORMAT(1X,'Drawdown Reference has been reset to the',
+     1               ' end of this time step')
+         IDDREF=0
+      END IF
 C
-C5------END PRINTOUT WITH TIME SUMMARY AND FORM FEED IF ANY PRINTOUT
-C5------WILL BE PRODUCED.
-  120 IF(IPFLG.EQ.0) RETURN
+C6------END PRINTOUT WITH TIME SUMMARY AND FORM FEED IF ANY PRINTOUT
+C6------WILL BE PRODUCED.
+      IF(IPFLG.EQ.0) RETURN
       CALL SGWF2BAS7T(KSTP,KPER,DELT,PERTIM,TOTIM,ITMUNI,IOUT)
       WRITE(IOUT,101)
   101 FORMAT('1')
@@ -2040,7 +2078,7 @@ C
 C        SPECIFICATIONS:
 C     ------------------------------------------------------------------
       USE GWFBASMODULE, ONLY: IOFLG,IHDDFL,ISPCFL,IBUDFL,ICBCFL,IPEROC,
-     1                        ITSOC,IBDOPT
+     1                        ITSOC,IBDOPT,IDDREF,IDDREFNEW
 C
       CHARACTER*200 LINE
 C     ------------------------------------------------------------------
@@ -2085,6 +2123,12 @@ C4------OUTPUT CONTROL TIME STEP MATCHES SIMULATION TIME STEP.
 12    FORMAT(1X,/1X,'OUTPUT CONTROL FOR STRESS PERIOD ',I8,
      1              '   TIME STEP ',I8)
 C
+C4B-----SET IDDREF FLAG FROM NEW SETTING
+      IDDREF=IDDREFNEW
+      IF(IDDREFNEW.NE.0) WRITE(IOUT,52)
+   52      FORMAT(1X,'Drawdown Reference will be reset at the',
+     1               ' end of this time step')
+C
 C4A-----OUTPUT CONTROL MATCHES SIMULATION TIME.  READ NEXT OUTPUT
 C4A-----RECORD; SKIP ANY BLANK LINES.
 50    READ(INOC,'(A)',END=1000) LINE
@@ -2099,6 +2143,12 @@ C4A1----TIME STEP.  IF FOUND, DECODE TIME STEP FOR NEXT OUTPUT.
          CALL URWORD(LINE,LLOC,ISTART,ISTOP,1,N,R,IOUT,INOC)
          IF(LINE(ISTART:ISTOP).NE.'STEP') GO TO 2000
          CALL URWORD(LINE,LLOC,ISTART,ISTOP,2,ITSOC,R,IOUT,INOC)
+C4A1a------SET DDREF FLAG IF KEYWORD IS SET
+         IF(LINE(ISTART:ISTOP).EQ.'DDREFERENCE') THEN
+           IDDREFNEW=1
+         ELSE
+           IDDREFNEW=0
+         END IF
          RETURN
 C
 C4A2----LOOK FOR "PRINT", WHICH MAY REFER TO "BUDGET", "HEAD", OR
@@ -2292,7 +2342,10 @@ C-------------------------------------------------------
 C-------------------------------------------------------
         DEALLOCATE(ISYM)
         DEALLOCATE(BUFF)
+        IF(.NOT.ASSOCIATED(DDREF,STRT))
+     1           DEALLOCATE(DDREF)
         DEALLOCATE(STRT)
+        DEALLOCATE(IDDREF,IDDREFNEW)
 C
         DEALLOCATE(ICLSUM,IPSUM,INAMLOC,NMLTAR,NZONAR,NPVAL)
         DEALLOCATE (B)

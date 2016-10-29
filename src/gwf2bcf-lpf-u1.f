@@ -150,11 +150,7 @@ C4------READ LAYCON & PRINT TITLE FOR LAYCON TABLE.
       ELSE
         READ(IN,*) (LAYCON(I),I=1,NLAY)
       ENDIF
-c---------hardwire to convert Surfact input to MF2K5_USGs input
-      do i=1,nlay
-        if(laycon(i).eq.43) laycon(i) = 04
-      enddo
-c------------end hardwire -------------------------------------
+C
    51 FORMAT(40I2)
       WRITE(IOUT,52)
    52 FORMAT(1X,5X,'LAYER  LAYER-TYPE CODE     INTERBLOCK T',
@@ -265,7 +261,7 @@ C8------READ PARAMETERS AND CONVERT FOR UNSTRUCTURED AND STRUCTURED GRIDS
       ENDIF
 C8A-----FOR LAYERS WITH LAYCON=0 RESET TRANSMISSIVITIES TO HK VALUES
       DO K=1,NLAY
-        IF(LAYCON(K).EQ.0)THEN
+        IF(LAYCON(K).EQ.0.OR.LAYCON(K).EQ.2)THEN
           NNDLAY = NODLAY(K)
           NSTRT = NODLAY(K-1)+1
           DO N=NSTRT,NNDLAY
@@ -279,7 +275,7 @@ CB-------------CALCULATE HK FROM TRANSMISSIVITY.
             ENDIF
           ENDDO
         ENDIF
-      ENDDO      
+      ENDDO
 C--------------------------------------------------------------------------------
 C9------SET CONSTANT TERMS IN PGF ARRAY IF IT IS NOT READ DIRECTLY
 C-------FOR NODAL INPUT OF CONDUCTIVITIES
@@ -697,20 +693,20 @@ C-----------GO OVER CONNECTIONS OF NODE N AND FILL FOR UPPER SYMMETRIC PART
             DO II = IA(N)+1,IA(N+1)-1
               JJ = JA(II)
               IF(JJ.LE.NODES)THEN
-                IIS = JAS(II) 
+                IIS = JAS(II)
                 IF(JJ.GT.N)THEN
                   AKN = AKN + PGF(IIS) / THICK * CL1(IIS)
                 ELSE
-                  AKN = AKN + PGF(IIS) / THICK * CL2(IIS) 
+                  AKN = AKN + PGF(IIS) / THICK * CL2(IIS)
                 ENDIF
                 IKN = IKN + 1
               ENDIF
             ENDDO
-            IF(IKN.GT.0) THEN 
+            IF(IKN.GT.0) THEN
               HK(N) = AKN / IKN
             ENDIF
           ENDDO
-C-----------------------------------------------------        
+C-----------------------------------------------------
         DEALLOCATE(TEMP)
       ENDIF
 C
@@ -1802,7 +1798,7 @@ C
 C11----RETURN.
       RETURN
       END
-C      
+C
       SUBROUTINE GWF2BCFU1BDCHWR(KSTP,KPER)
 C     ******************************************************************
 C     SAVE FLOW FROM CONSTANT-HEAD CELLS
@@ -1844,12 +1840,12 @@ C2------GWF DOMAIN
 C---------------------------------------------------------------------------
       IF(IBD.EQ.2) THEN
 C2A-----IF SAVING CELL-BY-CELL FLOW IN A LIST, COUNT CONSTANT-HEAD
-C2A-----CELLS AND WRITE HEADER RECORDS.         
+C2A-----CELLS AND WRITE HEADER RECORDS.
         NCH=0
         DO 7 N=1,NODES
           IF(IBOUND(N).LT.0) NCH=NCH+1
 7       CONTINUE
-C2B-------WRITE HEADER FOR THE LIST       
+C2B-------WRITE HEADER FOR THE LIST
         IF(IUNSTR.EQ.0)THEN
           CALL UBDSV2(KSTP,KPER,TEXT(1),IBCFCB,NCOL,NROW,NLAY,
      1         NCH,IOUT,DELT,PERTIM,TOTIM,IBOUND)
@@ -1886,7 +1882,7 @@ C6--------PRINT THE FLOW FOR THE CELL IF REQUESTED.
           IF(IBDLBL.EQ.0) WRITE(IOUT,899) TEXT(1),KPER,KSTP
   899     FORMAT(1X,/1X,A,'   PERIOD',I3,'   STEP',I3)
           IF(IUNSTR.EQ.0)THEN
-            K = N / (NCOL*NROW) + 1 
+            K = N / (NCOL*NROW) + 1
             IJ = N - (K-1)*NCOL*NROW
             I = (IJ-1)/NCOL + 1
             J = IJ - (I-1)*NCOL
@@ -1904,10 +1900,10 @@ C7------IF SAVING CELL-BY-CELL FLOW IN LIST, WRITE FLOW FOR CELL.
         IF(IBD.EQ.2)THEN
           SRATE = RATE
           IF(IUNSTR.EQ.0)THEN
-            K = N / (NCOL*NROW) + 1             
+            K = N / (NCOL*NROW) + 1
             IJ = N - (K-1)*NCOL*NROW
             I = (IJ-1)/NCOL + 1
-            J = IJ - (I-1)*NCOL             
+            J = IJ - (I-1)*NCOL
             CALL UBDSVA(IBCFCB,NCOL,NROW,J,I,K,SRATE,IBOUND,NLAY)
           ELSE
             CALL UBDSVAU(IBCFCB,NODES,N,SRATE,IBOUND)
@@ -3057,7 +3053,7 @@ C4--------READ EFFECTIVE SATURATED K OF CONNECTION
           DO IIS=1,NJAS
             PGF(IIS) = PGF(IIS) * TEMP(IIS)
           ENDDO
-C-----------INCLUDE THICKNESS TERM          
+C-----------INCLUDE THICKNESS TERM
           DO N=1,NODES
             THICK1 = TOP(N) - BOT(N)
 C-----------GO OVER CONNECTIONS OF NODE N AND FILL FOR UPPER SYMMETRIC PART
@@ -3414,17 +3410,19 @@ C3------------COMPUTE WHEN VERTICAL DIRECTION IS FOUND
                 KK = K+1
 C
 C4--------------CALCULATE VERTICAL HYDRAULIC CONDUCTIVITY FOR CELL.
+                hyc1 = 0.0
                 IF(LAYVKA(K).EQ.0) THEN
                   HYC1=VKA(N)
                 ELSE
-                   HYC1=HK(N)/VKA(N)
+                    if(vka(n).gt.1.0e-20) HYC1=HK(N)/VKA(N)
                 END IF
                 IF(HYC1.GT.ZERO) THEN
 C5----------------CALCULATE VERTICAL HYDRAULIC CONDUCTIVITY FOR ADJACENT CELL.
+                  hyc2 = 0.0
                   IF(LAYVKA(KK).EQ.0) THEN
                     HYC2=VKA(JJ)
                   ELSE
-                    HYC2=(HK(JJ)/VKA(JJ))
+                    if(vka(jj).gt.1.0e-20) HYC2=(HK(JJ)/VKA(JJ))
                   END IF
                   IF(HYC2.GT.ZERO) THEN
 C
@@ -3440,7 +3438,7 @@ C7------------------CALCULATE INVERSE LEAKANCE FOR ADJACENT CELL.
                     TTOP=TOP(JJ)
                     IF(LAYSTRT(KK).NE.0) TTOP=STRT(JJ)
                     BOVK2=(TTOP-BBOT)*HALF/HYC2
-                    IF(BOVK2.LT.1.0E-20) BOVK2 = 1.0E-20               
+                    IF(BOVK2.LT.1.0E-20) BOVK2 = 1.0E-20
 C
 C8------------------CALCULATE VERTICAL HYDRAULIC CONDUCTIVITY FOR CONFINING BED.
                     IUP = N

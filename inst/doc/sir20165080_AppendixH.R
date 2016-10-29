@@ -2,9 +2,10 @@
 t0 <- Sys.time()
 try(knitr::opts_chunk$set(tidy=FALSE, comment="#", fig.align="center"), silent=TRUE)
 grDevices::pdf.options(useDingbats=FALSE)
-options(preferRaster=TRUE, scipen=0, digits=2)
 library(wrv)
-loadNamespace("xtable")
+library(inlmisc)
+library(raster)
+options(preferRaster=TRUE, scipen=0, digits=2)
 
 # Device dimension in inches (width, height)
 fin.graph         <- c(7.16, 7.16)
@@ -147,7 +148,6 @@ legend("topright", leg, pch=21, col=col, pt.bg=bg, pt.lwd=0.25, pt.cex=0.8,
        inset=0.02, cex=0.7, box.lty=1, box.lwd=0.5, bg="#FFFFFFE7")
 AddInsetMap(idaho, width=1, main.label=list("IDAHO", adj=c(-0.4, -4.9)),
             sub.label=list("Map area", adj=c(0.5, 2.5)), loc="topleft")
-invisible(dev.off())
 
 ## ----include=FALSE-------------------------------------------------------
 v <- "Location of geolocated driller wells and Public Land Survey System (PLSS)-located driller wells in the Wood River Valley, Idaho."
@@ -173,7 +173,6 @@ leg <- c(paste("Geolocated driller well", no.1),
 legend("topright", leg, pch=pch, col=col, pt.bg=bg, pt.cex=cex,
        pt.lwd=0.25, inset=0.02, cex=0.7, box.lty=1, box.lwd=0.5,
        bg="#FFFFFFE7")
-invisible(dev.off())
 
 ## ----include=FALSE-------------------------------------------------------
 v <- "Location of two Sun Valley Water and Sewer District (SVWSD) production wells, and wells in The Nature Conservancy (TNC) groundwater monitoring network, Wood River Valley, Idaho."
@@ -198,7 +197,6 @@ text(p.2, labels=p.2@data$id, col="#333333", cex=0.6, pos=pos, offset=0.3)
 leg <- c("SVWSD well", "TNC well")
 legend("topright", leg, pch=pch, col=col, pt.bg=col, pt.cex=cex,
        pt.lwd=0.25, inset=0.02, cex=0.7, box.lty=1, box.lwd=0.5, bg="#FFFFFFE7")
-invisible(dev.off())
 
 ## ----include=FALSE-------------------------------------------------------
 v <- "River network and streamflow measurement sites in the Wood River Valley, Idaho."
@@ -237,8 +235,6 @@ leg <- c("Rivers and streams", "Streamgage with continuous record",
 legend("topright", leg, pch=c(NA, 24, 24), lwd=c(1, NA, NA),
        col=c("#3399CC", "#A40802", "#A40802"), pt.bg=c(NA, "#A40802", "#FDFDFD"),
        pt.cex=0.8, inset=0.02, cex=0.7, box.lty=1, box.lwd=0.5, bg="#FFFFFFE7")
-
-invisible(dev.off())
 
 ## ----echo=FALSE----------------------------------------------------------
 GetSiteNo <- function(i) {
@@ -346,7 +342,6 @@ text(p, labels=p@data$ret.no, col="#333333", cex=0.6, pos=pos, offset=0.3)
 leg <- c("Irrigation canal or pond return", "Exchange-well return")
 legend("topright", leg, pch=c(23, 21), lwd=NA, col=cols, pt.bg=cols,
        pt.cex=0.7, inset=0.02, cex=0.7, box.lty=1, box.lwd=0.5, bg="#FFFFFFE7")
-invisible(dev.off())
 
 ## ----table_ret, echo=FALSE, results="asis"-------------------------------
 d <- p.ret@data
@@ -398,7 +393,6 @@ text(p.div, labels=lab, col="#333333", cex=0.6, pos=pos, offset=0.3)
 leg <- "Stream diversion"
 legend("topright", leg, pch=22, lwd=NA, col="#F98C64", pt.bg="#F98C64",
        pt.cex=0.7, inset=0.02, cex=0.7, box.lty=1, box.lwd=0.5, bg="#FFFFFFE7")
-invisible(dev.off())
 
 ## ----table_div, echo=FALSE, results="asis"-------------------------------
 d <- p.div@data
@@ -463,7 +457,6 @@ points(sites[sites@data$SiteNo %in% ids, ], pch=24, cex=0.7,
 legend("topright", format(unique(reach.numbers)), lwd=1, col=unique(cols),
        pt.cex=1, inset=0.02, cex=0.7, box.lty=1, box.lwd=0.5,
        bg="#FFFFFFE7", title=expression(bold("Reach")))
-invisible(dev.off())
 
 ## ----table_reach, echo=FALSE, results="asis"-----------------------------
 d <- data.frame(ReachNo=seq_along(reach.names))
@@ -532,7 +525,6 @@ col <- "#C80C0B"
 PlotGraph(d, ylab=ylab, xlim=xlim, col=col, fill=paste0(col, "66"),
           conversion.factor=1 / cfs.to.m3.per.d,
           scientific=c(FALSE, TRUE, FALSE), center.date.labels=TRUE)
-invisible(dev.off())
 
 ## ----include=FALSE-------------------------------------------------------
 v <- "Stream-aquifer flow exchange in the Big Wood River, Hailey to Stanton Crossing river reach."
@@ -549,7 +541,6 @@ PlotGraph(d, ylab=ylab, xlim=xlim, col=col, fill=paste0(col, "66"),
           scientific=c(FALSE, TRUE, FALSE), center.date.labels=TRUE)
 legend("bottomright", c("Recharge", "Discharge"), col=col, lty=1,
        inset=0.02, cex=0.7, box.lty=1, box.lwd=0.5, bg="#FFFFFFE7")
-invisible(dev.off())
 
 ## ----include=FALSE-------------------------------------------------------
 v <- "Stream-aquifer flow exchange in the Willow Creek river reach."
@@ -561,7 +552,6 @@ col <- "#C80C0B"
 PlotGraph(d, ylab=ylab, xlim=xlim, col=col, fill=paste0(col, "66"),
           conversion.factor=1 / cfs.to.m3.per.d,
           scientific=c(FALSE, TRUE, FALSE), center.date.labels=TRUE)
-invisible(dev.off())
 
 ## ----include=FALSE-------------------------------------------------------
 v <- "Stream-aquifer flow exchange in Silver Creek, above Sportsman Access river reach."
@@ -573,7 +563,6 @@ col <- "#C80C0B"
 PlotGraph(d, ylab=ylab, xlim=xlim, col=col, fill=paste0(col, "66"),
           conversion.factor=1 / cfs.to.m3.per.d,
           scientific=c(FALSE, TRUE, FALSE), center.date.labels=TRUE)
-invisible(dev.off())
 
 ## ----echo=FALSE----------------------------------------------------------
 subreaches <- river.reaches
@@ -616,8 +605,6 @@ leg <- format(reach.numbers[order(reach.numbers)])
 legend("topright", leg, lwd=1, col=cols[order(reach.numbers)], ncol=2,
        pt.cex=1, inset=0.02, cex=0.7, box.lty=1, box.lwd=0.5,
        bg="#FFFFFFE7", title=expression(bold("Subreach")))
-
-invisible(dev.off())
 
 ## ----table_subreach, echo=FALSE, results="asis"--------------------------
 d <- subreaches@data[order(subreaches@data$ReachNo), c("ReachNo", "Reach", "BigReachNo")]
@@ -798,9 +785,8 @@ plot(cities, pch=15, cex=0.8, col="#333333", add=TRUE)
 text(cities, labels=cities@data$FEATURE_NA, col="#333333", cex=0.5, pos=3, offset=0.4)
 legend("topleft", leg, lwd=2, col=cols, border=NA, inset=0.02, cex=0.7,
        box.lty=1, box.lwd=0.5, xpd=NA, bg="#FFFFFFE7", title=expression(bold("Outlet Boundaries")))
-AddInsetMap(alluvium.extent, width=1, main.label=list("AQUIFER", adj=c(0, -9)),
-            sub.label=list("Map area", adj=c(1.9, 0.5)), loc="topright")
-invisible(dev.off())
+AddInsetMap(alluvium.extent, width=1, main.label=list("AQUIFER", adj=c(0.25, -9)),
+            sub.label=list("Map area", adj=c(1.65, 0.5)), loc="topright")
 
 ## ----table_zones, echo=FALSE, results="asis"-----------------------------
 d <- kriging.zones@data
@@ -869,7 +855,6 @@ FUN(2L)
 
 ## ----map_pilot_c, echo=FALSE, results="asis", fig.width=fin.map.0[1], fig.height=fin.map.0[2]----
 FUN(3L)
-invisible(dev.off())
 
 ## ----table_hk_sc, echo=FALSE, results="asis"-----------------------------
 d <- zone.properties
@@ -942,7 +927,6 @@ leg <- c("Underflow boundaries", "Aquifer extent")
 legend("topright", leg, pch=c(15, 22), lwd=NA, col=cols, pt.bg="#33333366",
        pt.cex=c(0.7, 1.5), inset=0.02, cex=0.7, box.lty=1, box.lwd=0.5,
        bg="#FFFFFFE7", seg.len=1.4)
-invisible(dev.off())
 
 ## ----include=FALSE-------------------------------------------------------
 v <- "Irrigation entities in the Wood River Valley, Idaho."
@@ -960,7 +944,6 @@ text(cities, labels=cities@data$FEATURE_NA, col="#333333", cex=0.5, pos=1, offse
 leg <- c("Irrigation entity", "Irrigation entity with possible natural sub-irrigation")
 legend("topright", leg, fill=cols, border="#FFFFFFCC", inset=0.02, cex=0.7, box.lty=1,
        box.lwd=0.5, xpd=NA, bg="#FFFFFFE7")
-invisible(dev.off())
 
 ## ----table_weights, echo=FALSE, results="asis"---------------------------
 d <- data.frame(typ=c("Groundwater level", "", "", "", "",

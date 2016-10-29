@@ -542,7 +542,7 @@ C1------Decode PARAMETER definitions if they exist
          CALL URWORD(LINE,LLOC,ISTART,ISTOP,2,MXL,R,IOUT,IN)
          IF(MXL.LT.0) MXL=0
          WRITE(IOUT,31) NP,MXL
-   31    FORMAT(1X,I5,' Named Parameters     ',I5,' List entries')
+   31    FORMAT(1X,I10,' Named Parameters     ',I10,' List entries')
          READ(IN,'(A)') LINE
       ELSE
          WRITE(IOUT,'(A)') ' No named parameters'

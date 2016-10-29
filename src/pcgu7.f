@@ -1,9 +1,10 @@
       MODULE PCGUMODULE
+        INTEGER,SAVE,POINTER  :: ILINMETH
         PRIVATE
         PUBLIC :: PCGU7U1AR
         PUBLIC :: PCGU7U1AP
         PUBLIC :: PCGU7U1DA
-        INTEGER,SAVE,POINTER  :: ILINMETH
+        PUBLIC :: ILINMETH
         INTEGER,SAVE,POINTER  :: ITER1C,IPC,ISCL,IORD,NITERC,NNZC,NIAC
         INTEGER,SAVE,POINTER  :: NIABCGS
         INTEGER,SAVE,POINTER  :: NIAPC,NJAPC,NNZAPC
@@ -531,8 +532,8 @@ C
 C  Deallocate PCGU DATA
       !USE PCGUMODULE
 C
-        IGRID=1
-        CALL PCGU7PNT(IGRID)
+      IGRID = 1
+      CALL PCGU7PNT(IGRID)
         DEALLOCATE(ILINMETH)
         DEALLOCATE(ITER1C,IPC,ISCL,IORD,NITERC,NNZC,NIAC)
         DEALLOCATE(NIABCGS)
@@ -1108,6 +1109,7 @@ C        DOUBLEPRECISION :: SPCGU_DP
 C
 C         + + + CODE + + +
         INNERIT  = 0
+        rho0 = 0.0 
         machprec = EPSILON( DZERO )
         dhclose  = DBLE( HCLOSEPCGU )
         drclose  = DBLE( RCLOSEPCGU )
@@ -1208,7 +1210,8 @@ C         + + + CODE + + +
         machprec = EPSILON( DZERO )
         dhclose  = DBLE( HCLOSEPCGU )
         drclose  = DBLE( RCLOSEPCGU )
-        
+        OMEGA0 = DZERO
+        ALPHA0 = DZERO
         alpha = DZERO
         beta  = DZERO
         rho   = DZERO

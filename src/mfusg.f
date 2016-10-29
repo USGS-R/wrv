@@ -16,18 +16,17 @@ c      USE GWFUZFMODULE, ONLY: IUZFBND, FINF, VKS
 c      USE DE4MODULE
 c      USE GMGMODULE
 C
-C jfisher 2015-02-23: remove dependency on 'openspec.inc'
-C     INCLUDE 'openspec.inc'
+C jfisher 2016-10-20: remove dependency on 'openspec.inc', contents included here.
       CHARACTER*20 ACCESS,FORM,ACTION(2)
       DATA ACCESS/'STREAM'/
       DATA FORM/'UNFORMATTED'/
       DATA (ACTION(I),I=1,2)/'READ','READWRITE'/
-C
+C     INCLUDE 'openspec.inc'
 C
 C-------ASSIGN VERSION NUMBER AND DATE
       CHARACTER*40 VERSION
       CHARACTER*10 MFVNAM
-      PARAMETER (VERSION='1.2.00 03/21/2014')
+      PARAMETER (VERSION='1.3.00 12/01/2015')
       PARAMETER (MFVNAM='-USG') !USG = Un-Structured Grids
 C
       CHARACTER*80 HEADNG(2)
@@ -43,7 +42,7 @@ C
      &           'GNC ', '    ', 'CHOB', 'ETS ', 'DRT ', '    ', 'GMG ',  ! 42
      &           'hyd ', 'SFR ', '    ', 'GAGE', 'LVDA', '    ', 'lmt6',  ! 49
      &           'MNW1', '    ', '    ', 'KDEP', 'SUB ', 'UZF ', 'gwm ',  ! 56
-     &           'SWT ', '    ', '    ', '    ', '    ', '    ', '    ',  ! 63
+     &           'SWT ', 'PATH', '    ', '    ', '    ', '    ', '    ',  ! 63
      &           37*'    '/
 C     ------------------------------------------------------------------
 C
@@ -93,7 +92,7 @@ C6E-------BOUNDARY CONDITIONS INPUT
       IF(IUNIT(4).GT.0) CALL GWF2RIV7U1AR(IUNIT(4))
       IF(IUNIT(5).GT.0) CALL GWF2EVT8U1AR(IUNIT(5),IUNIT(15))
       IF(IUNIT(7).GT.0) CALL GWF2GHB7U1AR(IUNIT(7))
-      IF(IUNIT(8).GT.0) CALL GWF2RCH8U1AR(IUNIT(8))
+      IF(IUNIT(8).GT.0) CALL GWF2RCH8U1AR(IUNIT(8),(IUNIT(15)))
       IF(IUNIT(16).GT.0) CALL GWF2FHB7U1AR(IUNIT(16))
 CSP      IF(IUNIT(17).GT.0) CALL GWF2RES7U1AR(IUNIT(17),IGRID)
       IF(IUNIT(18).GT.0) CALL GWF2STR7U1AR(IUNIT(18))
@@ -209,9 +208,6 @@ C---------INDICATE IN PRINTOUT THAT SOLUTION IS FOR HEADS
 C
 C7C2----ITERATIVELY FORMULATE AND SOLVE THE FLOW EQUATIONS.
           DO 30 KITER = 1, MXITER
-            if(kstp.eq.1.AND.KITER.EQ.41)then
-              yo=1
-            endif
             KKITER = KITER
 31          CONTINUE
 C
@@ -336,7 +332,7 @@ C
 C
           IF(IUNIT(8).GT.0) THEN
              IF(IUNIT(22).GT.0.AND.NRCHOP.EQ.3) CALL GWF2LAK7ST(0)
-             CALL GWF2RCH8U1BD(KKSTP,KKPER)
+             CALL GWF2RCH8U1BD(KKSTP,KKPER,(IUNIT(15)))
              IF(IUNIT(22).GT.0.AND.NRCHOP.EQ.3) CALL GWF2LAK7ST(1)
           END IF
 C
@@ -406,7 +402,7 @@ CSP      IF(IUNIT(23).GT.0.AND.IDEALLOC_LPF.EQ.0) CALL GWF2LPFU1DA
       IF(IUNIT(4).GT.0) CALL GWF2RIV7U1DA
       IF(IUNIT(5).GT.0) CALL GWF2EVT8U1DA(IUNIT(15))
       IF(IUNIT(7).GT.0) CALL GWF2GHB7U1DA
-      IF(IUNIT(8).GT.0) CALL GWF2RCH8U1DA
+      IF(IUNIT(8).GT.0) CALL GWF2RCH8U1DA(IUNIT(15))
       IF(IUNIT(16).GT.0) CALL GWF2FHB7U1DA
 CSP      IF(IUNIT(17).GT.0) CALL GWF2RES7U1DA(IGRID)
       IF(IUNIT(18).GT.0) CALL GWF2STR7U1DA

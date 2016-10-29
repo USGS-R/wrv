@@ -42,6 +42,10 @@ C1------IDENTIFY PACKAGE AND INITIALIZE.
 C
       i = 1
       Numtrack = 0
+      THETA = 1.0
+      Akappa = 0.0
+      Gamma = 0.0
+      Amomentum = 0.0
       Btol = 0
       Breduc = 0.
       RES_LIM = 0.
@@ -237,11 +241,7 @@ C5-----Allocate space for nonlinear arrays and initialize
       ALLOCATE(HTEMP(NEQS))
       ALLOCATE (Hncg(MXITER),Lrch(3,MXITER))
       ALLOCATE (HncgL(MXITER),LrchL(MXITER))
-      IF(NONMETH.GT.0)THEN
-        ALLOCATE (AMATFL(NJA))
-      ELSE
-        AMATFL => AMAT
-      ENDIF
+      ALLOCATE (AMATFL(NJA))
       IF(IABS(NONMETH).EQ.1)THEN
         ALLOCATE (Wsave(NEQS),hchold(NEQS),DEold(NEQS))
         WSAVE = 0.
@@ -347,6 +347,11 @@ C2G-------DEALLOCATE ARRAYS
         DEALLOCATE(HWADI, DWADI)
         IF(NOVFC.NE.1) DEALLOCATE (DWADIGW)
         IF(IWADICLN.NE.0) DEALLOCATE (DWADICC, DWADICG)
+      ELSE
+C2H-------SAVE AMAT FOR USE IN MASS BALANCE CALCULATION
+        DO J=1,NJA
+          AMATFL(J) = AMAT(J)
+        ENDDO
       ENDIF
 C
       IF(ILAYCON4.EQ.1.OR.INCLN.GT.0)THEN
@@ -362,13 +367,17 @@ C3a-------STORE HNEW IN TEMPORARY LOCATION
         HTEMP(N) = HNEW(N)
 C3b-------SET DIRICHLET BOUNDARY AND NO-FLOW CONDITION
         IF(IBOUND(N).LE.0)THEN
-          AMAT(IA(N)) = 1.0*BIG
-          RHS(N) = HNEW(N)*BIG
-CCB          AMAT(IA(N)) = 1.0
-CCB          RHS(N) = HNEW(N)
-CCB          DO JJ = IA(N)+1,IA(N+1)-1
-CCB            AMAT(JJ) = AMAT(JJ) / BIG
-CCB          ENDDO
+          AMAT(IA(N)) = 1.0
+          RHS(N) = HNEW(N)
+          DO JJ = IA(N)+1,IA(N+1)-1
+            AMAT(JJ) = 0.
+          ENDDO
+clang -- Replaced ibound<=0 approach in v 1.3.00
+ccb          AMAT(IA(N)) = 1.0*BIG
+ccb          RHS(N) = HNEW(N)*BIG
+ccb          DO JJ = IA(N)+1,IA(N+1)-1
+ccb            AMAT(JJ) = AMAT(JJ) / BIG
+ccb          ENDDO
         ELSE
 C3c---------TAKE CARE OF ZERO ROW DIAGONAL
           ADIAG = ABS(AMAT(IA(N)))
@@ -540,14 +549,15 @@ C
 C2A---------CALL XMD SOLVER
           IF(ILUFLAG.EQ.0) GO TO 300 ! SKIP FACTORIZATION IF ONLY RHS IS UPDATED
 C2A1-------- ILU FACTORIZATION
-          IF(IDROPTOL.EQ.0)THEN
+          IF(IDROPTOL.EQ.0 .OR. ILUREUSE) THEN
 C2A2--------numerical factorization only for level based scheme
             call xmdnfctr(amat, rhs, ia, ja, nja, neqs, ierr)
           ELSE
 C2A3--------level/drop tolerance preconditioning
             call xmdprecd(amat, rhs, epsrn, ia, ja, nja, neqs, level,
      1            ierr)
-          ENDIF
+            ILUREUSE = .TRUE.
+          END IF
 300       CONTINUE
 C
 C2A4---------solve matrix
@@ -917,7 +927,7 @@ C     ------------------------------------------------------------------
      2                NODES,NEQS,INCLN,IWADICLN
       USE CLN1MODULE, ONLY: ACLNNDS,NCLNNDS,CLNCON,NCLN,NNDCLN,
      1      ACLNGWC,NCLNGWC,IFLINCLN,DWADICC,DWADICG,
-     1      ICCWADICLN,ICGWADICLN,IA_CLN,JA_CLN 
+     1      ICCWADICLN,ICGWADICLN,IA_CLN,JA_CLN,IDXGLO_CLN  
             USE SMSMODULE, ONLY: DKDH,DKDHC,NONMETH,EPSILON
 C
       DOUBLE PRECISION HD,BBOT,TTOP,THCK,ZERO,CONSTERM,FLOWTERM,
@@ -953,34 +963,23 @@ C----------loop over all connections of node NC1
           ND1 = ACLNNDS(NC1,1)   !  NC1 + NODES
           ND2 = ACLNNDS(NC2,1)   !  NC2 + NODES
           IF(IBOUND(ND1).EQ.0.OR.IBOUND(ND2).EQ.0) CYCLE
-C2B---------FIND LOWER ROW NUMBER FOR UPPER DIAGONAL OF PGF
-          IF(ND2.GT.ND1)THEN
-            NL = ND1
-            NH = ND2
-          ELSE
-            NL = ND2
-            NH = ND1
-          ENDIF
-C2C---------COMPUTE AND FILL DKDHC TERM FOR CLN-CLN CONNECTION
-          DO II = IA(NL)+1,IA(NL+1)-1
-            JJ = JA(II)
-            IF(JJ.NE.NH) CYCLE
+          II = IDXGLO_CLN(II_CLN)
             IIS = JAS(II)
 C2D---------FIND UPSTREAM NODE AND HIGHER BOT NODE
-            IUPS = NL
-            IF(HNEW(JJ).GT.HNEW(NL)) IUPS = JJ
-            IHBOT = NL
-            BNL = ACLNNDS(NL-NODES,5)
-            BJJ = ACLNNDS(JJ-NODES,5)
-            BHBOT =BNL
-            IF(BJJ.GT.BNL) THEN
-                IHBOT = JJ
-                BHBOT = BJJ
+            IUPS = ND1
+            IF(HNEW(ND2).GT.HNEW(ND1)) IUPS = ND2
+            IHBOT = ND1
+            BC1 = ACLNNDS(NC1,5)
+            BC2 = ACLNNDS(NC2,5)
+            BHBOT =BC1
+            IF(BC2.GT.BC1) THEN
+                IHBOT = ND2
+                BHBOT = BC2
             ENDIF
 C2E---------FILL DKDHC FOR CONNECTION
             INDK = 0
             IF(IUPS.EQ.IHBOT) INDK = 1
-            IF(ABS(BJJ-BNL).LT.0.01) INDK = 1
+            IF(ABS(BC2-BC1).LT.0.01) INDK = 1
             IF(INDK.EQ.1)THEN
               DKDHC(IIS) = DKDH(IUPS)
             ELSEIF(IBOUND(IUPS).GT.0) THEN  !DKDH IS ZERO ON CONSTANT HEAD NODE
@@ -992,7 +991,6 @@ C2E---------FILL DKDHC FOR CONNECTION
               CALL CLN_THIK(ICLN,HD,BHBOT,THCK)
               DKDHC(IIS) = (THCK - DKDHC(IIS))/(EPSILON)
             ENDIF
-          ENDDO
 C
         ENDDO
       ENDDO
@@ -1114,7 +1112,7 @@ C     ------------------------------------------------------------------
      2                NODES,NEQS,INCLN,NOVFC,IWADICLN
       USE CLN1MODULE, ONLY: ACLNNDS,NCLNNDS,CLNCON,NCLN,NNDCLN,
      1                ACLNGWC,HWADICC,DWADICC,HWADICG,DWADICG,NCLNGWC,
-     2                IA_CLN,JA_CLN
+     2                IA_CLN,JA_CLN,IDXGLO_CLN
       USE GWFBCFMODULE,ONLY:LAYCON,HWADIGW,DWADIGW
       USE SMSMODULE, ONLY: DKDHC,NONMETH,EPSILON
 C
@@ -1174,24 +1172,13 @@ C----------loop over all connections of node NC1
           ND1 = ACLNNDS(NC1,1)   !  NC1 + NODES
           ND2 = ACLNNDS(NC2,1)   !  NC2 + NODES
           IF(IBOUND(ND1).EQ.0.OR.IBOUND(ND2).EQ.0) CYCLE
-C2B---------FIND LOWER ROW NUMBER FOR UPPER DIAGONAL OF PGF
-          IF(ND2.GT.ND1)THEN
-            NL = ND1
-            NH = ND2
-          ELSE
-            NL = ND2
-            NH = ND1
-          ENDIF
-C2C---------FILL ARRAYS FOR CLN-CLN CONNECTION
-          DO II = IA(NL)+1,IA(NL+1)-1
-            JJ = JA(II)
-            IF(JJ.NE.NH) CYCLE
+          II = IDXGLO_CLN(II_CLN)
             IIS = JAS(II)
 C2D---------FIND UPSTREAM AND DOWNSTREAM NODES
-            IUPS = NL
-            IF(HNEW(NH).GT.HNEW(NL)) IUPS = NH
-            IDN = NL
-            IF(IUPS.EQ.NL) IDN = NH
+            IUPS = ND1
+            IF(HNEW(ND2).GT.HNEW(ND1)) IUPS = ND2
+            IDN = ND1
+            IF(IUPS.EQ.ND1) IDN = ND2
 C
             IF(IWADICLN.EQ.1)THEN
 C2E-------------FILL ARRAYS WITH CORRECTED DOWNSTREAM HEADS OR HNEW STORED IN HWADICC
@@ -1203,7 +1190,6 @@ C2F-------------FILL ARRAYS WITH ORIGINAL DOWNSTREAM HEADS
               HWADI(IIS) = HNEW(IDN)
               DWADI(IIS) = 1.0
              ENDIF
-          ENDDO
         ENDDO
       ENDDO
 C-----------------------------------------------------------------------------
@@ -1588,6 +1574,7 @@ C-----------------------------------------------------------------------
 C
       DEALLOCATE(HTEMP)
       DEALLOCATE (Hncg,Lrch)
+      DEALLOCATE(AMATFL)
       DEALLOCATE (Akappa,Gamma,Amomentum,Breduc,Btol,Numtrack,THETA)
       DEALLOCATE (HncgL,LrchL)
       IF(IABS(NONMETH).EQ.1)THEN

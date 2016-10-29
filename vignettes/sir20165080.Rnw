@@ -4,7 +4,7 @@
 
 \documentclass[twoside]{article}
 
-\input{\Sexpr{shQuote(system.file("misc", "preamble.tex", package="wrv"))}}
+\input{\Sexpr{shQuote(system.file("misc", "preamble.tex", package="inlmisc"))}}
 
 % =========================================================================
 

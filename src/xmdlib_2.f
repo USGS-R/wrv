@@ -70,7 +70,7 @@
 
 
 
-      module xmdcmn
+      module xmdcmn 
 c
 c     miunit      unit number for output
 c     miout       switch for information message
@@ -895,7 +895,7 @@ c
      [                    ia, ja, iaf, jaf, idiagf, RBorder, nblack,
      [                    nred, n, nja, njaf, nitmax, north, ierr)
 
-
+       use xmdcmn
       implicit none
       double precision :: a(nja), b(n), af(njaf), x(n), soln(nblack),
      [                 ctol, rrctol
@@ -1063,6 +1063,12 @@ c
             res(i) = b( RBorder(i) ) - qb(i)
           enddo 
         endif
+        
+        if(miout.ge.1)then
+          write(miunit,691) iter, omega, temp1, resmax
+ 691     format (10x,1p,'iter = ',i5,2x,'omega = ',d12.5,
+     *         2x,'absolute = ',d12.5,2x,'rms  = ',d12.5)          
+        endif
 
       enddo
 
@@ -1080,7 +1086,7 @@ c     no convergence
      [                    ia, ja, iaf, jaf, idiagf, RBorder, nblack,
      [                    nred, n, nja, njaf, nitmax, ierr)
 
-
+      use xmdcmn
       implicit none
       double precision :: a(nja), b(n), af(njaf), x(n), soln(nblack),
      [                    ctol, rrctol
@@ -1192,7 +1198,13 @@ c       {q} <- {v} and {aq} <- {avk}
         resmax = dsqrt(resmax)
         conv = temp < ctol
         conv = conv.or.(resmax < rrctol*res0)
-
+        
+        if(miout.ge.1)then
+          write(miunit,691) iter, omega, temp, resmax
+ 691     format (10x,1p,'iter = ',i5,2x,'omega = ',d12.5,
+     *         2x,'absolute = ',d12.5,2x,'rms  = ',d12.5)          
+        endif
+        
         if (conv) then
           nitmax = iter+1
           deallocate ( avk, q, aq, res, v )
@@ -1541,7 +1553,7 @@ c
      [                  nblack, nred, n, nja, njaf, north, nitmax,
      [                  ierr)
 
-
+       use xmdcmn
       implicit none
       double precision :: a(nja), b(n), x(n), af(njaf),
      [                 soln(nblack), ctol, rrctol
@@ -1682,7 +1694,13 @@ c         q(ipnt+i) = v(i)
   
         conv = temp < ctol
         conv = conv.or.(resmax < rrctol*res0)
-
+        
+        if(miout.ge.1)then
+          write(miunit,691) iter, omega, temp, resmax
+ 691     format (10x,1p,'iter = ',i5,2x,'omega = ',d12.5,
+     *         2x,'absolute = ',d12.5,2x,'rms  = ',d12.5)          
+        endif
+        
         if (conv) then
           nitmax = iter+1
           deallocate ( avk, aqaq, q, aq, res )
@@ -3563,7 +3581,7 @@ c
 c
   11  return
       end
-
+C
       SUBROUTINE xmdlibda
       use xmdcmn
       use xmdmatrix

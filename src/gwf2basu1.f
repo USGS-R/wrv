@@ -501,12 +501,16 @@ C1C------COMPUTE CUMULATIVE TO GIVE NODE NUMBER OF LAST NODE OF A LAYER
 C---------------------------------------------------------------------------
 C
 C2------READ TOP ARRAY
+      ALLOCATE(TEMP(NODES))
       DO K = 1,NLAY
         KK = K
         NNDLAY = NODLAY(K)
         NSTRT = NODLAY(K-1)+1
         NDSLAY = NNDLAY - NODLAY(K-1)
-        CALL U1DREL8(TOP(NSTRT),ANAME(2),NDSLAY,K,INDIS,IOUT)
+        CALL U1DREL(TEMP(NSTRT),ANAME(2),NDSLAY,K,INDIS,IOUT)
+      ENDDO
+      DO J=1,NODES
+        TOP(J) = TEMP(J)
       ENDDO
 C
 C3------READ BOT ARRAY
@@ -515,8 +519,12 @@ C3------READ BOT ARRAY
         NNDLAY = NODLAY(K)
         NSTRT = NODLAY(K-1)+1
         NDSLAY = NNDLAY - NODLAY(K-1)
-        CALL U1DREL8(BOT(NSTRT),ANAME(3),NDSLAY,K,INDIS,IOUT)
+        CALL U1DREL(TEMP(NSTRT),ANAME(3),NDSLAY,K,INDIS,IOUT)
       ENDDO
+      DO J=1,NODES
+        BOT(J) = TEMP(J)
+      ENDDO
+      DEALLOCATE(TEMP)
 C
 C4-----READ HORIZONTAL AREA 
         IF(IVSD.EQ.-1)THEN
@@ -953,7 +961,7 @@ C
 C        SPECIFICATIONS:
 C     ------------------------------------------------------------------
       USE GLOBAL,      ONLY:NCOL,NROW,NLAY,IXSEC,HNEW,STRT,NODLAY,
-     1                      IBOUND,IOUT,SN,iunsat
+     1                      IBOUND,IOUT,SN,DDREF,iunsat
       USE GWFBASMODULE,ONLY:PERTIM,TOTIM,IDDNFM,IDDNUN,LBDDSV,
      2                      CDDNFM,IOFLG
 C
@@ -980,7 +988,7 @@ C4------CALCULATE DRAWDOWN FOR THE LAYER.
       DO 58 J=1,NCOL
       N = (K-1)*NROW*NCOL + (I-1)*NCOL + J
       BUFF(J,I,K)=HNEW(N)
-      SSTRT=STRT(N)
+      SSTRT=DDREF(N)
       IF(IBOUND(N).NE.0) BUFF(J,I,K)=SSTRT-HNEW(N)
       IF(IUNSAT.EQ.1) BUFF(J,I,K) = SN(N)
    58 CONTINUE
@@ -1393,7 +1401,6 @@ C5------IF SO THEN CALL ULASAV OR ULASV2 TO SAVE HEAD.
            CALL ULASV2U(BUFF,TEXT,KSTP,KPER,PERTIM,TOTIM,NSTRT,
      1             NNDLAY,KK,IHEDUN,CHEDFM,LBHDSV,IBOUND(NSTRT),NODES)
         END IF
-        IPFLG=1
    79   CONTINUE
 C
 C5A-----SAVE HEAD FOR CROSS SECTION.
@@ -1407,7 +1414,6 @@ C5A-----SAVE HEAD FOR CROSS SECTION.
              CALL ULASV2U(BUFF,TEXT,KSTP,KPER,PERTIM,TOTIM,NSTRT,
      1                  NNDLAY,-1,IHEDUN,CHEDFM,LBHDSV,IBOUND,NODES)
           END IF
-          IPFLG=1
         END IF
       END IF
 C

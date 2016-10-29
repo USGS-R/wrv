@@ -183,7 +183,7 @@ C
 C  VALUE OF MXLKND (NUMBER OF LAKE-AQUIFER INTERFACES) IS AN ESTIMATE.
 C    TO SAVE MEMORY, REDUCE ITS SIZE IF APPROPRIATE.
 C    IF MXLKND TOO SMALL, ERROR MESSAGE WILL BE PRINTED.
-      NODES = NCOL*NROW*NLAY
+csp      NODES = NCOL*NROW*NLAY
       MXLKND=NODES/2
       IF (NLAKES.LT.1) THEN
         WRITE(IOUT,2)
@@ -682,7 +682,7 @@ C
       IF(K.EQ.NLAY.AND.LKARR1(N).NE.0) BEDLAK(M) = 0.0
       BGAREA(LID) = BGAREA(LID) + DELC(J)*DELR(I)
       WRITE(IOUT,5) K,J,I,(ILAKE(I1,M),I1=4,5), BEDLAK(M)
-5     FORMAT(5I10,10X,F10.5)
+5     FORMAT(5I10,10X,G10.5)
       IF(LKARR1(N).NE.0) GO TO 180
 C
 C   SEARCH FOR CELL(S) ADJACENT TO LAKE
@@ -1295,7 +1295,8 @@ C   SEARCH FOR CELL(S) ADJACENT TO LAKE
 C
   150 K2 = K
       DO 175 K1=K2,NLAY
-         NL1 = NL + (K1-1)*NODLAY(1)
+CSP         NL1 = NL + (K1-1)*NODLAY(1)
+         NL1 = NL + NODLAY(K1-1)
 !         IF(LKARR1(NL1).EQ.0) CYCLE
 C
          I1 = IA(NL1)+1
@@ -1321,7 +1322,8 @@ C               CELL LATERALLY ADJACENT TO LAKE DETECTED
             BEDLAK(M) = BDLKN1(NL1)
             K4 = K1 - 1
             DO 3158 K3=1,K4
-             NL3 = NL + (K3-1)*NODLAY(1)
+CSP             NL3 = NL + (K3-1)*NODLAY(1)
+             NL3 = NL + NODLAY(K3-1)
             IF(LKARR1(NL3).EQ.0) GO TO 3158
             GO TO 3162
  3158       CONTINUE
@@ -3566,9 +3568,9 @@ C
         IF(BEDLAK(II).LE.0.0) GO TO 315
           IWRN1 = 1
         CNDFC1 = BEDLAK(II)*AREA(N)
-        IF (IWDFLG.EQ.0) THEN
-          CNDFCT(II) = CNDFC1
-        ELSE
+!       IF (IWDFLG.EQ.0) THEN   !RGN  12/13/13
+!         CNDFCT(II) = CNDFC1   !RGN  12/13/13
+!       ELSE                    !RGN  12/13/13
           DO IIN =IA(NTYP)+1, IA(NTYP+1)-1 !NTYP IS THE ABOVE NODE, N IS THE BELOW NODE
             JJ = JA(IIN)
             IF(JJ.EQ.N)GO TO 210
@@ -3577,9 +3579,9 @@ C
           IINS = JAS(IIN)
           IF(PGF(IINS).LE.0.0.OR.CNDFC1.LE.0.0) GO TO 315
           CNDFCT(II) = 1.0/(0.5/PGF(IINS)+1.0/CNDFC1)     ! PGF(IINS) CONTAINS THE CV FOR ABOVE NODE TO THIS NODE
-        END IF
-  315   IF (IWDFLG.EQ.0) THEN
-          IF(IUNSTR.EQ.0)THEN
+!       END IF                                            !RGN  12/13/13
+!  315   IF (IWDFLG.EQ.0) THEN                            !RGN  12/13/13
+315          IF(IUNSTR.EQ.0)THEN   !RGN added 315 here, 12/13/13
             WRITE(IOUT,7324)K, J, I,
      1      (ILAKE(I1,II),I1=4,5),DELC(J),DELR(I),
      1        BEDLAK(II),CNDFC1,CNDFCT(II)
@@ -3590,21 +3592,21 @@ C
      1        BEDLAK(II),CNDFC1,CNDFCT(II)
  7334       FORMAT(I8,I3,I8,4X,1P,E10.2,8X,2E10.2,10X,E10.2)
           ENDIF
-        ELSE
-          IINS = JAS(IIN)
-          CVWD2= 2.0*PGF(IINS)
-          IF(IUNSTR.EQ.0)THEN
-            WRITE(IOUT,7325)K, J, I,
-     1      (ILAKE(I1,II),I1=4,5),DELC(J),DELR(I),
-     1        BEDLAK(II),CNDFC1,CVWD2,CNDFCT(II)
- 7325     FORMAT(1X,5I3,2X,1P,6E10.2)
-          ELSE
-            WRITE(IOUT,7335) ILAKE(1,II),
-     1      (ILAKE(I1,II),I1=4,5),AREA(N),
-     1        BEDLAK(II),CNDFC1,CVWD2,CNDFCT(II)
+!        ELSE                                            !RGN  12/13/13
+!          IINS = JAS(IIN)                               !RGN  12/13/13
+!          CVWD2= 2.0*PGF(IINS)                       !RGN  12/13/13
+!          IF(IUNSTR.EQ.0)THEN                        !RGN  12/13/13
+!            WRITE(IOUT,7325)K, J, I,                 !RGN  12/13/13
+!     1      (ILAKE(I1,II),I1=4,5),DELC(J),DELR(I),     !RGN  12/13/13
+!     1        BEDLAK(II),CNDFC1,CVWD2,CNDFCT(II)       !RGN  12/13/13
+ 7325     FORMAT(1X,5I3,2X,1P,6E10.2) 
+!          ELSE                                         !RGN  12/13/13
+!            WRITE(IOUT,7335) ILAKE(1,II),              !RGN  12/13/13
+!     1      (ILAKE(I1,II),I1=4,5),AREA(N),             !RGN  12/13/13
+!     1        BEDLAK(II),CNDFC1,CVWD2,CNDFCT(II)       !RGN  12/13/13
  7335     FORMAT(I8,I3,I8,4X,1P,E10.2,8X,4E10.2)
-          ENDIF
-        END IF
+!          ENDIF                                        !RGN  12/13/13
+!        END IF                                         !RGN  12/13/13
       ELSE
 C
 C  Horizontal conductance
@@ -4337,6 +4339,7 @@ C-------VERTICALLY ADJACENT NODE BELOW IS N + NNDLAY
 3       CONTINUE
         JJ = N + NNDLAY
 ! if deepest layer then return original value for N
+        if(jj.gt.nodes) go to 2
         IF(IBOUND(JJ).NE.0)THEN ! on const head node is ok (no effect)
           N = JJ
           GO TO 2
