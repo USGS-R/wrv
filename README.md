@@ -1,5 +1,9 @@
 # wrv
 
+[![Travis-CI Build Status](https://travis-ci.org/USGS-R/wrv.svg?branch=master)](https://travis-ci.org/USGS-R/wrv)
+
+## Overview
+
 The [R](http://www.r-project.org/) package **wrv** is for processing the
 groundwater-flow model of the Wood River Valley (WRV) aquifer system, south-central Idaho.
 The groundwater-flow model is described in the associated
@@ -37,8 +41,6 @@ Access package documentation
 ```r
 help(package = "wrv")
 ```
-
-See [course material](https://jfisher-usgs.github.io/wrv-training/) for example applications using the **wrv** package.
 
 ## Bugs
 

@@ -1,3 +1,7 @@
+# wrv 1.1.0.9000
+
+- ...
+
 # wrv 1.1.0
 
 - Add suggested package **leaflet**, allows the creation of interactive maps using the 'Leaflet' JavaScript library and the **htmlwidgets** package.
