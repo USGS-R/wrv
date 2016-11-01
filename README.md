@@ -42,6 +42,8 @@ Access package documentation
 help(package = "wrv")
 ```
 
+See [training material](https://jfisher-usgs.github.io/wrv-training/) for example applications using the **wrv** package.
+
 ## Bugs
 
 Please consider reporting bugs and asking questions on the [Issues page](https://github.com/USGS-R/wrv/issues).
