@@ -47,13 +47,13 @@ try(knitr::opts_chunk$set(tidy=FALSE, comment="#", fig.align="center"), silent=T
 
 \section{Introduction}
 
-\href{http://www.r-project.org/}{\R{}} is a language and environment for statistical computing and graphics \citep{R2014}.
+\href{https://www.r-project.org/}{\R{}} is a language and environment for statistical computing and graphics \citep{R2014}.
 In \R{}, the primary mechanism for sharing with others is the \emph{package}.
 Packages are collections of computer code, data, and documentation in a well-defined format.
 Instructions, datasets, and functions for processing and analyzing the groundwater-flow model of the Wood River Valley (WRV) aquifer system, south-central Idaho,
 are bundled together in an \R{} package named \textbf{wrv}.
 This document is a \emph{vignette} in the \textbf{wrv} package that describes an overview of processing steps for model construction.
-A package vignette is a \href{http://latex-project.org/}{\LaTeX{}} document with embedded \R{} code;
+A package vignette is a \href{https://www.latex-project.org/}{\LaTeX{}} document with embedded \R{} code;
 the code is run when the vignette is built, and all data analysis output (figures, tables, etc.) is created extemporaneously and inserted into the final document.
 Small chunks of stylized code are typically shown throughout a vignette and are intended to be used interactively.
 It is not necessary to have \R{}-programming experience to follow the logic in these code chunks,
@@ -66,16 +66,16 @@ Model calibration is one aspect of model construction that was considered too ar
 
 \section{Software}
 
-Software items needed to run the processing instructions include \R{}, \href{http://water.usgs.gov/ogw/mfusg/}{MODFLOW-USG}, and \href{http://www.pesthomepage.org/}{PEST}.
+Software items needed to run the processing instructions include \R{}, \href{https://water.usgs.gov/ogw/mfusg/}{MODFLOW-USG}, and \href{http://www.pesthomepage.org/}{PEST}.
 If \R{} (version $\geq$ 3.1) is not already installed on your computer, download and install the latest binary distribution from the
-Comprehensive R Archive Network (\href{http://cran.r-project.org/}{CRAN}).
+Comprehensive R Archive Network (\href{https://cran.r-project.org/}{CRAN}).
 Next, extend the capabilities of \R{} by installing an assorted group of user-contributed packages available on CRAN and
-the Geological Survey \R{} Archive Network (\href{http://owi.usgs.gov/R/gran.html}{GRAN}).
+the Geological Survey \R{} Archive Network (\href{https://owi.usgs.gov/R/gran.html}{GRAN}).
 That is, start an \R{} session and type the following commands in your \R{}-console window, or any other command-line interface where \R{} is accessible
 (not required if the packages were previously installed):
 
 <<eval=FALSE>>=
-repos <- c("http://owi.usgs.gov/R", getOption("repos"))
+repos <- c("https://owi.usgs.gov/R", getOption("repos"))
 update.packages(ask = FALSE, repos = repos)
 install.packages("wrv", repos = repos, dependencies = TRUE)
 @

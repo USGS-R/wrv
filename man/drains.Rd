@@ -17,8 +17,8 @@
   Idaho Transverse Mercator projection (\href{https://www.idwr.idaho.gov/GIS/IDTM/}{IDTM}).}
 \source{
 U.S. Geological Survey, accessed on March 27, 2015;
-  a Keyhole Markup Language (\href{http://en.wikipedia.org/wiki/Kml}{KML}) file created in
-  \href{http://www.google.com/earth/}{Google Earth} with polygons drawn by hand in
+  a Keyhole Markup Language (\href{https://en.wikipedia.org/wiki/Kml}{KML}) file created in
+  \href{https://www.google.com/earth/}{Google Earth} with polygons drawn by hand in
   areas of known drains.
 }
 \usage{

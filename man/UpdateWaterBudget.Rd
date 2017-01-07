@@ -105,7 +105,7 @@ These boundary conditions include:
   (2) groundwater pumping at production wells, and
   (3) groundwater underflow in the major tributary valleys.
 Specified-flow values are saved to disk by rewriting the
-\href{http://water.usgs.gov/ogw/modflow/}{MODFLOW} Well Package file (\file{.wel}).
+\href{https://water.usgs.gov/ogw/modflow/}{MODFLOW} Well Package file (\file{.wel}).
 Note that this function is executed after each iteration of \href{http://www.pesthomepage.org/}{PEST}.
 }
 \details{

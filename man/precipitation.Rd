@@ -47,10 +47,10 @@ graphics.off()
 }
 \references{
 National Oceanic and Atmospheric Administration's National Weather Service
-  (\href{http://www.nws.noaa.gov/om/coop/}{NWS}) Cooperative Observer Program
+  (\href{https://www.ncdc.noaa.gov/data-access/land-based-station-data/land-based-datasets/cooperative-observer-network-coop}{NWS}) Cooperative Observer Program
 
   U.S. Bureau of Reclamation's Cooperative Agricultural Weather Network
-  (\href{http://www.usbr.gov/pn/agrimet/}{AgriMet})
+  (\href{https://www.usbr.gov/pn/agrimet/}{AgriMet})
 }
 \seealso{
 \code{\link{precip.zones}}, \code{\link{swe}}
