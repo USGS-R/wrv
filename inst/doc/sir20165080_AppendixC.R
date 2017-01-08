@@ -648,7 +648,7 @@ CheckStatus("streamgages")
 
 ## ----obs_wells_1---------------------------------------------------------
 path <- file.path(dir.in, "opt")
-obs.wells <- readOGR(path, "obs.wells", verbose = FALSE, stringsAsFactors = FALSE, 
+obs.wells <- readOGR(path, "obs.wells", verbose = FALSE, stringsAsFactors = FALSE,
                      integer64 = "allow.loss")
 obs.wells <- spTransform(obs.wells, crs)
 d <- obs.wells@data
@@ -749,7 +749,7 @@ CheckStatus("streams.rivers")
 
 ## ----tributary_streams_1-------------------------------------------------
 path <- file.path(dir.in, "decorative")
-tributary.streams <- readOGR(path, "tributary.streams", verbose = FALSE, 
+tributary.streams <- readOGR(path, "tributary.streams", verbose = FALSE,
                              integer64 = "allow.loss")
 tributary.streams <- spTransform(tributary.streams, crs)
 save(tributary.streams, file = file.path(dir.out, "tributary.streams.rda"),
@@ -788,7 +788,7 @@ CheckStatus("major.roads")
 
 ## ----alluvium_extent_1---------------------------------------------------
 path <- file.path(dir.in, "extent")
-alluvium.extent <- readOGR(path, "alluvium.extent", verbose = FALSE, 
+alluvium.extent <- readOGR(path, "alluvium.extent", verbose = FALSE,
                            integer64 = "allow.loss")
 alluvium.extent <- spTransform(alluvium.extent, crs)
 save(alluvium.extent, file = file.path(dir.out, "alluvium.extent.rda"), compress = "xz")
