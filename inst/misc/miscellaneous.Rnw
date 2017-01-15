@@ -940,7 +940,7 @@ z <- trib.lines@data$mean.flow
 Pal <- function(...) rev(viridis::viridis(..., alpha=0.8))
 AddBubbles(xy, z=z, inches=c(0.03, 0.3), fg="#FFFFFF65", format="d",
            title="Average groundwater flow rate", subtitle="in cubic meters per day",
-           bg.pos=Pal, loc="topright", quantile.breaks=TRUE)
+           bg=Pal, loc="topright", quantile.breaks=TRUE)
 plot(cities, pch=15, cex=0.8, col="#333333", add=TRUE)
 text(cities, labels=cities@data$FEATURE_NA, col="#333333", cex=0.5, pos=1, offset=0.4)
 text(xy, labels=rownames(trib.lines@data), col="#333333", cex=0.6, adj=c(0.5, 0.5), offset=0)

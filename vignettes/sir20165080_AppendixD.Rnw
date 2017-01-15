@@ -2227,7 +2227,7 @@ FUN <- function(desc) {
   plot(alluvium.extent, border="#FFFFFFCC", col=NA, add=TRUE)
   AddBubbles(coordinates(p), z=z, breaks=breaks, inches=c(0, 0.18),
              title="Residual", subtitle="in meters",
-             bg.pos=Pal.pos, bg.neg=Pal.neg, fg="#FFFFFF40",
+             bg=Pal.pos, bg.neg=Pal.neg, fg="#FFFFFF40",
              loc="topright", make.intervals=TRUE)
   plot(cities, pch=15, cex=0.8, col="#333333", add=TRUE)
   text(cities, labels=cities@data$FEATURE_NA, col="#333333", cex=0.5, pos=1, offset=0.4)
