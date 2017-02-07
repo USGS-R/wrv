@@ -25,4 +25,3 @@ str(major.roads@data)
 
 }
 \keyword{datasets}
-

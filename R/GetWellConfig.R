@@ -45,6 +45,9 @@
 #'
 #' @keywords manip
 #'
+#' @import sp
+#' @import raster
+#'
 #' @export
 #'
 #' @examples

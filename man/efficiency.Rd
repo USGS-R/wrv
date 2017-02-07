@@ -25,4 +25,3 @@ str(efficiency)
 
 }
 \keyword{datasets}
-

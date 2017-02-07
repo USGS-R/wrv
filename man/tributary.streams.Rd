@@ -23,4 +23,3 @@ str(tributary.streams@data)
 
 }
 \keyword{datasets}
-

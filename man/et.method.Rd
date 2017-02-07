@@ -46,4 +46,3 @@ Allen, R., and Robison, C.W., 2007, Evapotranspiration and
   ET Idaho: \url{http://data.kimberly.uidaho.edu/ETIdaho/}
 }
 \keyword{datasets}
-

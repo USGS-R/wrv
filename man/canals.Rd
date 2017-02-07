@@ -28,4 +28,3 @@ str(canals@data)
 \code{\link{r.canals}}, \code{\link{canal.seep}}
 }
 \keyword{datasets}
-

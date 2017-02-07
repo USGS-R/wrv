@@ -14,7 +14,7 @@
   North American Datum of 1983 (NAD 83), and placed in the
   Idaho Transverse Mercator projection (\href{https://www.idwr.idaho.gov/GIS/IDTM/}{IDTM}).}
 \source{
-National Water Information System (\href{http://waterdata.usgs.gov/nwis}{NWIS}),
+National Water Information System (\href{https://waterdata.usgs.gov/nwis}{NWIS}),
   accessed on May 29, 2015.
 }
 \usage{
@@ -28,4 +28,3 @@ str(streamgages)
 
 }
 \keyword{datasets}
-

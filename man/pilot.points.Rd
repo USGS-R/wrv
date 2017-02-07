@@ -31,4 +31,3 @@ str(pilot.points@data)
 \code{\link{kriging.zones}}
 }
 \keyword{datasets}
-
