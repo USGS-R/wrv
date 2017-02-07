@@ -12,7 +12,7 @@
 #' @references Bartolino, J.R., and Adkins, C.B., 2012,
 #'   Hydrogeologic framework of the Wood River Valley aquifer system, south-central Idaho:
 #'   U.S. Geological Survey Scientific Investigations Report 2012-5053, 46 p.,
-#'   available at \url{http://pubs.usgs.gov/sir/2012/5053/}.
+#'   available at \url{https://pubs.usgs.gov/sir/2012/5053/}.
 #'
 #' @keywords datasets
 #'
@@ -39,7 +39,7 @@
 #' @references Bartolino, J.R., and Adkins, C.B., 2012,
 #'   Hydrogeologic framework of the Wood River Valley aquifer system, south-central Idaho:
 #'   U.S. Geological Survey Scientific Investigations Report 2012-5053, 46 p.,
-#'   available at \url{http://pubs.usgs.gov/sir/2012/5053/}.
+#'   available at \url{https://pubs.usgs.gov/sir/2012/5053/}.
 #'
 #' @keywords datasets
 #'
@@ -65,7 +65,7 @@
 #' @references Bartolino, J.R., and Adkins, C.B., 2012,
 #'   Hydrogeologic framework of the Wood River Valley aquifer system, south-central Idaho:
 #'   U.S. Geological Survey Scientific Investigations Report 2012-5053, 46 p.,
-#'   available at \url{http://pubs.usgs.gov/sir/2012/5053/}.
+#'   available at \url{https://pubs.usgs.gov/sir/2012/5053/}.
 #'
 #' @keywords datasets
 #'
@@ -206,7 +206,7 @@
 #'   Blaine County, Idaho: Boise, Idaho Department of Water Resources, Water Information Bulletin 44,
 #'   42 p., 5 plates in pocket, accessed January 31, 2012.
 #'   Also published as U.S. Geological Survey Open-File report 77-456, 66 p.,
-#'   available at \url{http://pubs.er.usgs.gov/pubs/ofr/ofr77456}.
+#'   available at \url{https://pubs.er.usgs.gov/publication/ofr77456}.
 #'
 #' @keywords datasets
 #'
@@ -378,8 +378,8 @@
 #'   Idaho Transverse Mercator projection (\href{https://www.idwr.idaho.gov/GIS/IDTM/}{IDTM}).
 #'
 #' @source U.S. Geological Survey, accessed on March 27, 2015;
-#'   a Keyhole Markup Language (\href{http://en.wikipedia.org/wiki/Kml}{KML}) file created in
-#'   \href{http://www.google.com/earth/}{Google Earth} with polygons drawn by hand in
+#'   a Keyhole Markup Language (\href{https://en.wikipedia.org/wiki/Kml}{KML}) file created in
+#'   \href{https://www.google.com/earth/}{Google Earth} with polygons drawn by hand in
 #'   areas of known drains.
 #'
 #' @keywords datasets
@@ -550,17 +550,17 @@
 #'   \describe{
 #'     \item{Date}{date during which discharge was averaged.}
 #'     \item{13135500}{daily mean discharge in cubic meters per day, recorded at the USGS
-#'       \href{http://waterdata.usgs.gov/id/nwis/uv/?site_no=13135500}{13135500}
+#'       \href{https://waterdata.usgs.gov/id/nwis/uv/?site_no=13135500}{13135500}
 #'       Big Wood River near Ketchum streamgage.}
 #'     \item{13139510}{daily mean discharge in cubic meters per day, recorded at the USGS
-#'       \href{http://waterdata.usgs.gov/id/nwis/uv/?site_no=13139510}{13139510}
+#'       \href{https://waterdata.usgs.gov/id/nwis/uv/?site_no=13139510}{13139510}
 #'       Big Wood River at Hailey streamgage.}
 #'     \item{13140800}{daily mean discharge in cubic meters per day, recorded at the USGS
-#'       \href{http://waterdata.usgs.gov/id/nwis/uv/?site_no=13140800}{13140800}
+#'       \href{https://waterdata.usgs.gov/id/nwis/uv/?site_no=13140800}{13140800}
 #'       Big Wood River at Stanton Crossing near Bellevue streamgage.}
 #'   }
 #'
-#' @source National Water Information System (\href{http://waterdata.usgs.gov/nwis}{NWIS}),
+#' @source National Water Information System (\href{https://waterdata.usgs.gov/nwis}{NWIS}),
 #'   accessed on January 8, 2015
 #'
 #' @keywords datasets
@@ -591,18 +591,18 @@
 #'   \describe{
 #'     \item{Date}{date during which gage height was averaged.}
 #'     \item{13135500}{daily mean gage height in meters, recorded at the USGS
-#'       \href{http://waterdata.usgs.gov/id/nwis/uv/?site_no=13135500}{13135500}
+#'       \href{https://waterdata.usgs.gov/id/nwis/uv/?site_no=13135500}{13135500}
 #'       Big Wood River near Ketchum streamgage.}
 #'     \item{13139510}{daily mean gage height in meters, recorded at the USGS
-#'       \href{http://waterdata.usgs.gov/id/nwis/uv/?site_no=13139510}{13139510}
+#'       \href{https://waterdata.usgs.gov/id/nwis/uv/?site_no=13139510}{13139510}
 #'       Big Wood River at Hailey streamgage.}
 #'     \item{13140800}{daily mean gage height in meters, recorded at the USGS
-#'       \href{http://waterdata.usgs.gov/id/nwis/uv/?site_no=13140800}{13140800}
+#'       \href{https://waterdata.usgs.gov/id/nwis/uv/?site_no=13140800}{13140800}
 #'       Big Wood River at Stanton Crossing near Bellevue streamgages.}
 #'   }
 #'
 #' @source Data queried from the National Water Information System
-#'   (\href{http://waterdata.usgs.gov/nwis}{NWIS}) database on December 15, 2014,
+#'   (\href{https://waterdata.usgs.gov/nwis}{NWIS}) database on December 15, 2014,
 #'   by Ross Dickinson (USGS).
 #'   Records recorded on May 26-28, 1991 and March 15-22, 1995 were reassigned
 #'   quality assurance codes of \sQuote{I} because of assumed ice build-up.
@@ -666,7 +666,7 @@
 #' @source U.S. Department of Commerce, U.S. Census Bureau,
 #'   Geography Division/Cartographic Products Branch.
 #'   A simplified representation of the State of Idaho from the 2014 Census Bureau's
-#'   MAF/\href{http://www.census.gov/geo/maps-data/data/tiger.html}{TIGER} geographic database.
+#'   MAF/\href{https://www.census.gov/geo/maps-data/data/tiger.html}{TIGER} geographic database.
 #'
 #' @keywords datasets
 #'
@@ -820,18 +820,18 @@
 #'   The spatial grid is composed of 565 rows and 429 columns,
 #'   and has cell sizes that are constant at 100 meters by 100 meters.
 #'
-#' @source The National Elevation Dataset (\href{http://ned.usgs.gov/}{NED})
+#' @source The National Map (\href{https://nationalmap.gov/elevation.html}{TNM})
 #'   1/3-arc-second raster (Gesch, 2007; Gesch and others, 2002),
 #'   accessed on December 1, 2015.
 #'   This dataset can be downloaded in a Esri ArcGRID format using the
-#'   \href{http://viewer.nationalmap.gov/viewer/}{National Map Viewer}.
-#'   NED data are distributed in geographic coordinates in units of decimal degrees,
+#'   \href{https://viewer.nationalmap.gov/viewer/}{The National Map Viewer}.
+#'   Elevation datasets are distributed in geographic coordinates in units of decimal degrees,
 #'   and in conformance with the NAD 83.
 #'   Elevation values are in meters above the NAVD 88.
 #'   The west, east, south, and north bounding coordinates for this dataset are
 #'   -115, -114, 43, and 44 decimal degrees, respectively.
 #'   Post-processing includes:
-#'     (1) project the values of the NED dataset into the \code{\link{alluvium.thickness}}
+#'     (1) project the values of the elevation dataset into the \code{\link{alluvium.thickness}}
 #'         spatial grid using bilinear interpolation, and
 #'     (2) set values in cells where the elevation of the alluvium bottom is missing to NA.
 #'
@@ -1173,10 +1173,10 @@
 #' @source Idaho Department of Water Resources, accessed on April 24, 2015
 #'
 #' @references National Oceanic and Atmospheric Administration's National Weather Service
-#'   (\href{http://www.nws.noaa.gov/om/coop/}{NWS}) Cooperative Observer Program
+#'   (\href{https://www.ncdc.noaa.gov/data-access/land-based-station-data/land-based-datasets/cooperative-observer-network-coop}{NWS}) Cooperative Observer Program
 #'
 #'   U.S. Bureau of Reclamation's Cooperative Agricultural Weather Network
-#'   (\href{http://www.usbr.gov/pn/agrimet/}{AgriMet})
+#'   (\href{https://www.usbr.gov/pn/agrimet/}{AgriMet})
 #'
 #' @seealso \code{\link{precip.zones}}, \code{\link{swe}}
 #'
@@ -1433,7 +1433,7 @@
 #'
 #' @references Bartolino, J.R., 2014, Stream seepage and groundwater levels, Wood River Valley,
 #'   south-central Idaho, 2012--13: U.S. Geological Survey Scientific Investigations Report 2014-5151,
-#'   34 p., \url{http://dx.doi.org/10.3133/sir20145151}.
+#'   34 p., \url{https://dx.doi.org/10.3133/sir20145151}.
 #'
 #' @keywords datasets
 #'
@@ -1526,7 +1526,7 @@
 #'   North American Datum of 1983 (NAD 83), and placed in the
 #'   Idaho Transverse Mercator projection (\href{https://www.idwr.idaho.gov/GIS/IDTM/}{IDTM}).
 #'
-#' @source National Water Information System (\href{http://waterdata.usgs.gov/nwis}{NWIS}),
+#' @source National Water Information System (\href{https://waterdata.usgs.gov/nwis}{NWIS}),
 #'   accessed on May 29, 2015.
 #'
 #' @keywords datasets
@@ -1636,7 +1636,7 @@
 #'       its geometry is represented as the lower-half of an ellipse with
 #'       width and height equal to \code{TribWidth} and \code{BdrkDepth}, respectively.}
 #'     \item{DarcyFlow}{groundwater flow rate, in cubic meters per day, calculated using a
-#'       \href{http://en.wikipedia.org/wiki/Darcy_law}{Darcian} analysis.}
+#'       \href{https://en.wikipedia.org/wiki/Darcy_law}{Darcian} analysis.}
 #'     \item{BasinArea}{land-surface area defined by the basin above the cross-sectional transect line.}
 #'     \item{BasinAreaType}{label that describes the relative basin size; where
 #'       \code{"big"} indicates a basin area greater than 10 square miles (25.9 square kilometers), and
@@ -1653,8 +1653,8 @@
 #'   Idaho Transverse Mercator projection (\href{https://www.idwr.idaho.gov/GIS/IDTM/}{IDTM}).
 #'
 #' @source U.S. Geological Survey, accessed on July 2, 2015;
-#'   a Keyhole Markup Language (\href{http://en.wikipedia.org/wiki/Kml}{KML}) file created in
-#'   \href{http://www.google.com/earth/}{Google Earth} with polygons drawn by hand in
+#'   a Keyhole Markup Language (\href{https://en.wikipedia.org/wiki/Kml}{KML}) file created in
+#'   \href{https://www.google.com/earth/}{Google Earth} with polygons drawn by hand in
 #'   areas of known specified flow boundaries.
 #'   Transect lines are defined by the polygon boundaries within the extent of
 #'   alluvium aquifer (see \code{\link{alluvium.extent}} dataset).
@@ -1662,7 +1662,7 @@
 #'   \code{\link{land.surface}} dataset.
 #'   Hydraulic conductivity (\code{K}) is the average of two geometric means of hydraulic conductivity
 #'   in the unconfined aquifer taken from table 2 in Bartolino and Adkins (2012).
-#'   The U.S. Geologic Survey \href{http://water.usgs.gov/osw/streamstats/}{StreamStats} tool
+#'   The U.S. Geologic Survey \href{https://water.usgs.gov/osw/streamstats/}{StreamStats} tool
 #'   (Ries and others, 2004) was used to delineate the basin area (\code{BasinArea}) and
 #'   estimate the precipitation rate (\code{PrecipRate}).
 #'   See the appendix C. Package Dataset Creation for the \R code used to calculate the
@@ -1671,12 +1671,12 @@
 #' @references Bartolino, J.R., and Adkins, C.B., 2012, Hydrogeologic framework of the
 #'   Wood River Valley aquifer system, south-central Idaho: U.S. Geological Survey
 #'   Scientific Investigations Report 2012-5053, 46 p.,
-#'   available at \url{http://pubs.usgs.gov/sir/2012/5053/}.
+#'   available at \url{https://pubs.usgs.gov/sir/2012/5053/}.
 #'
 #'   Ries, K.G., Steeves, P.A., Coles, J.D., Rea, A.H., and Stewart, D.W., 2004,
 #'   StreamStats--A U.S. Geological Survey web application for stream information:
 #'   U.S. Geological Survey Fact Sheet FS-2004-3115, 4 p., available at
-#'   \url{http://pubs.er.usgs.gov/usgspubs/fs/fs20043115}.
+#'   \url{https://pubs.er.usgs.gov/publication/fs20043115}.
 #'
 #' @keywords datasets
 #'
@@ -1784,13 +1784,13 @@
 #'   Idaho Transverse Mercator projection (\href{https://www.idwr.idaho.gov/GIS/IDTM/}{IDTM}).
 #'
 #' @source This dataset is from Plate 1 in Skinner and others (2007), and available on the
-#'   \href{http://water.usgs.gov/GIS/metadata/usgswrd/XML/sir2007-5258_oct2006wl.xml}{WRD NSDI Node}.
+#'   \href{https://water.usgs.gov/GIS/metadata/usgswrd/XML/sir2007-5258_oct2006wl.xml}{WRD NSDI Node}.
 #'
 #' @references Skinner, K.D., Bartolino, J.R., and Tranmer, A.W., 2007,
 #'   Water-resource trends and comparisons between partial development and
 #'   October 2006 hydrologic conditions, Wood River Valley, south-central, Idaho:
 #'   U.S. Geological Survey Scientific Investigations Report 2007-5258, 30 p.,
-#'   available at \url{http://pubs.usgs.gov/sir/2007/5258/}
+#'   available at \url{https://pubs.usgs.gov/sir/2007/5258/}
 #'
 #' @keywords datasets
 #'
@@ -1820,7 +1820,7 @@
 #' @references Bartolino, J.R., and Adkins, C.B., 2012, Hydrogeologic framework of the
 #'   Wood River Valley aquifer system, south-central Idaho:
 #'   U.S. Geological Survey Scientific Investigations Report 2012-5053, 46 p.,
-#'   available at \url{http://pubs.usgs.gov/sir/2012/5053/}.
+#'   available at \url{https://pubs.usgs.gov/sir/2012/5053/}.
 #'
 #' @keywords datasets
 #'

@@ -8,17 +8,17 @@
   \describe{
     \item{Date}{date during which discharge was averaged.}
     \item{13135500}{daily mean discharge in cubic meters per day, recorded at the USGS
-      \href{http://waterdata.usgs.gov/id/nwis/uv/?site_no=13135500}{13135500}
+      \href{https://waterdata.usgs.gov/id/nwis/uv/?site_no=13135500}{13135500}
       Big Wood River near Ketchum streamgage.}
     \item{13139510}{daily mean discharge in cubic meters per day, recorded at the USGS
-      \href{http://waterdata.usgs.gov/id/nwis/uv/?site_no=13139510}{13139510}
+      \href{https://waterdata.usgs.gov/id/nwis/uv/?site_no=13139510}{13139510}
       Big Wood River at Hailey streamgage.}
     \item{13140800}{daily mean discharge in cubic meters per day, recorded at the USGS
-      \href{http://waterdata.usgs.gov/id/nwis/uv/?site_no=13140800}{13140800}
+      \href{https://waterdata.usgs.gov/id/nwis/uv/?site_no=13140800}{13140800}
       Big Wood River at Stanton Crossing near Bellevue streamgage.}
   }}
 \source{
-National Water Information System (\href{http://waterdata.usgs.gov/nwis}{NWIS}),
+National Water Information System (\href{https://waterdata.usgs.gov/nwis}{NWIS}),
   accessed on January 8, 2015
 }
 \usage{
@@ -44,4 +44,3 @@ graphics.off()
 
 }
 \keyword{datasets}
-

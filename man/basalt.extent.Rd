@@ -27,7 +27,6 @@ str(basalt.extent)
 Bartolino, J.R., and Adkins, C.B., 2012,
   Hydrogeologic framework of the Wood River Valley aquifer system, south-central Idaho:
   U.S. Geological Survey Scientific Investigations Report 2012-5053, 46 p.,
-  available at \url{http://pubs.usgs.gov/sir/2012/5053/}.
+  available at \url{https://pubs.usgs.gov/sir/2012/5053/}.
 }
 \keyword{datasets}
-

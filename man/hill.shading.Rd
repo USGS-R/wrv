@@ -28,4 +28,3 @@ raster::image(hill.shading, length(hill.shading), col = grey(0:255 / 255), asp =
 
 }
 \keyword{datasets}
-

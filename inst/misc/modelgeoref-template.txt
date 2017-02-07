@@ -2,7 +2,7 @@
 #   Fisher, J.C., Bartolino, J.R., Wylie, A.H., Sukow, Jennifer, and McVay,
 #   Michael, 2016, MODFLOW-USG model of groundwater flow in the Wood River
 #   Valley aquifer system in Blaine County, Idaho: U.S. Geological Survey Data
-#   Release, http://dx.doi.org/10.5066/F7C827DT.
+#   Release, https://dx.doi.org/10.5066/F7C827DT.
 # Publication:
 #   @{paste(strwrap(format(citation("wrv"), style="textVersion"), width=76), collapse="\n#   ")}
 

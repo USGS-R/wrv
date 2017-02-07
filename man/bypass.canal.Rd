@@ -22,4 +22,3 @@ sp::plot(bypass.canal)
 
 }
 \keyword{datasets}
-

@@ -33,4 +33,3 @@ graphics.off()
 \code{\link{canals}}
 }
 \keyword{datasets}
-

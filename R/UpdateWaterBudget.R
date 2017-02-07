@@ -6,7 +6,7 @@
 #'   (2) groundwater pumping at production wells, and
 #'   (3) groundwater underflow in the major tributary valleys.
 #' Specified-flow values are saved to disk by rewriting the
-#' \href{http://water.usgs.gov/ogw/modflow/}{MODFLOW} Well Package file (\file{.wel}).
+#' \href{https://water.usgs.gov/ogw/modflow/}{MODFLOW} Well Package file (\file{.wel}).
 #' Note that this function is executed after each iteration of \href{http://www.pesthomepage.org/}{PEST}.
 #  It may also be run in an interactive \R session to initialize model parameter files.
 #'

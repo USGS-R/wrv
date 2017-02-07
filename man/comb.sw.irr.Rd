@@ -30,4 +30,3 @@ str(comb.sw.irr)
 
 }
 \keyword{datasets}
-
