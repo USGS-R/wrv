@@ -8,17 +8,18 @@ library(raster)
 options(preferRaster=TRUE, scipen=0, digits=2)
 
 # Device dimension in inches (width, height)
-fin.graph         <- c(7.16, 7.16)
-fin.graph.short   <- c(7.16, 3.50)
-fin.map           <- c(7.01, 9.32)
-fin.map.0         <- c(7.01, 8.65)
-fin.map.s         <- c(7.16, 5.31)
-fin.map.s.0       <- c(7.16, 4.64)
-fin.map.n         <- c(7.16, 7.00)
-fin.map.n.small   <- c(3.50, 3.83)
-fin.map.n.small.0 <- c(3.50, 3.16)
-fin.cs            <- c(7.16, 5.39)
-fin.cs.0          <- c(7.16, 4.73)
+fin.graph         <- c(7.17, 7.17)
+fin.graph.short   <- c(7.17, 3.50)
+fig.graph.small   <- c(3.50, 3.50)
+fin.map           <- c(7.17, 9.31)
+fin.map.0         <- c(7.17, 8.77)
+fin.map.s         <- c(7.17, 5.22)
+fin.map.s.0       <- c(7.17, 4.68)
+fin.map.n         <- c(7.17, 6.97)
+fin.map.n.small   <- c(3.50, 3.60)
+fin.map.n.small.0 <- c(3.50, 3.30)
+fin.cs            <- c(7.17, 5.26)
+fin.cs.0          <- c(7.17, 4.68)
 
 # Extreme coordinates of plotting region (x1, x2, y1, y2)
 usr.map     <- c(2451504, 2497815, 1342484, 1402354)
@@ -92,7 +93,7 @@ PrintTable <- function(idxs, is.last.hline, label) {
             "``SVWSD well'' is a production well in the Sun Valley Water and Sewer District (SVWSD); and",
             "``TNC well'' is monitored by The Nature Conservancy and installed with a pressure transducer.",
             "\\textbf{Well No.}: identifier used to locate wells in figures \\ref{fig:map_wells_usgs}, \\ref{fig:map_wells_driller}, and \\ref{fig:map_wells_svws_nat}.",
-            "\\textbf{Site identifier}: unique numerical identifiers used to access well data (\\url{http://waterdata.usgs.gov/nwis}).",
+            "\\textbf{Site identifier}: unique numerical identifiers used to access well data (\\url{https://waterdata.usgs.gov/nwis}).",
             "\\textbf{Name}: local well name used in this study.",
             "\\textbf{SD}: standard deviation of groundwater levels.",
             "\\textbf{Abbreviations}: m, meters; --, not available; NA, not applicable")
@@ -126,7 +127,8 @@ v <- c(paste("Map showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(
 ## ----map_wells_usgs, echo=FALSE, fig.width=fin.map.0[1], fig.height=fin.map.0[2], fig.scap=sprintf("{%s}", v[1]), fig.cap=sprintf("{%s}", v[2])----
 PlotMap(crs(hill.shading), xlim=usr.map[1:2], ylim=usr.map[3:4],
         bg.image=hill.shading, dms.tick=TRUE, bg.image.alpha=0.6,
-        rivers=list(x=streams.rivers), lakes=list(x=lakes), credit=credit)
+        rivers=list(x=streams.rivers), lakes=list(x=lakes),
+        credit=credit, scale.loc="bottomleft")
 plot(alluvium.extent, border="#FFFFFFCC", col=NA, add=TRUE)
 p <- obs.wells[obs.wells@data$desc == "Observation well", ]
 col <- "#FF4B12"
@@ -156,7 +158,8 @@ v <- c(paste("Map showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(
 ## ----map_wells_driller, echo=FALSE, fig.width=fin.map.0[1], fig.height=fin.map.0[2], fig.scap=sprintf("{%s}", v[1]), fig.cap=sprintf("{%s}", v[2])----
 PlotMap(crs(hill.shading), xlim=usr.map[1:2], ylim=usr.map[3:4],
         bg.image=hill.shading, dms.tick=TRUE, bg.image.alpha=0.6,
-        rivers=list(x=streams.rivers), lakes=list(x=lakes), credit=credit)
+        rivers=list(x=streams.rivers), lakes=list(x=lakes),
+        credit=credit, scale.loc="bottomleft")
 plot(alluvium.extent, border="#FFFFFFCC", col=NA, add=TRUE)
 p.1 <- obs.wells[obs.wells@data$desc == "Geo-located driller well", ]
 p.2 <- obs.wells[obs.wells@data$desc == "Driller-located driller well", ]
@@ -181,7 +184,8 @@ v <- c(paste("Map showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(
 ## ----map_wells_svws_nat, echo=FALSE, fig.width=fin.map.0[1], fig.height=fin.map.0[2], fig.scap=sprintf("{%s}", v[1]), fig.cap=sprintf("{%s}", v[2])----
 PlotMap(crs(hill.shading), xlim=usr.map[1:2], ylim=usr.map[3:4],
         bg.image=hill.shading, dms.tick=TRUE, bg.image.alpha=0.6,
-        rivers=list(x=streams.rivers), lakes=list(x=lakes), credit=credit)
+        rivers=list(x=streams.rivers), lakes=list(x=lakes),
+        credit=credit, scale.loc="bottomleft")
 plot(alluvium.extent, border="#FFFFFFCC", col=NA, add=TRUE)
 p.1 <- obs.wells[obs.wells@data$desc == "Sun Valley Water and Sewer well", ]
 p.2 <- obs.wells[obs.wells@data$desc == "Nature Conservancy well", ]
@@ -209,7 +213,8 @@ sites <- sites[!duplicated(sites@data$Name), ]
 sites@data$site.no <- seq_len(nrow(sites@data))
 
 PlotMap(crs(hill.shading), xlim=usr.map[1:2], ylim=usr.map[3:4],
-        bg.image=hill.shading, dms.tick=TRUE, bg.image.alpha=0.6, credit=credit)
+        bg.image=hill.shading, dms.tick=TRUE, bg.image.alpha=0.6,
+        credit=credit, scale.loc="bottomleft")
 plot(alluvium.extent, border="#FFFFFFCC", col="#FFFFFF9A", add=TRUE)
 plot(river.reaches, col="#3399CC", lwd=0.5, add=TRUE)
 plot(tributary.streams, col="#3399CC", lwd=0.5, add=TRUE)
@@ -264,7 +269,7 @@ columns <- c("Site \\\\ No.", "Site \\\\ identifier", "Name", "Period of record"
 colnames(d) <- sprintf("\\textbf{\\shortstack{%s}}", columns)
 cap1 <- "Streamflow measurement sites located on the Big Wood River, Willow Creek, Silver Creek, and spring-fed tributaries."
 cap2 <- c("\\textbf{Site No.}: identifier used to locate measurement sites on maps located in figures and as a cross reference with data in other tables.",
-          "\\textbf{Site identifier}: unique numerical identifiers used to access streamflow data (\\url{http://waterdata.usgs.gov/nwis}).",
+          "\\textbf{Site identifier}: unique numerical identifiers used to access streamflow data (\\url{https://waterdata.usgs.gov/nwis}).",
           "\\textbf{Name}: local measurement site name used in this study.")
 tbl <- xtable::xtable(d, label="table_sites")
 xtable::caption(tbl) <- c(sprintf("%s [%s]", cap1, paste(cap2, collapse=" ")), cap1)
@@ -325,7 +330,8 @@ v <- c(paste("Map showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(
 
 ## ----map_ret, echo=FALSE, fig.width=fin.map.0[1], fig.height=fin.map.0[2], fig.scap=sprintf("{%s}", v[1]), fig.cap=sprintf("{%s}", v[2])----
 PlotMap(crs(hill.shading), xlim=usr.map[1:2], ylim=usr.map[3:4],
-        bg.image=hill.shading, dms.tick=TRUE, bg.image.alpha=0.6, credit=credit)
+        bg.image=hill.shading, dms.tick=TRUE, bg.image.alpha=0.6,
+        credit=credit, scale.loc="bottomleft")
 plot(alluvium.extent, border="#FFFFFFCC", col="#FFFFFF9A", add=TRUE)
 plot(river.reaches, col="#3399CC", lwd=0.5, add=TRUE)
 plot(tributary.streams, col="#3399CC", lwd=0.5, add=TRUE)
@@ -370,7 +376,8 @@ v <- c(paste("Map showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(
 p.div <- div.ret.exch[div.ret.exch@data$Type == "Diversion", ]
 p.div@data$div.no <- seq_along(p.div)
 PlotMap(crs(hill.shading), xlim=usr.map[1:2], ylim=usr.map[3:4],
-        bg.image=hill.shading, dms.tick=TRUE, bg.image.alpha=0.6, credit=credit)
+        bg.image=hill.shading, dms.tick=TRUE, bg.image.alpha=0.6,
+        credit=credit, scale.loc="bottomleft")
 plot(alluvium.extent, border="#FFFFFFCC", col="#FFFFFF9A", add=TRUE)
 plot(river.reaches, col="#3399CC", lwd=0.5, add=TRUE)
 plot(tributary.streams, col="#3399CC", lwd=0.5, add=TRUE)
@@ -402,7 +409,7 @@ columns <- c("Div. \\\\ No.", "Site \\\\ identifier", "Name")
 colnames(d) <- sprintf("\\textbf{\\shortstack{%s}}", columns)
 cap1 <- "Streamflow diversions located on the Big Wood River, Willow Creek, Silver Creek, and spring-fed tributaries."
 cap2 <- c("\\textbf{Div. No.}: identifier used to locate diversions in \\hyperref[fig:map_div]{figure~\\ref{fig:map_div}}.",
-          "\\textbf{Site identifier}: unique numerical identifiers used to access streamflow measurement data (\\url{http://waterdata.usgs.gov/nwis}).",
+          "\\textbf{Site identifier}: unique numerical identifiers used to access streamflow measurement data (\\url{https://waterdata.usgs.gov/nwis}).",
           "\\textbf{Name}: local diversion name used in this study.",
           "\\textbf{Abbreviations}: --, not available")
 idxs <- 1:52
@@ -445,7 +452,8 @@ Pal <- function(...) {
   return(cols1)
 }
 PlotMap(crs(hill.shading), xlim=usr.map[1:2], ylim=usr.map[3:4],
-        bg.image=hill.shading, dms.tick=TRUE, bg.image.alpha=0.6, credit=credit)
+        bg.image=hill.shading, dms.tick=TRUE, bg.image.alpha=0.6,
+        credit=credit, scale.loc="bottomleft")
 plot(alluvium.extent, border="#FFFFFFCC", col="#FFFFFF9A", add=TRUE)
 cols <- Pal(max(reach.numbers))[reach.numbers]
 plot(rr, col=cols, lwd=0.5, add=TRUE)
@@ -585,7 +593,8 @@ Pal <- function(...) {
   return(cols1)
 }
 PlotMap(crs(hill.shading), xlim=usr.map[1:2], ylim=usr.map[3:4],
-        bg.image=hill.shading, dms.tick=TRUE, bg.image.alpha=0.6, credit=credit)
+        bg.image=hill.shading, dms.tick=TRUE, bg.image.alpha=0.6,
+        credit=credit, scale.loc="bottomleft")
 plot(alluvium.extent, border="#FFFFFFCC", col="#FFFFFF9A", add=TRUE)
 cols <- Pal(nlevels(subreaches@data$Reach))
 plot(subreaches, col=cols, lwd=0.5, add=TRUE)
@@ -777,7 +786,8 @@ l <- rgeos::gIntersection(drains, as(alluvium.extent, "SpatialLinesDataFrame"), 
 l <- SpatialLinesDataFrame(l, data=drains@data, match.ID=FALSE)
 cols <- c("#F02311", "#FBB829")
 PlotMap(crs(hill.shading), xlim=usr.map.s[1:2], ylim=usr.map.s[3:4], bg.image=hill.shading,
-        bg.image.alpha=0.6, dms.tick=TRUE, rivers=list(x=streams.rivers), lakes=list(x=lakes), credit=credit)
+        bg.image.alpha=0.6, dms.tick=TRUE, rivers=list(x=streams.rivers), lakes=list(x=lakes),
+        credit=credit, scale.loc="bottomleft")
 plot(alluvium.extent, border="#FFFFFFCC", col=NA, add=TRUE)
 leg <- c("Stanton Crossing", "Silver Creek")
 plot(l[match(l@data$Name, leg), ], col=cols, lwd=2, add=TRUE)
@@ -819,23 +829,25 @@ print(tbl, include.rownames=FALSE, caption.placement="top", booktabs=TRUE,
 
 ## ----echo=FALSE----------------------------------------------------------
 FUN <- function(layer) {
-  kz <- kriging.zones[kriging.zones@data$Layer == layer, ]
-  zones <- kz@data$Zone
+  is <- kriging.zones@data$Layer == layer
+  zones <- kriging.zones@data$Zone
+  zones <- as.character(zones)[match(zones, levels(zones))][is]
+  kz <- kriging.zones[is, ]
   r <- rasterize(kz, land.surface, "Zone")
   dc <- (layer - 1L) * 0.1
   Pal <- function(...) rainbow(..., s=1, v=0.5, start=0.1 + dc, end=1.0 - dc, alpha=0.6)
   PlotMap(r, xlim=usr.map[1:2], ylim=usr.map[3:4], pal=Pal,
           bg.image=hill.shading, dms.tick=TRUE, bg.image.alpha=0.6,
-          rivers=list(x=streams.rivers), lakes=list(x=lakes), draw.key=FALSE, credit=credit)
+          rivers=list(x=streams.rivers), lakes=list(x=lakes), draw.key=FALSE,
+          credit=credit, scale.loc="bottomleft")
   is.layer <- pilot.points@data$Layer == layer
   pp <- pilot.points[is.layer, ]
   points(pp, pch=21, cex=0.6, col="#333333", bg="#333333")
   text(pp, labels=seq_along(pilot.points)[is.layer], col="#333333",
        cex=0.6, pos=1, offset=0.3)
-
   text(kz, labels=zones, col="black", cex=0.7, pos=1, offset=0.5, font=2)
-  labs <- as.character(sort(zones))
-  cols <- Pal(length(labs))[as.integer(order(zones))]
+  labs <- as.character(kz@data$Zone)
+  cols <- Pal(length(labs))
   legend("topright", labs, pch=22, col=cols, pt.bg=cols,
          pt.cex=1, inset=0.02, cex=0.7, box.lty=1, box.lwd=0.5, bg="#FFFFFFE7",
          text.font=2, title=expression(bold("Zone")))
@@ -910,7 +922,8 @@ v <- c(paste("Map showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(
 
 ## ----map_tribs, echo=FALSE, fig.width=fin.map.0[1], fig.height=fin.map.0[2], fig.scap=sprintf("{%s}", v[1]), fig.cap=sprintf("{%s}", v[2])----
 PlotMap(crs(alluvium.thickness), xlim=usr.map[1:2], ylim=usr.map[3:4], bg.image=hill.shading, dms.tick=TRUE,
-        bg.image.alpha=0.6, rivers=list(x=streams.rivers), lakes=list(x=lakes), credit=credit)
+        bg.image.alpha=0.6, rivers=list(x=streams.rivers), lakes=list(x=lakes),
+        credit=credit, scale.loc="bottomleft")
 cols <- c("#F02311", "#FFFFFFCC")
 plot(alluvium.extent, border=cols[3], col="#33333366", add=TRUE)
 l <- rgeos::gIntersection(as(tributaries, "SpatialLinesDataFrame"), alluvium.extent, TRUE)
@@ -936,7 +949,8 @@ v <- c(paste("Map showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(
 p <- irr.entities
 p@data <- dplyr::left_join(p@data[, "EntityName", drop=FALSE], efficiency, by="EntityName")
 PlotMap(crs(hill.shading), xlim=usr.map[1:2], ylim=usr.map[3:4], bg.image=hill.shading,
-        bg.image.alpha=0.6, dms.tick=TRUE, rivers=list(x=streams.rivers), lakes=list(x=lakes), credit=credit)
+        bg.image.alpha=0.6, dms.tick=TRUE, rivers=list(x=streams.rivers), lakes=list(x=lakes),
+        credit=credit, scale.loc="bottomleft")
 cols <- c("#66C2A5B3", "#FC8D62B3")
 plot(p, col=cols[as.integer(p@data$Comment)], border="#FFFFFFCC", lwd=0.5, add=TRUE)
 plot(cities, pch=15, cex=0.8, col="#333333", add=TRUE)

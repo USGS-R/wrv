@@ -20,7 +20,7 @@
       its geometry is represented as the lower-half of an ellipse with
       width and height equal to \code{TribWidth} and \code{BdrkDepth}, respectively.}
     \item{DarcyFlow}{groundwater flow rate, in cubic meters per day, calculated using a
-      \href{http://en.wikipedia.org/wiki/Darcy_law}{Darcian} analysis.}
+      \href{https://en.wikipedia.org/wiki/Darcy_law}{Darcian} analysis.}
     \item{BasinArea}{land-surface area defined by the basin above the cross-sectional transect line.}
     \item{BasinAreaType}{label that describes the relative basin size; where
       \code{"big"} indicates a basin area greater than 10 square miles (25.9 square kilometers), and
@@ -37,8 +37,8 @@
   Idaho Transverse Mercator projection (\href{https://www.idwr.idaho.gov/GIS/IDTM/}{IDTM}).}
 \source{
 U.S. Geological Survey, accessed on July 2, 2015;
-  a Keyhole Markup Language (\href{http://en.wikipedia.org/wiki/Kml}{KML}) file created in
-  \href{http://www.google.com/earth/}{Google Earth} with polygons drawn by hand in
+  a Keyhole Markup Language (\href{https://en.wikipedia.org/wiki/Kml}{KML}) file created in
+  \href{https://www.google.com/earth/}{Google Earth} with polygons drawn by hand in
   areas of known specified flow boundaries.
   Transect lines are defined by the polygon boundaries within the extent of
   alluvium aquifer (see \code{\link{alluvium.extent}} dataset).
@@ -46,7 +46,7 @@ U.S. Geological Survey, accessed on July 2, 2015;
   \code{\link{land.surface}} dataset.
   Hydraulic conductivity (\code{K}) is the average of two geometric means of hydraulic conductivity
   in the unconfined aquifer taken from table 2 in Bartolino and Adkins (2012).
-  The U.S. Geologic Survey \href{http://water.usgs.gov/osw/streamstats/}{StreamStats} tool
+  The U.S. Geologic Survey \href{https://water.usgs.gov/osw/streamstats/}{StreamStats} tool
   (Ries and others, 2004) was used to delineate the basin area (\code{BasinArea}) and
   estimate the precipitation rate (\code{PrecipRate}).
   See the appendix C. Package Dataset Creation for the \R code used to calculate the
@@ -69,12 +69,11 @@ str(tributaries@data)
 Bartolino, J.R., and Adkins, C.B., 2012, Hydrogeologic framework of the
   Wood River Valley aquifer system, south-central Idaho: U.S. Geological Survey
   Scientific Investigations Report 2012-5053, 46 p.,
-  available at \url{http://pubs.usgs.gov/sir/2012/5053/}.
+  available at \url{https://pubs.usgs.gov/sir/2012/5053/}.
 
   Ries, K.G., Steeves, P.A., Coles, J.D., Rea, A.H., and Stewart, D.W., 2004,
   StreamStats--A U.S. Geological Survey web application for stream information:
   U.S. Geological Survey Fact Sheet FS-2004-3115, 4 p., available at
-  \url{http://pubs.er.usgs.gov/usgspubs/fs/fs20043115}.
+  \url{https://pubs.er.usgs.gov/publication/fs20043115}.
 }
 \keyword{datasets}
-

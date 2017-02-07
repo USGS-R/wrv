@@ -32,4 +32,3 @@ str(swe)
   \code{\link{precipitation}}
 }
 \keyword{datasets}
-

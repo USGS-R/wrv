@@ -13,7 +13,7 @@
 U.S. Department of Commerce, U.S. Census Bureau,
   Geography Division/Cartographic Products Branch.
   A simplified representation of the State of Idaho from the 2014 Census Bureau's
-  MAF/\href{http://www.census.gov/geo/maps-data/data/tiger.html}{TIGER} geographic database.
+  MAF/\href{https://www.census.gov/geo/maps-data/data/tiger.html}{TIGER} geographic database.
 }
 \usage{
 idaho
@@ -27,4 +27,3 @@ print(idaho)
 
 }
 \keyword{datasets}
-

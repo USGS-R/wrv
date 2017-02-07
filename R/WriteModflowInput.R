@@ -59,7 +59,7 @@
 #'   listing file (\file{.lst}) and budget file (\file{.bud})
 #'
 #' @details Groundwater flow in the WRV aquifer system is simulated using the
-#'   \href{http://water.usgs.gov/ogw/mfusg/}{MODFLOW-USG} groundwater-flow model.
+#'   \href{https://water.usgs.gov/ogw/mfusg/}{MODFLOW-USG} groundwater-flow model.
 #'   This numerical model was chosen for its ability to solve
 #'   complex unconfined groundwater flow simulations.
 #'   The solver implemented in MODFLOW-USG incorporates the Newton-Raphson formulation for
@@ -68,9 +68,9 @@
 #'   A structured finite-difference grid is implemented in the model to
 #'     (1) simplify discretization,
 #'     (2) keep formats and structures for the MODFLOW-USG packages identical to those of
-#'         \href{http://water.usgs.gov/nrp/gwsoftware/modflow2005/Guide/index.html}{MODFLOW-2005}, and
+#'         \href{https://water.usgs.gov/ogw/modflow/MODFLOW-2005-Guide/index.html}{MODFLOW-2005}, and
 #'     (3) allow any MODFLOW post-processor to be used to analyze the results of the MODFLOW-USG simulation
-#'         (such as \href{http://water.usgs.gov/nrp/gwsoftware/modelviewer/ModelViewer.html}{Model Viewer}).
+#'         (such as \href{https://water.usgs.gov/nrp/gwsoftware/modelviewer/ModelViewer.html}{Model Viewer}).
 #'
 #'   Model input files are written to \code{dir.run} and include the following MODFLOW Package files:
 #'   Name (\file{.nam}), Basic (\file{.ba6}), Discretization (\file{.dis}),
@@ -121,14 +121,17 @@
 #'   Columbus, Ohio State University School of Earth Sciences.
 #'
 #'   Niswonger, R.G., Panday, Sorab, and Ibaraki, Motomu, 2011, MODFLOW-NWT, A Newton formulation for MODFLOW-2005:
-#'   U.S. Geological Survey Techniques and Methods 6-A37, 44 p., available at \url{http://pubs.usgs.gov/tm/tm6a37/}.
+#'   U.S. Geological Survey Techniques and Methods 6-A37, 44 p., available at \url{https://pubs.usgs.gov/tm/tm6a37/}.
 #'
 #'   Panday, Sorab, Langevin, C.D., Niswonger, R.G., Ibaraki, Motomu, and Hughes, J.D., 2013, MODFLOW-USG version 1:
 #'   An unstructured grid version of MODFLOW for simulating groundwater flow and tightly coupled processes using a
 #'   control volume finite-difference formulation: U.S. Geological Survey Techniques and Methods, book 6, chap. A45,
-#'   66 p., available at \url{http://pubs.usgs.gov/tm/06/a45/}.
+#'   66 p., available at \url{https://pubs.usgs.gov/tm/06/a45/}.
 #'
 #' @keywords IO
+#'
+#' @import sp
+#' @import raster
 #'
 #' @export
 #'

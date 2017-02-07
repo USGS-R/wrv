@@ -22,6 +22,6 @@
 \section{File Placeholder}
 
 This document serves as a placeholder until the Scientific Investigations Report 2016-5080 is made available on the
-U.S. Geological Survey Publications Warehouse at \url{http://dx.doi.org/10.3133/sir20165080}.
+U.S. Geological Survey Publications Warehouse at \url{https://dx.doi.org/10.3133/sir20165080}.
 
 \end{document}

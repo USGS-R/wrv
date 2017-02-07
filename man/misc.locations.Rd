@@ -29,4 +29,3 @@ text(misc.locations, labels = misc.locations@data$label, pos = 3, cex = 0.6)
 
 }
 \keyword{datasets}
-

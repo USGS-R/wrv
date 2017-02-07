@@ -42,7 +42,6 @@ str(seepage.study@data)
 \references{
 Bartolino, J.R., 2014, Stream seepage and groundwater levels, Wood River Valley,
   south-central Idaho, 2012--13: U.S. Geological Survey Scientific Investigations Report 2014-5151,
-  34 p., \url{http://dx.doi.org/10.3133/sir20145151}.
+  34 p., \url{https://dx.doi.org/10.3133/sir20145151}.
 }
 \keyword{datasets}
-

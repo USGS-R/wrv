@@ -4,7 +4,6 @@
 ^\.Rhistory$
 ^Makefile$
 ^\.travis\.yml$
-
 extdata/.*[.]csv$
 extdata/.*[.]kml$
 extdata/.*[.]md$

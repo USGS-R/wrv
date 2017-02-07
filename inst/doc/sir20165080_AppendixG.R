@@ -8,17 +8,18 @@ library(raster)
 options(preferRaster=TRUE, scipen=0, digits=2)
 
 # Device dimension in inches (width, height)
-fin.graph         <- c(7.16, 7.16)
-fin.graph.short   <- c(7.16, 3.50)
-fin.map           <- c(7.01, 9.32)
-fin.map.0         <- c(7.01, 8.65)
-fin.map.s         <- c(7.16, 5.31)
-fin.map.s.0       <- c(7.16, 4.64)
-fin.map.n         <- c(7.16, 7.00)
-fin.map.n.small   <- c(3.50, 3.83)
-fin.map.n.small.0 <- c(3.50, 3.16)
-fin.cs            <- c(7.16, 5.39)
-fin.cs.0          <- c(7.16, 4.73)
+fin.graph         <- c(7.17, 7.17)
+fin.graph.short   <- c(7.17, 3.50)
+fig.graph.small   <- c(3.50, 3.50)
+fin.map           <- c(7.17, 9.31)
+fin.map.0         <- c(7.17, 8.77)
+fin.map.s         <- c(7.17, 5.22)
+fin.map.s.0       <- c(7.17, 4.68)
+fin.map.n         <- c(7.17, 6.97)
+fin.map.n.small   <- c(3.50, 3.60)
+fin.map.n.small.0 <- c(3.50, 3.30)
+fin.cs            <- c(7.17, 5.26)
+fin.cs.0          <- c(7.17, 4.68)
 
 # Extreme coordinates of plotting region (x1, x2, y1, y2)
 usr.map     <- c(2451504, 2497815, 1342484, 1402354)
@@ -71,7 +72,8 @@ v <- c(paste("Map showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(
 ## ----map_canals_full, echo=FALSE, fig.width=fin.map.0[1], fig.height=fin.map.0[2], fig.scap=sprintf("{%s}", v[1]), fig.cap=sprintf("{%s}", v[2])----
 PlotMap(crs(hill.shading), xlim=usr.map[1:2], ylim=usr.map[3:4],
         bg.image=hill.shading, bg.image.alpha=0.6, dms.tick=TRUE,
-        rivers=list(x=streams.rivers), lakes=list(x=lakes), credit=credit)
+        rivers=list(x=streams.rivers), lakes=list(x=lakes), credit=credit,
+        scale.loc="bottomleft")
 cols <- c("#33333366", "#FBB829", "#000000")
 plot(alluvium.extent, border="#FFFFFFCC", col=cols[1], add=TRUE)
 lines(canals, col=cols[2])
@@ -108,7 +110,8 @@ FUN <- function(usr, credit=NULL, pos=1, max.dev.dim=c(43, 56)) {
   PlotMap(r, att="ID", xlim=usr[1:2], ylim=usr[3:4], bg.image=hill.shading,
           bg.image.alpha=0.6, dms.tick=TRUE, max.dev.dim=max.dev.dim,
           credit=credit, rivers=list(x=streams.rivers), lakes=list(x=lakes),
-          col=cols[as.integer(levels(r)[[1]][, 1])], draw.key=FALSE)
+          col=cols[as.integer(levels(r)[[1]][, 1])], draw.key=FALSE,
+          scale.loc="bottomleft")
   if (nrow(levels(r)[[1]]) > 0) {
     poly <- rasterToPolygons(r, dissolve=TRUE)
     xy <- suppressWarnings(getSpatialPolygonsLabelPoints(poly))
@@ -156,7 +159,7 @@ cols <- c("#FAB236", "#F02311")
 PlotMap(r, att="RechSite", xlim=usr.map.s[1:2], ylim=usr.map.s[3:4],
         bg.image=hill.shading, bg.image.alpha=0.6, dms.tick=TRUE, col=cols,
         roads=list(x=major.roads), rivers=list(x=streams.rivers),
-        lakes=list(x=lakes), draw.key=FALSE, credit=credit)
+        lakes=list(x=lakes), draw.key=FALSE, credit=credit, scale.loc="bottomleft")
 plot(alluvium.extent, border="#FFFFFF7F", add=TRUE)
 plot(cities, pch=15, cex=0.8, col="#333333", add=TRUE)
 text(cities, labels=cities@data$FEATURE_NA, col="#333333", cex=0.5, pos=1, offset=0.4)
@@ -191,7 +194,8 @@ print(tbl, include.rownames=FALSE, caption.placement="top", booktabs=TRUE,
 ## ----echo=FALSE----------------------------------------------------------
 FUN <- function(i) {
   PlotMap(crs(hill.shading), xlim=usr.map[1:2], ylim=usr.map[3:4], bg.image=hill.shading,
-          bg.image.alpha=0.6, dms.tick=TRUE, rivers=list(x=streams.rivers), lakes=list(x=lakes), credit=credit)
+          bg.image.alpha=0.6, dms.tick=TRUE, rivers=list(x=streams.rivers), lakes=list(x=lakes),
+          credit=credit, scale.loc="bottomleft")
   plot(alluvium.extent, border="#FFFFFFCC", add=TRUE)
   cols <- c("#90AB76", "#AF8DC3")
   is.irr <- irr.lands[[i]]@data$Status == "irrigated"
@@ -235,7 +239,8 @@ v <- c(paste("Map showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(
 
 ## ----map_wetlands_parcels, echo=FALSE, fig.width=fin.map.0[1], fig.height=fin.map.0[2], fig.scap=sprintf("{%s}", v[1]), fig.cap=sprintf("{%s}", v[2])----
 PlotMap(crs(hill.shading), xlim=usr.map[1:2], ylim=usr.map[3:4], bg.image=hill.shading,
-        bg.image.alpha=0.6, dms.tick=TRUE, rivers=list(x=streams.rivers), lakes=list(x=lakes), credit=credit)
+        bg.image.alpha=0.6, dms.tick=TRUE, rivers=list(x=streams.rivers), lakes=list(x=lakes),
+        credit=credit, scale.loc="bottomleft")
 plot(public.parcels, col="#CDBB99C0", border="#755C3BC0", add=TRUE)
 plot(alluvium.extent, border="#FFFFFFCC", add=TRUE)
 plot(wetlands, col="#59A80F", border=NA, add=TRUE)
@@ -288,7 +293,7 @@ FUN <- function(usr) {
   p <- SetPolygons(polys, extent(usr), "gIntersection")
   PlotMap(crs(hill.shading), xlim=usr[1:2], ylim=usr[3:4], bg.image=hill.shading,
           bg.image.alpha=0.6, dms.tick=TRUE, rivers=list(x=streams.rivers),
-          lakes=list(x=lakes), credit=credit)
+          lakes=list(x=lakes), credit=credit, scale.loc="bottomleft")
   plot(p, col=cols[p@data$id], border=NA, add=TRUE)
   plot(cities, pch=15, cex=0.8, col="#333333", add=TRUE)
   text(cities, labels=cities@data$FEATURE_NA, col="#333333", cex=0.5, pos=1, offset=0.4)
@@ -331,7 +336,8 @@ cols <- Pal(max(r[], na.rm=TRUE), alpha=0.8)
 PlotMap(r, breaks=seq(min(at) - 0.5, max(at) + 0.5), xlim=usr.map.s[1:2],
         ylim=usr.map.s[3:4], bg.image=hill.shading, bg.image.alpha=0.6,
         dms.tick=TRUE, col=cols, labels=list(at=at), draw.key=FALSE,
-        rivers=list(x=streams.rivers), lakes=list(x=lakes), credit=credit)
+        rivers=list(x=streams.rivers), lakes=list(x=lakes), credit=credit,
+        scale.loc="bottomleft")
 poly <- rasterToPolygons(crop(r, extent(usr.map.s)), dissolve=TRUE)
 plot(alluvium.extent, border="#FFFFFFCC", add=TRUE)
 xy <- suppressWarnings(getSpatialPolygonsLabelPoints(poly))
@@ -349,7 +355,8 @@ v <- c(paste("Map showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(
 
 ## ----map_sources, echo=FALSE, fig.width=fin.map.0[1], fig.height=fin.map.0[2], fig.scap=sprintf("{%s}", v[1]), fig.cap=sprintf("{%s}", v[2])----
 PlotMap(crs(hill.shading), xlim=usr.map[1:2], ylim=usr.map[3:4], bg.image=hill.shading,
-        bg.image.alpha=0.6, dms.tick=TRUE, rivers=list(x=streams.rivers), lakes=list(x=lakes), credit=credit)
+        bg.image.alpha=0.6, dms.tick=TRUE, rivers=list(x=streams.rivers), lakes=list(x=lakes),
+        credit=credit, scale.loc="bottomleft")
 polys <- irr.entities
 cols <- c("#66C2A5CC", "#FC8D62CC", "#8DA0CBCC")
 plot(polys, col=cols[as.integer(polys@data$Source)], border=NA, add=TRUE)
@@ -378,7 +385,8 @@ v <- c(paste("Map showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(
 
 ## ----map_pod, echo=FALSE, fig.width=fin.map.0[1], fig.height=fin.map.0[2], fig.scap=sprintf("{%s}", v[1]), fig.cap=sprintf("{%s}", v[2])----
 PlotMap(crs(hill.shading), xlim=usr.map[1:2], ylim=usr.map[3:4], bg.image=hill.shading,
-        dms.tick=TRUE, bg.image.alpha=0.6, rivers=list(x=streams.rivers), lakes=list(x=lakes), credit=credit)
+        dms.tick=TRUE, bg.image.alpha=0.6, rivers=list(x=streams.rivers), lakes=list(x=lakes),
+        credit=credit, scale.loc="bottomleft")
 plot(alluvium.extent, border="#FFFFFFCC", add=TRUE)
 is.obs <- pod.wells@data$WMISNumber %in% unique(div.gw$WMISNumber)
 cols <- c("#9061C2", "#FBB829")

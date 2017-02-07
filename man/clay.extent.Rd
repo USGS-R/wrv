@@ -32,7 +32,6 @@ Moreland, J.A., 1977, Ground water-surface water relations in the Silver Creek a
   Blaine County, Idaho: Boise, Idaho Department of Water Resources, Water Information Bulletin 44,
   42 p., 5 plates in pocket, accessed January 31, 2012.
   Also published as U.S. Geological Survey Open-File report 77-456, 66 p.,
-  available at \url{http://pubs.er.usgs.gov/pubs/ofr/ofr77456}.
+  available at \url{https://pubs.er.usgs.gov/publication/ofr77456}.
 }
 \keyword{datasets}
-
