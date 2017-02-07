@@ -182,13 +182,12 @@ and negative values are flow out of the system (groundwater discharge).
 \dontrun{# see Appendix A. Package Introduction}
 
 }
+\seealso{
+\code{\link{UpdateWaterBudget}}
+}
 \author{
 J.C. Fisher, U.S. Geological Survey, Idaho Water Science Center
 
   J. Sukow and M. McVay, Idaho Department of Water Resources
 }
-\seealso{
-\code{\link{UpdateWaterBudget}}
-}
 \keyword{manip}
-

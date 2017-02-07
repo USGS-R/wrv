@@ -29,17 +29,18 @@ library(raster)
 options(preferRaster=TRUE, scipen=0, digits=2)
 
 # Device dimension in inches (width, height)
-fin.graph         <- c(7.16, 7.16)
-fin.graph.short   <- c(7.16, 3.50)
-fin.map           <- c(7.01, 9.32)
-fin.map.0         <- c(7.01, 8.65)
-fin.map.s         <- c(7.16, 5.31)
-fin.map.s.0       <- c(7.16, 4.64)
-fin.map.n         <- c(7.16, 7.00)
-fin.map.n.small   <- c(3.50, 3.83)
-fin.map.n.small.0 <- c(3.50, 3.16)
-fin.cs            <- c(7.16, 5.39)
-fin.cs.0          <- c(7.16, 4.73)
+fin.graph         <- c(7.17, 7.17)
+fin.graph.short   <- c(7.17, 3.50)
+fig.graph.small   <- c(3.50, 3.50)
+fin.map           <- c(7.17, 9.31)
+fin.map.0         <- c(7.17, 8.77)
+fin.map.s         <- c(7.17, 5.22)
+fin.map.s.0       <- c(7.17, 4.68)
+fin.map.n         <- c(7.17, 6.97)
+fin.map.n.small   <- c(3.50, 3.60)
+fin.map.n.small.0 <- c(3.50, 3.30)
+fin.cs            <- c(7.17, 5.26)
+fin.cs.0          <- c(7.17, 4.68)
 
 # Extreme coordinates of plotting region (x1, x2, y1, y2)
 usr.map     <- c(2451504, 2497815, 1342484, 1402354)
@@ -161,7 +162,8 @@ v <- c(paste("Map showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(
 
 <<map_tribs, echo=FALSE, fig.width=fin.map.0[1], fig.height=fin.map.0[2], fig.scap=sprintf("{%s}", v[1]), fig.cap=sprintf("{%s}", v[2])>>=
 PlotMap(crs(alluvium.thickness), xlim=usr.map[1:2], ylim=usr.map[3:4], bg.image=hill.shading, dms.tick=TRUE,
-        bg.image.alpha=0.6, rivers=list(x=streams.rivers), lakes=list(x=lakes), credit=credit)
+        bg.image.alpha=0.6, rivers=list(x=streams.rivers), lakes=list(x=lakes), credit=credit,
+        scale.loc="bottomleft")
 cols <- c("#F02311", "#333333", "#FFFFFFCC", "#FBB829")
 plot(alluvium.extent, border=cols[3], col="#33333366", add=TRUE)
 l <- rgeos::gIntersection(as(tributaries, "SpatialLinesDataFrame"), alluvium.extent, TRUE)
@@ -324,7 +326,8 @@ RotateLine <- function(m, ang=90) {
     e <- extent(c(xy[1] - dx, xy[1] + dx, xy[2] - dx, xy[2] + dx))
     PlotMap(crs(alluvium.thickness), xlim=e[1:2], ylim=e[3:4],
             bg.image=hill.shading, dms.tick=TRUE, bg.image.alpha=0.8,
-            rivers=list(x=streams.rivers), lakes=list(x=lakes), credit=NULL)
+            rivers=list(x=streams.rivers), lakes=list(x=lakes), credit=NULL,
+            scale.loc="bottomleft")
     cols <- c("#F02311", "#FFC800", "#333333CC")
     plot(transect, lwd=2, col=cols[1], add=TRUE)
     pts <- as(transect, "SpatialPoints")

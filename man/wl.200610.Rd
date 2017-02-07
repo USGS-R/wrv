@@ -17,7 +17,7 @@
   Idaho Transverse Mercator projection (\href{https://www.idwr.idaho.gov/GIS/IDTM/}{IDTM}).}
 \source{
 This dataset is from Plate 1 in Skinner and others (2007), and available on the
-  \href{http://water.usgs.gov/GIS/metadata/usgswrd/XML/sir2007-5258_oct2006wl.xml}{WRD NSDI Node}.
+  \href{https://water.usgs.gov/GIS/metadata/usgswrd/XML/sir2007-5258_oct2006wl.xml}{WRD NSDI Node}.
 }
 \usage{
 wl.200610
@@ -39,7 +39,6 @@ Skinner, K.D., Bartolino, J.R., and Tranmer, A.W., 2007,
   Water-resource trends and comparisons between partial development and
   October 2006 hydrologic conditions, Wood River Valley, south-central, Idaho:
   U.S. Geological Survey Scientific Investigations Report 2007-5258, 30 p.,
-  available at \url{http://pubs.usgs.gov/sir/2007/5258/}
+  available at \url{https://pubs.usgs.gov/sir/2007/5258/}
 }
 \keyword{datasets}
-

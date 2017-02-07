@@ -24,17 +24,18 @@ loadNamespace("viridis")
 loadNamespace("xtable")
 
 # Device dimension in inches (width, height)
-fin.graph         <- c(7.16, 7.16)
-fin.graph.short   <- c(7.16, 3.50)
-fin.map           <- c(7.01, 9.32)
-fin.map.0         <- c(7.01, 8.65)
-fin.map.s         <- c(7.16, 5.31)
-fin.map.s.0       <- c(7.16, 4.64)
-fin.map.n         <- c(7.16, 7.00)
-fin.map.n.small   <- c(3.50, 3.83)
-fin.map.n.small.0 <- c(3.50, 3.16)
-fin.cs            <- c(7.16, 5.39)
-fin.cs.0          <- c(7.16, 4.73)
+fin.graph         <- c(7.17, 7.17)
+fin.graph.short   <- c(7.17, 3.50)
+fig.graph.small   <- c(3.50, 3.50)
+fin.map           <- c(7.17, 9.31)
+fin.map.0         <- c(7.17, 8.77)
+fin.map.s         <- c(7.17, 5.22)
+fin.map.s.0       <- c(7.17, 4.68)
+fin.map.n         <- c(7.17, 6.97)
+fin.map.n.small   <- c(3.50, 3.60)
+fin.map.n.small.0 <- c(3.50, 3.30)
+fin.cs            <- c(7.17, 5.26)
+fin.cs.0          <- c(7.17, 4.68)
 
 # Extreme coordinates of plotting region (x1, x2, y1, y2)
 usr.map     <- c(2451504, 2497815, 1342484, 1402354)
@@ -139,7 +140,8 @@ r <- rasterize(alluvium.extent, raster(hill.shading))
 PlotMap(r, xlim=usr.map[1:2], ylim=usr.map[3:4], bg.image=hill.shading,
         col="#C0C0C0", bg.image.alpha=0.4, dms.tick=TRUE,
         rivers=list(x=streams.rivers), lakes=list(x=lakes),
-        roads=list(x=major.roads), credit=credit, draw.key=FALSE)
+        roads=list(x=major.roads), credit=credit, draw.key=FALSE,
+        scale.loc="bottomleft")
 plot(alluvium.extent, border="#F0D87880", add=TRUE)
 points(streamgages, pch=24, cex=1, col="#FFFFFFB1", bg="#88263B")
 pos <- c(3, 4, 3, 4, 3, 2, 3, 2, 3)
@@ -212,7 +214,7 @@ FUN <- function(i) {
   PlotMap(crs(r), xlim=usr.map[1:2], ylim=usr.map[3:4],
           bg.image=hill.shading, bg.image.alpha=0.6,
           dms.tick=TRUE, rivers=list(x=streams.rivers), lakes=list(x=lakes),
-          draw.key=FALSE, credit=credit, scale.loc=NULL)
+          draw.key=FALSE, credit=credit)
 
   loc <- extent(r)
   rect(loc[1], loc[3], loc[2], loc[4], col="#FFFFFFA6", border=NA)
@@ -377,7 +379,8 @@ FUN <- function(r) {
           bg.image=hill.shading, bg.image.alpha=0.6, dms.tick=TRUE,
           pal=Pal, explanation="Horizontal hydraulic conductivity, in meters per day, plotted on a logarithmic scale.",
           rivers=list(x=streams.rivers), lakes=list(x=lakes),
-          labels=list(at=at, labels=labels), credit=credit)
+          labels=list(at=at, labels=labels), credit=credit,
+          scale.loc="bottomleft")
   lines(transect, col="#1F1F1F")
   text(transect.ends, labels=c("A", "A'"), col="#1F1F1F", cex=0.7, pos=c(3, 4), offset=0.1, font=4)
   plot(cities, pch=15, cex=0.8, col="#333333", add=TRUE)
@@ -546,7 +549,8 @@ FUN <- function(r) {
           bg.image=hill.shading, bg.image.alpha=0.6, dms.tick=TRUE,
           pal=Pal, explanation="Storage coefficient, a dimensionless quantity, plotted on a logarithmic scale.",
           rivers=list(x=streams.rivers), lakes=list(x=lakes),
-          labels=list(at=breaks, labels=labels), credit=credit)
+          labels=list(at=breaks, labels=labels), credit=credit,
+          scale.loc="bottomleft")
   lines(transect, col="#1F1F1F")
   text(transect.ends, labels=c("A", "A'"), col="#1F1F1F", cex=0.7, pos=c(3, 4), offset=0.1, font=4)
   plot(cities, pch=15, cex=0.8, col="#333333", add=TRUE)
@@ -729,7 +733,8 @@ PlotMap(r, breaks=breaks, xlim=usr.map[1:2], ylim=usr.map[3:4],
         bg.image=hill.shading, bg.image.alpha=0.6, dms.tick=TRUE,
         pal=Pal, explanation="Irrigation efficiency, a dimensionless quantity.",
         rivers=list(x=streams.rivers), lakes=list(x=lakes),
-        labels=list(at=breaks, labels=labels), credit=credit, draw.raster=FALSE)
+        labels=list(at=breaks, labels=labels), credit=credit,
+        scale.loc="bottomleft", draw.raster=FALSE)
 cols <- Pal(max(p1@data$id))
 plot(p1, col=cols[p1@data$id], border=NA, add=TRUE)
 plot(p2, col="#948979", border=NA, add=TRUE)
@@ -811,7 +816,7 @@ r[] <- log10(r[])
 PlotMap(r, breaks=breaks, xlim=usr.map[1:2], ylim=usr.map[3:4],
         bg.image=hill.shading, bg.image.alpha=0.6, dms.tick=TRUE,
         pal=Pal, explanation="Riverbed conductance, in square meters per day, plotted on a logarithmic scale.",
-        labels=list(at=breaks, labels=labels), credit=credit)
+        labels=list(at=breaks, labels=labels), credit=credit, scale.loc="bottomleft")
 pos <- c(4, 4, 4, 4, 4, 4, 4, 2, 2, 2,
          3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
          1, 3)
@@ -928,14 +933,15 @@ print(tbl, include.rownames=FALSE, caption.placement="top", booktabs=TRUE,
 <<map_tribs, echo=FALSE, fig.width=fin.map.0[1], fig.height=fin.map.0[2], fig.cap="{Spatial distribution of long-term mean volumetric flow rate for groundwater entering the model domain in the major tributary canyons and the upper part of the Wood River Valley, Idaho. Tributary identifiers are used as a cross reference with data in table 3.}">>=
 PlotMap(crs(hill.shading), xlim=usr.map[1:2], ylim=usr.map[3:4],
         bg.image=hill.shading, bg.image.alpha=0.6, dms.tick=TRUE,
-        rivers=list(x=streams.rivers), lakes=list(x=lakes), credit=credit)
+        rivers=list(x=streams.rivers), lakes=list(x=lakes), credit=credit,
+        scale.loc="bottomleft")
 plot(alluvium.extent, border="#FFFFFFCC", add=TRUE)
 xy <- coordinates(getSpatialLinesMidPoints(trib.lines))
 z <- trib.lines@data$mean.flow
 Pal <- function(...) rev(viridis::viridis(..., alpha=0.8))
-AddBubbles(xy, z=z, inches=c(0.03, 0.3), fg="#FFFFFF65", format="d",
-           title="Average groundwater flow rate", subtitle="in cubic meters per day",
-           bg.pos=Pal, loc="topright", quantile.breaks=TRUE)
+AddPoints(xy, z=z, inches=c(0.03, 0.3), fg="#FFFFFF65", format="d",
+          title="Average groundwater flow rate", subtitle="in cubic meters per day",
+          bg=Pal, legend.loc="topright", quantile.breaks=TRUE)
 plot(cities, pch=15, cex=0.8, col="#333333", add=TRUE)
 text(cities, labels=cities@data$FEATURE_NA, col="#333333", cex=0.5, pos=1, offset=0.4)
 text(xy, labels=rownames(trib.lines@data), col="#333333", cex=0.6, adj=c(0.5, 0.5), offset=0)

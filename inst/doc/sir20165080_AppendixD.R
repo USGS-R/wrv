@@ -5,18 +5,18 @@ grDevices::pdf.options(useDingbats=FALSE)
 options(preferRaster=TRUE, scipen=0, digits=2)
 
 # Device dimension in inches (width, height)
-fin.graph         <- c(7.16, 7.16)
-fin.graph.short   <- c(7.16, 3.50)
+fin.graph         <- c(7.17, 7.17)
+fin.graph.short   <- c(7.17, 3.50)
 fig.graph.small   <- c(3.50, 3.50)
-fin.map           <- c(7.01, 9.32)
-fin.map.0         <- c(7.01, 8.65)
-fin.map.s         <- c(7.16, 5.31)
-fin.map.s.0       <- c(7.16, 4.64)
-fin.map.n         <- c(7.16, 7.00)
-fin.map.n.small   <- c(3.50, 3.83)
-fin.map.n.small.0 <- c(3.50, 3.16)
-fin.cs            <- c(7.16, 5.39)
-fin.cs.0          <- c(7.16, 4.73)
+fin.map           <- c(7.17, 9.31)
+fin.map.0         <- c(7.17, 8.77)
+fin.map.s         <- c(7.17, 5.22)
+fin.map.s.0       <- c(7.17, 4.68)
+fin.map.n         <- c(7.17, 6.97)
+fin.map.n.small   <- c(3.50, 3.60)
+fin.map.n.small.0 <- c(3.50, 3.30)
+fin.cs            <- c(7.17, 5.26)
+fin.cs.0          <- c(7.17, 4.68)
 
 # Extreme coordinates of plotting region (x1, x2, y1, y2)
 usr.map     <- c(2451504, 2497815, 1342484, 1402354)
@@ -97,7 +97,8 @@ Pal <- colorRampPalette(c("#F02311", "#FFFFEA", "#107FC9"))
 PlotMap(r, breaks=pretty(range(r[], na.rm=TRUE), n=12), xlim=usr.map[1:2], ylim=usr.map[3:4],
         bg.image=hill.shading, bg.image.alpha=0.6, dms.tick=TRUE,
         pal=Pal, explanation="Thickness of the Quaternary sediments measured as depth below land surface, in meters.",
-        rivers=list(x=streams.rivers), lakes=list(x=lakes), credit=credit)
+        rivers=list(x=streams.rivers), lakes=list(x=lakes), credit=credit,
+        scale.loc="bottomleft")
 plot(cities, pch=15, cex=0.8, col="#333333", add=TRUE)
 text(cities, labels=cities@data$FEATURE_NA, col="#333333", cex=0.5, pos=1, offset=0.4)
 AddInsetMap(idaho, width=1, main.label=list("IDAHO", adj=c(-0.4, -4.9)),
@@ -122,7 +123,7 @@ v <- c(paste("Map showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(
 col <- "#BEAED4"
 PlotMap(r, xlim=usr.map.s[1:2], ylim=usr.map.s[3:4], bg.image=hill.shading, bg.image.alpha=0.6,
         dms.tick=TRUE, col=col, roads=list(x=major.roads), rivers=list(x=streams.rivers),
-        lakes=list(x=lakes), draw.key=FALSE, credit=credit)
+        lakes=list(x=lakes), draw.key=FALSE, credit=credit, scale.loc="bottomleft")
 plot(alluvium.extent, border="#FFFFFF7F", add=TRUE)
 plot(cities, pch=15, cex=0.8, col="#333333", add=TRUE)
 text(cities, labels=cities@data$FEATURE_NA, col="#333333", cex=0.5, pos=1, offset=0.3)
@@ -163,7 +164,8 @@ r <- rs.data[["aquifer.thickness"]]
 PlotMap(r, breaks=pretty(range(r[], na.rm=TRUE), n=12), xlim=usr.map.s[1:2], ylim=usr.map.s[3:4],
         bg.image=hill.shading, bg.image.alpha=0.6, dms.tick=TRUE, pal=Pal,
         explanation="Thickness of the aquifer system measured as depth below land surface, in meters.",
-        rivers=list(x=streams.rivers), lakes=list(x=lakes), credit=credit)
+        rivers=list(x=streams.rivers), lakes=list(x=lakes), credit=credit,
+        scale.loc="bottomleft")
 plot(cities, pch=15, cex=0.8, col="#333333", add=TRUE)
 text(cities, labels=cities@data$FEATURE_NA, col="#333333", cex=0.5, pos=1, offset=0.4)
 
@@ -181,7 +183,8 @@ v <- c(paste("Map showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(
 ## ----map_clay_extent, echo=FALSE, fig.width=fin.map.s.0[1], fig.height=fin.map.s.0[2], fig.scap=sprintf("{%s}", v[1]), fig.cap=sprintf("{%s}", v[2])----
 col <- "#FDC086"
 PlotMap(r, xlim=usr.map.s[1:2], ylim=usr.map.s[3:4], bg.image=hill.shading, bg.image.alpha=0.6,
-        dms.tick=TRUE, col=col, rivers=list(x=streams.rivers), lakes=list(x=lakes), draw.key=FALSE, credit=credit)
+        dms.tick=TRUE, col=col, rivers=list(x=streams.rivers), lakes=list(x=lakes),
+        draw.key=FALSE, credit=credit, scale.loc="bottomleft")
 plot(alluvium.extent, border="#FFFFFF7F", add=TRUE)
 plot(cities, pch=15, cex=0.8, col="#333333", add=TRUE)
 text(cities, labels=cities@data$FEATURE_NA, col="#333333", cex=0.5, pos=1, offset=0.4)
@@ -216,7 +219,8 @@ Pal <- function(n) {
 PlotMap(r, xlim=usr.map[1:2], ylim=usr.map[3:4], zlim=range(pretty(r[])),
         bg.image=hill.shading, bg.image.alpha=0.6, dms.tick=TRUE,
         pal=Pal, explanation="Adjustment to bedrock-bottom elevations, in meters.",
-        rivers=list(x=streams.rivers), lakes=list(x=lakes), credit=credit)
+        rivers=list(x=streams.rivers), lakes=list(x=lakes), credit=credit,
+        scale.loc="bottomleft")
 plot(cities, pch=15, cex=0.8, col="#333333", add=TRUE)
 text(cities, labels=cities@data$FEATURE_NA, col="#333333", cex=0.5, pos=1, offset=0.4)
 
@@ -243,7 +247,8 @@ v <- c(paste("Map showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(
 ## ----map_tribs, echo=FALSE, fig.width=fin.map.0[1], fig.height=fin.map.0[2], fig.scap=sprintf("{%s}", v[1]), fig.cap=sprintf("{%s}", v[2])----
 cols <- c("#FF404B", "#A6CEE3", "#000000")
 PlotMap(r, xlim=usr.map[1:2], ylim=usr.map[3:4], bg.image=hill.shading, bg.image.alpha=0.6, dms.tick=TRUE,
-        col=cols, rivers=list(x=streams.rivers), lakes=list(x=lakes), draw.key=FALSE, credit=credit)
+        col=cols, rivers=list(x=streams.rivers), lakes=list(x=lakes), draw.key=FALSE,
+        credit=credit, scale.loc="bottomleft")
 plot(cities, pch=15, cex=0.8, col="#333333", add=TRUE)
 text(cities, labels=cities@data$FEATURE_NA, col="#333333", cex=0.5, pos=1, offset=0.4)
 pos <- c(2, 4, 2, 1, 2, 3, 3, 1, 4, 3,
@@ -379,7 +384,8 @@ FUN <- function(i) {
   r <- rs.model[[i]]
   cols <- c("#7FC97F", "#BEAED4", "#FDC086", "#ffff99")[levels(r)[[1]]$ID]
   PlotMap(r, xlim=usr.map[1:2], ylim=usr.map[3:4], bg.image=hill.shading, bg.image.alpha=0.6,
-          dms.tick=TRUE, col=cols, rivers=list(x=streams.rivers), lakes=list(x=lakes), draw.key=FALSE, credit=credit)
+          dms.tick=TRUE, col=cols, rivers=list(x=streams.rivers), lakes=list(x=lakes),
+          draw.key=FALSE, credit=credit, scale.loc="bottomleft")
   plot(alluvium.extent, border="#FFFFFF7F", add=TRUE)
   lines(transect, col="#1F1F1F")
   text(transect.ends, labels=c("A", "A'"), col="#1F1F1F", cex=0.7, pos=c(3, 4), offset=0.1, font=4)
@@ -546,7 +552,7 @@ v <- c(paste("Map showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(
 cols <- c("#F02311", "#FBB829")
 PlotMap(r, xlim=usr.map.s[1:2], ylim=usr.map.s[3:4], bg.image=hill.shading, bg.image.alpha=0.6,
         dms.tick=TRUE, col=cols, rivers=list(x=streams.rivers), lakes=list(x=lakes), draw.key=FALSE,
-        draw.raster=FALSE, credit=credit)
+        draw.raster=FALSE, credit=credit, scale.loc="bottomleft")
 plot(alluvium.extent, border="#FFFFFF7F", add=TRUE)
 plot(r, col=cols, legend=FALSE, add=TRUE)
 plot(cities, pch=15, cex=0.8, col="#333333", add=TRUE)
@@ -623,7 +629,8 @@ at <- unique(r)
 PlotMap(r, breaks=seq(min(at) - 0.5, max(at) + 0.5),
         xlim=usr.map[1:2], ylim=usr.map[3:4], bg.image=hill.shading,
         bg.image.alpha=0.6, explanation="An identifier for the river subreach.",
-        dms.tick=TRUE, pal=Pal, labels=list(at=at), credit=credit)
+        dms.tick=TRUE, pal=Pal, labels=list(at=at), credit=credit,
+        scale.loc="bottomleft")
 plot(bypass.canal, col="#3399CC", lwd=0.5, add=TRUE)
 text(getSpatialLinesMidPoints(rgeos::gLineMerge(bypass.canal)), labels="Bypass Canal",
      cex=0.5, col="#3399CC", font=3, srt=80, pos=1, offset=1)
@@ -796,7 +803,8 @@ v <- c(paste("Map showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(
 
 ## ----map_wells, echo=FALSE, fig.width=fin.map.0[1], fig.height=fin.map.0[2], fig.scap=sprintf("{%s}", v[1]), fig.cap=sprintf("{%s}", v[2])----
 PlotMap(crs(hill.shading), xlim=usr.map[1:2], ylim=usr.map[3:4], bg.image=hill.shading, dms.tick=TRUE,
-        bg.image.alpha=0.6, rivers=list(x=streams.rivers), lakes=list(x=lakes), credit=credit)
+        bg.image.alpha=0.6, rivers=list(x=streams.rivers), lakes=list(x=lakes), credit=credit,
+        scale.loc="bottomleft")
 plot(alluvium.extent, border="#FFFFFFCC", add=TRUE)
 x <- pod.wells[pod.wells@data$WMISNumber %in% unique(well$WMISNumber), ]
 col <- "#F02311CB"
@@ -859,7 +867,8 @@ if (zlim[1] < 0) {
 PlotMap(r, xlim=usr.map[1:2], ylim=usr.map[3:4], zlim=zlim, bg.image=hill.shading,
         bg.image.alpha=0.6, dms.tick=TRUE, pal=Pal,
         explanation="Volumetric flow rate in cubic meters per day.",
-        rivers=list(x=streams.rivers), lakes=list(x=lakes), credit=credit)
+        rivers=list(x=streams.rivers), lakes=list(x=lakes), credit=credit,
+        scale.loc="bottomleft")
 plot(cities, pch=15, cex=0.8, col="#333333", add=TRUE)
 text(cities, labels=cities@data$FEATURE_NA, col="#333333", cex=0.5, pos=1, offset=0.4)
 
@@ -1132,7 +1141,8 @@ Pal <- function(n) {
 PlotMap(r, xlim=usr.map[1:2], ylim=usr.map[3:4], zlim=zlim, bg.image=hill.shading,
         bg.image.alpha=0.6, dms.tick=TRUE, pal=Pal,
         explanation="Hydraulic head exceedance, in meters above land surface.",
-        rivers=list(x=streams.rivers), lakes=list(x=lakes), credit=credit)
+        rivers=list(x=streams.rivers), lakes=list(x=lakes), credit=credit,
+        scale.loc="bottomleft")
 plot(cities, pch=15, cex=0.8, col="#333333", add=TRUE)
 text(cities, labels=cities@data$FEATURE_NA, col="#333333", cex=0.5, pos=1, offset=0.4)
 
@@ -1146,7 +1156,8 @@ zlim <- range(pretty(range(r[], na.rm=TRUE)))
 PlotMap(r, xlim=usr.map[1:2], ylim=usr.map[3:4], zlim=zlim, bg.image=hill.shading,
         bg.image.alpha=0.6, dms.tick=TRUE,
         explanation="Hydraulic head, in meters above the North American Vertical Datum of 1988.",
-        rivers=list(x=streams.rivers), lakes=list(x=lakes), credit=credit)
+        rivers=list(x=streams.rivers), lakes=list(x=lakes), credit=credit,
+        scale.loc="bottomleft")
 plot(extent(usr.map.n.1), add=TRUE)
 plot(extent(usr.map.n.2), add=TRUE)
 plot(extent(usr.map.n.3), add=TRUE)
@@ -1177,7 +1188,8 @@ FUN <- function(usr, credit=NULL, max.dev.dim=c(21, 56), add.legend=FALSE) {
   PlotMap(r, xlim=usr[1:2], ylim=usr[3:4], zlim=zlim, bg.image=hill.shading,
           bg.image.alpha=0.6, dms.tick=TRUE, max.dev.dim=max.dev.dim,
           credit=credit, rivers=list(x=streams.rivers), lakes=list(x=lakes),
-          explanation=explanation, contour.lines=list(col="#1F1F1F"))
+          explanation=explanation, contour.lines=list(col="#1F1F1F"),
+          scale.loc="bottomleft")
   if (add.legend)
     legend("topright", "Water-table contour", col="#1F1F1F", lty=1, lwd=0.5,
            inset=0.02, cex=0.7, box.lty=1, box.lwd=0.5, bg="#FFFFFFCD")
@@ -1240,7 +1252,7 @@ r0[!is.na(r0[])] <- 1L
 r0 <- as.factor(r0)
 PlotMap(r0, xlim=usr.map.s[1:2], ylim=usr.map.s[3:4], bg.image=hill.shading, bg.image.alpha=0.6,
         dms.tick=TRUE, rivers=list(x=streams.rivers), lakes=list(x=lakes),
-        col="#FFFFFFE6", draw.key=FALSE, credit=credit)
+        col="#FFFFFFE6", draw.key=FALSE, credit=credit, scale.loc="bottomleft")
 cols <- c("#D33F6A", "#000000")
 levs <- sort(unique(wl@data$CONTOUR))
 labs <- formatC(round(levs / m.to.ft), big.mark=",")
@@ -1360,12 +1372,13 @@ FUN <- function(desc) {
   breaks <- pretty(z, n=8)
   PlotMap(crs(hill.shading), xlim=usr.map[1:2], ylim=usr.map[3:4],
           bg.image=hill.shading, dms.tick=TRUE, bg.image.alpha=0.6,
-          rivers=list(x=streams.rivers), lakes=list(x=lakes), credit=credit)
+          rivers=list(x=streams.rivers), lakes=list(x=lakes), credit=credit,
+          scale.loc="bottomleft")
   plot(alluvium.extent, border="#FFFFFFCC", col=NA, add=TRUE)
-  AddBubbles(coordinates(p), z=z, breaks=breaks, inches=c(0, 0.18),
-             title="Residual", subtitle="in meters",
-             bg.pos=Pal.pos, bg.neg=Pal.neg, fg="#FFFFFF40",
-             loc="topright", make.intervals=TRUE)
+  AddPoints(coordinates(p), z=z, breaks=breaks, inches=c(0, 0.18),
+            title="Residual", subtitle="in meters",
+            bg=Pal.pos, bg.neg=Pal.neg, fg="#FFFFFF40",
+            legend.loc="topright", make.intervals=TRUE)
   plot(cities, pch=15, cex=0.8, col="#333333", add=TRUE)
   text(cities, labels=cities@data$FEATURE_NA, col="#333333", cex=0.5, pos=1, offset=0.4)
 }
@@ -1775,7 +1788,7 @@ FUN <- function(i, usr) {
           bg.image=hill.shading, bg.image.alpha=0.6, dms.tick=TRUE, pal=Pal,
           credit="", explanation="Simulated depth to water table, in meters.",
           rivers=list(x=streams.rivers), lakes=list(x=lakes),
-          labels=list(at=at, labels=labs))
+          labels=list(at=at, labels=labs), scale.loc="bottomleft")
   dx <- diff(par("usr")[1:2]) * 0.05
   text(par("usr")[2] - dx, par("usr")[4] - dx, i, pos=2, offset=0,
        font=2, cex=1.5, col="#1F1F1F")
@@ -1928,7 +1941,7 @@ r <- !is.na(rs.model[["lay1.bot"]])
 PlotMap(crs(r), xlim=usr.map[1:2], ylim=usr.map[3:4],
         bg.image=hill.shading, bg.image.alpha=0.6,
         dms.tick=TRUE, rivers=list(x=streams.rivers), lakes=list(x=lakes),
-        draw.key=FALSE, credit=credit, scale.loc=NULL)
+        draw.key=FALSE, credit=credit)
 loc <- extent(r)
 rect(loc[1], loc[3], loc[2], loc[4], col="#F0D878A6", border="#F02311", lwd=1)
 loc <- extent(raster(extend(r, buff <- 6L)))

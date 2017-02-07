@@ -8,18 +8,18 @@
   \describe{
     \item{Date}{date during which gage height was averaged.}
     \item{13135500}{daily mean gage height in meters, recorded at the USGS
-      \href{http://waterdata.usgs.gov/id/nwis/uv/?site_no=13135500}{13135500}
+      \href{https://waterdata.usgs.gov/id/nwis/uv/?site_no=13135500}{13135500}
       Big Wood River near Ketchum streamgage.}
     \item{13139510}{daily mean gage height in meters, recorded at the USGS
-      \href{http://waterdata.usgs.gov/id/nwis/uv/?site_no=13139510}{13139510}
+      \href{https://waterdata.usgs.gov/id/nwis/uv/?site_no=13139510}{13139510}
       Big Wood River at Hailey streamgage.}
     \item{13140800}{daily mean gage height in meters, recorded at the USGS
-      \href{http://waterdata.usgs.gov/id/nwis/uv/?site_no=13140800}{13140800}
+      \href{https://waterdata.usgs.gov/id/nwis/uv/?site_no=13140800}{13140800}
       Big Wood River at Stanton Crossing near Bellevue streamgages.}
   }}
 \source{
 Data queried from the National Water Information System
-  (\href{http://waterdata.usgs.gov/nwis}{NWIS}) database on December 15, 2014,
+  (\href{https://waterdata.usgs.gov/nwis}{NWIS}) database on December 15, 2014,
   by Ross Dickinson (USGS).
   Records recorded on May 26-28, 1991 and March 15-22, 1995 were reassigned
   quality assurance codes of \sQuote{I} because of assumed ice build-up.
@@ -53,4 +53,3 @@ graphics.off()
 
 }
 \keyword{datasets}
-
