@@ -1,12 +1,19 @@
-# wrv 1.1.0.9000
+# wrv 1.1.1
 
-- ...
+- Change graphic dimensions for figures in vignettes.
+  Dimensions are now compatible with plotting routines in the latest version of the **inlmisc** package (v0.2.3).
+
+- Set `integer64 = "allow.loss"` (default < rgdal 1.2) in calls to `rgdal::readOGR` function.
+
+- Set `scale.loc = "bottomright"` in calls to `inlmisc::PlotMap` function.
+
+- Update URL links to HTTP Secure
 
 # wrv 1.1.0
 
 - Add suggested package **leaflet**, allows the creation of interactive maps using the 'Leaflet' JavaScript library and the **htmlwidgets** package.
 
-- Update MODFLOW-USG version from 1.2 to 1.3, see [release notes](http://water.usgs.gov/ogw/mfusg/release.txt) for details.
+- Update MODFLOW-USG version from 1.2 to 1.3, see [release notes](https://water.usgs.gov/ogw/mfusg/release.txt) for details.
 
 - Change NEWS file to markdown format.
 

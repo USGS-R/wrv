@@ -57,4 +57,3 @@ J.C. Fisher, U.S. Geological Survey, Idaho Water Science Center
   A.H. Wylie and J. Sukow, Idaho Department of Water Resources
 }
 \keyword{manip}
-

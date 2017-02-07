@@ -4,17 +4,18 @@ try(knitr::opts_chunk$set(tidy=FALSE, comment="#", fig.align="center"), silent=T
 grDevices::pdf.options(useDingbats=FALSE)
 
 # Device dimension in inches (width, height)
-fin.graph         <- c(7.16, 7.16)
-fin.graph.short   <- c(7.16, 3.50)
-fin.map           <- c(7.01, 9.32)
-fin.map.0         <- c(7.01, 8.65)
-fin.map.s         <- c(7.16, 5.31)
-fin.map.s.0       <- c(7.16, 4.64)
-fin.map.n         <- c(7.16, 7.00)
-fin.map.n.small   <- c(3.50, 3.83)
-fin.map.n.small.0 <- c(3.50, 3.16)
-fin.cs            <- c(7.16, 5.39)
-fin.cs.0          <- c(7.16, 4.73)
+fin.graph         <- c(7.17, 7.17)
+fin.graph.short   <- c(7.17, 3.50)
+fig.graph.small   <- c(3.50, 3.50)
+fin.map           <- c(7.17, 9.31)
+fin.map.0         <- c(7.17, 8.77)
+fin.map.s         <- c(7.17, 5.22)
+fin.map.s.0       <- c(7.17, 4.68)
+fin.map.n         <- c(7.17, 6.97)
+fin.map.n.small   <- c(3.50, 3.60)
+fin.map.n.small.0 <- c(3.50, 3.30)
+fin.cs            <- c(7.17, 5.26)
+fin.cs.0          <- c(7.17, 4.68)
 
 # Extreme coordinates of plotting region (x1, x2, y1, y2)
 usr.map <- c(2451504, 2497815, 1342484, 1402354)
@@ -544,7 +545,7 @@ CheckStatus("sensitivity")
 
 ## ----cities_1------------------------------------------------------------
 path <- file.path(dir.in, "decorative")
-cities <- readOGR(dsn = path, layer = "cities", verbose = FALSE)
+cities <- readOGR(path, "cities", verbose = FALSE, integer64 = "allow.loss")
 cities <- spTransform(cities, crs)
 cities <- cities[cities@data$FEATURE_NA != "Elkhorn Village", ]
 save(cities, file = file.path(dir.out, "cities.rda"), compress = "xz")
@@ -595,7 +596,7 @@ CheckStatus("weather.stations")
 
 ## ----pod_wells_1---------------------------------------------------------
 path <- file.path(dir.in, "div")
-pod.wells <- readOGR(dsn = path, layer = "pod.wells", verbose = FALSE)
+pod.wells <- readOGR(path, "pod.wells", verbose = FALSE, integer64 = "allow.loss")
 pod.wells <- spTransform(pod.wells, crs)
 d <- pod.wells@data
 columns <- c("TopOpen1", "BotOpen1", "TopOpen2", "BotOpen2")
@@ -621,7 +622,7 @@ v <- c(paste("Map showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, nchar(
 ## ----map_completions, echo=FALSE, fig.width=fin.map.0[1], fig.height=fin.map.0[2], fig.scap=sprintf("{%s}", v[1]), fig.cap=sprintf("{%s}", v[2])----
 inlmisc::PlotMap(crs, xlim=usr.map[1:2], ylim=usr.map[3:4], bg.image=wrv::hill.shading,
                  dms.tick=TRUE, bg.image.alpha=0.6, rivers=list(x=wrv::streams.rivers),
-                 lakes=list(x=wrv::lakes), credit=credit)
+                 lakes=list(x=wrv::lakes), credit=credit, scale.loc="bottomleft")
 plot(wrv::alluvium.extent, border="#FFFFFFCC", add=TRUE)
 cols <- c("#9061C2D9", "#FBB829D9")
 pchs <- c(24, 21)
@@ -639,7 +640,7 @@ CheckStatus("pod.wells")
 
 ## ----streamgages_1-------------------------------------------------------
 path <- file.path(dir.in, "gage")
-streamgages <- readOGR(dsn = path, layer = "streamgages", verbose = FALSE)
+streamgages <- readOGR(path, "streamgages", verbose = FALSE)
 streamgages <- spTransform(streamgages, crs)
 save(streamgages, file = file.path(dir.out, "streamgages.rda"), compress = "xz")
 
@@ -648,8 +649,8 @@ CheckStatus("streamgages")
 
 ## ----obs_wells_1---------------------------------------------------------
 path <- file.path(dir.in, "opt")
-obs.wells <- readOGR(dsn = path, layer = "obs.wells", verbose = FALSE,
-                     stringsAsFactors = FALSE)
+obs.wells <- readOGR(path, "obs.wells", verbose = FALSE, stringsAsFactors = FALSE,
+                     integer64 = "allow.loss")
 obs.wells <- spTransform(obs.wells, crs)
 d <- obs.wells@data
 d$COMPLETION <- as.Date(d$COMPLETION, tz = "MST", format = "%Y-%m-%d")
@@ -678,7 +679,7 @@ CheckStatus("obs.wells")
 
 ## ----seepage_study_1-----------------------------------------------------
 path <- file.path(dir.in, "opt")
-seepage.study <- readOGR(dsn = path, layer = "seepage.study", verbose = FALSE)
+seepage.study <- readOGR(path, "seepage.study", verbose = FALSE, integer64 = "allow.loss")
 seepage.study <- spTransform(seepage.study, crs)
 d <- seepage.study@data
 d$Aug <- d$Aug_cfs * cfs.to.m3.per.d
@@ -695,7 +696,7 @@ CheckStatus("seepage.study")
 
 ## ----div_ret_exch_1------------------------------------------------------
 path <- file.path(dir.in, "opt")
-div.ret.exch <- readOGR(dsn = path, layer = "div.ret.exch", verbose = FALSE)
+div.ret.exch <- readOGR(path, "div.ret.exch", verbose = FALSE)
 div.ret.exch <- spTransform(div.ret.exch, crs)
 save(div.ret.exch, file = file.path(dir.out, "div.ret.exch.rda"), compress = "xz")
 
@@ -704,7 +705,7 @@ CheckStatus("div.ret.exch")
 
 ## ----pilot_points_1------------------------------------------------------
 path <- file.path(dir.in, "opt")
-pilot.points <- readOGR(dsn = path, layer = "pilot.points", verbose = FALSE)
+pilot.points <- readOGR(path, "pilot.points", verbose = FALSE, integer64 = "allow.loss")
 pilot.points <- spTransform(pilot.points, crs)
 save(pilot.points, file = file.path(dir.out, "pilot.points.rda"), compress = "xz")
 
@@ -713,7 +714,7 @@ CheckStatus("pilot.points")
 
 ## ----canals_1------------------------------------------------------------
 path <- file.path(dir.in, "canal")
-canals <- readOGR(dsn = path, layer = "canals", verbose = FALSE)
+canals <- readOGR(path, "canals", verbose = FALSE)
 canals <- spTransform(canals, crs)
 canals@data$Name <- as.character(canals@data$NAME)
 canals@data <- canals@data[, c("EntityName", "Name")]
@@ -723,7 +724,7 @@ save(canals, file = file.path(dir.out, "canals.rda"), compress = "xz")
 CheckStatus("canals")
 
 ## ----river_reaches_1-----------------------------------------------------
-river.reaches <- readOGR(dsn = dir.in, layer = "river.reaches", verbose = FALSE)
+river.reaches <- readOGR(dir.in, "river.reaches", verbose = FALSE, integer64 = "allow.loss")
 river.reaches <- spTransform(river.reaches, crs)
 d <- river.reaches@data
 d$RchAvg <- d$RchAvg_cfs * cfs.to.m3.per.d
@@ -740,7 +741,7 @@ CheckStatus("river.reaches")
 
 ## ----streams_rivers_1----------------------------------------------------
 path <- file.path(dir.in, "decorative")
-streams.rivers <- readOGR(dsn = path, layer = "rivers", verbose = FALSE)
+streams.rivers <- readOGR(path, "rivers", verbose = FALSE, integer64 = "allow.loss")
 streams.rivers <- spTransform(streams.rivers, crs)
 save(streams.rivers, file = file.path(dir.out, "streams.rivers.rda"), compress = "xz")
 
@@ -749,7 +750,8 @@ CheckStatus("streams.rivers")
 
 ## ----tributary_streams_1-------------------------------------------------
 path <- file.path(dir.in, "decorative")
-tributary.streams <- readOGR(dsn = path, layer = "tributary.streams", verbose = FALSE)
+tributary.streams <- readOGR(path, "tributary.streams", verbose = FALSE,
+                             integer64 = "allow.loss")
 tributary.streams <- spTransform(tributary.streams, crs)
 save(tributary.streams, file = file.path(dir.out, "tributary.streams.rda"),
      compress = "xz")
@@ -759,7 +761,7 @@ CheckStatus("tributary.streams")
 
 ## ----bypass_canal_1------------------------------------------------------
 path <- file.path(dir.in, "canal")
-bypass.canal <- readOGR(dsn = path, layer = "bypass.canal", verbose = FALSE)
+bypass.canal <- readOGR(path, "bypass.canal", verbose = FALSE)
 bypass.canal <- spTransform(bypass.canal, crs)
 bypass.canal <- as(bypass.canal, "SpatialLines")
 save(bypass.canal, file = file.path(dir.out, "bypass.canal.rda"), compress = "xz")
@@ -768,7 +770,7 @@ save(bypass.canal, file = file.path(dir.out, "bypass.canal.rda"), compress = "xz
 CheckStatus("bypass.canal")
 
 ## ----wl_200610_1---------------------------------------------------------
-wl.200610 <- readOGR(dsn = dir.in, layer = "wl.200610", verbose = FALSE)
+wl.200610 <- readOGR(dir.in, "wl.200610", verbose = FALSE)
 wl.200610 <- spTransform(wl.200610, crs)
 wl.200610@data$CONTOUR <- wl.200610@data$CONTOUR * ft.to.m
 save(wl.200610, file = file.path(dir.out, "wl.200610.rda"), compress = "xz")
@@ -778,7 +780,7 @@ CheckStatus("wl.200610")
 
 ## ----major_roads_1-------------------------------------------------------
 path <- file.path(dir.in, "decorative")
-major.roads <- readOGR(dsn = path, layer = "major.roads", verbose = FALSE)
+major.roads <- readOGR(path, "major.roads", verbose = FALSE)
 major.roads <- spTransform(major.roads, crs)
 save(major.roads, file = file.path(dir.out, "major.roads.rda"), compress = "xz")
 
@@ -787,7 +789,8 @@ CheckStatus("major.roads")
 
 ## ----alluvium_extent_1---------------------------------------------------
 path <- file.path(dir.in, "extent")
-alluvium.extent <- readOGR(dsn = path, layer = "alluvium.extent", verbose = FALSE)
+alluvium.extent <- readOGR(path, "alluvium.extent", verbose = FALSE,
+                           integer64 = "allow.loss")
 alluvium.extent <- spTransform(alluvium.extent, crs)
 save(alluvium.extent, file = file.path(dir.out, "alluvium.extent.rda"), compress = "xz")
 
@@ -796,7 +799,7 @@ CheckStatus("alluvium.extent")
 
 ## ----clay_extent_1-------------------------------------------------------
 path <- file.path(dir.in, "extent")
-clay.extent <- readOGR(dsn = path, layer = "clay.extent", verbose = FALSE)
+clay.extent <- readOGR(path, "clay.extent", verbose = FALSE, integer64 = "allow.loss")
 clay.extent <- spTransform(clay.extent, crs)
 save(clay.extent, file = file.path(dir.out, "clay.extent.rda"), compress = "xz")
 
@@ -805,7 +808,7 @@ CheckStatus("clay.extent")
 
 ## ----basalt_extent_1-----------------------------------------------------
 path <- file.path(dir.in, "extent")
-basalt.extent <- readOGR(dsn = path, layer = "basalt.extent", verbose = FALSE)
+basalt.extent <- readOGR(path, "basalt.extent", verbose = FALSE)
 basalt.extent <- spTransform(basalt.extent, crs)
 save(basalt.extent, file = file.path(dir.out, "basalt.extent.rda"), compress = "xz")
 
@@ -889,7 +892,7 @@ CheckStatus("precip.zones")
 
 ## ----irr_entities_1------------------------------------------------------
 path <- file.path(dir.in, "irr")
-irr.entities <- readOGR(dsn = path, layer = "irr.entities", verbose = FALSE)
+irr.entities <- readOGR(path, "irr.entities", verbose = FALSE)
 irr.entities <- spTransform(irr.entities, crs)
 irr.entities <- rgeos::gBuffer(irr.entities, width = 0, byid = TRUE)
 d <- irr.entities@data
@@ -907,7 +910,7 @@ yr <- c(1996, 2000, 2002, 2006, 2008, 2009, 2010)
 files <- paste0("irr.lands.", yr)
 irr.lands <- list()
 for (i in seq_along(files)) {
-  p <- readOGR(dsn = path, layer = files[i], verbose = FALSE)
+  p <- readOGR(path, files[i], verbose = FALSE)
   p <- spTransform(p, crs)
   p@data <- p@data[, paste0("STATUS_", substr(yr[i], 1, 3)), drop = FALSE]
   names(p@data) <- "Status"
@@ -924,7 +927,7 @@ CheckStatus("irr.lands")
 
 ## ----lakes_1-------------------------------------------------------------
 path <- file.path(dir.in, "decorative")
-lakes <- readOGR(dsn = path, layer = "lakes", verbose = FALSE)
+lakes <- readOGR(path, "lakes", verbose = FALSE)
 lakes <- spTransform(lakes, crs)
 save(lakes, file = file.path(dir.out, "lakes.rda"), compress = "xz")
 
@@ -932,7 +935,7 @@ save(lakes, file = file.path(dir.out, "lakes.rda"), compress = "xz")
 CheckStatus("lakes")
 
 ## ----public_parcels_1----------------------------------------------------
-public.parcels <- readOGR(dsn = dir.in, layer = "public.parcels", verbose = FALSE)
+public.parcels <- readOGR(dir.in, "public.parcels", verbose = FALSE)
 public.parcels <- spTransform(public.parcels, crs)
 public.parcels <- as(public.parcels, "SpatialPolygons")
 save(public.parcels, file = file.path(dir.out, "public.parcels.rda"), compress = "xz")
@@ -941,7 +944,7 @@ save(public.parcels, file = file.path(dir.out, "public.parcels.rda"), compress =
 CheckStatus("public.parcels")
 
 ## ----soils_1-------------------------------------------------------------
-soils <- readOGR(dsn = dir.in, layer = "soils", verbose = FALSE)
+soils <- readOGR(dir.in, "soils", verbose = FALSE)
 soils <- spTransform(soils, crs)
 soils@data <- soils@data[, c("GroupSym", "SoilLayer")]
 names(soils@data)[1] <- "GroupSymbol"
@@ -961,7 +964,7 @@ save(soils, file = file.path(dir.out, "soils.rda"), compress = "xz")
 CheckStatus("soils")
 
 ## ----wetlands_1----------------------------------------------------------
-wetlands <- readOGR(dsn = dir.in, layer = "wetlands", verbose = FALSE)
+wetlands <- readOGR(dir.in, "wetlands", verbose = FALSE)
 wetlands <- spTransform(wetlands, crs)
 wetlands <- as(wetlands, "SpatialPolygons")
 save(wetlands, file = file.path(dir.out, "wetlands.rda"), compress = "xz")
@@ -970,8 +973,7 @@ save(wetlands, file = file.path(dir.out, "wetlands.rda"), compress = "xz")
 CheckStatus("wetlands")
 
 ## ----bellevue_wwtp_ponds_1-----------------------------------------------
-bellevue.wwtp.ponds <- readOGR(dsn = dir.in, layer = "bellevue.wwtp.ponds",
-                               verbose = FALSE)
+bellevue.wwtp.ponds <- readOGR(dir.in, "bellevue.wwtp.ponds", verbose = FALSE)
 bellevue.wwtp.ponds <- spTransform(bellevue.wwtp.ponds, crs)
 bellevue.wwtp.ponds <- as(bellevue.wwtp.ponds, "SpatialPolygons")
 save(bellevue.wwtp.ponds, file = file.path(dir.out, "bellevue.wwtp.ponds.rda"),
@@ -982,7 +984,7 @@ CheckStatus("bellevue.wwtp.ponds")
 
 ## ----kriging_zones_1-----------------------------------------------------
 path <- file.path(dir.in, "opt")
-kriging.zones <- readOGR(dsn = path, layer = "kriging.zones", verbose = FALSE)
+kriging.zones <- readOGR(path, "kriging.zones", verbose = FALSE)
 kriging.zones <- spTransform(kriging.zones, crs)
 save(kriging.zones, file = file.path(dir.out, "kriging.zones.rda"), compress = "xz")
 
@@ -991,7 +993,7 @@ CheckStatus("kriging.zones")
 
 ## ----idaho_1-------------------------------------------------------------
 path <- file.path(dir.in, "decorative")
-idaho <- readOGR(dsn = path, layer = "idaho", verbose = FALSE)
+idaho <- readOGR(path, "idaho", verbose = FALSE)
 idaho <- as(idaho, "SpatialPolygons")
 idaho <- spTransform(idaho, crs)
 save(idaho, file = file.path(dir.out, "idaho.rda"), compress = "xz")

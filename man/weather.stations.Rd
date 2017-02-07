@@ -43,4 +43,3 @@ str(weather.stations@data)
 
 }
 \keyword{datasets}
-

@@ -34,4 +34,3 @@ print(levels(rs.entities[["199507"]])[[1]])
 
 }
 \keyword{datasets}
-

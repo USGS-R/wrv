@@ -28,4 +28,3 @@ sp::plot(rs.rech.non.irr[["199507"]])
 
 }
 \keyword{datasets}
-

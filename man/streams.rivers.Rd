@@ -25,4 +25,3 @@ str(streams.rivers@data)
 
 }
 \keyword{datasets}
-

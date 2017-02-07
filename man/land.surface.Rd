@@ -13,18 +13,18 @@
   The spatial grid is composed of 565 rows and 429 columns,
   and has cell sizes that are constant at 100 meters by 100 meters.}
 \source{
-The National Elevation Dataset (\href{http://ned.usgs.gov/}{NED})
+The National Map (\href{https://nationalmap.gov/elevation.html}{TNM})
   1/3-arc-second raster (Gesch, 2007; Gesch and others, 2002),
   accessed on December 1, 2015.
   This dataset can be downloaded in a Esri ArcGRID format using the
-  \href{http://viewer.nationalmap.gov/viewer/}{National Map Viewer}.
-  NED data are distributed in geographic coordinates in units of decimal degrees,
+  \href{https://viewer.nationalmap.gov/viewer/}{The National Map Viewer}.
+  Elevation datasets are distributed in geographic coordinates in units of decimal degrees,
   and in conformance with the NAD 83.
   Elevation values are in meters above the NAVD 88.
   The west, east, south, and north bounding coordinates for this dataset are
   -115, -114, 43, and 44 decimal degrees, respectively.
   Post-processing includes:
-    (1) project the values of the NED dataset into the \code{\link{alluvium.thickness}}
+    (1) project the values of the elevation dataset into the \code{\link{alluvium.thickness}}
         spatial grid using bilinear interpolation, and
     (2) set values in cells where the elevation of the alluvium bottom is missing to NA.
 }
@@ -51,4 +51,3 @@ Gesch, D.B., 2007, The National Elevation Dataset, in Maune, D., ed.,
   v. 68, no. 1, p. 5-11.
 }
 \keyword{datasets}
-

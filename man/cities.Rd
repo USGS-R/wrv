@@ -28,4 +28,3 @@ text(cities, labels = cities@data$FEATURE_NA, col = col, cex = 0.5, pos = 1, off
 
 }
 \keyword{datasets}
-
