@@ -147,9 +147,6 @@ Groundwater flow in the WRV aquifer system is simulated using the
 \dontrun{# see Appendix D. Uncalibrated Groundwater-Flow Model}
 
 }
-\author{
-J.C. Fisher, U.S. Geological Survey, Idaho Water Science Center
-}
 \references{
 Ibaraki, M., 2005, \eqn{\chi}MD User's guide-An efficient sparse matrix solver library, version 1.30:
   Columbus, Ohio State University School of Earth Sciences.
@@ -162,5 +159,7 @@ Ibaraki, M., 2005, \eqn{\chi}MD User's guide-An efficient sparse matrix solver l
   control volume finite-difference formulation: U.S. Geological Survey Techniques and Methods, book 6, chap. A45,
   66 p., available at \url{https://pubs.usgs.gov/tm/06/a45/}.
 }
+\author{
+J.C. Fisher, U.S. Geological Survey, Idaho Water Science Center
+}
 \keyword{IO}
-

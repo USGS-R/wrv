@@ -29,4 +29,3 @@ print(levels(r.canals)[[1]])
 
 }
 \keyword{datasets}
-

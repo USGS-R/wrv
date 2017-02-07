@@ -51,4 +51,3 @@ Gesch, D.B., 2007, The National Elevation Dataset, in Maune, D., ed.,
   v. 68, no. 1, p. 5-11.
 }
 \keyword{datasets}
-

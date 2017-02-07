@@ -77,4 +77,3 @@ Bartolino, J.R., and Adkins, C.B., 2012, Hydrogeologic framework of the
   \url{https://pubs.er.usgs.gov/publication/fs20043115}.
 }
 \keyword{datasets}
-

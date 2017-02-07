@@ -35,4 +35,3 @@ Moreland, J.A., 1977, Ground water-surface water relations in the Silver Creek a
   available at \url{https://pubs.er.usgs.gov/publication/ofr77456}.
 }
 \keyword{datasets}
-

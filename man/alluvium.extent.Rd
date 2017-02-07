@@ -29,4 +29,3 @@ Bartolino, J.R., and Adkins, C.B., 2012,
   available at \url{https://pubs.usgs.gov/sir/2012/5053/}.
 }
 \keyword{datasets}
-

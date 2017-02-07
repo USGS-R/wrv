@@ -45,4 +45,3 @@ print(precip.zones)
 \code{\link{precipitation}}
 }
 \keyword{datasets}
-

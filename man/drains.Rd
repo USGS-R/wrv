@@ -37,4 +37,3 @@ sp::plot(alluvium.extent, add = TRUE)
 
 }
 \keyword{datasets}
-

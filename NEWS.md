@@ -1,5 +1,8 @@
 # wrv 1.1.1
 
+- Change graphic dimensions for figures in vignettes.
+  Dimensions are now compatible with plotting routines in the latest version of the **inlmisc** package (v0.2.3).
+
 - Set `integer64 = "allow.loss"` (default < rgdal 1.2) in calls to `rgdal::readOGR` function.
 
 - Set `scale.loc = "bottomright"` in calls to `inlmisc::PlotMap` function.

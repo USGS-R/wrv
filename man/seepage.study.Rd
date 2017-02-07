@@ -45,4 +45,3 @@ Bartolino, J.R., 2014, Stream seepage and groundwater levels, Wood River Valley,
   34 p., \url{https://dx.doi.org/10.3133/sir20145151}.
 }
 \keyword{datasets}
-

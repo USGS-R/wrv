@@ -130,6 +130,9 @@
 #'
 #' @keywords IO
 #'
+#' @import sp
+#' @import raster
+#'
 #' @export
 #'
 #' @examples

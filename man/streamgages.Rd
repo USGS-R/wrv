@@ -28,4 +28,3 @@ str(streamgages)
 
 }
 \keyword{datasets}
-

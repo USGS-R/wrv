@@ -42,4 +42,3 @@ Skinner, K.D., Bartolino, J.R., and Tranmer, A.W., 2007,
   available at \url{https://pubs.usgs.gov/sir/2007/5258/}
 }
 \keyword{datasets}
-

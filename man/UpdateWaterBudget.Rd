@@ -161,11 +161,10 @@ Files read during execution, and located within the \code{dir.run} directory,
 }
 
 }
-\author{
-J.C. Fisher, U.S. Geological Survey, Idaho Water Science Center
-}
 \seealso{
 \code{\link{RunWaterBalance}}, \code{\link{GetSeasonalMult}}
 }
+\author{
+J.C. Fisher, U.S. Geological Survey, Idaho Water Science Center
+}
 \keyword{utilities}
-

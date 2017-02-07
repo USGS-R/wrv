@@ -3,7 +3,7 @@ t0 <- Sys.time()
 try(knitr::opts_chunk$set(tidy=FALSE, comment="#", fig.align="center"), silent=TRUE)
 
 ## ----eval=FALSE----------------------------------------------------------
-#  repos <- c("https://owi.usgs.gov/R", getOption("repos"))
+#  repos <- c("https://owi.usgs.gov/R", "https://cloud.r-project.org/")
 #  update.packages(ask = FALSE, repos = repos)
 #  install.packages("wrv", repos = repos, dependencies = TRUE)
 

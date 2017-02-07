@@ -25,4 +25,3 @@ str(lakes@data)
 
 }
 \keyword{datasets}
-

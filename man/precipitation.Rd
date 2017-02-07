@@ -56,4 +56,3 @@ National Oceanic and Atmospheric Administration's National Weather Service
 \code{\link{precip.zones}}, \code{\link{swe}}
 }
 \keyword{datasets}
-

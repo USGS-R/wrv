@@ -18,7 +18,7 @@ You can install the stable version of **wrv** from [GRAN](https://owi.usgs.gov/R
 and its dependencies from [CRAN](https://cran.r-project.org/), using the following commands:
 
 ```r
-repos <- c("https://owi.usgs.gov/R", getOption("repos"))
+repos <- c("https://owi.usgs.gov/R", "https://cloud.r-project.org/")
 install.packages("wrv", repos = repos, dependencies = TRUE)
 ```
 

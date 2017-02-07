@@ -26,18 +26,18 @@ grDevices::pdf.options(useDingbats=FALSE)
 options(preferRaster=TRUE, scipen=0, digits=2)
 
 # Device dimension in inches (width, height)
-fin.graph         <- c(7.16, 7.16)
-fin.graph.short   <- c(7.16, 3.50)
+fin.graph         <- c(7.17, 7.17)
+fin.graph.short   <- c(7.17, 3.50)
 fig.graph.small   <- c(3.50, 3.50)
-fin.map           <- c(7.01, 9.32)
-fin.map.0         <- c(7.01, 8.65)
-fin.map.s         <- c(7.16, 5.31)
-fin.map.s.0       <- c(7.16, 4.64)
-fin.map.n         <- c(7.16, 7.00)
-fin.map.n.small   <- c(3.50, 3.83)
-fin.map.n.small.0 <- c(3.50, 3.16)
-fin.cs            <- c(7.16, 5.39)
-fin.cs.0          <- c(7.16, 4.73)
+fin.map           <- c(7.17, 9.31)
+fin.map.0         <- c(7.17, 8.77)
+fin.map.s         <- c(7.17, 5.22)
+fin.map.s.0       <- c(7.17, 4.68)
+fin.map.n         <- c(7.17, 6.97)
+fin.map.n.small   <- c(3.50, 3.60)
+fin.map.n.small.0 <- c(3.50, 3.30)
+fin.cs            <- c(7.17, 5.26)
+fin.cs.0          <- c(7.17, 4.68)
 
 # Extreme coordinates of plotting region (x1, x2, y1, y2)
 usr.map     <- c(2451504, 2497815, 1342484, 1402354)
@@ -2225,10 +2225,10 @@ FUN <- function(desc) {
           rivers=list(x=streams.rivers), lakes=list(x=lakes), credit=credit,
           scale.loc="bottomleft")
   plot(alluvium.extent, border="#FFFFFFCC", col=NA, add=TRUE)
-  AddBubbles(coordinates(p), z=z, breaks=breaks, inches=c(0, 0.18),
-             title="Residual", subtitle="in meters",
-             bg=Pal.pos, bg.neg=Pal.neg, fg="#FFFFFF40",
-             loc="topright", make.intervals=TRUE)
+  AddPoints(coordinates(p), z=z, breaks=breaks, inches=c(0, 0.18),
+            title="Residual", subtitle="in meters",
+            bg=Pal.pos, bg.neg=Pal.neg, fg="#FFFFFF40",
+            legend.loc="topright", make.intervals=TRUE)
   plot(cities, pch=15, cex=0.8, col="#333333", add=TRUE)
   text(cities, labels=cities@data$FEATURE_NA, col="#333333", cex=0.5, pos=1, offset=0.4)
 }
