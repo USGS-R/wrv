@@ -1,6 +1,6 @@
 Package: wrv
 Title: Wood River Valley Groundwater-Flow Model
-Version: 1.1.1
+Version: 1.1.1.9000
 Authors@R: person(given=c("Jason", "C."), family="Fisher", role=c("aut", "cre"), email="jfisher@usgs.gov")
 Description: A processing program for the groundwater-flow model of the Wood
     River Valley aquifer system, south-central Idaho. Included in the package is
