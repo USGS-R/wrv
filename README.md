@@ -19,6 +19,7 @@ and its dependencies from [CRAN](https://cran.r-project.org/), using the followi
 
 ```r
 repos <- c("https://owi.usgs.gov/R", "https://cloud.r-project.org/")
+update.packages(ask = FALSE, repos = repos)
 install.packages("wrv", repos = repos, dependencies = TRUE)
 ```
 
