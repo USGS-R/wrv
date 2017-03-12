@@ -1,7 +1,7 @@
 # wrv
 
 [![Travis-CI Build Status](https://travis-ci.org/USGS-R/wrv.svg?branch=master)](https://travis-ci.org/USGS-R/wrv)
-[![CC0](https://img.shields.io/badge/license-CC0%201.0-brightgreen.svg)](https://creativecommons.org/publicdomain/zero/1.0/)
+[![CC0](https://img.shields.io/badge/license-CC0--1.0-brightgreen.svg)](https://creativecommons.org/publicdomain/zero/1.0/)
 
 ## Overview
 
