@@ -41,7 +41,7 @@ rasterOptions(standardnames = FALSE)
 
 ## ----download_git, message=FALSE, results="hide"-------------------------
 url <- "https://github.com/USGS-R/wrv.git"
-path <-  file.path(tempdir(), basename(tools::file_path_sans_ext(url)))
+path <- file.path(tempdir(), basename(tools::file_path_sans_ext(url)))
 git2r::clone(url, path, progress = FALSE)
 dir.in <- file.path(path, "inst/extdata")
 files <- list.files(dir.in, pattern = "*.zip$", full.names = TRUE, recursive = TRUE)
