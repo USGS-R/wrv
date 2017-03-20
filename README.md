@@ -1,6 +1,7 @@
 # wrv
 
 [![Travis-CI Build Status](https://travis-ci.org/USGS-R/wrv.svg?branch=master)](https://travis-ci.org/USGS-R/wrv)
+[![CC0](https://img.shields.io/badge/license-CC0--1.0-brightgreen.svg)](https://creativecommons.org/publicdomain/zero/1.0/)
 
 ## Overview
 
@@ -61,5 +62,3 @@ is made by the USGS or the U.S. Government as to the accuracy and functioning of
 and no responsibility is assumed by the USGS in connection therewith.
 
 This software is provided "AS IS."
-
-[![CC0](https://i.creativecommons.org/p/zero/1.0/88x31.png)](https://creativecommons.org/publicdomain/zero/1.0/)

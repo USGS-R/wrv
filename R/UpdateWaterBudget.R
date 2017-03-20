@@ -306,7 +306,7 @@ UpdateWaterBudget <- function(dir.run, id,
   f <- file.path(dir.run, "UpdateBudget.bat")
   if (!file.exists(f)) {
     cmd <- shQuote(paste0(file.path(R.home(component="bin"), "Rscript")))
-    cmd <- paste(cmd, "--vanilla --default-packages=utils,stats,raster,wrv -e")
+    cmd <- paste(cmd, "--vanilla --default-packages=raster,wrv -e")
     cmd <- paste(cmd, shQuote(paste0("UpdateWaterBudget(", shQuote("."), ", ",
                                      shQuote(id), ")")))
     cat(cmd, file=f, sep="\n")

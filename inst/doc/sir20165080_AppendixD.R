@@ -960,7 +960,7 @@ setwd(wd)
 ## ----read_budget_1-------------------------------------------------------
 file.bud <- file.path(dir.run, paste0(id, ".bud"))
 budget <- ReadModflowBinary(file.bud, "flow", rm.totim.0 = TRUE)
-budget <- SummariseBudget(budget)
+budget <- SummariseBudget(budget, c("wells", "drains", "river leakage"), id = "id")
 budget <- dplyr::mutate(budget, totim.date = as.Date(totim, origin = tr.stress.periods[1]))
 
 ## ----read_budget_2, echo=FALSE-------------------------------------------
@@ -1097,7 +1097,7 @@ print(tbl, include.rownames=FALSE, caption.placement="top", booktabs=TRUE,
 ## ----read_head-----------------------------------------------------------
 heads <- ReadModflowBinary(file.path(dir.run, paste0(id, ".hds")))
 dates <- as.Date(vapply(heads, function(i) i$totim, 0), origin = tr.stress.periods[1])
-layer <- vapply(heads, function(i) i$ilay, 0L)
+layer <- vapply(heads, function(i) i$layer, 0L)
 FUN <- function(i) {return(setValues(raster(rs.model), i$d))}
 rs.heads.lay1 <- mask(stack(lapply(heads[layer == 1L], FUN)), rs.model[["lay1.bot"]])
 rs.heads.lay2 <- mask(stack(lapply(heads[layer == 2L], FUN)), rs.model[["lay2.bot"]])
