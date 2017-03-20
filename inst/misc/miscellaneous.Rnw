@@ -106,7 +106,7 @@ verticies <- as(transect, "SpatialPoints")
 transect.ends <- verticies[c(1, length(verticies)), ]
 
 budget <- ReadModflowBinary(file.path(path, "wrv_mfusg.bud"), "flow")
-b <- SummariseBudget(budget)
+b <- SummariseBudget(budget, c("wells", "drains", "river leakage"), id="id")
 b <- dplyr::mutate(b, totim.date=as.Date(totim, origin="1995-01-01"))
 
 
