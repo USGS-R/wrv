@@ -1,6 +1,6 @@
 # wrv 1.1.1.9000
 
-- ...
+- In `GetWellConfig` function, remove wells located outside the model grid.
 
 # wrv 1.1.1
 
