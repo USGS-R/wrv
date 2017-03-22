@@ -2,7 +2,7 @@
 
 - In `GetWellConfig` function, fixed error that occurred when a well was located outside the model grid.
 
-- Specify `desc` argument in `inlmisc::SummariseBudget` function call--required for new version of **inlmisc** package.
+- Specify `desc` argument in `inlmisc::SummariseBudget` function call, required for new version of **inlmisc** package.
 
 # wrv 1.1.1
 
