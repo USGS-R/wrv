@@ -517,7 +517,8 @@ RunWaterBalance <- function(r.grid, tr.stress.periods,
 
   is.non.irr <- div.gw$YearMonth %in% yr.mo.non.irr
   d <- div.gw[is.non.irr, c("WMISNumber", "YearMonth", "GWDiv")]
-
+  d <- aggregate(d$GWDiv, by=list(paste(d[, 1], d[, 2])), sum)
+  d <- data.frame(do.call(rbind, strsplit(d[, 1], split=" ")), d[, 2])
   rows <- match(d[, 1], rownames(pod.rech))
   cols <- match(d[, 2], colnames(pod.rech))
   pod.rech[cbind(rows, cols)] <- d[, 3]
