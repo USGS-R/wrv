@@ -1,6 +1,6 @@
-# wrv 1.1.1.9000
+# wrv 1.1.2
 
-- In `RunWaterBalance` function, sum groundwater diversions for `div.gw` records having an identical site location and stress period.
+- In `RunWaterBalance` function, sum groundwater diversions for `div.gw` dataset records having an identical site location and stress period.
 
 - Remove hard codding of irrigation years in appendix C, see `irr.lands` dataset creation.
 
