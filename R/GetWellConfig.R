@@ -54,11 +54,12 @@
 #' \dontrun{# see Appendix D. Uncalibrated Groundwater-Flow Model}
 #'
 
-GetWellConfig <- function(rs.model, wells, well.col, rate.col=NULL,
-                          lay2.hk.tol=1e-02) {
+GetWellConfig <- function(rs.model, wells, well.col, rate.col=NULL, lay2.hk.tol=1e-02) {
 
   wells@data$cell <- sp::over(wells, methods::as(rs.model, "SpatialGrid"))
-  is.in.model <- as.logical(!is.na(rs.model[["lay1.top"]])[wells@data$cell])
+  is.in.grid <- !is.na(wells@data$cell)
+  wells <- wells[is.in.grid, , drop=FALSE]
+  is.in.model <- !is.na(rs.model[["lay1.top"]][wells@data$cell])
   wells <- wells[is.in.model, , drop=FALSE]
 
   d <- wells@data

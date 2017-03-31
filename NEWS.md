@@ -1,6 +1,12 @@
-# wrv 1.1.1.9000
+# wrv 1.1.2
 
-- ...
+- In `RunWaterBalance` function, sum groundwater diversions for `div.gw` dataset records having an identical site location and stress period.
+
+- Remove hard codding of irrigation years in appendix C, see `irr.lands` dataset creation.
+
+- In `GetWellConfig` function, fixed error that occurred when a well was located outside the model grid.
+
+- Specify `desc` argument in `inlmisc::SummariseBudget` function call, required for new version of **inlmisc** package.
 
 # wrv 1.1.1
 
