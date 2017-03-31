@@ -269,8 +269,7 @@ RunWaterBalance <- function(r.grid, tr.stress.periods,
 
     comp <- entity.components[[i]]@data
     comp <- comp[comp$Source == "Mixed", cols]
-    names(comp) <- c("EntityName", "area.mix", "et.mix", "precip.mix",
-                     "cir.mix")
+    names(comp) <- c("EntityName", "area.mix", "et.mix", "precip.mix", "cir.mix")
     d <- suppressWarnings(dplyr::left_join(d, comp, by="EntityName"))
     d$cir.mix[is.na(d$cir.mix)] <- 0
 
@@ -312,8 +311,7 @@ RunWaterBalance <- function(r.grid, tr.stress.periods,
     d$hg.mix[is.src] <- d$SWDel[is.src]
     d$gw.dem.mix[is.src] <- d$cir.mix[is.src] / d$Eff[is.src] - d$hg.mix[is.src]
     d$gw.dem.mix[is.src & d$cir.mix <= 0] <- 0
-    d$gw.div.est[is.src] <- d$WWDiv[is.src] - d$gw.dem.mix[is.src] -
-                            d$GWDiv[is.src]
+    d$gw.div.est[is.src] <- d$WWDiv[is.src] - d$gw.dem.mix[is.src] - d$GWDiv[is.src]
     is.pos <- is.src & d$gw.div.est >= 0
     d$gw.div.est[is.pos] <- 0
     d$rech.mix[is.src] <- d$hg.mix[is.src] - d$GWDiv[is.src] + d$WWDiv[is.src] -
@@ -346,8 +344,7 @@ RunWaterBalance <- function(r.grid, tr.stress.periods,
     d$gw.dem.gw[is.src & d$cir.gw <= 0] <- 0
     d$gw.div.est[is.src] <- -d$gw.dem.gw[is.src] - d$GWDiv[is.src]
     d$gw.div.est[is.src & d$gw.div.est > 0] <- 0
-    d$rech.gw[is.src] <- -d$GWDiv[is.src] - d$gw.div.est[is.src] -
-                         d$cir.gw[is.src]
+    d$rech.gw[is.src] <- -d$GWDiv[is.src] - d$gw.div.est[is.src] - d$cir.gw[is.src]
 
     return(d)
   }
@@ -357,18 +354,13 @@ RunWaterBalance <- function(r.grid, tr.stress.periods,
   cols <- names(div.by.entity[[1]])
   FUN <- function(i) {
     d <- data.frame(EntityName=levels(irr.entities@data$EntityName))
-
     d <- suppressWarnings(dplyr::left_join(d, sw.div.by.entity[[i]], by="EntityName"))
     d$SWDiv[is.na(d$SWDiv)] <- 0
-
     d <- suppressWarnings(dplyr::left_join(d, gw.div.by.entity[[i]], by="EntityName"))
     d$GWDiv[is.na(d$GWDiv)] <- 0
-
     d <- suppressWarnings(dplyr::left_join(d, ww.div.by.entity[[i]], by="EntityName"))
     d$WWDiv[is.na(d$WWDiv)] <- 0
-
     d$rech.gw <- d$SWDiv - d$GWDiv + d$WWDiv
-
     d[, cols[!cols %in% names(d)]] <- NA
     return(d[, cols])
   }
@@ -383,8 +375,7 @@ RunWaterBalance <- function(r.grid, tr.stress.periods,
 
     cols <- names(div.by.entity[[1]])
     d <- dplyr::bind_rows(lapply(div.by.entity, function(i) i[, cols]))
-    year.month <- rep(names(div.by.entity),
-                      times=vapply(div.by.entity, nrow, 0L))
+    year.month <- rep(names(div.by.entity), times=vapply(div.by.entity, nrow, 0L))
     d <- cbind(YearMonth=year.month, d)
     rownames(d) <- NULL
     d <- d[order(d$EntityName), c(2, 1, 3:ncol(d))]
@@ -464,12 +455,10 @@ RunWaterBalance <- function(r.grid, tr.stress.periods,
   FUN <- function(i) {
     d <- comb.sw.irr
     d$sw.rate <- 0
-    priority.cut <- priority.cuts[priority.cuts$YearMonth == i,
-                                       "Pdate_BWR"]
+    priority.cut <- priority.cuts[priority.cuts$YearMonth == i, "Pdate_BWR"]
     is.lt <- !is.sc.src & (!is.na(priority.cut) & d$Pdate < priority.cut)
     d$sw.rate[is.lt] <- d$MaxDivRate[is.lt]
-    priority.cut <- priority.cuts[priority.cuts$YearMonth == i,
-                                       "Pdate_SC"]
+    priority.cut <- priority.cuts[priority.cuts$YearMonth == i, "Pdate_SC"]
     is.lt <- is.sc.src & (!is.na(priority.cut) & d$Pdate < priority.cut)
     d$sw.rate[is.lt] <- d$MaxDivRate[is.lt]
     d <- dplyr::summarise_(dplyr::group_by_(d, "WaterRight"),
@@ -486,8 +475,7 @@ RunWaterBalance <- function(r.grid, tr.stress.periods,
     d <- d[is.est, ]
     d.agg <- dplyr::summarise_(dplyr::group_by_(d, "EntityName"),
                                gw.rate="sum(gw.rate, na.rm=TRUE)")
-    d$fraction <- d$gw.rate /
-                  d.agg$gw.rate[match(d$EntityName, d.agg$EntityName)]
+    d$fraction <- d$gw.rate / d.agg$gw.rate[match(d$EntityName, d.agg$EntityName)]
     d$gw.div <- 0
     div <- div.by.entity[[i]][, c("EntityName", "gw.div.est")]
     idxs <- match(d$EntityName, div$EntityName)
@@ -499,8 +487,7 @@ RunWaterBalance <- function(r.grid, tr.stress.periods,
   names(rech.by.pod) <- yr.mo.irr
 
   FUN <- function(i) {
-    rec <- gw.div.by.wmis.no[gw.div.by.wmis.no$YearMonth == i,
-                             c("WMISNumber", "GWDiv")]
+    rec <- gw.div.by.wmis.no[gw.div.by.wmis.no$YearMonth == i, c("WMISNumber", "GWDiv")]
     est <- rech.by.pod[[i]][, c("WMISNumber", "gw.div")]
     est <- dplyr::summarise_(dplyr::group_by_(est, "WMISNumber"),
                              gw.div="sum(gw.div, na.rm=TRUE)")
@@ -517,7 +504,8 @@ RunWaterBalance <- function(r.grid, tr.stress.periods,
 
   is.non.irr <- div.gw$YearMonth %in% yr.mo.non.irr
   d <- div.gw[is.non.irr, c("WMISNumber", "YearMonth", "GWDiv")]
-
+  d <- aggregate(d$GWDiv, by=list(paste(d[, 1], d[, 2])), sum)
+  d <- data.frame(do.call(rbind, strsplit(d[, 1], split=" ")), d[, 2])
   rows <- match(d[, 1], rownames(pod.rech))
   cols <- match(d[, 2], colnames(pod.rech))
   pod.rech[cbind(rows, cols)] <- d[, 3]
