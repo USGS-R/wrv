@@ -541,7 +541,7 @@ xlim <- as.Date(c("1994-01-01", "2011-01-01"))
 ylab <- paste("Streamflow, in", c("cubic meters per day", "acre-foot per year"))
 PlotGraph(d, ylab = ylab, xlim=xlim, col="#3399CC", lty=1,
           conversion.factor=m3.per.d.to.af.per.y, center.date.labels=TRUE,
-          scientific=c(FALSE, TRUE, TRUE))
+          scientific=c(FALSE, TRUE, TRUE), seq.date.by="year")
 @
 
 \newpage
@@ -721,7 +721,8 @@ fill <- paste0(cols, c("98", "4E"))
 d <- rbind(d.dt, d.dt[nrow(d.dt), , drop=FALSE])
 d[nrow(d), "Date"] <- d[nrow(d), "Date"] + diff(d$Date)[1]
 PlotGraph(d, ylab=ylab, col=cols, fill=fill, conversion.factor=m3.per.d.to.af.per.yr,
-          center.date.labels=TRUE, scientific=c(FALSE, FALSE, FALSE))
+          center.date.labels=TRUE, scientific=c(FALSE, FALSE, FALSE),
+          seq.date.by="year")
 legend("topright", labs, col=cols, lty=1, inset=0.02, cex=0.7,
        box.lwd=0.5, xpd=NA, bg="#FFFFFFE7")
 @
@@ -738,7 +739,8 @@ fill <- paste0(cols, c("98", "4E"))
 d <- rbind(d.rf, d.rf[nrow(d.rf), , drop=FALSE])
 d[nrow(d), "Date"] <- d[nrow(d), "Date"] + diff(d$Date)[1]
 PlotGraph(d, ylab=ylab, col=cols, fill=fill, conversion.factor=m3.per.d.to.af.per.yr,
-          center.date.labels=TRUE, scientific=c(FALSE, FALSE, FALSE))
+          center.date.labels=TRUE, scientific=c(FALSE, FALSE, FALSE),
+          seq.date.by="year")
 legend("topright", labs, col=cols, lty=1, inset=0.02, cex=0.7,
        box.lwd=0.5, xpd=NA, bg="#FFFFFFE7")
 @
@@ -755,7 +757,8 @@ fill <- paste0(cols, "4E")
 d <- rbind(d.av, d.av[nrow(d.av), , drop=FALSE])
 d[nrow(d), "Date"] <- d[nrow(d), "Date"] + diff(d$Date)[1]
 PlotGraph(d, ylab=ylab, col=cols, fill=fill, conversion.factor=m3.per.d.to.af.per.yr,
-          center.date.labels=TRUE, scientific=c(FALSE, FALSE, FALSE))
+          center.date.labels=TRUE, scientific=c(FALSE, FALSE, FALSE),
+          seq.date.by="year")
 legend("topright", labs, col=cols, lty=1, inset=0.02, cex=0.7,
        box.lwd=0.5, xpd=NA, bg="#FFFFFFE7")
 @

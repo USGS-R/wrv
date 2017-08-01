@@ -472,7 +472,7 @@ d[nrow(d), 1] <- d[nrow(d), 1] + ndays
 ylab <- paste("Tributary basin underflow, in", c("cubic meters per day", "acre-feet per year"))
 cols  <- rainbow(ncol(d), start=0.0, end=0.8)
 PlotGraph(d, ylab=ylab, conversion.factor=m3.per.d.to.af.per.yr, col=cols,
-          center.date.labels=TRUE, scientific=FALSE)
+          center.date.labels=TRUE, scientific=FALSE, seq.date.by="year")
 leg <- format(match(colnames(d)[-1], make.names(tributaries@data$Name)))
 legend("topright", leg, lwd=1, col=cols, ncol=2,
        pt.cex=1, inset=0.02, cex=0.7, box.lty=1, box.lwd=0.5,
@@ -732,7 +732,8 @@ x <- tr.stress.periods
 y <- rbind(norm.gage.height[, -1], norm.gage.height[nrow(norm.gage.height), -1])
 ylab <- paste("Normalized mean gage-height, in", c("meters", "feet"))
 cols <- c("#1B9E77", "#D95F02", "#7570B3")
-PlotGraph(x, y, ylab=ylab, col=cols, conversion.factor=m.to.ft, center.date.labels=TRUE)
+PlotGraph(x, y, ylab=ylab, col=cols, conversion.factor=m.to.ft,
+          center.date.labels=TRUE, seq.date.by="year")
 legend("topright", colnames(y), lwd=c(1, 1, 1), col=cols, inset=0.02, cex=0.7,
        box.lty=1, box.lwd=0.5, bg="#FFFFFFCD", title=expression(bold("Streamgages")))
 
@@ -828,7 +829,8 @@ d[d[, 3] > 0, 3] <- 0
 ylab <- paste("Total flow across water table, in", c("cubic meters per day", "acre-feet per year"))
 col <- c("#67A9CF", "#C80C0B")
 PlotGraph(d, ylab=ylab, col=col, fill=paste0(col, "66"),
-          conversion.factor=m3.per.d.to.af.per.yr, scientific=TRUE, center.date.labels=TRUE)
+          conversion.factor=m3.per.d.to.af.per.yr, scientific=TRUE,
+          center.date.labels=TRUE, seq.date.by="year")
 legend("topright", c("Recharge", "Discharge"), col=col, lty=1,
        inset=0.02, cex=0.7, box.lty=1, box.lwd=0.5, bg="#FFFFFFCD")
 
@@ -843,7 +845,8 @@ x <- tr.stress.periods
 ylab <- paste("Total withdrawals from wells, in", c("cubic meters per day", "acre-feet per year"))
 col <- "#C80C0B"
 PlotGraph(x, y, ylab=ylab, col=col, fill=paste0(col, "66"),
-          conversion.factor=m3.per.d.to.af.per.yr, scientific=TRUE, center.date.labels=TRUE)
+          conversion.factor=m3.per.d.to.af.per.yr, scientific=TRUE,
+          center.date.labels=TRUE, seq.date.by="year")
 
 ## ----include=FALSE-------------------------------------------------------
 v <- "Steady-state areal recharge. Values are preliminary and were modified by adjustments to irrigation efficiency during the model-calibration process."
@@ -905,7 +908,8 @@ y <- rbind(m, m[nrow(m), , drop=FALSE])
 ylab <- paste("Seepage rate, in", c("cubic meters per day", "acre-feet per year"))
 col <- "#67A9CF"
 PlotGraph(x, y, ylab=ylab, col=col, fill=paste0(col, "66"),
-          conversion.factor=m3.per.d.to.af.per.yr, scientific=c(FALSE, TRUE, FALSE), center.date.labels=TRUE)
+          conversion.factor=m3.per.d.to.af.per.yr, scientific=c(FALSE, TRUE, FALSE),
+          center.date.labels=TRUE, seq.date.by="year")
 
 ## ----include=FALSE-------------------------------------------------------
 v <- "Seepage beneath the Bellevue Waste Water Treatment Plant Ponds."
@@ -919,7 +923,8 @@ y <- rbind(m, m[nrow(m), , drop=FALSE])
 ylab <- paste("Seepage rate, in", c("cubic meters per day", "acre-feet per year"))
 col <- "#67A9CF"
 PlotGraph(x, y, ylab=ylab, col=col, fill=paste0(col, "66"),
-          conversion.factor=m3.per.d.to.af.per.yr, scientific=FALSE, center.date.labels=TRUE)
+          conversion.factor=m3.per.d.to.af.per.yr, scientific=FALSE,
+          center.date.labels=TRUE, seq.date.by="year")
 
 ## ------------------------------------------------------------------------
 misc <- cbind(misc, ss = apply(misc[, ss.yr.mo], 1, mean))
@@ -1310,7 +1315,8 @@ FUN <- function(desc) {
   xlab <- "Simulated hydraulic head, in meters above the NAVD88"
   ylab <- paste("Hydraulic head residual, in", c("meters (m)", "feet"))
   PlotGraph(dd, xlab=xlab, ylab=ylab, type="n", xlim=xlim, ylim=ylim,
-            conversion.factor=m.to.ft, bg.polygon=bg.polygon)
+            conversion.factor=m.to.ft, bg.polygon=bg.polygon,
+            seq.date.by="year")
   abline(h=0, col="#333333", lwd=1)
   for (i in seq_along(desc))
     points(d[d$desc %in% desc[i], c("head.sim", "head.res")], pch=20, col=col[i])
@@ -1432,7 +1438,8 @@ FUN <- function(idx, add.legend=FALSE) {
   bg.polygon <- list(x=xy.coords(c(xbuf, rev(xbuf)), c(rep(ylim[1], 2), rep(ylim[2], 2))), col=cols[3])
   ylab <- paste("Hydraulic head in", c("meters", "feet"), "above the NAVD88")
   PlotGraph(dd.sim, xlim=xlim, ylim=ylim, ylab=ylab, col=cols[2],
-            conversion.factor=m.to.ft, bg.polygon=bg.polygon, center.date.labels=TRUE)
+            conversion.factor=m.to.ft, bg.polygon=bg.polygon,
+            center.date.labels=TRUE, seq.date.by="year")
   lines(x=as.Date(dd.obs$DateTime), y=dd.obs$head.obs, type="b", pch=20, lwd=0.5, col=cols[1])
   if (add.legend) {
     labs <- c("Measured groundwater level", "Simulated groundwater level", "Warm-up period in simulation")
@@ -1484,7 +1491,8 @@ d[d[, 2] < 0, 2] <- 0
 d[d[, 3] > 0, 3] <- 0
 col <- c("#67A9CF", "#C80C0B")
 PlotGraph(d, ylab=ylab, col=col, fill=paste0(col, "66"),
-          conversion.factor=m3.per.d.to.af.per.yr, scientific=TRUE, center.date.labels=TRUE)
+          conversion.factor=m3.per.d.to.af.per.yr, scientific=TRUE,
+          center.date.labels=TRUE, seq.date.by="year")
 legend("bottomright", c("Recharge", "Discharge"), col=col, lty=1,
        inset=0.02, cex=0.7, box.lty=1, box.lwd=0.5, bg="#FFFFFFCD")
 
@@ -1539,7 +1547,8 @@ FUN <- function(d, add.legend=FALSE) {
   ylab <- paste("Stream-aquifer flow exchange, in", c("cubic meters per day", "cubic feet per second"))
   PlotGraph(d[, 1:3], xlim=xlim, ylab=ylab, col=cols[1:2],
             conversion.factor=1 / cfs.to.m3.per.d, bg.polygon=bg.polygon,
-            scientific=c(FALSE, TRUE, FALSE), center.date.labels=TRUE)
+            scientific=c(FALSE, TRUE, FALSE), center.date.labels=TRUE,
+            seq.date.by="year")
   if (add.legend) {
     labs <- c("Measured", "Simulated", "Warm-up period")
     legend("topright", labs, pch=c(NA, NA, 22), lwd=c(1, 1, NA),
@@ -1730,7 +1739,8 @@ v <- c(paste("Graph showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, ncha
 ylab <- paste("Groundwater discharge, in", c("cubic meters per day", "acre-feet per year"))
 col <- "#C80C0B"
 PlotGraph(d.drain.1, ylab=ylab, col=col, fill=paste0(col, "66"),
-          conversion.factor=m3.per.d.to.af.per.yr, scientific=FALSE, center.date.labels=TRUE)
+          conversion.factor=m3.per.d.to.af.per.yr, scientific=FALSE,
+          center.date.labels=TRUE, seq.date.by="year")
 
 ## ----include=FALSE-------------------------------------------------------
 v <- "Groundwater discharge across the Silver Creek outlet boundary---based on uncalibrated model results."

@@ -14,29 +14,25 @@
 \raggedright{}
 \inputencoding{utf8}
 \item[Title]\AsIs{Wood River Valley Groundwater-Flow Model}
-\item[Version]\AsIs{1.1.2}
+\item[Version]\AsIs{1.1.3}
 \item[Description]\AsIs{A processing program for the groundwater-flow model of the Wood
 River Valley aquifer system, south-central Idaho. Included in the package is
 MODFLOW-USG version 1.3, a U.S. Geological Survey groundwater-flow model.}
-\item[Depends]\AsIs{
-R (>= 3.2.0)}
-\item[Imports]\AsIs{
-dplyr,
-grDevices,
-graphics,
+\item[Depends]\AsIs{R (>= 3.2.0)}
+\item[Imports]\AsIs{dplyr,
 inlmisc,
 methods,
 sp,
 stats,
-raster,
-rgdal,
-rgeos}
-\item[Suggests]\AsIs{
-animation,
+raster}
+\item[Suggests]\AsIs{animation,
 dataRetrieval,
 git2r,
+grDevices,
 knitr,
 leaflet,
+rgdal,
+rgeos,
 sfsmisc,
 viridis,
 xtable}
@@ -947,7 +943,7 @@ str(gage.disch)
 col <- c("red", "blue", "green")
 ylab <- paste("Discharge in cubic", c("meters per day", "acre-foot per year"))
 inlmisc::PlotGraph(gage.disch, ylab = ylab, col = col, lty = 1:3,
-                   conversion.factor = 0.29611)
+                   conversion.factor = 0.29611, seq.date.by = "year")
 leg <- sprintf("USGS \%s", names(gage.disch)[-1])
 legend("topright", leg, col = col, lty = 1:3, inset = 0.02, cex = 0.7,
        box.lty = 1, bg = "#FFFFFFE7")
@@ -1011,7 +1007,7 @@ str(gage.height)
 col <- c("red", "blue", "green")
 ylab <- paste("Gage height in", c("meters", "feet"))
 inlmisc::PlotGraph(gage.height, ylab = ylab, col = col, lty = 1:3,
-                   conversion.factor = 3.28084)
+                   conversion.factor = 3.28084, seq.date.by = "year")
 leg <- sprintf("USGS \%s", names(gage.height)[-1])
 legend("topright", leg, col = col, lty = 1:3, inset = 0.02, cex = 0.7,
        box.lty = 1, bg = "#FFFFFFE7")
@@ -2041,7 +2037,8 @@ d <- merge(merge(d1, d2, by = "Date"), d3, by = "Date")
 
 col <- c("red", "blue", "green")
 ylab <- paste("Precipitation in", c("meters", "feet"))
-inlmisc::PlotGraph(d, ylab = ylab, col = col, lty = 1:3, conversion.factor = 3.28084)
+inlmisc::PlotGraph(d, ylab = ylab, col = col, lty = 1:3,
+                   conversion.factor = 3.28084, seq.date.by = "year")
 legend("topright", zones, col = col, lty = 1:3, inset = 0.02, cex = 0.7,
        box.lty = 1, bg = "#FFFFFFE7")
 

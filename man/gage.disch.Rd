@@ -35,7 +35,7 @@ str(gage.disch)
 col <- c("red", "blue", "green")
 ylab <- paste("Discharge in cubic", c("meters per day", "acre-foot per year"))
 inlmisc::PlotGraph(gage.disch, ylab = ylab, col = col, lty = 1:3,
-                   conversion.factor = 0.29611)
+                   conversion.factor = 0.29611, seq.date.by = "year")
 leg <- sprintf("USGS \\\%s", names(gage.disch)[-1])
 legend("topright", leg, col = col, lty = 1:3, inset = 0.02, cex = 0.7,
        box.lty = 1, bg = "#FFFFFFE7")

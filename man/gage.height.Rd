@@ -44,7 +44,7 @@ str(gage.height)
 col <- c("red", "blue", "green")
 ylab <- paste("Gage height in", c("meters", "feet"))
 inlmisc::PlotGraph(gage.height, ylab = ylab, col = col, lty = 1:3,
-                   conversion.factor = 3.28084)
+                   conversion.factor = 3.28084, seq.date.by = "year")
 leg <- sprintf("USGS \\\%s", names(gage.height)[-1])
 legend("topright", leg, col = col, lty = 1:3, inset = 0.02, cex = 0.7,
        box.lty = 1, bg = "#FFFFFFE7")
