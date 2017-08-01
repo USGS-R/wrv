@@ -38,7 +38,8 @@ d <- merge(merge(d1, d2, by = "Date"), d3, by = "Date")
 
 col <- c("red", "blue", "green")
 ylab <- paste("Precipitation in", c("meters", "feet"))
-inlmisc::PlotGraph(d, ylab = ylab, col = col, lty = 1:3, conversion.factor = 3.28084)
+inlmisc::PlotGraph(d, ylab = ylab, col = col, lty = 1:3,
+                   conversion.factor = 3.28084, seq.date.by = "year")
 legend("topright", zones, col = col, lty = 1:3, inset = 0.02, cex = 0.7,
        box.lty = 1, bg = "#FFFFFFE7")
 

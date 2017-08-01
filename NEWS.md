@@ -1,10 +1,16 @@
+# wrv 1.1.3
+
+- Specify `seq.date.by` argument in calls to `inlmisc::PlotGraph` function.
+  The latest version of **inlmisc** determines a default value for `seq.date.by`,
+  its previous default was `seq.date.by =  "year"`.
+
 # wrv 1.1.2
 
 - In `RunWaterBalance` function, sum groundwater diversions for `div.gw` dataset records having an identical site location and stress period.
 
 - Remove hard codding of irrigation years in appendix C, see `irr.lands` dataset creation.
 
-- In `GetWellConfig` function, fixed error that occurred when a well was located outside the model grid.
+- In `GetWellConfig` function, fix error that occurred when a well was located outside the model grid.
 
 - Specify `desc` argument in `inlmisc::SummariseBudget` function call, required for new version of **inlmisc** package.
 
