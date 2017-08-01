@@ -310,7 +310,7 @@ ylab <- paste("Total areal recharge, in", c("cubic meters per day", "acre-feet p
 col <- c("#67A9CF", "#C80C0B")
 PlotGraph(d, ylab=ylab, col=col, fill=paste0(col, "66"),
           conversion.factor=m3.per.d.to.af.per.yr, scientific=TRUE,
-          center.date.labels=TRUE)
+          center.date.labels=TRUE, seq.date.by="year")
 legend("topright", c("Recharge", "Discharge"), col=col, lty=1,
        inset=0.02, cex=0.7, box.lty=1, box.lwd=0.5, bg="#FFFFFFE7")
 @
@@ -333,7 +333,7 @@ ylab <- paste("Total withdrawals from wells, in", c("cubic meters per day", "acr
 col <- "#C80C0B"
 PlotGraph(d, ylab=ylab, col=col, fill=paste0(col, "66"),
           conversion.factor=m3.per.d.to.af.per.yr, scientific=TRUE,
-          center.date.labels=TRUE)
+          center.date.labels=TRUE, seq.date.by="year")
 @
 
 Descriptive statistics for pumping rates, in cubic meters per day:
@@ -956,7 +956,7 @@ d[nrow(d), 1] <- d[nrow(d), 1] + ndays
 ylab <- paste("Tributary basin underflow, in", c("cubic meters per day", "acre-feet per year"))
 cols  <- rainbow(ncol(d), start=0.0, end=0.8)
 PlotGraph(d, ylab=ylab, conversion.factor=m3.per.d.to.af.per.yr, col=cols,
-          scientific=TRUE, center.date.labels=TRUE)
+          scientific=TRUE, center.date.labels=TRUE, seq.date.by="year")
 leg <- format(match(colnames(d)[-1], make.names(tributaries@data$Name)))
 legend("topright", leg, lwd=1, col=cols, ncol=2,
        pt.cex=1, inset=0.02, cex=0.7, box.lty=1, box.lwd=0.5,

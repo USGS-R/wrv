@@ -111,11 +111,12 @@ d[, 1] <- as.Date(d$MonthDay, "%Y%m%d")
 d <- d[order(d$MonthDay), ]
 col <- c("#1B9E77", "#D95F02", "#7570B3")
 ylab <- paste("Snow water equivalent, in", c("meters", "inches"))
-PlotGraph(d, ylab=ylab, col=col, fill=paste0(col, "66"), lty=1,
-          seq.date.by="month", conversion.factor=39.3701, center.date.labels=TRUE)
 xlim <- range(d[, 1])
+PlotGraph(d, xlim=xlim, ylab=ylab, col=col, fill=paste0(col, "66"), lty=1,
+          seq.date.by="month", conversion.factor=39.3701,
+          center.date.labels=TRUE)
 xat <- seq(xlim[1], xlim[2], by="month")
-at <- xat + diff(c(xat, xlim[2])) / 2
+at <- c(xat + diff(c(xat, xlim[2])) / 2, xlim[2])
 xlabs <- sprintf("(%d)", c(10:12, 1:9))
 axis.Date(1, at=at, tcl=0, cex.axis=0.6, lwd=-1, labels=xlabs, padj=1.5)
 leg <- c("Chocolate Gulch SNOTEL", "Hailey HADS", "Picabo AgriMet")
@@ -141,7 +142,8 @@ FUN <- function(i, col) {
   ylab <- paste("Monthly precipitation, in", c("meters", "feet"))
   col <- c(col, "#333333")
   PlotGraph(d, ylab=ylab, col=col, fill=paste0(col, "66"), lty=1,
-            conversion.factor=m.to.ft, center.date.labels=TRUE)
+            conversion.factor=m.to.ft, center.date.labels=TRUE,
+            seq.date.by="year")
   leg <- c("Adjusted for spring melt", "Recorded at weather station")
   legend("topright", leg, col=col, lty=1, inset=0.02, cex=0.7, box.lty=1,
          box.lwd=0.5, bg="#FFFFFFE7")
@@ -350,8 +352,8 @@ ylab <- paste("Evapotranspiration rate, in", c("meters", "feet"), "per month")
 FUN <- function(xlim) {
   xlim <- as.Date(xlim)
   idxs <-  which(x > xlim[1] & x < xlim[2])
-  PlotGraph(x[idxs], d[, idxs], xlim=xlim, type="box", ylab=ylab, ylim=ylim, col="#FFE4C4",
-            seq.date.by="years", conversion.factor=m.to.ft, boxwex=20,
+  PlotGraph(x[idxs], d[, idxs], xlim=xlim, type="w", ylab=ylab, ylim=ylim, col="#FFE4C4",
+            seq.date.by="year", conversion.factor=m.to.ft, boxwex=20,
             center.date.labels=TRUE)
 }
 
@@ -485,8 +487,8 @@ ylab <- paste("Natural groundwater recharge rate, in cubic", c("meters", "feet")
 FUN <- function(xlim) {
   xlim <- as.Date(xlim)
   idxs <-  which(x > xlim[1] & x < xlim[2])
-  PlotGraph(x[idxs], d[, idxs], xlim=xlim, type="box", ylab=ylab, ylim=ylim, col="#FFE4C4",
-            seq.date.by="years", conversion.factor=m.to.ft, boxwex=20,
+  PlotGraph(x[idxs], d[, idxs], xlim=xlim, type="w", ylab=ylab, ylim=ylim, col="#FFE4C4",
+            seq.date.by="year", conversion.factor=m.to.ft, boxwex=20,
             center.date.labels=TRUE, scientific=c(FALSE, FALSE, TRUE))
 }
 

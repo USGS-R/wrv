@@ -202,7 +202,7 @@ cols <- "#327CCB"
 ylab <- paste("Monthly precipitation, in", c("meters", "feet"))
 ltys <- c(1, 2)
 inlmisc::PlotGraph(d, xlim=tr.interval, ylab=ylab, col=cols, lty=0,
-                   conversion.factor=1 / ft.to.m, center.date.labels=TRUE)
+                   conversion.factor=1 / ft.to.m, center.date.labels=TRUE, seq.date.by="year")
 lines(d1, lty=ltys[1], col=cols, type="s")
 lines(d2, lty=ltys[2], col=cols, type="s")
 legend("topright", c("Measured", "Estimated"), col=cols, lty=ltys, inset=0.02,
@@ -390,7 +390,7 @@ cols <- rep(c("#1B9E77", "#D95F02", "#7570B3"), 2)
 ltys <- c(rep(1, 3), rep(3, 3))
 ylab <- paste("Gage height, in", c("meters", "feet"))
 inlmisc::PlotGraph(x, ylab=ylab, col=cols, lty=ltys, conversion.factor=1 / ft.to.m,
-                   center.date.labels=TRUE)
+                   center.date.labels=TRUE, seq.date.by="year")
 leg <- c(sprintf("%s measured",  names(d)[-1]),
          sprintf("%s estimated", names(d)[-1]))
 legend("topright", leg, col=cols, lty=ltys, inset=0.02, cex=0.7, box.lty=1,
