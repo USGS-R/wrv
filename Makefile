@@ -21,7 +21,7 @@ install: build
 
 check:
 	cd ..;\
-	R CMD check --no-build-vignettes --as-cran $(PKGNAME)_$(PKGVERS).tar.gz;\
+	R CMD check --no-build-vignettes $(PKGNAME)_$(PKGVERS).tar.gz;\
 
 rd2tex:
 	cd ..;\

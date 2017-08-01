@@ -532,7 +532,8 @@ d <- d.rech[, c("Date", "nKet_Hai")]
 col <- "#C80C0B"
 PlotGraph(d, ylab=ylab, xlim=xlim, col=col, fill=paste0(col, "66"),
           conversion.factor=1 / cfs.to.m3.per.d,
-          scientific=c(FALSE, TRUE, FALSE), center.date.labels=TRUE)
+          scientific=c(FALSE, TRUE, FALSE), center.date.labels=TRUE,
+          seq.date.by="year")
 
 ## ----include=FALSE-------------------------------------------------------
 v <- "Stream-aquifer flow exchange in the Big Wood River, Hailey to Stanton Crossing river reach."
@@ -546,7 +547,8 @@ d[!is.na(d[, 3]) & d[, 3] > 0, 3] <- 0
 col <- c("#67A9CF", "#C80C0B")
 PlotGraph(d, ylab=ylab, xlim=xlim, col=col, fill=paste0(col, "66"),
           conversion.factor=1 / cfs.to.m3.per.d,
-          scientific=c(FALSE, TRUE, FALSE), center.date.labels=TRUE)
+          scientific=c(FALSE, TRUE, FALSE), center.date.labels=TRUE,
+          seq.date.by="year")
 legend("bottomright", c("Recharge", "Discharge"), col=col, lty=1,
        inset=0.02, cex=0.7, box.lty=1, box.lwd=0.5, bg="#FFFFFFE7")
 
@@ -559,7 +561,8 @@ d <- d.rech[, c("Date", "WillowCr")]
 col <- "#C80C0B"
 PlotGraph(d, ylab=ylab, xlim=xlim, col=col, fill=paste0(col, "66"),
           conversion.factor=1 / cfs.to.m3.per.d,
-          scientific=c(FALSE, TRUE, FALSE), center.date.labels=TRUE)
+          scientific=c(FALSE, TRUE, FALSE), center.date.labels=TRUE,
+          seq.date.by="year")
 
 ## ----include=FALSE-------------------------------------------------------
 v <- "Stream-aquifer flow exchange in Silver Creek, above Sportsman Access river reach."
@@ -570,7 +573,8 @@ d <- d.rech[, c("Date", "SilverAbv")]
 col <- "#C80C0B"
 PlotGraph(d, ylab=ylab, xlim=xlim, col=col, fill=paste0(col, "66"),
           conversion.factor=1 / cfs.to.m3.per.d,
-          scientific=c(FALSE, TRUE, FALSE), center.date.labels=TRUE)
+          scientific=c(FALSE, TRUE, FALSE), center.date.labels=TRUE,
+          seq.date.by="year")
 
 ## ----echo=FALSE----------------------------------------------------------
 subreaches <- river.reaches
