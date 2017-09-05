@@ -1040,12 +1040,12 @@ axis(3, mid, tcl=tcl, labels=FALSE, lwd=-1, lwd.ticks=0.5)
 legend("topleft", "Change in aquifer storage", lwd=2, col="#0F0A06",
        inset=0.02, cex=cex, box.lty=1, box.lwd=0.5, xpd=NA,
        bg="#FFFFFFCD")
-y1lab <- ToScientific(y1at, lab.type="plotmath")
+y1lab <- ToScientific(y1at, type="plotmath")
 sfsmisc::eaxis(2, at=y1at, labels=y1lab, at.small=FALSE, tcl=tcl, cex.axis=cex,
                lwd=-1, lwd.ticks=0.5)
 title(ylab="Annual volume, in cubic meters", cex.lab=cex)
 y2at <- pretty(y1at * m3.to.af)
-y2lab <- ToScientific(y2at, lab.type="plotmath")
+y2lab <- ToScientific(y2at, type="plotmath")
 at <- y2at / m3.to.af
 sfsmisc::eaxis(4, at=at, tcl=tcl, labels=y2lab, at.small=FALSE, tcl=tcl,
                cex.axis=cex, lwd=-1, lwd.ticks=0.5)

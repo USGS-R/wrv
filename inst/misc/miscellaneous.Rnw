@@ -370,7 +370,7 @@ x <- c(rs[["lay1.hk"]][], rs[["lay2.hk"]][], rs[["lay3.hk"]][])
 breaks <- pretty(log10(x), n=15, na.rm=TRUE)
 
 at <- breaks[c(TRUE, FALSE)]
-labels <- ToScientific(10^at, digits=1, lab.type="plotmath")
+labels <- ToScientific(10^at, digits=1, type="plotmath")
 
 Pal <- function(...) viridis::viridis(...)
 FUN <- function(r) {
@@ -541,7 +541,7 @@ rs <- stack(rs, r)
 
 x <- c(rs[["lay1.sc"]][], rs[["lay2.sc"]][], rs[["lay3.sc"]][])
 breaks <- pretty(log10(x), n=15, na.rm=TRUE)
-labels <- ToScientific(10^breaks, digits=1, lab.type="plotmath")
+labels <- ToScientific(10^breaks, digits=1, type="plotmath")
 Pal <- colorRampPalette(c("#4dac26", "#b8e186", "#f7f7f7", "#f1b6da", "#d01c8b"))
 FUN <- function(r) {
   r[] <- log10(r[])
@@ -810,7 +810,7 @@ print(tbl, include.rownames=FALSE, caption.placement="top", booktabs=TRUE,
 <<map_riv_cond, echo=FALSE, fig.width=fin.map[1], fig.height=fin.map[2], fig.cap="{Spatial distribution of riverbed conductance in the model domain. River subreach identifiers are used as a cross reference with data in \\hyperref[table_riv_cond]{table~\\ref{table_riv_cond}}}">>=
 r <- rs[["riv.cond"]]
 breaks <- pretty(log10(r[]), n=15, na.rm=TRUE)
-labels <- ToScientific(10^breaks, digits=1, lab.type="plotmath")
+labels <- ToScientific(10^breaks, digits=1, type="plotmath")
 Pal <- colorRampPalette(c("#2c7bb6", "#FBB829", "#d7191c"))
 r[] <- log10(r[])
 PlotMap(r, breaks=breaks, xlim=usr.map[1:2], ylim=usr.map[3:4],
