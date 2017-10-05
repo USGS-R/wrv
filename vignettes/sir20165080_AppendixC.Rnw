@@ -53,11 +53,8 @@ CheckStatus <- function(s) {
 }
 @
 
-\title{Appendix C. Creating Datasets for the R-Package `wrv'\vspace{2ex}}
+\title{Appendix C. Creating Datasets for the R-Package `wrv'}
 \author{}
-\date{}
-\pretitle{\begin{flushleft}\LARGE\bfseries\sffamily}
-\posttitle{\end{flushleft}}
 \maketitle
 
 \tableofcontents

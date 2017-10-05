@@ -60,11 +60,8 @@ credit <- paste("Base derived from U.S. Geological Survey National Elevation Dat
                 "Idaho Transverse Mercator projection; North American Datum of 1983.", sep="\n")
 @
 
-\title{Miscellaneous\vspace{2ex}}
+\title{Miscellaneous}
 \author{}
-\date{}
-\pretitle{\begin{flushleft}\LARGE\bfseries\sffamily}
-\posttitle{\end{flushleft}}
 \maketitle
 
 \tableofcontents

@@ -98,11 +98,8 @@ FmtFlow <- function(x, u=c("m\\textsuperscript{3}/d", "acre-ft/yr"), conv=m3.per
 }
 @
 
-\title{Appendix D.\enspace Uncalibrated Groundwater-Flow Model for the Wood River Valley Aquifer System, South-Central Idaho\vspace{2ex}}
+\title{Appendix D.\enspace Uncalibrated Groundwater-Flow Model for the Wood River Valley Aquifer System, South-Central Idaho}
 \author{}
-\date{}
-\pretitle{\begin{flushleft}\LARGE\bfseries\sffamily}
-\posttitle{\end{flushleft}}
 \maketitle
 
 \tableofcontents
