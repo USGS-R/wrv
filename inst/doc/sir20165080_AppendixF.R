@@ -432,7 +432,7 @@ r <- rasterize(polys, raster(hill.shading), "PercolationRate")
 r[] <- log10(r[])
 breaks <- pretty(r[], n=30, na.rm=TRUE)
 at <- breaks[c(TRUE, FALSE, FALSE)]
-labels <- ToScientific(10^at, digits=1, lab.type="plotmath")
+labels <- ToScientific(10^at, digits=1, type="plotmath")
 Pal <- colorRampPalette(c("#ffffb2", "#fecc5c", "#fd8d3c", "#f03b20", "#bd0026"))
 PlotMap(r, breaks=breaks, xlim=usr.map[1:2], ylim=usr.map[3:4],
         bg.image=hill.shading, bg.image.alpha=0.6, dms.tick=TRUE,
