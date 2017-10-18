@@ -1,3 +1,7 @@
+# wrv 1.1.3.9000
+
+- In `GetSeasonalMult`, enable extrapolation of time series data.
+
 # wrv 1.1.3
 
 - Specify `seq.date.by` argument in calls to `inlmisc::PlotGraph` function.
