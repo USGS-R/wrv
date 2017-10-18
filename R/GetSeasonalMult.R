@@ -57,7 +57,7 @@ GetSeasonalMult <- function(x, reduction, d.in.mv.ave, fixed.dates) {
   if (!inherits(fixed.dates, "Date"))
     stop("Problem with 'fixed.dates' argument")
 
-  f <- stats::approxfun(x[, 1], x[, 2])
+  f <- stats::approxfun(x[, 1], x[, 2], rule=2)
   d <- data.frame(utils::head(fixed.dates, -1))
   FUN <- function(i) {
     vol <- stats::integrate(f, i - d.in.mv.ave, i, subdivisions=1000L, rel.tol=0.001)
