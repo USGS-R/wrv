@@ -24,7 +24,7 @@ Suggests:
     rgdal,
     rgeos,
     sfsmisc,
-    viridis,
+    viridisLite,
     xtable
 SystemRequirements: PEST (>= 13.0, optional)
 License: CC0

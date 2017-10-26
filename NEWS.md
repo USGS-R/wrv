@@ -1,5 +1,7 @@
 # wrv 1.1.3.9000
 
+- Substitute the recommended **viridis** package for its 'lite' version **viridisLite**.
+
 - In `GetSeasonalMult`, enable extrapolation of time series data.
 
 # wrv 1.1.3
