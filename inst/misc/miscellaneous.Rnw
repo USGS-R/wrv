@@ -20,7 +20,7 @@ try(knitr::opts_chunk$set(tidy=FALSE, comment="#", fig.align="center"), silent=T
 grDevices::pdf.options(useDingbats=FALSE)
 options(preferRaster=TRUE, scipen=0, digits=2)
 library(wrv)
-loadNamespace("viridis")
+loadNamespace("viridisLite")
 loadNamespace("xtable")
 
 # Device dimension in inches (width, height)
@@ -369,7 +369,7 @@ breaks <- pretty(log10(x), n=15, na.rm=TRUE)
 at <- breaks[c(TRUE, FALSE)]
 labels <- ToScientific(10^at, digits=1, type="plotmath")
 
-Pal <- function(...) viridis::viridis(...)
+Pal <- function(...) viridisLite::viridis(...)
 FUN <- function(r) {
   r[] <- log10(r[])
   PlotMap(r, breaks=breaks, xlim=usr.map[1:2], ylim=usr.map[3:4],
@@ -935,7 +935,7 @@ PlotMap(crs(hill.shading), xlim=usr.map[1:2], ylim=usr.map[3:4],
 plot(alluvium.extent, border="#FFFFFFCC", add=TRUE)
 xy <- coordinates(getSpatialLinesMidPoints(trib.lines))
 z <- trib.lines@data$mean.flow
-Pal <- function(...) rev(viridis::viridis(..., alpha=0.8))
+Pal <- function(...) rev(viridisLite::viridis(..., alpha=0.8))
 AddPoints(xy, z=z, inches=c(0.03, 0.3), fg="#FFFFFF65", format="d",
           title="Average groundwater flow rate", subtitle="in cubic meters per day",
           bg=Pal, legend.loc="topright", quantile.breaks=TRUE)
