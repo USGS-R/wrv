@@ -1,7 +1,6 @@
 # wrv
 
 [![Travis-CI Build Status](https://travis-ci.org/USGS-R/wrv.svg?branch=master)](https://travis-ci.org/USGS-R/wrv)
-[![CC0](https://img.shields.io/badge/license-CC0--1.0-brightgreen.svg)](https://creativecommons.org/publicdomain/zero/1.0/)
 [![USGS Category](https://img.shields.io/badge/USGS-Research-blue.svg)](https://owi.usgs.gov/R/packages.html#research)
 
 ## Overview
@@ -28,7 +27,7 @@ install.packages("wrv", repos = repos, dependencies = TRUE)
 Or use **devtools** to install the development version from GitHub.
 
 ```r
-devtools::install_github("USGS-R/wrv")
+devtools::install_github("USGS-R/wrv", dependencies = TRUE)
 ```
 
 ## Run
