@@ -5,7 +5,7 @@ PKGVERS := $(shell sed -n "s/Version: *\([^ ]*\)/\1/p" DESCRIPTION)
 PKGSRC  := $(shell basename `pwd`)
 APPXC   := sir20165080_AppendixC
 
-all: docs install check clean
+all: docs rd2tex install check clean
 
 docs:
 	R -q -e 'devtools::document()';\
@@ -30,7 +30,7 @@ rd2tex:
 	$(RM) $(PKGSRC).pdf;\
 	$(RM) -r .Rd2pdf*;\
 
-vignettes: rd2tex
+vignettes:
 	R -q -e 'devtools::build_vignettes()';\
 	R -q -e 'tools::compactPDF(paths='\''inst/doc'\'', gs_quality='\''ebook'\'')';\
 
