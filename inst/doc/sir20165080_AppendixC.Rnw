@@ -53,11 +53,8 @@ CheckStatus <- function(s) {
 }
 @
 
-\title{Appendix C. Creating Datasets for the R-Package `wrv'\vspace{2ex}}
+\title{Appendix C. Creating Datasets for the R-Package `wrv'}
 \author{}
-\date{}
-\pretitle{\begin{flushleft}\LARGE\bfseries\sffamily}
-\posttitle{\end{flushleft}}
 \maketitle
 
 \tableofcontents
@@ -125,7 +122,7 @@ Download the ZIP file to a temporary directory and uncompress.
 <<download_ned, message=FALSE>>=
 ftp <- "ftp://rockyftp.cr.usgs.gov/vdelivery/Datasets/Staged/NED/13/ArcGrid/n44w115.zip"
 file <- file.path(tempdir(), basename(ftp))
-download.file(ftp, file)
+download.file(ftp, file, method = "curl", quiet = TRUE)
 unzip(file, exdir = dir.in)
 @
 
