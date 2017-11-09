@@ -65,7 +65,7 @@ FmtLength <- function(x, u=c("m", "ft"), conv=m.to.ft) {
   return(s)
 }
 FmtFlow <- function(x, u=c("m\\textsuperscript{3}/d", "acre-ft/yr"), conv=m3.per.d.to.af.per.yr) {
-  FUN <- function(i) ToScientific(i, 1)
+  FUN <- function(i) ToScientific(i, digits=1)
   if (length(x) == 1) {
     s <- vapply(c(x[1], x[1] *  conv), FUN, "")
     s <- sprintf("%s~%s (%s~%s)", s[1], u[1], s[2], u[2])

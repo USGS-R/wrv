@@ -24,11 +24,8 @@ t0 <- Sys.time()
 try(knitr::opts_chunk$set(tidy=FALSE, comment="#", fig.align="center"), silent=TRUE)
 @
 
-\title{Appendix A.\enspace An Introduction to the R-Package `wrv'\vspace{2ex}}
+\title{Appendix A.\enspace An Introduction to the R-Package `wrv'}
 \author{}
-\date{}
-\pretitle{\begin{flushleft}\LARGE\bfseries\sffamily}
-\posttitle{\end{flushleft}}
 \maketitle
 
 \tableofcontents

@@ -1,4 +1,12 @@
-# prepare the package for release
+# Prepare package for release
+#
+# Note that 'AppendixC.pdf' and 'AppendixD.pdf' files are built separately
+# using the following R commands:
+#   setwd("*")
+#   knitr::knit2pdf("sir20165080_Appendix*.Rnw")
+#   tools::compactPDF(paths="sir20165080_Appendix*.pdf", gs_quality="ebook")
+#   knitr::purl("sir20165080_Appendix*.Rnw")
+#
 
 PKGNAME := $(shell sed -n "s/Package: *\([^ ]*\)/\1/p" DESCRIPTION)
 PKGVERS := $(shell sed -n "s/Version: *\([^ ]*\)/\1/p" DESCRIPTION)
