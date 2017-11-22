@@ -66,6 +66,8 @@ credit <- paste("Base derived from U.S. Geological Survey National Elevation Dat
 
 \tableofcontents
 
+\newpage
+
 \renewcommand*\listfigurename{Figures}
 \listoffigures
 
