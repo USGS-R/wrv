@@ -1,7 +1,6 @@
 # Prepare package for release
 #
-# Note that 'AppendixC.pdf' and 'AppendixD.pdf' files are built separately
-# using the following R commands:
+# Note that 'AppendixC' and 'AppendixD' are built separately using R commands:
 #   setwd("*")
 #   knitr::knit2pdf("sir20165080_Appendix*.Rnw")
 #   tools::compactPDF(paths="sir20165080_Appendix*.pdf", gs_quality="ebook")
