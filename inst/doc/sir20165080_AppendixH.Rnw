@@ -58,11 +58,8 @@ credit <- paste("Base derived from U.S. Geological Survey National Elevation Dat
                 "Idaho Transverse Mercator projection; North American Datum of 1983.", sep="\n")
 @
 
-\title{Appendix H.\enspace Calibration of the Wood River Valley Groundwater-Flow Model\vspace{2ex}}
+\title{Appendix H.\enspace Calibration of the Wood River Valley Groundwater-Flow Model}
 \author{}
-\date{}
-\pretitle{\begin{flushleft}\LARGE\bfseries\sffamily}
-\posttitle{\end{flushleft}}
 \maketitle
 
 \tableofcontents

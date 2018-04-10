@@ -65,7 +65,7 @@ FmtLength <- function(x, u=c("m", "ft"), conv=m.to.ft) {
   return(s)
 }
 FmtFlow <- function(x, u=c("m\\textsuperscript{3}/d", "acre-ft/yr"), conv=m3.per.d.to.af.per.yr) {
-  FUN <- function(i) ToScientific(i, 1)
+  FUN <- function(i) ToScientific(i, digits=1)
   if (length(x) == 1) {
     s <- vapply(c(x[1], x[1] *  conv), FUN, "")
     s <- sprintf("%s~%s (%s~%s)", s[1], u[1], s[2], u[2])
@@ -1750,7 +1750,8 @@ v <- c(paste("Graph showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, ncha
 ylab <- paste("Groundwater discharge, in", c("cubic meters per day", "acre-feet per year"))
 col <- "#C80C0B"
 PlotGraph(d.drain.2, ylab=ylab, col=col, fill=paste0(col, "66"),
-          conversion.factor=m3.per.d.to.af.per.yr, scientific=TRUE, center.date.labels=TRUE)
+          conversion.factor=m3.per.d.to.af.per.yr, scientific=FALSE,
+          center.date.labels=TRUE, seq.date.by="year")
 
 ## ----echo=FALSE, message=FALSE-------------------------------------------
 # save R objects that will be used to update the water budget

@@ -1,11 +1,18 @@
-# prepare the package for release
+# Prepare package for release
+#
+# Note that 'AppendixC' and 'AppendixD' are built separately using R commands:
+#   setwd("*")
+#   knitr::knit2pdf("sir20165080_Appendix*.Rnw")
+#   tools::compactPDF(paths="sir20165080_Appendix*.pdf", gs_quality="ebook")
+#   knitr::purl("sir20165080_Appendix*.Rnw")
+#
 
 PKGNAME := $(shell sed -n "s/Package: *\([^ ]*\)/\1/p" DESCRIPTION)
 PKGVERS := $(shell sed -n "s/Version: *\([^ ]*\)/\1/p" DESCRIPTION)
 PKGSRC  := $(shell basename `pwd`)
 APPXC   := sir20165080_AppendixC
 
-all: docs install check clean
+all: docs rd2tex install check clean
 
 docs:
 	R -q -e 'devtools::document()';\
@@ -30,7 +37,7 @@ rd2tex:
 	$(RM) $(PKGSRC).pdf;\
 	$(RM) -r .Rd2pdf*;\
 
-vignettes: rd2tex
+vignettes:
 	R -q -e 'devtools::build_vignettes()';\
 	R -q -e 'tools::compactPDF(paths='\''inst/doc'\'', gs_quality='\''ebook'\'')';\
 

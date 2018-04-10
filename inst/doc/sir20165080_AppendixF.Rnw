@@ -60,14 +60,13 @@ credit <- paste("Base derived from U.S. Geological Survey National Elevation Dat
                 "Idaho Transverse Mercator projection; North American Datum of 1983.", sep="\n")
 @
 
-\title{Appendix F.\enspace Natural Groundwater Recharge and Discharge in the Wood River Valley Aquifer System, South-Central Idaho\vspace{2ex}}
+\title{Appendix F.\enspace Natural Groundwater Recharge and Discharge in the Wood River Valley Aquifer System, South-Central Idaho}
 \author{}
-\date{}
-\pretitle{\begin{flushleft}\LARGE\bfseries\sffamily}
-\posttitle{\end{flushleft}}
 \maketitle
 
 \tableofcontents
+
+\newpage
 
 \renewcommand*\listfigurename{Figures}
 \listoffigures

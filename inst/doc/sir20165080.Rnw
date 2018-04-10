@@ -10,11 +10,8 @@
 
 \begin{document}
 
-\title{U.S. Geological Survey \protect\\ Scientific Investigations Report 2016-5080\vspace{2ex}}
+\title{U.S. Geological Survey \protect\\ Scientific Investigations Report 2016-5080}
 \author{}
-\date{}
-\pretitle{\begin{flushleft}\LARGE\bfseries\sffamily}
-\posttitle{\end{flushleft}}
 \maketitle
 
 % =========================================================================
