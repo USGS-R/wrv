@@ -2796,7 +2796,8 @@ v <- c(paste("Graph showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, ncha
 ylab <- paste("Groundwater discharge, in", c("cubic meters per day", "acre-feet per year"))
 col <- "#C80C0B"
 PlotGraph(d.drain.2, ylab=ylab, col=col, fill=paste0(col, "66"),
-          conversion.factor=m3.per.d.to.af.per.yr, scientific=TRUE, center.date.labels=TRUE)
+          conversion.factor=m3.per.d.to.af.per.yr, scientific=FALSE,
+          center.date.labels=TRUE, seq.date.by="year")
 @
 
 % =========================================================================

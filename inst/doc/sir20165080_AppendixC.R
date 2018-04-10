@@ -50,7 +50,7 @@ for (i in files) unzip(i, exdir = dirname(i))
 ## ----download_ned, message=FALSE-----------------------------------------
 ftp <- "ftp://rockyftp.cr.usgs.gov/vdelivery/Datasets/Staged/NED/13/ArcGrid/n44w115.zip"
 file <- file.path(tempdir(), basename(ftp))
-download.file(ftp, file)
+download.file(ftp, file, method = "curl", quiet = TRUE)
 unzip(file, exdir = dir.in)
 
 ## ----create_data_dir-----------------------------------------------------
