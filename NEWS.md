@@ -1,6 +1,6 @@
 # wrv 1.1.4.9000
 
-- ...
+- Argument changes required for updated `inlmisc::AddScaleBar` function.
 
 # wrv 1.1.4
 
