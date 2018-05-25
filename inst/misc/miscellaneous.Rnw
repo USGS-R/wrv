@@ -231,7 +231,7 @@ FUN <- function(i) {
 
   raster::image(r, maxpixels=length(r), useRaster=FALSE, col=col, add=TRUE)
 
-  AddScaleBar(asp=1, "m", loc="topright", offset=c(-0.4, -0.5))
+  AddScaleBar(unit="m", loc="topright", offset=c(-0.4, -0.5))
   plt <- c(grconvertX(loc[1:2], "user", "nfc"), grconvertY(loc[3:4], "user", "nfc"))
   par(plt=plt, bg="#FFFFFFCC", new=TRUE)
   m <- seq(0.5 - buff, dim(r)[1] + 0.5 + buff, by=1)
