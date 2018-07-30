@@ -4,10 +4,10 @@
 \alias{WriteModflowInput}
 \title{Write MODFLOW Input Files}
 \usage{
-WriteModflowInput(rs.model, rech, well, trib, misc, river, drain, id, dir.run,
-  is.convertible = FALSE, ss.perlen = 0L, tr.stress.periods = NULL,
-  ntime.steps = 4L, mv.flag = 1e+09, auto.flow.reduce = FALSE,
-  verbose = TRUE)
+WriteModflowInput(rs.model, rech, well, trib, misc, river, drain, id,
+  dir.run, is.convertible = FALSE, ss.perlen = 0L,
+  tr.stress.periods = NULL, ntime.steps = 4L, mv.flag = 1e+09,
+  auto.flow.reduce = FALSE, verbose = TRUE)
 }
 \arguments{
 \item{rs.model}{RasterStack.

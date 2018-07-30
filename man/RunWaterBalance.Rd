@@ -7,12 +7,12 @@
 RunWaterBalance(r.grid, tr.stress.periods, ss.stress.periods = NULL,
   canal.seep = wrv::canal.seep, comb.sw.irr = wrv::comb.sw.irr,
   div.gw = wrv::div.gw, div.sw = wrv::div.sw, div.ww = wrv::div.ww,
-  efficiency = wrv::efficiency, entity.components = wrv::entity.components,
-  et = wrv::et, irr.entities = wrv::irr.entities,
-  land.surface = wrv::land.surface, pod.gw = wrv::pod.gw,
-  priority.cuts = wrv::priority.cuts, r.canals = wrv::r.canals,
-  rs.entities = wrv::rs.entities, rs.rech.non.irr = wrv::rs.rech.non.irr,
-  verbose = FALSE)
+  efficiency = wrv::efficiency,
+  entity.components = wrv::entity.components, et = wrv::et,
+  irr.entities = wrv::irr.entities, land.surface = wrv::land.surface,
+  pod.gw = wrv::pod.gw, priority.cuts = wrv::priority.cuts,
+  r.canals = wrv::r.canals, rs.entities = wrv::rs.entities,
+  rs.rech.non.irr = wrv::rs.rech.non.irr, verbose = FALSE)
 }
 \arguments{
 \item{r.grid}{RasterLayer.
