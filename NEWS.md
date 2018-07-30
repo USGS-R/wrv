@@ -1,5 +1,7 @@
 # wrv 1.1.4.9000
 
+- Change `fill` argument to reflect updated `inlmisc::PlotGraph` function.
+
 - Argument changes required for updated `inlmisc::AddScaleBar` function.
 
 # wrv 1.1.4

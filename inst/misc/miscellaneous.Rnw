@@ -305,7 +305,7 @@ d[d[, 2] < 0, 2] <- 0
 d[d[, 3] > 0, 3] <- 0
 ylab <- paste("Total areal recharge, in", c("cubic meters per day", "acre-feet per year"))
 col <- c("#67A9CF", "#C80C0B")
-PlotGraph(d, ylab=ylab, col=col, fill=paste0(col, "66"),
+PlotGraph(d, ylab=ylab, col=col, fill="tozeroy",
           conversion.factor=m3.per.d.to.af.per.yr, scientific=TRUE,
           center.date.labels=TRUE, seq.date.by="year")
 legend("topright", c("Recharge", "Discharge"), col=col, lty=1,
@@ -328,7 +328,7 @@ Something... (\hyperref[fig:graph_wells]{fig.~\ref{fig:graph_wells}}).
 d <- TidyBudget(b, "wells", 2L)[, c("totim.date", "flow.total", "flow.total")]
 ylab <- paste("Total withdrawals from wells, in", c("cubic meters per day", "acre-feet per year"))
 col <- "#C80C0B"
-PlotGraph(d, ylab=ylab, col=col, fill=paste0(col, "66"),
+PlotGraph(d, ylab=ylab, col=col, fill="tozeroy",
           conversion.factor=m3.per.d.to.af.per.yr, scientific=TRUE,
           center.date.labels=TRUE, seq.date.by="year")
 @

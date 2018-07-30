@@ -713,10 +713,9 @@ v <- c(paste("Graph showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, ncha
 ylab <- paste("Tributary basin underflow, in", c("cubic meters per day", "acre-feet per year"))
 labs <- paste0(mo, "-month sampling window")
 cols <- c("#00C176", "#1F1F1F")
-fill <- paste0(cols, c("98", "4E"))
 d <- rbind(d.dt, d.dt[nrow(d.dt), , drop=FALSE])
 d[nrow(d), "Date"] <- d[nrow(d), "Date"] + diff(d$Date)[1]
-PlotGraph(d, ylab=ylab, col=cols, fill=fill, conversion.factor=m3.per.d.to.af.per.yr,
+PlotGraph(d, ylab=ylab, col=cols, fill="tozeroy", conversion.factor=m3.per.d.to.af.per.yr,
           center.date.labels=TRUE, scientific=c(FALSE, FALSE, FALSE),
           seq.date.by="year")
 legend("topright", labs, col=cols, lty=1, inset=0.02, cex=0.7,
@@ -731,10 +730,9 @@ v <- c(paste("Graph showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, ncha
 <<graph_flow_rf, echo=FALSE, fig.width=fin.graph.short[1], fig.height=fin.graph.short[2], fig.scap=sprintf("{%s}", v[1]), fig.cap=sprintf("{%s}", v[2])>>=
 labs <- paste("Reduction factor of", rf)
 cols <- c("#F02311", "#1F1F1F")
-fill <- paste0(cols, c("98", "4E"))
 d <- rbind(d.rf, d.rf[nrow(d.rf), , drop=FALSE])
 d[nrow(d), "Date"] <- d[nrow(d), "Date"] + diff(d$Date)[1]
-PlotGraph(d, ylab=ylab, col=cols, fill=fill, conversion.factor=m3.per.d.to.af.per.yr,
+PlotGraph(d, ylab=ylab, col=cols, fill="tozeroy", conversion.factor=m3.per.d.to.af.per.yr,
           center.date.labels=TRUE, scientific=c(FALSE, FALSE, FALSE),
           seq.date.by="year")
 legend("topright", labs, col=cols, lty=1, inset=0.02, cex=0.7,
@@ -749,10 +747,9 @@ v <- c(paste("Graph showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, ncha
 <<graph_flow_av, echo=FALSE, fig.width=fin.graph.short[1], fig.height=fin.graph.short[2], fig.scap=sprintf("{%s}", v[1]), fig.cap=sprintf("{%s}", v[2])>>=
 labs <- paste(av * 100, "percent")
 cols <- c("#02779E", "#1F1F1F", "#FFCC00")
-fill <- paste0(cols, "4E")
 d <- rbind(d.av, d.av[nrow(d.av), , drop=FALSE])
 d[nrow(d), "Date"] <- d[nrow(d), "Date"] + diff(d$Date)[1]
-PlotGraph(d, ylab=ylab, col=cols, fill=fill, conversion.factor=m3.per.d.to.af.per.yr,
+PlotGraph(d, ylab=ylab, col=cols, fill="tozeroy", conversion.factor=m3.per.d.to.af.per.yr,
           center.date.labels=TRUE, scientific=c(FALSE, FALSE, FALSE),
           seq.date.by="year")
 legend("topright", labs, col=cols, lty=1, inset=0.02, cex=0.7,
