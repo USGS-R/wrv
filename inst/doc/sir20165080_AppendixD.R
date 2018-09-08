@@ -828,7 +828,7 @@ d[d[, 2] < 0, 2] <- 0
 d[d[, 3] > 0, 3] <- 0
 ylab <- paste("Total flow across water table, in", c("cubic meters per day", "acre-feet per year"))
 col <- c("#67A9CF", "#C80C0B")
-PlotGraph(d, ylab=ylab, col=col, fill=paste0(col, "66"),
+PlotGraph(d, ylab=ylab, col=col, fill="tozeroy",
           conversion.factor=m3.per.d.to.af.per.yr, scientific=TRUE,
           center.date.labels=TRUE, seq.date.by="year")
 legend("topright", c("Recharge", "Discharge"), col=col, lty=1,
@@ -844,7 +844,7 @@ y <- c(y, y[length(y)])
 x <- tr.stress.periods
 ylab <- paste("Total withdrawals from wells, in", c("cubic meters per day", "acre-feet per year"))
 col <- "#C80C0B"
-PlotGraph(x, y, ylab=ylab, col=col, fill=paste0(col, "66"),
+PlotGraph(x, y, ylab=ylab, col=col, fill="tozeroy",
           conversion.factor=m3.per.d.to.af.per.yr, scientific=TRUE,
           center.date.labels=TRUE, seq.date.by="year")
 
@@ -907,7 +907,7 @@ x <- tr.stress.periods
 y <- rbind(m, m[nrow(m), , drop=FALSE])
 ylab <- paste("Seepage rate, in", c("cubic meters per day", "acre-feet per year"))
 col <- "#67A9CF"
-PlotGraph(x, y, ylab=ylab, col=col, fill=paste0(col, "66"),
+PlotGraph(x, y, ylab=ylab, col=col, fill="tozeroy",
           conversion.factor=m3.per.d.to.af.per.yr, scientific=c(FALSE, TRUE, FALSE),
           center.date.labels=TRUE, seq.date.by="year")
 
@@ -922,7 +922,7 @@ x <- tr.stress.periods
 y <- rbind(m, m[nrow(m), , drop=FALSE])
 ylab <- paste("Seepage rate, in", c("cubic meters per day", "acre-feet per year"))
 col <- "#67A9CF"
-PlotGraph(x, y, ylab=ylab, col=col, fill=paste0(col, "66"),
+PlotGraph(x, y, ylab=ylab, col=col, fill="tozeroy",
           conversion.factor=m3.per.d.to.af.per.yr, scientific=FALSE,
           center.date.labels=TRUE, seq.date.by="year")
 
@@ -1490,7 +1490,7 @@ ylab <- paste("Total stream-aquifer flow exchange, in", c("cubic meters per day"
 d[d[, 2] < 0, 2] <- 0
 d[d[, 3] > 0, 3] <- 0
 col <- c("#67A9CF", "#C80C0B")
-PlotGraph(d, ylab=ylab, col=col, fill=paste0(col, "66"),
+PlotGraph(d, ylab=ylab, col=col, fill="tozeroy",
           conversion.factor=m3.per.d.to.af.per.yr, scientific=TRUE,
           center.date.labels=TRUE, seq.date.by="year")
 legend("bottomright", c("Recharge", "Discharge"), col=col, lty=1,
@@ -1738,7 +1738,7 @@ v <- c(paste("Graph showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, ncha
 ## ----graph_drain_stn_cross, echo=FALSE, fig.width=fin.graph.short[1], fig.height=fin.graph.short[2], fig.scap=sprintf("{%s}", v[1]), fig.cap=sprintf("{%s}", v[2])----
 ylab <- paste("Groundwater discharge, in", c("cubic meters per day", "acre-feet per year"))
 col <- "#C80C0B"
-PlotGraph(d.drain.1, ylab=ylab, col=col, fill=paste0(col, "66"),
+PlotGraph(d.drain.1, ylab=ylab, col=col, fill="tozeroy",
           conversion.factor=m3.per.d.to.af.per.yr, scientific=FALSE,
           center.date.labels=TRUE, seq.date.by="year")
 
@@ -1749,7 +1749,7 @@ v <- c(paste("Graph showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, ncha
 ## ----graph_drain_silver_crk, echo=FALSE, fig.width=fin.graph.short[1], fig.height=fin.graph.short[2], fig.scap=sprintf("{%s}", v[1]), fig.cap=sprintf("{%s}", v[2])----
 ylab <- paste("Groundwater discharge, in", c("cubic meters per day", "acre-feet per year"))
 col <- "#C80C0B"
-PlotGraph(d.drain.2, ylab=ylab, col=col, fill=paste0(col, "66"),
+PlotGraph(d.drain.2, ylab=ylab, col=col, fill="tozeroy",
           conversion.factor=m3.per.d.to.af.per.yr, scientific=FALSE,
           center.date.labels=TRUE, seq.date.by="year")
 
@@ -1963,7 +1963,7 @@ legend("topleft",
        col=c("#F02311", "#F0D878", "#7FAF1B"), pt.bg=c(NA, "#F0D878", "#7FAF1B"),
        pt.lwd=1, pt.cex=1, inset=0.02, cex=0.7, box.lty=1, box.lwd=0.5,
        bg="#FFFFFFE7", title=expression(bold("EXPLANATION")))
-AddScaleBar(unit="m", loc="topright", offset=c(-0.4, -0.5))
+AddScaleBar(unit="m", loc="topright", inset=0.1)
 plt <- c(grconvertX(loc[1:2], "user", "nfc"), grconvertY(loc[3:4], "user", "nfc"))
 par(plt=plt, bg="#FFFFFFCC", new=TRUE)
 m <- seq(0.5 - buff, dim(r)[1] + 0.5 + buff, by=1)
