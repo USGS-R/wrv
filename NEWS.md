@@ -1,8 +1,8 @@
 # wrv 1.1.4.9000
 
-- Change `fill` argument to reflect updated `inlmisc::PlotGraph` function.
+- In `inlmisc::AddScaleBar` function calls, remove `offset` argument and replace with `inset`.
 
-- Argument changes required for updated `inlmisc::AddScaleBar` function.
+- In `inlmisc::PlotGraph` function calls, change `fill` argument.
 
 # wrv 1.1.4
 

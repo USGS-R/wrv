@@ -3012,7 +3012,7 @@ legend("topleft",
        col=c("#F02311", "#F0D878", "#7FAF1B"), pt.bg=c(NA, "#F0D878", "#7FAF1B"),
        pt.lwd=1, pt.cex=1, inset=0.02, cex=0.7, box.lty=1, box.lwd=0.5,
        bg="#FFFFFFE7", title=expression(bold("EXPLANATION")))
-AddScaleBar(unit="m", loc="topright", offset=c(-0.4, -0.5))
+AddScaleBar(unit="m", loc="topright", inset=0.1)
 plt <- c(grconvertX(loc[1:2], "user", "nfc"), grconvertY(loc[3:4], "user", "nfc"))
 par(plt=plt, bg="#FFFFFFCC", new=TRUE)
 m <- seq(0.5 - buff, dim(r)[1] + 0.5 + buff, by=1)

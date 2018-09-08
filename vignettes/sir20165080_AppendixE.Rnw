@@ -361,7 +361,7 @@ RotateLine <- function(m, ang=90) {
     polygon(p, border=NA, col=cols[2], lty=1, lwd=1)
     polygon(c(xlim, rev(xlim)), c(rep(land.elev, 2), rep(land.elev, 2) - depth.to.water),
             border=NA, col=cols[1])
-    AddScaleBar(unit="meters", vert.exag=asp, loc="bottomright", offset=c(-0.3, 0.1))
+    AddScaleBar(unit="meters", vert.exag=asp, loc="bottom", inset=0.12)
     legend("bottom", leg, fill=cols, horiz=TRUE, inset=-0.15,
            cex=0.7, bty="n", xpd=TRUE, xjust=0.5, yjust=0, border=NA)
     text(xlim[1], ylim[2], "B",  cex=0.7, pos=3, font=4)
