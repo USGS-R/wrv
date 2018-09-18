@@ -21,14 +21,14 @@
         Support is provided for correcting errors in the data release and
         clarification of the modeling conducted by the U.S. Geological Survey.
         Users are encouraged to review the complete model documentation report
-        (https://dx.doi.org/10.3133/sir20165080) to understand the purpose,
+        (https://doi.org/10.3133/sir20165080) to understand the purpose,
         construction, and limitations of this model.
 
         Reconstructing the data release from the online data release:
         -------------------------------------------------------------
         This data release is available from:
 
-            https://dx.doi.org/10.5066/F7C827DT
+            https://doi.org/10.5066/F7C827DT
 
         The model, along with pre- and post-processing tools, will run
         successfully only if the original directory structure is correctly
