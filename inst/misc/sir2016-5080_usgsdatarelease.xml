@@ -17,7 +17,7 @@
 					<pubplace>Reston, VA, USA</pubplace>
 					<publish>U.S. Geological Survey</publish>
 				</pubinfo>
-				<onlink>https://dx.doi.org/10.5066/F7C827DT</onlink>
+				<onlink>https://doi.org/10.5066/F7C827DT</onlink>
 				<lworkcit>
 					<citeinfo>
 						<origin>Jason C. Fisher</origin>
@@ -36,15 +36,15 @@
 							<pubplace>Reston, VA, USA</pubplace>
 							<publish>U.S. Geological Survey</publish>
 						</pubinfo>
-						<onlink>https://dx.doi.org/10.3133/sir20165080</onlink>
+						<onlink>https://doi.org/10.3133/sir20165080</onlink>
 					</citeinfo>
 				</lworkcit>
 			</citeinfo>
 		</citation>
 		<descript>
-			<abstract>A three-dimensional numerical groundwater flow model (MODFLOW-USG) was developed for the Wood River Valley (WRV) aquifer system, south-central Idaho, to evaluate groundwater and surface-water availability at the regional scale. The U.S. Geological Survey (USGS), in cooperation Idaho Department of Water Resources, used the transient groundwater flow model to simulate historical hydraulic head conditions from 1995 to 2010. This USGS data release contains all of the input and output files for the simulation described in the associated model documentation report (https://dx.doi.org/10.3133/sir20165080).</abstract>
-			<purpose>This groundwater model was created to advance the basic understanding of the Wood River Valley aquifer system, Idaho. Ultimately the model could be used to examine human development and climatic effects on the groundwater system and its interaction with the Big Wood River caused by changes in water use and groundwater recharge and discharge. The development of the model input and output files included in this data release are documented in U.S. Geological Survey Scientific Investigations Report 2016-5080 (https://dx.doi.org/10.3133/sir20165080).</purpose>
-			<supplinf>Support is provided for correcting errors in the data release and clarification of the modeling conducted by the U.S. Geological Survey. Users are encouraged to review the complete model documentation report (https://dx.doi.org/10.3133/sir20165080) to understand the purpose, construction, and limitations of this model. The models, along with pre- and post-processing tools, will run successfully only if the original directory structure is correctly restored. The model archive is broken into several pieces to reduce the likelihood of download timeouts. Instructions for reconstructing the original directory structure and running the models included in this data release and described in the model documentation report can be found in the readme.txt ASCII file which can be downloaded as part of this data release.</supplinf>
+			<abstract>A three-dimensional numerical groundwater flow model (MODFLOW-USG) was developed for the Wood River Valley (WRV) aquifer system, south-central Idaho, to evaluate groundwater and surface-water availability at the regional scale. The U.S. Geological Survey (USGS), in cooperation Idaho Department of Water Resources, used the transient groundwater flow model to simulate historical hydraulic head conditions from 1995 to 2010. This USGS data release contains all of the input and output files for the simulation described in the associated model documentation report (https://doi.org/10.3133/sir20165080).</abstract>
+			<purpose>This groundwater model was created to advance the basic understanding of the Wood River Valley aquifer system, Idaho. Ultimately the model could be used to examine human development and climatic effects on the groundwater system and its interaction with the Big Wood River caused by changes in water use and groundwater recharge and discharge. The development of the model input and output files included in this data release are documented in U.S. Geological Survey Scientific Investigations Report 2016-5080 (https://doi.org/10.3133/sir20165080).</purpose>
+			<supplinf>Support is provided for correcting errors in the data release and clarification of the modeling conducted by the U.S. Geological Survey. Users are encouraged to review the complete model documentation report (https://doi.org/10.3133/sir20165080) to understand the purpose, construction, and limitations of this model. The models, along with pre- and post-processing tools, will run successfully only if the original directory structure is correctly restored. The model archive is broken into several pieces to reduce the likelihood of download timeouts. Instructions for reconstructing the original directory structure and running the models included in this data release and described in the model documentation report can be found in the readme.txt ASCII file which can be downloaded as part of this data release.</supplinf>
 		</descript>
 		<timeperd>
 			<timeinfo>
@@ -121,7 +121,7 @@
 			<attraccr>The model was calibrated using data from 1998 to 2010 and was used to simulate historical conditions from 1995 to 2010. Field measurements used in the parameter estimation process include groundwater levels in wells, stream-aquifer flow exchange in river reaches, and groundwater flow at outlet boundaries.</attraccr>
 		</attracc>
 		<logic>No formal logical accuracy tests were conducted</logic>
-		<complete>Data set is considered complete for the information presented, as described in the abstract. Users are advised to read the rest of the metadata record and the associated model documentation report (https://dx.doi.org/10.3133/sir20165080) carefully for additional details.</complete>
+		<complete>Data set is considered complete for the information presented, as described in the abstract. Users are advised to read the rest of the metadata record and the associated model documentation report (https://doi.org/10.3133/sir20165080) carefully for additional details.</complete>
 		<posacc>
 			<horizpa>
 				<horizpar>No formal positional accuracy tests were conducted</horizpar>
@@ -132,7 +132,7 @@
 		</posacc>
 		<lineage>
 			<procstep>
-				<procdesc>The process used to develop, calibrate, and apply the groundwater flow model is fully described in the model documentation report (https://dx.doi.org/10.3133/sir20165080).</procdesc>
+				<procdesc>The process used to develop, calibrate, and apply the groundwater flow model is fully described in the model documentation report (https://doi.org/10.3133/sir20165080).</procdesc>
 				<procdate>2016</procdate>
 			</procstep>
 		</lineage>
@@ -185,19 +185,19 @@
 <attr>
 	<attrlabl>Area</attrlabl>
 	<attrdef>Text string indicates active and inactive model domain.</attrdef>
-	<attrdefs>https://dx.doi.org/10.3133/sir20165080</attrdefs>
+	<attrdefs>https://doi.org/10.3133/sir20165080</attrdefs>
 	<attrdomv>
 		<edom>
 			<edomv>usgsgroundwatermodel</edomv>
 			<edomvd>Delineation of active and inactive areas in the model.</edomvd>
-			<edomvds>https://dx.doi.org/10.3133/sir20165080</edomvds>
+			<edomvds>https://doi.org/10.3133/sir20165080</edomvds>
 		</edom>
 	</attrdomv>
 </attr>
 	</detailed>
 		<overview>
 			<eaover>Fisher, J.C., Bartolino, J.R., Wylie, A.H., Sukow, Jennifer, and McVay, Michael, 2016, MODFLOW-USG model of groundwater flow in the Wood River Valley aquifer system in Blaine County, Idaho: U.S. Geological Survey Data Release.</eaover>
-			<eadetcit>https://dx.doi.org/10.5066/F7C827DT</eadetcit>
+			<eadetcit>https://doi.org/10.5066/F7C827DT</eadetcit>
 		</overview>
 	</eainfo>
 	<distinfo>
