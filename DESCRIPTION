@@ -1,6 +1,6 @@
 Package: wrv
 Title: Wood River Valley Groundwater-Flow Model
-Version: 1.1.4
+Version: 1.1.5
 Authors@R: c(
     person(given=c("Jason", "C."), family="Fisher", role=c("aut", "cre"), email="jfisher@usgs.gov", comment=c(ORCID="0000-0001-9032-8912")),
     person(given=c("Allan", "H."), family="Wylie", role="ctb", email="Allan.Wylie@idwr.idaho.gov"),
@@ -43,4 +43,4 @@ ByteCompile: true
 LazyData: true
 LazyDataCompression: xz
 VignetteBuilder: knitr
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.0

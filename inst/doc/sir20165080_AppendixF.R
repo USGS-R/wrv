@@ -112,7 +112,7 @@ d <- d[order(d$MonthDay), ]
 col <- c("#1B9E77", "#D95F02", "#7570B3")
 ylab <- paste("Snow water equivalent, in", c("meters", "inches"))
 xlim <- range(d[, 1])
-PlotGraph(d, xlim=xlim, ylab=ylab, col=col, fill=paste0(col, "66"), lty=1,
+PlotGraph(d, xlim=xlim, ylab=ylab, col=col, fill="tozeroy", lty=1,
           seq.date.by="month", conversion.factor=39.3701,
           center.date.labels=TRUE)
 xat <- seq(xlim[1], xlim[2], by="month")
@@ -141,7 +141,7 @@ FUN <- function(i, col) {
   d[nrow(d), 1] <- d[nrow(d), 1] + diff(d[, 1])[1]
   ylab <- paste("Monthly precipitation, in", c("meters", "feet"))
   col <- c(col, "#333333")
-  PlotGraph(d, ylab=ylab, col=col, fill=paste0(col, "66"), lty=1,
+  PlotGraph(d, ylab=ylab, col=col, fill="tozeroy", lty=1,
             conversion.factor=m.to.ft, center.date.labels=TRUE,
             seq.date.by="year")
   leg <- c("Adjusted for spring melt", "Recorded at weather station")
