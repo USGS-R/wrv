@@ -1,3 +1,9 @@
+# wrv 1.1.5
+
+- In `inlmisc::AddScaleBar` function calls, remove `offset` argument and replace with `inset`.
+
+- In `inlmisc::PlotGraph` function calls, change `fill` argument.
+
 # wrv 1.1.4
 
 - Substitute the recommended **viridis** package for its 'lite' version **viridisLite**.

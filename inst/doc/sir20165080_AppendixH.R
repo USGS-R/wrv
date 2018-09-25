@@ -530,7 +530,7 @@ ylab <- paste("Stream-aquifer flow exchange, in", c("cubic meters per day", "cub
 xlim <- as.Date(c("1995-01-01", "2011-01-01"), tz="MST")
 d <- d.rech[, c("Date", "nKet_Hai")]
 col <- "#C80C0B"
-PlotGraph(d, ylab=ylab, xlim=xlim, col=col, fill=paste0(col, "66"),
+PlotGraph(d, ylab=ylab, xlim=xlim, col=col, fill="tozeroy",
           conversion.factor=1 / cfs.to.m3.per.d,
           scientific=c(FALSE, TRUE, FALSE), center.date.labels=TRUE,
           seq.date.by="year")
@@ -545,7 +545,7 @@ d[, 3] <- d[, 2]
 d[!is.na(d[, 2]) & d[, 2] < 0, 2] <- 0
 d[!is.na(d[, 3]) & d[, 3] > 0, 3] <- 0
 col <- c("#67A9CF", "#C80C0B")
-PlotGraph(d, ylab=ylab, xlim=xlim, col=col, fill=paste0(col, "66"),
+PlotGraph(d, ylab=ylab, xlim=xlim, col=col, fill="tozeroy",
           conversion.factor=1 / cfs.to.m3.per.d,
           scientific=c(FALSE, TRUE, FALSE), center.date.labels=TRUE,
           seq.date.by="year")
@@ -559,7 +559,7 @@ v <- c(paste("Graph showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, ncha
 ## ----graph_willowcr, echo=FALSE, fig.width=fin.graph.short[1], fig.height=fin.graph.short[2], fig.scap=sprintf("{%s}", v[1]), fig.cap=sprintf("{%s}", v[2])----
 d <- d.rech[, c("Date", "WillowCr")]
 col <- "#C80C0B"
-PlotGraph(d, ylab=ylab, xlim=xlim, col=col, fill=paste0(col, "66"),
+PlotGraph(d, ylab=ylab, xlim=xlim, col=col, fill="tozeroy",
           conversion.factor=1 / cfs.to.m3.per.d,
           scientific=c(FALSE, TRUE, FALSE), center.date.labels=TRUE,
           seq.date.by="year")
@@ -571,7 +571,7 @@ v <- c(paste("Graph showing", paste0(tolower(substr(v, 1, 1)), substr(v, 2, ncha
 ## ----graph_silverabv, echo=FALSE, fig.width=fin.graph.short[1], fig.height=fin.graph.short[2], fig.scap=sprintf("{%s}", v[1]), fig.cap=sprintf("{%s}", v[2])----
 d <- d.rech[, c("Date", "SilverAbv")]
 col <- "#C80C0B"
-PlotGraph(d, ylab=ylab, xlim=xlim, col=col, fill=paste0(col, "66"),
+PlotGraph(d, ylab=ylab, xlim=xlim, col=col, fill="tozeroy",
           conversion.factor=1 / cfs.to.m3.per.d,
           scientific=c(FALSE, TRUE, FALSE), center.date.labels=TRUE,
           seq.date.by="year")
