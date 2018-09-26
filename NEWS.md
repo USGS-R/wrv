@@ -1,3 +1,7 @@
+# wrv 1.1.5.9000
+
+- ...
+
 # wrv 1.1.5
 
 - In `inlmisc::AddScaleBar` function calls, remove `offset` argument and replace with `inset`.
