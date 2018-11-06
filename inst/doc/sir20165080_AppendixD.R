@@ -1656,12 +1656,12 @@ d$BigReachNo <- d1$BigReachNo[match(d$id, d1$ReachNo)]
 d$month <- as.factor(months(d$totim.date, abbreviate=TRUE))
 d <- d[d$totim.date >= as.Date("2000-01-01") & d$month %in% c("Aug", "Oct", "Mar"), ]
 
-d2 <- aggregate(d[, "flow.sum"], by=list(ReachNo=d$id, totim.date=d$totim.date, month=d$month), sum)
+d2 <- aggregate(d[, "flow.sum", drop=FALSE], by=list(ReachNo=d$id, totim.date=d$totim.date, month=d$month), sum)
 d2 <- aggregate(d2$flow.sum, by=list(ReachNo=d2$ReachNo, month=d2$month), mean)
 colnames(d2) <- c("ReachNo", "month", "subreach.ave")
 d2$BigReachNo <- d1$BigReachNo[match(d2$ReachNo, d1$ReachNo)]
 
-reach.ave <- aggregate(d[, "flow.sum"], by=list(BigReachNo=d$BigReachNo, totim.date=d$totim.date, month=d$month), sum)
+reach.ave <- aggregate(d[, "flow.sum", drop=FALSE], by=list(BigReachNo=d$BigReachNo, totim.date=d$totim.date, month=d$month), sum)
 reach.ave <- aggregate(reach.ave$flow.sum, by=list(BigReachNo=reach.ave$BigReachNo, month=reach.ave$month), mean)
 colnames(reach.ave) <- c("BigReachNo", "month", "reach.ave")
 
