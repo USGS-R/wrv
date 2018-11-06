@@ -1,6 +1,6 @@
 # wrv 1.1.5.9000
 
-- ...
+- Fix bug in appendix D that was droping `"flow.sum"` column name when aggregating flows.
 
 # wrv 1.1.5
 
