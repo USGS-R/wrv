@@ -15,8 +15,8 @@ APPXC   := sir20165080_AppendixC
 all: docs rd2tex install check clean
 
 docs:
-	R -q -e 'devtools::document()';\
-	R -q -e 'devtools::clean_dll()';\
+	R -q -e 'Rd2roxygen::roxygen_and_build('\''.'\'', build=FALSE, reformat=FALSE)';\
+	R -q -e 'pkgbuild::clean_dll()';\
 
 build:
 	cd ..;\
@@ -38,8 +38,7 @@ rd2tex:
 	$(RM) -r .Rd2pdf*;\
 
 vignettes:
-	R -q -e 'devtools::build_vignettes()';\
-	R -q -e 'tools::compactPDF(paths='\''inst/doc'\'', gs_quality='\''ebook'\'')';\
+	R -q -e 'inlmisc::BuildVignettes(gs_quality='\''ebook'\'')';\
 
 datasets:
 	cd ..;\
