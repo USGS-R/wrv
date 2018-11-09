@@ -15,8 +15,7 @@ APPXC   := sir20165080_AppendixC
 all: docs rd2tex install check clean
 
 docs:
-	R -q -e 'Rd2roxygen::roxygen_and_build('\''.'\'', build=FALSE, reformat=FALSE)';\
-	R -q -e 'pkgbuild::clean_dll()';\
+	R -q -e 'pkgload::load_all();roxygen2::roxygenize();pkgbuild::clean_dll()';\
 
 build:
 	cd ..;\
