@@ -4,11 +4,19 @@
 \alias{UpdateWaterBudget}
 \title{Update Water Budget}
 \usage{
-UpdateWaterBudget(dir.run, id, qa.tables = c("none", "si", "english"),
-  ss.interval = NULL, iwelcb = ifelse(interactive(), 50L, 0L),
-  canal.seep = wrv::canal.seep, efficiency = wrv::efficiency,
-  gage.disch = wrv::gage.disch, pod.wells = wrv::pod.wells,
-  tributaries = wrv::tributaries, ...)
+UpdateWaterBudget(
+  dir.run,
+  id,
+  qa.tables = c("none", "si", "english"),
+  ss.interval = NULL,
+  iwelcb = ifelse(interactive(), 50L, 0L),
+  canal.seep = wrv::canal.seep,
+  efficiency = wrv::efficiency,
+  gage.disch = wrv::gage.disch,
+  pod.wells = wrv::pod.wells,
+  tributaries = wrv::tributaries,
+  ...
+)
 }
 \arguments{
 \item{dir.run}{character.

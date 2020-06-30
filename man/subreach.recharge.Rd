@@ -4,7 +4,8 @@
 \name{subreach.recharge}
 \alias{subreach.recharge}
 \title{Stream-Aquifer Flow Exchange Along River Subreaches}
-\format{An object of data.frame class with 19 records and the following variables:
+\format{
+An object of data.frame class with 19 records and the following variables:
   \describe{
     \item{ReachNo}{subreach number identifier}
     \item{Reach}{name of the subreach.}
@@ -16,7 +17,8 @@
       in cubic meters per day.}
     \item{Mar}{estimated volumetric flow rate measured during March 2013,
       in cubic meters per day.}
-  }}
+  }
+}
 \source{
 Flow values calculated from \code{\link{seepage.study}} data.
 }

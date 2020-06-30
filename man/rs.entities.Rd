@@ -4,7 +4,8 @@
 \name{rs.entities}
 \alias{rs.entities}
 \title{Rasterized Monthly Irrigation Entities}
-\format{An object of RasterStack class containing a 192 RasterLayer objects,
+\format{
+An object of RasterStack class containing a 192 RasterLayer objects,
   one layer for each month in the 1995-2010 time period.
   Geographic coordinates are in units of meters, in conformance with the
   North American Datum of 1983 (NAD 83), and placed in the
@@ -15,7 +16,8 @@
     \item{ID}{cell index}
     \item{COUNT}{frequency of the cell index in the raster grid.}
     \item{EntityName}{name of the irrigation entity served by a group of diversions.}
-  }}
+  }
+}
 \source{
 Calculated by transferring the \code{\link{entity.components}} dataset to grid cells
   in the \code{\link{land.surface}} dataset using the rasterize function;

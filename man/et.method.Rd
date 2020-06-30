@@ -4,7 +4,8 @@
 \name{et.method}
 \alias{et.method}
 \title{Method Used to Calculate Evapotranspiration}
-\format{An object of data.frame class with 122 records with the following variables:
+\format{
+An object of data.frame class with 122 records with the following variables:
   \describe{
     \item{YearMonth}{year and month during which the method was applied,
       with a required date format of YYYYMM.}
@@ -17,7 +18,8 @@
           (Allen and others, 2010b);
         \dQuote{Interpolation}, interpolation from known ET data; or
         \dQuote{METRIC-NDVI}, a combination of METRIC and NDVI methods.}
-  }}
+  }
+}
 \source{
 Idaho Department of Water Resources, accessed on April 27, 2015
 }

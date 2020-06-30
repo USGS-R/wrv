@@ -4,13 +4,15 @@
 \name{obs.wells.head}
 \alias{obs.wells.head}
 \title{Hydraulic Heads in Observation Wells}
-\format{An object of class data.frame with 3,477 records and the following variables:
+\format{
+An object of class data.frame with 3,477 records and the following variables:
   \describe{
     \item{PESTNAME}{unique well identifier for PEST.}
     \item{DateTime}{date and time when the measurement was recorded.}
     \item{Head}{groundwater-level measurement (hydraulic head)
       in meters above the North American Vertical Datum of 1988 (NAVD 88).}
-  }}
+  }
+}
 \source{
 Idaho Department of Water Resources, accessed on June 26, 2015
 }

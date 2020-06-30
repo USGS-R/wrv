@@ -4,7 +4,8 @@
 \name{priority.cuts}
 \alias{priority.cuts}
 \title{Priority Cuts}
-\format{An object of data.frame class with 112 records
+\format{
+An object of data.frame class with 112 records
   and the following variables:
   \describe{
     \item{YearMonth}{year and month during of the priority cut date,
@@ -13,7 +14,8 @@
       Big Wood River above Magic Reservoir by Water District 37.}
     \item{Pdate_SC}{date of the priority cut applied to
       Silver Creek by Water District 37M.}
-  }}
+  }
+}
 \source{
 Idaho Department of Water Resources, accessed on November 17, 2014;
   compiled priority cut dates in effect at the end of each month,

@@ -4,14 +4,16 @@
 \name{land.surface}
 \alias{land.surface}
 \title{Topography of Land Surface}
-\format{An object of SpatialGridDataFrame class.
+\format{
+An object of SpatialGridDataFrame class.
   Each cell on the surface grid represents an elevation in meters above the
   North American Vertical Datum of 1988 (NAVD 88).
   Geographic coordinates are in units of meters, in conformance with the
   North American Datum of 1983 (NAD 83), and placed in the
   Idaho Transverse Mercator projection (\href{https://www.idwr.idaho.gov/GIS/IDTM/}{IDTM}).
   The spatial grid is composed of 565 rows and 429 columns,
-  and has cell sizes that are constant at 100 meters by 100 meters.}
+  and has cell sizes that are constant at 100 meters by 100 meters.
+}
 \source{
 The National Map (\href{https://nationalmap.gov/elevation.html}{TNM})
   1/3-arc-second raster (Gesch, 2007; Gesch and others, 2002),

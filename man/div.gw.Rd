@@ -4,7 +4,8 @@
 \name{div.gw}
 \alias{div.gw}
 \title{Groundwater Diversions}
-\format{An object of class data.frame with 7,292 records and the following variables:
+\format{
+An object of class data.frame with 7,292 records and the following variables:
   \describe{
     \item{YearMonth}{year and month during which diversions were recorded,
       with a required date format of YYYYMM.}
@@ -17,7 +18,8 @@
     \item{WMISNumber}{well number in the Idaho Department of Water Resources (IDWR)
       Water Measurement Information System.}
     \item{GWDiv}{volume of water diverted during the month, in cubic meters.}
-  }}
+  }
+}
 \source{
 Idaho Department of Water Resources (IDWR), accessed on December 11, 2014;
   compiled data records from Water District 37 and 37M, City of Ketchum,

@@ -572,7 +572,7 @@
 #' ylab <- paste("Discharge in cubic", c("meters per day", "acre-foot per year"))
 #' inlmisc::PlotGraph(gage.disch, ylab = ylab, col = col, lty = 1:3,
 #'                    conversion.factor = 0.29611, seq.date.by = "year")
-#' leg <- sprintf("USGS \%s", names(gage.disch)[-1])
+#' leg <- sprintf("USGS %s", names(gage.disch)[-1])
 #' legend("topright", leg, col = col, lty = 1:3, inset = 0.02, cex = 0.7,
 #'        box.lty = 1, bg = "#FFFFFFE7")
 #'
@@ -621,7 +621,7 @@
 #' ylab <- paste("Gage height in", c("meters", "feet"))
 #' inlmisc::PlotGraph(gage.height, ylab = ylab, col = col, lty = 1:3,
 #'                    conversion.factor = 3.28084, seq.date.by = "year")
-#' leg <- sprintf("USGS \%s", names(gage.height)[-1])
+#' leg <- sprintf("USGS %s", names(gage.height)[-1])
 #' legend("topright", leg, col = col, lty = 1:3, inset = 0.02, cex = 0.7,
 #'        box.lty = 1, bg = "#FFFFFFE7")
 #'
@@ -1186,7 +1186,7 @@
 #' str(precipitation)
 #'
 #' d <- precipitation
-#' d <- data.frame(Date = as.Date(paste0(d$YearMonth, "15"), format = "\%Y\%m\%d"),
+#' d <- data.frame(Date = as.Date(paste0(d$YearMonth, "15"), format = "%Y%m%d"),
 #'                 Precip = d$Precip)
 #' zones <- c("Hailey", "Ketchum", "Picabo")
 #' d1 <- d[precipitation$PrecipZone == zones[1], ]

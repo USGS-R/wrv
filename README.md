@@ -15,19 +15,13 @@ a U.S. Geological Survey (USGS) computer code that solves the groundwater-flow e
 
 ## Install
 
-You can install the stable version of **wrv** from [GRAN](https://owi.usgs.gov/R/gran.html),
-and its dependencies from [CRAN](https://cran.r-project.org/), using the following commands:
+You can install **wrv** from [GitHub](https://github.com/USGS-R/wrv),
+and its dependencies from [CRAN](https://cran.r-project.org/),
+using the following commands:
 
 ```r
-repos <- c("https://owi.usgs.gov/R", "https://cloud.r-project.org/")
-update.packages(ask = FALSE, repos = repos)
-install.packages("wrv", repos = repos, dependencies = TRUE)
-```
-
-Or use **devtools** to install the development version from GitHub.
-
-```r
-devtools::install_github("USGS-R/wrv", dependencies = TRUE)
+if (!requireNamespace("remotes")) install.packages("remotes")
+remotes::install_github("USGS-R/wrv", dependencies = TRUE)
 ```
 
 ## Run

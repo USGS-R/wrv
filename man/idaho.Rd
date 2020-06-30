@@ -4,11 +4,13 @@
 \name{idaho}
 \alias{idaho}
 \title{U.S. State of Idaho}
-\format{An object of SpatialPolygons class containing 1 Polygons.
+\format{
+An object of SpatialPolygons class containing 1 Polygons.
   Cartographic boundary at 5m (1:5,000,000) resolution.
   Geographic coordinates are in units of meters, in conformance with the
   North American Datum of 1983 (NAD 83), and placed in the
-  Idaho Transverse Mercator projection (\href{https://www.idwr.idaho.gov/GIS/IDTM/}{IDTM}).}
+  Idaho Transverse Mercator projection (\href{https://www.idwr.idaho.gov/GIS/IDTM/}{IDTM}).
+}
 \source{
 U.S. Department of Commerce, U.S. Census Bureau,
   Geography Division/Cartographic Products Branch.

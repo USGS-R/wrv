@@ -4,7 +4,8 @@
 \name{irr.lands}
 \alias{irr.lands}
 \title{Irrigated Lands}
-\format{An object of list class with 7 SpatialPolygonsDataFrame components.
+\format{
+An object of list class with 7 SpatialPolygonsDataFrame components.
   The data.frame associated with each SpatialPolygons object has the following variable:
   \describe{
     \item{Status}{status of land during the year reviewed,
@@ -12,7 +13,8 @@
   }
   Geographic coordinates are in units of meters, in conformance with the
   North American Datum of 1983 (NAD 83), and placed in the
-  Idaho Transverse Mercator projection (\href{https://www.idwr.idaho.gov/GIS/IDTM/}{IDTM}).}
+  Idaho Transverse Mercator projection (\href{https://www.idwr.idaho.gov/GIS/IDTM/}{IDTM}).
+}
 \source{
 Idaho Department of Water Resources, accessed on November 17, 2014;
   polygons derived from U.S. Department of Agriculture Common Land Unit polygons

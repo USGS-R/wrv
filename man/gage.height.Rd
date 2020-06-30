@@ -4,7 +4,8 @@
 \name{gage.height}
 \alias{gage.height}
 \title{Daily Mean Gage Height at Streamgages}
-\format{An object of data.frame class with 9,980 records and the following variables:
+\format{
+An object of data.frame class with 9,980 records and the following variables:
   \describe{
     \item{Date}{date during which gage height was averaged.}
     \item{13135500}{daily mean gage height in meters, recorded at the USGS
@@ -16,7 +17,8 @@
     \item{13140800}{daily mean gage height in meters, recorded at the USGS
       \href{https://waterdata.usgs.gov/id/nwis/uv/?site_no=13140800}{13140800}
       Big Wood River at Stanton Crossing near Bellevue streamgages.}
-  }}
+  }
+}
 \source{
 Data queried from the National Water Information System
   (\href{https://waterdata.usgs.gov/nwis}{NWIS}) database on December 15, 2014,
@@ -45,7 +47,7 @@ col <- c("red", "blue", "green")
 ylab <- paste("Gage height in", c("meters", "feet"))
 inlmisc::PlotGraph(gage.height, ylab = ylab, col = col, lty = 1:3,
                    conversion.factor = 3.28084, seq.date.by = "year")
-leg <- sprintf("USGS \\\%s", names(gage.height)[-1])
+leg <- sprintf("USGS \%s", names(gage.height)[-1])
 legend("topright", leg, col = col, lty = 1:3, inset = 0.02, cex = 0.7,
        box.lty = 1, bg = "#FFFFFFE7")
 

@@ -4,7 +4,8 @@
 \name{div.ww}
 \alias{div.ww}
 \title{Wastewater Treatment Plant Diversions}
-\format{An object of class data.frame with 1,182 records and the following variables:
+\format{
+An object of class data.frame with 1,182 records and the following variables:
   \describe{
     \item{YearMonth}{year and month during which diversions were recorded,
       with a required date format of YYYYMM.}
@@ -15,7 +16,8 @@
       only applicable to wastewater treatment plants that discharge to the river.}
     \item{EntityName}{name of the irrigation entity served by the wastewater treatment plant.}
     \item{WWDiv}{volume of wastewater discharged during the month, in cubic meters.}
-  }}
+  }
+}
 \source{
 Idaho Department of Water Resources and U.S. Geological Survey,
   accessed on August 11, 2014; compiled data records from the

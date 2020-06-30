@@ -4,10 +4,12 @@
 \name{public.parcels}
 \alias{public.parcels}
 \title{Public Land Parcels}
-\format{An object of SpatialPolygons class containing 669 Polygons.
+\format{
+An object of SpatialPolygons class containing 669 Polygons.
   Geographic coordinates are in units of meters, in conformance with the
   North American Datum of 1983 (NAD 83), and placed in the
-  Idaho Transverse Mercator projection (\href{https://www.idwr.idaho.gov/GIS/IDTM/}{IDTM}).}
+  Idaho Transverse Mercator projection (\href{https://www.idwr.idaho.gov/GIS/IDTM/}{IDTM}).
+}
 \source{
 Idaho Department of Water Resources, accessed on November 29, 2014;
   derived from Blaine County tax lots and aerial photography.

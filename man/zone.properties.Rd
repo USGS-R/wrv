@@ -4,7 +4,8 @@
 \name{zone.properties}
 \alias{zone.properties}
 \title{Hydraulic Properties of Hydrogeologic Zones}
-\format{An object of \code{data.frame} class with the following variables:
+\format{
+An object of \code{data.frame} class with the following variables:
   \describe{
     \item{ID}{numeric identifier for the hydrogeologic zone.}
     \item{name}{name of the hydrogeologic zone.}
@@ -13,7 +14,8 @@
     \item{sy}{specific yield, a dimensionless quantity.}
     \item{hk}{horizontal hydraulic conductivity in meters per day.}
     \item{ss}{specific storage in inverse meter.}
-  }}
+  }
+}
 \usage{
 zone.properties
 }

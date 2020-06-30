@@ -4,13 +4,15 @@
 \name{alluvium.thickness}
 \alias{alluvium.thickness}
 \title{Thickness of the Quaternary Sediment}
-\format{An object of RasterLayer class.
+\format{
+An object of RasterLayer class.
   Each cell on the surface grid represents a depth measured from land surface in meters.
   Geographic coordinates are in units of meters, in conformance with the
   North American Datum of 1983 (NAD 83), and placed in the
   Idaho Transverse Mercator projection (\href{https://www.idwr.idaho.gov/GIS/IDTM/}{IDTM}).
   The spatial grid is composed of 565 rows and 429 columns,
-  and has cell sizes that are constant at 100 meters by 100 meters.}
+  and has cell sizes that are constant at 100 meters by 100 meters.
+}
 \source{
 Revised version of Plate 1 in Bartolino and Adkins (2012).
 }

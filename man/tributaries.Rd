@@ -4,7 +4,8 @@
 \name{tributaries}
 \alias{tributaries}
 \title{Tributary Basin Underflow}
-\format{An object of SpatialPolygonsDataFrame class containing a set of 22 Polygons and a
+\format{
+An object of SpatialPolygonsDataFrame class containing a set of 22 Polygons and a
   data.frame with the following variable:
   \describe{
     \item{Name}{tributary name}
@@ -34,7 +35,8 @@
   }
   Geographic coordinates are in units of meters, in conformance with the
   North American Datum of 1983 (NAD 83), and placed in the
-  Idaho Transverse Mercator projection (\href{https://www.idwr.idaho.gov/GIS/IDTM/}{IDTM}).}
+  Idaho Transverse Mercator projection (\href{https://www.idwr.idaho.gov/GIS/IDTM/}{IDTM}).
+}
 \source{
 U.S. Geological Survey, accessed on July 2, 2015;
   a Keyhole Markup Language (\href{https://en.wikipedia.org/wiki/Kml}{KML}) file created in

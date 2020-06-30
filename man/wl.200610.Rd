@@ -4,7 +4,8 @@
 \name{wl.200610}
 \alias{wl.200610}
 \title{Groundwater-Level Contours for October 2006}
-\format{An object of SpatialLinesDataFrame class containing 265 Lines and a
+\format{
+An object of SpatialLinesDataFrame class containing 265 Lines and a
   data.frame with the following variables:
   \describe{
     \item{CONTOUR}{groundwater elevation contour value in meters above the
@@ -14,7 +15,8 @@
   }
   Geographic coordinates are in units of meters, in conformance with the
   North American Datum of 1983 (NAD 83), and placed in the
-  Idaho Transverse Mercator projection (\href{https://www.idwr.idaho.gov/GIS/IDTM/}{IDTM}).}
+  Idaho Transverse Mercator projection (\href{https://www.idwr.idaho.gov/GIS/IDTM/}{IDTM}).
+}
 \source{
 This dataset is from Plate 1 in Skinner and others (2007), and available on the
   \href{https://water.usgs.gov/GIS/metadata/usgswrd/XML/sir2007-5258_oct2006wl.xml}{WRD NSDI Node}.

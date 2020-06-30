@@ -4,13 +4,15 @@
 \name{hill.shading}
 \alias{hill.shading}
 \title{Land Surface Hill Shading}
-\format{An object of \code{RasterLayer} class.
+\format{
+An object of \code{RasterLayer} class.
   Each cell on the surface grid represents the hill shade.
   Geographic coordinates are in units of meters, in conformance with the
   North American Datum of 1983 (NAD 83), and placed in the
   Idaho Transverse Mercator projection (\href{https://www.idwr.idaho.gov/GIS/IDTM/}{IDTM}).
   The spatial grid is composed of 3,108 rows and 2,360 columns,
-  and has cell sizes that are constant at 20 meters by 20 meters.}
+  and has cell sizes that are constant at 20 meters by 20 meters.
+}
 \source{
 Calculated from the slope and aspect of the \code{\link{land.surface}} dataset
   using the \code{terrain} and \code{hillShade} functions;

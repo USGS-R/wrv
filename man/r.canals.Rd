@@ -4,14 +4,16 @@
 \name{r.canals}
 \alias{r.canals}
 \title{Rasterized Canals}
-\format{An object of RasterLayer class with indexed cell values linked to
+\format{
+An object of RasterLayer class with indexed cell values linked to
   a raster attribute table (RAT).
   The RAT is a \code{data.frame} with the following components:
   \describe{
     \item{ID}{cell index}
     \item{COUNT}{frequency of the cell index in the raster grid.}
     \item{EntityName}{name of the irrigation entity served by the canal system.}
-  }}
+  }
+}
 \source{
 Calculated by transferring the \code{\link{canals}} dataset to grid cells in the
   \code{\link{land.surface}} dataset using the \code{rasterize} function;

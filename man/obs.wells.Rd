@@ -4,7 +4,8 @@
 \name{obs.wells}
 \alias{obs.wells}
 \title{Observation Wells}
-\format{An object of SpatialPointsDataFrame class containing 776 points
+\format{
+An object of SpatialPointsDataFrame class containing 776 points
   with the following variables:
   \describe{
     \item{id}{unique well identifier used in this study.}
@@ -34,7 +35,8 @@
       in meters below land surface.}
     \item{TopOpen2}{not applicable}
     \item{BotOpen2}{not applicable}
-  }}
+  }
+}
 \source{
 Idaho Department of Water Resources well construction database,
   accessed on June 29, 2015

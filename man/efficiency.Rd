@@ -4,13 +4,15 @@
 \name{efficiency}
 \alias{efficiency}
 \title{Irrigation Efficiency}
-\format{An object of data.frame class with 88 records and the following variables:
+\format{
+An object of data.frame class with 88 records and the following variables:
   \describe{
     \item{EntityName}{name of the irrigation entity which the irrigation efficiency is applied.}
     \item{Eff}{estimated irrigation efficiency, the ratio of the amount of
       water consumed by the crop to the amount of water supplied through irrigation.}
     \item{Comment}{brief comment on irrigation conditions.}
-  }}
+  }
+}
 \source{
 Idaho Department of Water Resources, accessed on July 9, 2015
 }

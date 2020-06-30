@@ -4,10 +4,12 @@
 \name{clay.extent}
 \alias{clay.extent}
 \title{Extent of Clay Unit}
-\format{An object of SpatialPolygonsDataFrame class containing 2 Polygons.
+\format{
+An object of SpatialPolygonsDataFrame class containing 2 Polygons.
   Geographic coordinates are in units of meters, in conformance with the
   North American Datum of 1983 (NAD 83), and placed in the
-  Idaho Transverse Mercator projection (\href{https://www.idwr.idaho.gov/GIS/IDTM/}{IDTM}).}
+  Idaho Transverse Mercator projection (\href{https://www.idwr.idaho.gov/GIS/IDTM/}{IDTM}).
+}
 \source{
 Extent defined by Moreland (1977, fig. 3 in USGS Open-File report).
   Moreland (1977) shows an outlier by Picabo that is assumed to

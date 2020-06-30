@@ -4,7 +4,8 @@
 \name{drains}
 \alias{drains}
 \title{Drain Boundaries at Stanton Crossing and Silver Creek}
-\format{An object of SpatialPolygonsDataFrame class containing a set of 2 Polygons and
+\format{
+An object of SpatialPolygonsDataFrame class containing a set of 2 Polygons and
   a data.frame with the following variable:
   \describe{
     \item{Name}{identifier for the polygon.}
@@ -14,7 +15,8 @@
   }
   Geographic coordinates are in units of meters, in conformance with the
   North American Datum of 1983 (NAD 83), and placed in the
-  Idaho Transverse Mercator projection (\href{https://www.idwr.idaho.gov/GIS/IDTM/}{IDTM}).}
+  Idaho Transverse Mercator projection (\href{https://www.idwr.idaho.gov/GIS/IDTM/}{IDTM}).
+}
 \source{
 U.S. Geological Survey, accessed on March 27, 2015;
   a Keyhole Markup Language (\href{https://en.wikipedia.org/wiki/Kml}{KML}) file created in

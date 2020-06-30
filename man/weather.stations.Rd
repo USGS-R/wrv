@@ -4,7 +4,8 @@
 \name{weather.stations}
 \alias{weather.stations}
 \title{Weather Stations}
-\format{An object of SpatialPointsDataFrame class containing 5 points
+\format{
+An object of SpatialPointsDataFrame class containing 5 points
   and the following variables:
   \describe{
     \item{name}{name of the weather station.}
@@ -24,7 +25,8 @@
   }
   Geographic coordinates are in units of meters, in conformance with the
   North American Datum of 1983 (NAD 83), and placed in the
-  Idaho Transverse Mercator projection (\href{https://www.idwr.idaho.gov/GIS/IDTM/}{IDTM}).}
+  Idaho Transverse Mercator projection (\href{https://www.idwr.idaho.gov/GIS/IDTM/}{IDTM}).
+}
 \source{
 National Oceanic and Atmospheric Administration (NOAA),
   Bureau of Reclamation, Natural Resources Conservation Service (NRCS),

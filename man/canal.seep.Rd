@@ -4,11 +4,13 @@
 \name{canal.seep}
 \alias{canal.seep}
 \title{Canal Seepage}
-\format{An object of class data.frame with 19 records and the following variables:
+\format{
+An object of class data.frame with 19 records and the following variables:
   \describe{
     \item{EntityName}{name of the irrigation entity served by the canal system.}
     \item{SeepFrac}{estimated canal seepage as a fraction of diversions.}
-  }}
+  }
+}
 \source{
 Idaho Department of Water Resources, accessed on November 4, 2015
 }

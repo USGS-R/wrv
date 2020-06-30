@@ -4,7 +4,8 @@
 \name{comb.sw.irr}
 \alias{comb.sw.irr}
 \title{Combined Surface-Water Irrigation Diversions}
-\format{An object of class data.frame with 1,213 records and the following variables:
+\format{
+An object of class data.frame with 1,213 records and the following variables:
   \describe{
     \item{WaterRight}{name of the supplemental groundwater right.}
     \item{CombWaterRight}{name of the surface-water right that shares a
@@ -14,7 +15,8 @@
     \item{MaxDivRate}{authorized maximum diversion rate for the surface-water right,
       in cubic meters per day.}
     \item{Pdate}{priority date of the surface-water right.}
-  }}
+  }
+}
 \source{
 Idaho Department of Water Resources (IDWR), accessed on April 25, 2014;
   derived from combined limit comments in IDWR water rights database.
