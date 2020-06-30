@@ -4,12 +4,14 @@
 \name{drybed}
 \alias{drybed}
 \title{Dry River Bed and Stream Fed Creek Conditions}
-\format{An object of data.frame class with 12 records and the following variables:
+\format{
+An object of data.frame class with 12 records and the following variables:
   \describe{
     \item{Reach}{stream reach name}
     \item{199501,\dots,201012}{logical values indicating whether the stream reach exhibits
       dry-bed conditions during a stress period.}
-  }}
+  }
+}
 \source{
 Idaho Department of Water Resources, accessed on January 6, 2016;
   compiled from Water District 37 records.

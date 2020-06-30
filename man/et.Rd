@@ -4,12 +4,14 @@
 \name{et}
 \alias{et}
 \title{Evapotranspiration}
-\format{An object of RasterStack class containing 192 RasterLayer objects,
+\format{
+An object of RasterStack class containing 192 RasterLayer objects,
   one layer for each month in the 1995-2010 time period.
   Each cell on a layers surface grid represents the monthly depth of ET in meters.
   Geographic coordinates are in units of meters, in conformance with the
   North American Datum of 1983 (NAD 83), and placed in the
-  Idaho Transverse Mercator projection (\href{https://www.idwr.idaho.gov/GIS/IDTM/}{IDTM}).}
+  Idaho Transverse Mercator projection (\href{https://www.idwr.idaho.gov/GIS/IDTM/}{IDTM}).
+}
 \source{
 Idaho Department of Water Resources, accessed on November 17, 2014
 }

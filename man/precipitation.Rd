@@ -4,7 +4,8 @@
 \name{precipitation}
 \alias{precipitation}
 \title{Precipitation Rate}
-\format{An object of data.frame class with 582 records and the following variables:
+\format{
+An object of data.frame class with 582 records and the following variables:
   with the following variables:
   \describe{
     \item{YearMonth}{year and month during which precipitation were recorded,
@@ -14,7 +15,8 @@
     \item{Precip}{monthly depth of precipitation accounting for spring melt, in meters.}
     \item{Precip.raw}{monthly depth of precipitation recorded at the weather station,
       in meters.}
-  }}
+  }
+}
 \source{
 Idaho Department of Water Resources, accessed on April 24, 2015
 }
@@ -28,7 +30,7 @@ Precipitation rates in the Wood River Valley and surrounding areas.
 str(precipitation)
 
 d <- precipitation
-d <- data.frame(Date = as.Date(paste0(d$YearMonth, "15"), format = "\\\%Y\\\%m\\\%d"),
+d <- data.frame(Date = as.Date(paste0(d$YearMonth, "15"), format = "\%Y\%m\%d"),
                 Precip = d$Precip)
 zones <- c("Hailey", "Ketchum", "Picabo")
 d1 <- d[precipitation$PrecipZone == zones[1], ]

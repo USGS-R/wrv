@@ -4,7 +4,8 @@
 \name{reach.recharge}
 \alias{reach.recharge}
 \title{Stream-Aquifer Flow Exchange Along River Reaches}
-\format{An object of \code{data.frame} class with 192 records and the following variables:
+\format{
+An object of \code{data.frame} class with 192 records and the following variables:
   \describe{
     \item{YearMonth}{year and month of the measurement record,
       with a required date format of \code{YYYYMM}.}
@@ -18,7 +19,8 @@
       above Sportsman Access river reach, in cubic meters per day.}
     \item{SilverBlw}{stream-aquifer flow exchange in Silver Creek,
       Sportsman Access to near Picabo river reach, in cubic meters per day.}
-  }}
+  }
+}
 \source{
 Calculated from continuous stream flow measurements, diversion data,
   return flow data, and exchange well data using a flow difference method to

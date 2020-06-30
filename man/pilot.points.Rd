@@ -4,7 +4,8 @@
 \name{pilot.points}
 \alias{pilot.points}
 \title{Pilot Points}
-\format{An object of SpatialPointsDataFrame class containing 106 points
+\format{
+An object of SpatialPointsDataFrame class containing 106 points
   with the following variables:
   \describe{
     \item{Layer}{model layer}
@@ -12,7 +13,8 @@
   }
   Geographic coordinates are in units of meters, in conformance with the
   North American Datum of 1983 (NAD 83), and placed in the
-  Idaho Transverse Mercator projection (\href{https://www.idwr.idaho.gov/GIS/IDTM/}{IDTM}).}
+  Idaho Transverse Mercator projection (\href{https://www.idwr.idaho.gov/GIS/IDTM/}{IDTM}).
+}
 \source{
 Idaho Department of Water Resources, accessed on June 11, 2015
 }

@@ -4,12 +4,14 @@
 \name{rs.rech.non.irr}
 \alias{rs.rech.non.irr}
 \title{Rasterized Monthly Recharge on Non-Irrigated Lands}
-\format{An object of RasterStack class containing 192 RasterLayer objects,
+\format{
+An object of RasterStack class containing 192 RasterLayer objects,
   one layer for each month in the 1995-2010 time period.
   Each cell on a layers surface grid represents the monthly recharge in meters.
   Geographic coordinates are in units of meters, in conformance with the
   North American Datum of 1983 (NAD 83), and placed in the
-  Idaho Transverse Mercator projection (\href{https://www.idwr.idaho.gov/GIS/IDTM/}{IDTM}).}
+  Idaho Transverse Mercator projection (\href{https://www.idwr.idaho.gov/GIS/IDTM/}{IDTM}).
+}
 \source{
 Calculated from the \code{\link{et}}, \code{\link{precipitation}},
   \code{\link{precip.zones}}, and \code{\link{soils}} datasets;

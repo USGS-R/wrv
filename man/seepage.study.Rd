@@ -4,7 +4,8 @@
 \name{seepage.study}
 \alias{seepage.study}
 \title{Stream Seepage Study}
-\format{An object of SpatialPointsDataFrame class containing 82 points
+\format{
+An object of SpatialPointsDataFrame class containing 82 points
   with the following variables:
   \describe{
     \item{Order}{index used to preserve the downstream order of measurement sites.}
@@ -22,7 +23,8 @@
   }
   Geographic coordinates are in units of meters, in conformance with the
   North American Datum of 1983 (NAD 83), and placed in the
-  Idaho Transverse Mercator projection (\href{https://www.idwr.idaho.gov/GIS/IDTM/}{IDTM}).}
+  Idaho Transverse Mercator projection (\href{https://www.idwr.idaho.gov/GIS/IDTM/}{IDTM}).
+}
 \source{
 Derived from Bartolino (2014) seepage study,
   Idaho Department of Water Resources, Water District 37 and 37M flow records.

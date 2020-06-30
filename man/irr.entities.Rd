@@ -4,7 +4,8 @@
 \name{irr.entities}
 \alias{irr.entities}
 \title{Irrigation Entities}
-\format{An object of SpatialPolygonsDataFrame class containing 235 Polygons and
+\format{
+An object of SpatialPolygonsDataFrame class containing 235 Polygons and
   a data.frame with the following variables:
   \describe{
     \item{EntityName}{name of the irrigation entity served by a group of diversions.}
@@ -16,7 +17,8 @@
   }
   Geographic coordinates are in units of meters, in conformance with the
   North American Datum of 1983 (NAD 83), and placed in the
-  Idaho Transverse Mercator projection (\href{https://www.idwr.idaho.gov/GIS/IDTM/}{IDTM}).}
+  Idaho Transverse Mercator projection (\href{https://www.idwr.idaho.gov/GIS/IDTM/}{IDTM}).
+}
 \source{
 Idaho Department of Water Resources (IDWR), accessed on December 11, 2014;
   derived from IDWR water rights database, Blaine County tax lot data,

@@ -4,7 +4,8 @@
 \name{entity.components}
 \alias{entity.components}
 \title{Irrigation Entity Components}
-\format{An object of list class with components of SpatialPolygonsDataFrame-class.
+\format{
+An object of list class with components of SpatialPolygonsDataFrame-class.
   There are a total of 192 components, one for each month in the 1995--2010 time period.
   Linked data.frame objects have the following variables:
   \describe{
@@ -19,7 +20,8 @@
     \item{EntityName}{name of the irrigation entity.}
     \item{Source}{water source, either \dQuote{Mixed} for a mixture of surface water and groundwater,
       \dQuote{SW Only} for surface water only, or \dQuote{GW Only} for groundwater only.}
-  }}
+  }
+}
 \source{
 Calculated from the \code{\link{irr.entities}}, \code{\link{wetlands}},
   \code{\link{public.parcels}}, \code{\link{irr.lands.year}}, \code{\link{et}}, and

@@ -1,3 +1,7 @@
+# wrv 1.1.7
+
+- Change package installation instructions to reflect that [GRAN](https://owi.usgs.gov/R/gran.html) is being decommissioned.
+
 # wrv 1.1.6
 
 - Fix bug in appendix D that was droping `"flow.sum"` column name when aggregating flows.

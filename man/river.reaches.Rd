@@ -4,7 +4,8 @@
 \name{river.reaches}
 \alias{river.reaches}
 \title{Major River Reaches}
-\format{An object of SpatialLinesDataFrame class containing 22 Lines and a
+\format{
+An object of SpatialLinesDataFrame class containing 22 Lines and a
   data.frame with the following variables:
   \describe{
     \item{Reach}{name of the subreaches measured in U.S. Geological Survey (USGS)
@@ -23,7 +24,8 @@
   }
   Geographic coordinates are in units of meters, in conformance with the
   North American Datum of 1983 (NAD 83), and placed in the
-  Idaho Transverse Mercator projection (\href{https://www.idwr.idaho.gov/GIS/IDTM/}{IDTM}).}
+  Idaho Transverse Mercator projection (\href{https://www.idwr.idaho.gov/GIS/IDTM/}{IDTM}).
+}
 \source{
 Idaho Department of Water Resources, accessed on June 6, 2015
 }

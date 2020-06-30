@@ -4,7 +4,8 @@
 \name{div.ret.exch}
 \alias{div.ret.exch}
 \title{Diversions, Returns, and Exchange Wells}
-\format{An object of SpatialPointsDataFrame class containing 117 points with the
+\format{
+An object of SpatialPointsDataFrame class containing 117 points with the
   following variables:
   \describe{
     \item{Name}{local name for the diversion/return site.}
@@ -15,7 +16,8 @@
   }
   Geographic coordinates are in units of meters, in conformance with the
   North American Datum of 1983 (NAD 83), and placed in the
-  Idaho Transverse Mercator projection (\href{https://www.idwr.idaho.gov/GIS/IDTM/}{IDTM}).}
+  Idaho Transverse Mercator projection (\href{https://www.idwr.idaho.gov/GIS/IDTM/}{IDTM}).
+}
 \source{
 Idaho Department of Water Resources, accessed on June 5, 2015
 }

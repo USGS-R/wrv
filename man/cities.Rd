@@ -4,10 +4,12 @@
 \name{cities}
 \alias{cities}
 \title{Cities and Towns}
-\format{An object of SpatialPointsDataFrame class containing 11 points.
+\format{
+An object of SpatialPointsDataFrame class containing 11 points.
   Geographic coordinates are in units of meters, in conformance with the
   North American Datum of 1983 (NAD 83), and placed in the
-  Idaho Transverse Mercator projection (\href{https://www.idwr.idaho.gov/GIS/IDTM/}{IDTM}).}
+  Idaho Transverse Mercator projection (\href{https://www.idwr.idaho.gov/GIS/IDTM/}{IDTM}).
+}
 \source{
 Idaho Department of Water Resources
   (\href{https://research.idwr.idaho.gov/index.html#GIS-Data}{IDWR}),

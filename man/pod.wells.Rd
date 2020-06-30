@@ -4,7 +4,8 @@
 \name{pod.wells}
 \alias{pod.wells}
 \title{Well Completions}
-\format{An object of SpatialPointsDataFrame class containing 1,243 points
+\format{
+An object of SpatialPointsDataFrame class containing 1,243 points
   with the following variables:
   \describe{
     \item{WMISNumber}{is a unique number assigned to a water right point of diversion.}
@@ -20,7 +21,8 @@
   }
   Geographic coordinates are in units of meters, in conformance with the
   North American Datum of 1983 (NAD 83), and placed in the
-  Idaho Transverse Mercator projection (\href{https://www.idwr.idaho.gov/GIS/IDTM/}{IDTM}).}
+  Idaho Transverse Mercator projection (\href{https://www.idwr.idaho.gov/GIS/IDTM/}{IDTM}).
+}
 \source{
 Idaho Department of Water Resources water rights database,
   accessed on November 29, 2014

@@ -4,7 +4,8 @@
 \name{gage.disch}
 \alias{gage.disch}
 \title{Daily Mean Discharge at Streamgages}
-\format{An object of data.frame class with 8,315 records and the following variables:
+\format{
+An object of data.frame class with 8,315 records and the following variables:
   \describe{
     \item{Date}{date during which discharge was averaged.}
     \item{13135500}{daily mean discharge in cubic meters per day, recorded at the USGS
@@ -16,7 +17,8 @@
     \item{13140800}{daily mean discharge in cubic meters per day, recorded at the USGS
       \href{https://waterdata.usgs.gov/id/nwis/uv/?site_no=13140800}{13140800}
       Big Wood River at Stanton Crossing near Bellevue streamgage.}
-  }}
+  }
+}
 \source{
 National Water Information System (\href{https://waterdata.usgs.gov/nwis}{NWIS}),
   accessed on January 8, 2015
@@ -36,7 +38,7 @@ col <- c("red", "blue", "green")
 ylab <- paste("Discharge in cubic", c("meters per day", "acre-foot per year"))
 inlmisc::PlotGraph(gage.disch, ylab = ylab, col = col, lty = 1:3,
                    conversion.factor = 0.29611, seq.date.by = "year")
-leg <- sprintf("USGS \\\%s", names(gage.disch)[-1])
+leg <- sprintf("USGS \%s", names(gage.disch)[-1])
 legend("topright", leg, col = col, lty = 1:3, inset = 0.02, cex = 0.7,
        box.lty = 1, bg = "#FFFFFFE7")
 

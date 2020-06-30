@@ -4,10 +4,12 @@
 \name{bypass.canal}
 \alias{bypass.canal}
 \title{Bypass Canal}
-\format{An object of SpatialLines class containing 4 Lines.
+\format{
+An object of SpatialLines class containing 4 Lines.
   Geographic coordinates are in units of meters, in conformance with the
   North American Datum of 1983 (NAD 83), and placed in the
-  Idaho Transverse Mercator projection (\href{https://www.idwr.idaho.gov/GIS/IDTM/}{IDTM}).}
+  Idaho Transverse Mercator projection (\href{https://www.idwr.idaho.gov/GIS/IDTM/}{IDTM}).
+}
 \source{
 Idaho Department of Water Resources, accessed on January 15, 2015
 }

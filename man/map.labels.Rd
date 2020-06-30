@@ -4,7 +4,8 @@
 \name{map.labels}
 \alias{map.labels}
 \title{Map Labels}
-\format{An object of SpatialPointsDataFrame class containing
+\format{
+An object of SpatialPointsDataFrame class containing
   40 points with the following variables:
   \describe{
     \item{label}{text to be written.}
@@ -14,7 +15,8 @@
   }
   Geographic coordinates are in units of meters, in conformance with the
   North American Datum of 1983 (NAD 83), and placed in the
-  Idaho Transverse Mercator projection (\href{https://www.idwr.idaho.gov/GIS/IDTM/}{IDTM}).}
+  Idaho Transverse Mercator projection (\href{https://www.idwr.idaho.gov/GIS/IDTM/}{IDTM}).
+}
 \source{
 Best estimates of map label locations.
 }

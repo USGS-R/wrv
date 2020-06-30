@@ -4,11 +4,13 @@
 \name{irr.lands.year}
 \alias{irr.lands.year}
 \title{Irrigation Lands for a Given Year}
-\format{An object of data.frame class with 16 records and the following variables:
+\format{
+An object of data.frame class with 16 records and the following variables:
   \describe{
     \item{Year}{year with a required date format of YYYY.}
     \item{IL_Year}{substitute year with a required date format of YYYY.}
-  }}
+  }
+}
 \source{
 Idaho Department of Water Resources, accessed on April 25, 2014
 }

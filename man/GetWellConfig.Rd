@@ -4,8 +4,7 @@
 \alias{GetWellConfig}
 \title{Get Well Completion and Pumping Rate in Model Space}
 \usage{
-GetWellConfig(rs.model, wells, well.col, rate.col = NULL,
-  lay2.hk.tol = 0.01)
+GetWellConfig(rs.model, wells, well.col, rate.col = NULL, lay2.hk.tol = 0.01)
 }
 \arguments{
 \item{rs.model}{RasterStack.

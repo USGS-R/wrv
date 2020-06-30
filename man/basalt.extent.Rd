@@ -4,10 +4,12 @@
 \name{basalt.extent}
 \alias{basalt.extent}
 \title{Extent of Basalt Unit}
-\format{An object of SpatialPolygonsDataFrame class containing 1 Polygons.
+\format{
+An object of SpatialPolygonsDataFrame class containing 1 Polygons.
   Geographic coordinates are in units of meters, in conformance with the
   North American Datum of 1983 (NAD 83), and placed in the
-  Idaho Transverse Mercator projection (\href{https://www.idwr.idaho.gov/GIS/IDTM/}{IDTM}).}
+  Idaho Transverse Mercator projection (\href{https://www.idwr.idaho.gov/GIS/IDTM/}{IDTM}).
+}
 \source{
 Extent defined by Bartollino and Adkins (2012, Plate 1).
 }

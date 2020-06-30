@@ -4,7 +4,8 @@
 \name{swe}
 \alias{swe}
 \title{Snow Water Equivalent}
-\format{An object of data.frame class with 366 records and the following variables:
+\format{
+An object of data.frame class with 366 records and the following variables:
   \describe{
     \item{MonthDay}{month and day, with a required date format of \code{MMDD}.}
     \item{Choco}{daily SWE recorded at the Chocolate Gulch snow telemetry (SNOTEL)
@@ -12,7 +13,8 @@
     \item{Hailey}{daily SWE recorded at the Hailey Ranger Station at Hailey
       hydrometeorological automated data system (HADS) weather station.}
     \item{Picabo}{daily SWE recorded at the Picabo PICI HADS weather station.}
-  }}
+  }
+}
 \source{
 Idaho Department of Water Resources, accessed on April 24, 2015
 }

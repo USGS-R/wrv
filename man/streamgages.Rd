@@ -4,7 +4,8 @@
 \name{streamgages}
 \alias{streamgages}
 \title{Streamgages}
-\format{An object of SpatialPointsDataFrame class containing 9 points and a
+\format{
+An object of SpatialPointsDataFrame class containing 9 points and a
   data.frame with the following variable:
   \describe{
     \item{SiteNo}{unique site number for the streamgage.}
@@ -12,7 +13,8 @@
   }
   Geographic coordinates are in units of meters, in conformance with the
   North American Datum of 1983 (NAD 83), and placed in the
-  Idaho Transverse Mercator projection (\href{https://www.idwr.idaho.gov/GIS/IDTM/}{IDTM}).}
+  Idaho Transverse Mercator projection (\href{https://www.idwr.idaho.gov/GIS/IDTM/}{IDTM}).
+}
 \source{
 National Water Information System (\href{https://waterdata.usgs.gov/nwis}{NWIS}),
   accessed on May 29, 2015.

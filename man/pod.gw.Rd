@@ -4,7 +4,8 @@
 \name{pod.gw}
 \alias{pod.gw}
 \title{Points of Diversion for Groundwater}
-\format{An object of class data.frame with 1,755 records and the following variables:
+\format{
+An object of class data.frame with 1,755 records and the following variables:
   \describe{
     \item{WMISNumber}{unique number assigned to a water right point of diversion.}
     \item{WaterRight}{number identifying a specific authorization to use
@@ -16,7 +17,8 @@
     \item{Pdate}{priority date, the date the water right was established.}
     \item{IrrRate}{irrigation rate in cubic meters per day,
       the maximum permitted water use rate associated with a water right.}
-  }}
+  }
+}
 \source{
 Idaho Department of Water Resources water rights database,
   accessed on December 11, 2014

@@ -4,7 +4,8 @@
 \name{sensitivity}
 \alias{sensitivity}
 \title{PEST Sensitivity}
-\format{An object of data.frame class with 336 records and the following variables:
+\format{
+An object of data.frame class with 336 records and the following variables:
   \describe{
     \item{parameter.desc}{parameter description}
     \item{ID}{unique identifier within the parameter type,
@@ -20,7 +21,8 @@
     \item{value}{calibrated parameter value estimated by PEST.}
     \item{comp.sens}{composite sensitivity generated during the final iteration of PEST.}
     \item{rel.comp.sens}{relative composite sensitivity}
-  }}
+  }
+}
 \source{
 Idaho Department of Water Resources, accessed on January 15, 2016
 }

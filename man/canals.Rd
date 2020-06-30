@@ -4,12 +4,14 @@
 \name{canals}
 \alias{canals}
 \title{Canal Systems}
-\format{An object of SpatialLinesDataFrame class containing
+\format{
+An object of SpatialLinesDataFrame class containing
   113 Lines and a data.frame with the following variable:
   \describe{
     \item{EntityName}{name of the irrigation entity served by the canal system.}
     \item{Name}{local canal name}
-  }}
+  }
+}
 \source{
 Idaho Department of Water Resources, accessed on November 29, 2014
 }
