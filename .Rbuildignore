@@ -9,3 +9,5 @@ extdata/.*[.]kml$
 extdata/.*[.]md$
 extdata/.*[.]tif$
 extdata/.*[.]zip$
+^wrv\.Rproj$
+^\.Rproj\.user$
